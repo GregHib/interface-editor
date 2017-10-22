@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#handleMouseDragged" onMousePressed="#handleMousePressed" prefHeight="750.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.greg.controller.Controller">
+   <top>
+      <VBox prefHeight="39.0" prefWidth="750.0" BorderPane.alignment="CENTER">
+         <children>
+            <StackPane prefHeight="50.0" prefWidth="750.0">
+               <children>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Label alignment="CENTER" text="Better Interface Editor" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_RIGHT">
+                     <children>
+                        <Button fx:id="minBtn" mnemonicParsing="false" onAction="#minimizeProgram" prefHeight="20.0" prefWidth="45.0">
+                           <HBox.margin>
+                              <Insets right="4.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="45.0">
+                           <HBox.margin>
+                              <Insets right="4.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#closeProgram" prefHeight="20.0" prefWidth="45.0">
+                           <HBox.margin>
+                              <Insets right="4.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </StackPane>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <MenuBar focusTraversable="false" prefHeight="25.0" prefWidth="150.0">
+                    <menus>
+                      <Menu mnemonicParsing="false" text="File">
+                        <items>
+                          <MenuItem mnemonicParsing="false" text="Close" />
+                        </items>
+                      </Menu>
+                      <Menu mnemonicParsing="false" text="Tools">
+                        <items>
+                          <MenuItem mnemonicParsing="false" text="Delete" />
+                        </items>
+                      </Menu>
+                    </menus>
+                  </MenuBar>
+                  <HBox alignment="BOTTOM_LEFT" prefHeight="24.0" prefWidth="750.0">
+                     <children>
+                        <Button fx:id="loadCacheBtn" mnemonicParsing="false" onAction="#loadCache" text="Load">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" text="Button">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                           <children>
+                              <StackPane prefHeight="25.0" prefWidth="400.0" HBox.hgrow="NEVER">
+                                 <children>
+                                    <ProgressBar fx:id="progressBar" prefHeight="40.0" prefWidth="482.0" progress="0.0" />
+                                    <Text fx:id="progressText" strokeType="OUTSIDE" strokeWidth="0.0" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </top>
+   <left>
+      <VBox prefHeight="765.0" prefWidth="503.0" BorderPane.alignment="CENTER">
+         <children>
+            <Pane fx:id="pane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Pane>
+            <Canvas fx:id="canvas" height="503.0" width="765.0" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </left>
+</BorderPane>
