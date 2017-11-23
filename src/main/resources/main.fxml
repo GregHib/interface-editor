@@ -6,8 +6,8 @@
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#handleMouseDragged" onMousePressed="#handleMousePressed" prefHeight="750.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.greg.controller.Controller">
+<!--onMouseDragged="#handleMouseDragged" onMousePressed="#handleMousePressed"-->
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.greg.controller.Controller">
    <top>
       <VBox prefHeight="39.0" prefWidth="750.0" BorderPane.alignment="CENTER">
          <children>

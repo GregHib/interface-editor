@@ -8,30 +8,19 @@ import com.greg.widget.WidgetText
 import javafx.animation.PauseTransition
 import javafx.application.Platform
 import javafx.concurrent.Task
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.geometry.Pos
 import javafx.geometry.VPos
 import javafx.scene.Group
-import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.control.ProgressBar
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.util.Duration
 import java.net.URL
 import java.util.*
-import javafx.scene.shape.Circle
-import javafx.scene.shape.Rectangle
-import javafx.scene.text.TextAlignment
-import java.util.ArrayList
-
-
-
 
 class Controller : Initializable {
 
@@ -75,6 +64,7 @@ class Controller : Initializable {
         var rectangle2 = WidgetRectangle(45.5, 45.5, 10.0, 10.0)
         rectangle2.stroke = Color.WHITE
         pane.children.add(rectangle2)
+
         selected = Group()
         pane.children.add(selected)
         selected.toFront()

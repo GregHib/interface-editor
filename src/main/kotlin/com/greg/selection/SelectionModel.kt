@@ -1,18 +1,20 @@
 package com.greg.selection
 
-import javafx.scene.Node
+import javafx.scene.paint.Color
+import javafx.scene.shape.Shape
 import java.util.*
+import kotlin.collections.HashSet
 
 class SelectionModel {
-    private var selection: MutableSet<Node> = HashSet()
+    private var selection: MutableSet<Shape> = HashSet()
 
-    fun add(node: Node) {
-        node.style = "-fx-effect: dropshadow(three-pass-box, red, 2, 2, 0, 0);"
+    fun add(node: Shape) {
+        node.stroke = Color.RED
         selection.add(node)
     }
 
-    fun remove(node: Node) {
-        node.style = "-fx-effect: null"
+    fun remove(node: Shape) {
+        node.stroke = Color.WHITE
         selection.remove(node)
     }
 
@@ -22,8 +24,16 @@ class SelectionModel {
         }
     }
 
-    operator fun contains(node: Node): Boolean {
+    fun size(): Int {
+        return selection.size
+    }
+
+    operator fun contains(node: Shape): Boolean {
         return selection.contains(node)
+    }
+
+    fun getSelection(): MutableSet<Shape> {
+        return selection
     }
 
     fun log() {

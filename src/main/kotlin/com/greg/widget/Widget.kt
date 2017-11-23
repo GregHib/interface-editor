@@ -1,3 +1,7 @@
 package com.greg.widget
 
-interface Widget
+import com.greg.selection.DragModel
+
+interface Widget {
+    var drag: DragModel
+}
