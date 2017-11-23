@@ -24,11 +24,11 @@ import java.util.*
 
 class Controller : Initializable {
 
-    var mouseX = 0.0
+    private var mouseX = 0.0
 
-    var mouseY = 0.0
+    private var mouseY = 0.0
 
-    var click = 0
+    private var click = 0
 
     private var offsetX = 0.0
 
@@ -108,13 +108,12 @@ class Controller : Initializable {
 
     private fun createTask(task: Task<*>) {
 
-        println(progressBar == null)
-        progressBar?.isVisible = true
+        progressBar.isVisible = true
 
-        progressBar?.progressProperty()!!.unbind()
-        progressBar?.progressProperty().bind(task.progressProperty())
+        progressBar.progressProperty()!!.unbind()
+        progressBar.progressProperty().bind(task.progressProperty())
 
-        progressText?.textProperty()!!.unbind()
+        progressText.textProperty()!!.unbind()
         progressText.textProperty().bind(task.messageProperty())
 
         Thread(task).start()
