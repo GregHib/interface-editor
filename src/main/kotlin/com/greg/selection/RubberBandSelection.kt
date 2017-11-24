@@ -9,6 +9,18 @@ import javafx.scene.shape.Shape
 
 class RubberBandSelection(private var group: Pane, private var selectionModel: SelectionModel) {
 
+    /**
+     * TODO
+     * Improve & comment marquee code
+     * Remove getX/getY
+     *
+     * replace etc..
+     * actualX = if(actualX < 0.0) 0.0 else if(actualX > bounds.width - width) bounds.width - width else actualX
+     *
+     * with something like
+     * clip(actualX, width)
+     */
+
     private var marquee = Marquee()
     private var start: EventTarget? = null
 
@@ -36,27 +48,43 @@ class RubberBandSelection(private var group: Pane, private var selectionModel: S
     private fun initPreDrag(event: MouseEvent) {
         //If has items selected
         if (selectionModel.size() > 0) {
-            //Set the drag start positions just in case dragging occurs
+            //Set info needed for drag just in case dragging occurs
             selectionModel.getSelection().forEach { n ->
                 if (n is Widget) {
-                    n.drag = DragModel(event.sceneX, event.sceneY, n.translateX, n.translateY)
+                    //save the offset of the shapes position relative to the mouse click
+                    var offsetX = group.localToScene(n.boundsInParent).minX - event.sceneX
+                    var offsetY = group.localToScene(n.boundsInParent).minY - event.sceneY
+                    n.drag = DragModel(offsetX, offsetY)
                 }
             }
         }
     }
 
     private fun dragSelection(event: MouseEvent) {
+        group.layoutBounds
         if (selectionModel.contains(event.target as Shape)) {
             selectionModel.getSelection().forEach { n ->
-                if (n is Widget && n.drag != null) {
-                    val offsetX = event.sceneX - n.drag.sceneX!!
-                    val offsetY = event.sceneY - n.drag.sceneY!!
-                    val newTranslateX = n.drag.translateX!! + offsetX
-                    val newTranslateY = n.drag.translateY!! + offsetY
+                if (n is Widget) {
 
-                    n.translateX = newTranslateX
-                    n.translateY = newTranslateY
+                    //Bounds of the container
+                    val bounds = group.localToScene(group.layoutBounds)
 
+                    //The actual positioning of the shape relative to the container
+                    var actualX = event.sceneX - bounds.minX + n.drag.offsetX!!
+                    var actualY = event.sceneY - bounds.minY + n.drag.offsetY!!
+
+                    //Size of shape
+                    val width = n.layoutBounds.width
+                    val height = n.layoutBounds.height
+
+                    //Constrain position to within the container
+                    actualX = if(actualX < 0.0) 0.0 else if(actualX > bounds.width - width) bounds.width - width else actualX
+                    actualY = if(actualY < 0.0) 0.0 else if(actualY > bounds.height - height) bounds.height - height else actualY
+
+                    //Move
+                    n.relocate(actualX, actualY)
+
+                    //Display in front
                     n.toFront()
                 }
             }
@@ -94,8 +122,7 @@ class RubberBandSelection(private var group: Pane, private var selectionModel: S
         group.children
                 .filter { it is Widget && it.boundsInParent.intersects(marquee.boundsInParent) }
                 .forEach {
-                    var shape = it as Shape
-                    handleShape(shape, event)
+                    handleShape(it as Shape, event)
                 }
 
         selectionModel.log()

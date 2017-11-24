@@ -6,7 +6,9 @@
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
+
 <!--onMouseDragged="#handleMouseDragged" onMousePressed="#handleMousePressed"-->
+
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.greg.controller.Controller">
    <top>
       <VBox prefHeight="39.0" prefWidth="750.0" BorderPane.alignment="CENTER">
@@ -87,16 +89,21 @@
          </children>
       </VBox>
    </top>
-   <left>
-      <VBox prefHeight="765.0" prefWidth="503.0" BorderPane.alignment="CENTER">
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Pane fx:id="pane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;">
+            <Pane fx:id="pane" maxHeight="503.0" maxWidth="765.0" minHeight="200.0" minWidth="765.0" prefHeight="503.0" prefWidth="765.0" style="-fx-background-color: #000000;" VBox.vgrow="NEVER">
                <VBox.margin>
-                  <Insets top="5.0" />
+                  <Insets />
                </VBox.margin>
+               <rotationAxis>
+                  <Point3D />
+               </rotationAxis>
             </Pane>
-            <Canvas fx:id="canvas" height="503.0" width="765.0" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
+   </center>
+   <left>
+      <StackPane prefHeight="665.0" prefWidth="80.0" BorderPane.alignment="CENTER" />
    </left>
 </BorderPane>
