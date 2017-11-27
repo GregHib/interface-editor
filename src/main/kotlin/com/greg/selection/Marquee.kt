@@ -17,32 +17,31 @@ class Marquee: Rectangle() {
         fill = Color.LIGHTBLUE.deriveColor(0.0, 1.2, 1.0, 0.6)
     }
 
-    fun add(x: Double, y: Double) {
-        mouseAnchorX = x
-        mouseAnchorY = y
+    fun add(startX: Double, startY: Double) {
+        mouseAnchorX = startX
+        mouseAnchorY = startY
 
-        this.x = mouseAnchorX
-        this.y = mouseAnchorY
+        x = mouseAnchorX
+        y = mouseAnchorY
         width = 0.0
         height = 0.0
     }
 
-    fun draw(x: Double, y: Double) {
-        val offsetX = x - mouseAnchorX
-        val offsetY = y - mouseAnchorY
-
-        if (offsetX > 0)
-            width = offsetX
-        else {
-            this.x = x + 0.5
-            width = mouseAnchorX - this.x + 0.5
+    fun draw(drawX: Double, drawY: Double) {
+        if(drawX > mouseAnchorX) {
+            x = mouseAnchorX - 0.5
+            width = drawX - mouseAnchorX
+        } else {
+            x = drawX + 0.5
+            width = mouseAnchorX - drawX
         }
 
-        if (offsetY > 0) {
-            height = offsetY
+        if(drawY > mouseAnchorY) {
+            y = mouseAnchorY - 0.5
+            height = drawY - mouseAnchorY
         } else {
-            this.y = y + 0.5
-            height = mouseAnchorY - this.y + 0.5
+            y = drawY + 0.5
+            height = mouseAnchorY - drawY
         }
     }
 

@@ -9,150 +9,8 @@ import javafx.scene.shape.Shape
 
 class RubberBandSelection(private var group: Pane, private var selectionModel: SelectionModel) {
 
-    /**
-     * TODO
-     * Improve & comment marquee code
-     * Remove getX/getY
-     *
-     * replace etc..
-     * actualX = if(actualX < 0.0) 0.0 else if(actualX > bounds.width - width) bounds.width - width else actualX
-     *
-     * with something like
-     * clip(actualX, width)
-     */
-
     private var marquee = Marquee()
     private var start: EventTarget? = null
-
-    /**
-     * Get relative mouse position on pane
-     */
-    private fun getX(event: MouseEvent): Double {
-        val x = group.localToScene(group.boundsInLocal).minX
-        return if (event.sceneX < x) 0.0 else if (event.sceneX > x + group.width) group.width else event.sceneX - group.localToScene(group.boundsInLocal).minX
-    }
-
-    private fun getY(event: MouseEvent): Double {
-        val y = group.localToScene(group.boundsInLocal).minY
-        return if (event.sceneY < y) 0.0 else if (event.sceneY > y + group.height) group.height else event.sceneY - group.localToScene(group.boundsInLocal).minY
-    }
-
-
-    private fun isMultiSelect(event: MouseEvent): Boolean {
-        return event.isShiftDown || event.isControlDown
-    }
-
-    /**
-     * Drag handling
-     */
-    private fun initPreDrag(event: MouseEvent) {
-        //If has items selected
-        if (selectionModel.size() > 0) {
-            //Set info needed for drag just in case dragging occurs
-            selectionModel.getSelection().forEach { n ->
-                if (n is Widget) {
-                    //save the offset of the shapes position relative to the mouse click
-                    var offsetX = group.localToScene(n.boundsInParent).minX - event.sceneX
-                    var offsetY = group.localToScene(n.boundsInParent).minY - event.sceneY
-                    n.drag = DragModel(offsetX, offsetY)
-                }
-            }
-        }
-    }
-
-    private fun dragSelection(event: MouseEvent) {
-        group.layoutBounds
-        if (selectionModel.contains(event.target as Shape)) {
-            selectionModel.getSelection().forEach { n ->
-                if (n is Widget) {
-
-                    //Bounds of the container
-                    val bounds = group.localToScene(group.layoutBounds)
-
-                    //The actual positioning of the shape relative to the container
-                    var actualX = event.sceneX - bounds.minX + n.drag.offsetX!!
-                    var actualY = event.sceneY - bounds.minY + n.drag.offsetY!!
-
-                    //Size of shape
-                    val width = n.layoutBounds.width
-                    val height = n.layoutBounds.height
-
-                    //Constrain position to within the container
-                    actualX = if(actualX < 0.0) 0.0 else if(actualX > bounds.width - width) bounds.width - width else actualX
-                    actualY = if(actualY < 0.0) 0.0 else if(actualY > bounds.height - height) bounds.height - height else actualY
-
-                    //Move
-                    n.relocate(actualX, actualY)
-
-                    //Display in front
-                    n.toFront()
-                }
-            }
-        }
-    }
-
-    /**
-     * Marquee handling
-     */
-    private fun addMarqueeBox(event: MouseEvent) {
-        if (group.children.contains(marquee))
-            group.children.remove(marquee)
-
-        marquee.add(getX(event), getY(event))
-
-        group.children.add(marquee)
-
-        event.consume()
-    }
-
-    private fun drawMarqueeBox(event: MouseEvent) {
-        val x = getX(event)
-        val y = getY(event)
-
-        marquee.draw(x, y)
-
-        event.consume()
-    }
-
-    /**
-     * Adds all shapes within the marquee box to the selection model
-     * @param event
-     */
-    private fun selectContents(event: MouseEvent) {
-        group.children
-                .filter { it is Widget && it.boundsInParent.intersects(marquee.boundsInParent) }
-                .forEach {
-                    handleShape(it as Shape, event)
-                }
-
-        selectionModel.log()
-
-        marquee.reset()
-
-        group.children.remove(marquee)
-
-        event.consume()
-    }
-
-    /**
-     * Selection handling
-     */
-    private fun handleShape(shape: Shape, event: MouseEvent) {
-        if (event.isControlDown) {
-            toggle(shape)
-        } else {
-            selectionModel.add(shape)
-        }
-    }
-
-    private fun toggle(shape: Shape) {
-        if (selectionModel.contains(shape)) {
-            selectionModel.remove(shape)
-        } else {
-            selectionModel.add(shape)
-        }
-    }
-
 
     /**
      * Mouse events
@@ -205,4 +63,157 @@ class RubberBandSelection(private var group: Pane, private var selectionModel: S
         group.addEventHandler(MouseEvent.MOUSE_DRAGGED, onMouseDraggedEventHandler)
         group.addEventHandler(MouseEvent.MOUSE_RELEASED, onMouseReleasedEventHandler)
     }
+
+    /**
+     * Drag handling
+     */
+    private fun initPreDrag(event: MouseEvent) {
+        //If has items selected
+        if (selectionModel.size() > 0) {
+            //Set info needed for drag just in case dragging occurs
+            selectionModel.getSelection().forEach { n ->
+                if (n is Widget) {
+                    //save the offset of the shapes position relative to the mouse click
+                    var offsetX = group.localToScene(n.boundsInParent).minX - event.sceneX
+                    var offsetY = group.localToScene(n.boundsInParent).minY - event.sceneY
+                    n.drag = DragModel(offsetX, offsetY)
+                }
+            }
+        }
+    }
+
+    private fun dragSelection(event: MouseEvent) {
+        group.layoutBounds
+        if (selectionModel.contains(event.target as Shape)) {
+            selectionModel.getSelection().forEach { n ->
+                if (n is Widget) {
+
+                    //Bounds of the container
+                    val bounds = group.localToScene(group.layoutBounds)
+
+                    //The actual positioning of the shape relative to the container
+                    var actualX = event.sceneX - bounds.minX + n.drag.offsetX!!
+                    var actualY = event.sceneY - bounds.minY + n.drag.offsetY!!
+
+                    //Size of shape
+                    val width = n.layoutBounds.width
+                    val height = n.layoutBounds.height
+
+                    //Constrain position to within the container
+                    actualX = constrain(actualX, bounds.width - width)
+                    actualY = constrain(actualY, bounds.height - height)
+
+                    //Move
+                    n.relocate(actualX, actualY)
+
+                    //Display in front
+                    n.toFront()
+                }
+            }
+        }
+    }
+
+    /**
+     * Marquee handling
+     */
+
+    private fun addMarqueeBox(event: MouseEvent) {
+        //Remove any existing boxes as only 1 can exist on screen at a time
+        if (group.children.contains(marquee))
+            group.children.remove(marquee)
+
+        //calculate the x,y within the pane
+        var actualX = event.sceneX - group.localToScene(group.boundsInLocal).minX
+        var actualY = event.sceneY - group.localToScene(group.boundsInLocal).minY
+
+        //create a marquee box
+        marquee.add(actualX, actualY)
+
+        //add to the pane
+        group.children.add(marquee)
+
+        event.consume()
+    }
+
+    private fun drawMarqueeBox(event: MouseEvent) {
+        //get x, y local to pane
+        var actualX = event.sceneX - group.localToScene(group.boundsInLocal).minX
+        var actualY = event.sceneY - group.localToScene(group.boundsInLocal).minY
+
+        val bounds = group.localToScene(group.layoutBounds)
+
+        val width = bounds.width
+        val height = bounds.height
+
+        //Cap to pane size
+        actualX = constrain(actualX, width)
+        actualY = constrain(actualY, height)
+
+        //draw at that position
+        marquee.draw(actualX, actualY)
+
+        event.consume()
+    }
+
+    /**
+     * Adds all shapes within the marquee box to the selection model
+     * @param event
+     */
+    private fun selectContents(event: MouseEvent) {
+        //Add everything in box to selection
+        group.children
+                .filter { it is Widget && it.boundsInParent.intersects(marquee.boundsInParent) }
+                .forEach {
+                    handleShape(it as Shape, event)
+                }
+
+        //Reset marquee
+        marquee.reset()
+
+        //Remove from pane
+        group.children.remove(marquee)
+
+        event.consume()
+    }
+
+    /**
+     * Selection handling
+     */
+
+    private fun handleShape(shape: Shape, event: MouseEvent) {
+        if (event.isControlDown) {
+            toggle(shape)
+        } else {
+            selectionModel.add(shape)
+        }
+    }
+
+    private fun toggle(shape: Shape) {
+        if (selectionModel.contains(shape)) {
+            selectionModel.remove(shape)
+        } else {
+            selectionModel.add(shape)
+        }
+    }
+
+
+    /**
+     * Convince functions
+     */
+
+    private fun isMultiSelect(event: MouseEvent): Boolean {
+        return event.isShiftDown || event.isControlDown
+    }
+
+    /**
+     * Constrain
+     * @param value
+     * between 0 and
+     * @param max
+     */
+    private fun constrain(value: Double, max: Double): Double {
+        return if(value < 0.0) 0.0 else if(value > max) max else value
+    }
+
+
 }

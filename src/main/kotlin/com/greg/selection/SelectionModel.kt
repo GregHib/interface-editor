@@ -35,8 +35,4 @@ class SelectionModel {
     fun getSelection(): MutableSet<Shape> {
         return selection
     }
-
-    fun log() {
-        println("Items in model: " + Arrays.asList<Any>(*selection.toTypedArray()))
-    }
 }
