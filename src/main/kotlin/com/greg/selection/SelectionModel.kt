@@ -1,20 +1,19 @@
 package com.greg.selection
 
+import com.greg.widget.Widget
 import javafx.scene.paint.Color
-import javafx.scene.shape.Shape
-import java.util.*
 import kotlin.collections.HashSet
 
 class SelectionModel {
-    private var selection: MutableSet<Shape> = HashSet()
+    private var selection: MutableSet<Widget> = HashSet()
 
-    fun add(node: Shape) {
-        node.stroke = Color.RED
+    fun add(node: Widget) {
+        node.setStroke(Color.RED)
         selection.add(node)
     }
 
-    fun remove(node: Shape) {
-        node.stroke = Color.WHITE
+    fun remove(node: Widget) {
+        node.setStroke(Color.WHITE)
         selection.remove(node)
     }
 
@@ -28,11 +27,11 @@ class SelectionModel {
         return selection.size
     }
 
-    operator fun contains(node: Shape): Boolean {
+    operator fun contains(node: Widget): Boolean {
         return selection.contains(node)
     }
 
-    fun getSelection(): MutableSet<Shape> {
+    fun getSelection(): MutableSet<Widget> {
         return selection
     }
 }

@@ -10,24 +10,34 @@ import javafx.scene.shape.Shape
 class RubberBandSelection(private var group: Pane, private var selectionModel: SelectionModel) {
 
     private var marquee = Marquee()
-    private var start: EventTarget? = null
+    private var target: EventTarget? = null
+    private var widget: Widget? = null
 
     /**
      * Mouse events
      */
     private var onMousePressedEventHandler: EventHandler<MouseEvent> = EventHandler { event ->
-        start = event.target
+        target = event.target
+        val widget = getWidget(target)
+        this.widget = widget
 
-        //If clicking empty space or a shape which isn't selected
-        var selected = start !is Shape || !selectionModel.contains(start as Shape)
+        //If clicked something other than a widget
+        var selected = widget == null
+
+        if (widget != null && !selected) {
+            //or clicked a shape which isn't selected
+            selected = !selectionModel.contains(widget)
+        }
 
         //Clear current selection
         if (!isMultiSelect(event) && selected)
             selectionModel.clear()
 
-        //Always toggle the shape clicked
-        if (start is Shape)
-            handleShape(start as Shape, event)
+
+        if(widget != null) {
+            //Always toggle the shape clicked
+            handleShape(widget, event)
+        }
 
         initPreDrag(event)
     }
@@ -36,7 +46,7 @@ class RubberBandSelection(private var group: Pane, private var selectionModel: S
         if (event.isPrimaryButtonDown) {
             //If marquee box isn't already on the screen and...
             //If clicking blank space or a unselected shape with a multi select key down
-            if (!marquee.selecting && (start !is Shape || (!selectionModel.contains(start as Shape) && isMultiSelect(event)))) {
+            if (!marquee.selecting && (target !is Shape || (!selectionModel.contains(widget as Widget) && isMultiSelect(event)))) {
                 //Begin marquee selection box
                 marquee.selecting = true
                 addMarqueeBox(event)
@@ -72,43 +82,38 @@ class RubberBandSelection(private var group: Pane, private var selectionModel: S
         if (selectionModel.size() > 0) {
             //Set info needed for drag just in case dragging occurs
             selectionModel.getSelection().forEach { n ->
-                if (n is Widget) {
-                    //save the offset of the shapes position relative to the mouse click
-                    var offsetX = group.localToScene(n.boundsInParent).minX - event.sceneX
-                    var offsetY = group.localToScene(n.boundsInParent).minY - event.sceneY
-                    n.drag = DragModel(offsetX, offsetY)
-                }
+                //save the offset of the shapes position relative to the mouse click
+                var offsetX = group.localToScene(n.boundsInParent).minX - event.sceneX
+                var offsetY = group.localToScene(n.boundsInParent).minY - event.sceneY
+                n.drag = DragModel(offsetX, offsetY)
             }
         }
     }
 
     private fun dragSelection(event: MouseEvent) {
-        group.layoutBounds
-        if (selectionModel.contains(event.target as Shape)) {
+        var widget = getWidget(event.target)
+        if (widget != null && selectionModel.contains(widget)) {
             selectionModel.getSelection().forEach { n ->
-                if (n is Widget) {
+                //Bounds of the container
+                val bounds = group.localToScene(group.layoutBounds)
 
-                    //Bounds of the container
-                    val bounds = group.localToScene(group.layoutBounds)
+                //The actual positioning of the shape relative to the container
+                var actualX = event.sceneX - bounds.minX + n.drag.offsetX!!
+                var actualY = event.sceneY - bounds.minY + n.drag.offsetY!!
 
-                    //The actual positioning of the shape relative to the container
-                    var actualX = event.sceneX - bounds.minX + n.drag.offsetX!!
-                    var actualY = event.sceneY - bounds.minY + n.drag.offsetY!!
+                //Size of shape
+                val width = n.layoutBounds.width
+                val height = n.layoutBounds.height
 
-                    //Size of shape
-                    val width = n.layoutBounds.width
-                    val height = n.layoutBounds.height
+                //Constrain position to within the container
+                actualX = constrain(actualX, bounds.width - width)
+                actualY = constrain(actualY, bounds.height - height)
 
-                    //Constrain position to within the container
-                    actualX = constrain(actualX, bounds.width - width)
-                    actualY = constrain(actualY, bounds.height - height)
+                //Move
+                n.relocate(actualX, actualY)
 
-                    //Move
-                    n.relocate(actualX, actualY)
-
-                    //Display in front
-                    n.toFront()
-                }
+                //Display in front
+                n.toFront()
             }
         }
     }
@@ -164,7 +169,7 @@ class RubberBandSelection(private var group: Pane, private var selectionModel: S
         group.children
                 .filter { it is Widget && it.boundsInParent.intersects(marquee.boundsInParent) }
                 .forEach {
-                    handleShape(it as Shape, event)
+                    handleShape(it as Widget, event)
                 }
 
         //Reset marquee
@@ -180,7 +185,7 @@ class RubberBandSelection(private var group: Pane, private var selectionModel: S
      * Selection handling
      */
 
-    private fun handleShape(shape: Shape, event: MouseEvent) {
+    private fun handleShape(shape: Widget, event: MouseEvent) {
         if (event.isControlDown) {
             toggle(shape)
         } else {
@@ -188,7 +193,7 @@ class RubberBandSelection(private var group: Pane, private var selectionModel: S
         }
     }
 
-    private fun toggle(shape: Shape) {
+    private fun toggle(shape: Widget) {
         if (selectionModel.contains(shape)) {
             selectionModel.remove(shape)
         } else {
@@ -212,8 +217,18 @@ class RubberBandSelection(private var group: Pane, private var selectionModel: S
      * @param max
      */
     private fun constrain(value: Double, max: Double): Double {
-        return if(value < 0.0) 0.0 else if(value > max) max else value
+        return if (value < 0.0) 0.0 else if (value > max) max else value
     }
 
+
+    private fun getWidget(target: EventTarget?): Widget? {
+        if (target is Shape) {
+            var parent = target.parent
+            if (parent is Widget)
+                return parent
+        }
+
+        return null
+    }
 
 }

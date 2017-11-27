@@ -1,8 +1,17 @@
 package com.greg.widget
 
-import com.greg.selection.DragModel
+import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 
-class WidgetRectangle(x: Double, y: Double, width: Double, height: Double) : Rectangle(x, y, width, height), Widget {
-    override lateinit var drag: DragModel
+open class WidgetRectangle(x: Double, y: Double, width: Double, height: Double): Widget() {
+
+    override fun setStroke(colour: Color?) {
+        rectangle.stroke = colour
+    }
+
+    var rectangle = Rectangle(x, y, width, height)
+
+    init {
+        this.children.add(rectangle)
+    }
 }

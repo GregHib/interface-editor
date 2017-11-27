@@ -54,15 +54,15 @@ class Controller : Initializable {
 
         RubberBandSelection(pane, selectionModel)
 
-        var text = WidgetText("Here is some text")
+        var text = WidgetText("Here is some text", Color.WHITE)
         text.textOrigin = VPos.TOP
         pane.children.add(text)
-        text.stroke = Color.WHITE
+        text.setStroke(Color.WHITE)
         var rectangle = WidgetRectangle(50.5, 50.5, 10.0, 10.0)
-        rectangle.stroke = Color.WHITE
+        rectangle.setStroke(Color.WHITE)
         pane.children.add(rectangle)
         var rectangle2 = WidgetRectangle(45.5, 45.5, 10.0, 10.0)
-        rectangle2.stroke = Color.WHITE
+        rectangle2.setStroke(Color.WHITE)
         pane.children.add(rectangle2)
 
         selected = Group()

@@ -9,7 +9,7 @@
 
 <!--onMouseDragged="#handleMouseDragged" onMousePressed="#handleMousePressed"-->
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.greg.controller.Controller">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="965.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.greg.controller.Controller">
    <top>
       <VBox prefHeight="39.0" prefWidth="750.0" BorderPane.alignment="CENTER">
          <children>
@@ -104,6 +104,9 @@
       </VBox>
    </center>
    <left>
-      <StackPane prefHeight="665.0" prefWidth="80.0" BorderPane.alignment="CENTER" />
+      <StackPane prefHeight="665.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
    </left>
+   <right>
+      <StackPane prefHeight="665.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+   </right>
 </BorderPane>
