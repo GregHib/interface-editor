@@ -13,11 +13,10 @@ import javafx.fxml.Initializable
 import javafx.geometry.VPos
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
-import javafx.scene.control.ProgressBar
+import javafx.scene.control.ProgressIndicator
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
-import javafx.scene.text.Text
 import javafx.util.Duration
 import java.net.URL
 import java.util.*
@@ -34,17 +33,14 @@ class Controller : Initializable {
 
     private var offsetY = 0.0
 
-    @FXML
+    @FXML private
     lateinit var canvas: Canvas
 
     @FXML
     lateinit var pane: Pane
 
     @FXML
-    lateinit var progressText: Text
-
-    @FXML
-    lateinit var progressBar: ProgressBar
+    lateinit var progressIndicator: ProgressIndicator
 
     lateinit var selected: Group
 
@@ -80,8 +76,7 @@ class Controller : Initializable {
                 val progress = 100.00
 
                 updateMessage(String.format("%.2f%s", progress, "%"))
-                updateProgress(1, 1)
-
+                updateProgress(100, 100)
                 return true
             }
 
@@ -108,13 +103,10 @@ class Controller : Initializable {
 
     private fun createTask(task: Task<*>) {
 
-        progressBar.isVisible = true
+        progressIndicator.isVisible = true
 
-        progressBar.progressProperty()!!.unbind()
-        progressBar.progressProperty().bind(task.progressProperty())
-
-        progressText.textProperty()!!.unbind()
-        progressText.textProperty().bind(task.messageProperty())
+//        progressIndicator.progressProperty()!!.unbind()
+//        progressIndicator.progressProperty().bind(task.progressProperty())
 
         Thread(task).start()
 
@@ -123,9 +115,7 @@ class Controller : Initializable {
             val pause = PauseTransition(Duration.seconds(1.0))
 
             pause.setOnFinished {
-                progressBar.isVisible = false
-                progressText.textProperty().unbind()
-                progressText.text = ""
+                progressIndicator.isVisible = false
             }
 
             pause.play()
@@ -136,9 +126,7 @@ class Controller : Initializable {
             val pause = PauseTransition(Duration.seconds(1.0))
 
             pause.setOnFinished {
-                progressBar.isVisible = false
-                progressText.textProperty().unbind()
-                progressText.text = ""
+                progressIndicator.isVisible = false
             }
 
             pause.play()

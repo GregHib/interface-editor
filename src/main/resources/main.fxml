@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
@@ -9,11 +11,11 @@
 
 <!--onMouseDragged="#handleMouseDragged" onMousePressed="#handleMousePressed"-->
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="965.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.greg.controller.Controller">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1165.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.greg.controller.Controller">
    <top>
-      <VBox prefHeight="39.0" prefWidth="750.0" BorderPane.alignment="CENTER">
+      <VBox prefWidth="750.0" BorderPane.alignment="CENTER">
          <children>
-            <StackPane prefHeight="50.0" prefWidth="750.0">
+            <StackPane prefWidth="750.0">
                <children>
                   <HBox alignment="CENTER">
                      <children>
@@ -22,17 +24,17 @@
                   </HBox>
                   <HBox alignment="CENTER_RIGHT">
                      <children>
-                        <Button fx:id="minBtn" mnemonicParsing="false" onAction="#minimizeProgram" prefHeight="20.0" prefWidth="45.0">
+                        <Button fx:id="minBtn" mnemonicParsing="false" onAction="#minimizeProgram" prefHeight="20.0" prefWidth="25.0">
                            <HBox.margin>
                               <Insets right="4.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="45.0">
+                        <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="25.0">
                            <HBox.margin>
                               <Insets right="4.0" />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#closeProgram" prefHeight="20.0" prefWidth="45.0">
+                        <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#closeProgram" prefHeight="20.0" prefWidth="25.0">
                            <HBox.margin>
                               <Insets right="4.0" />
                            </HBox.margin>
@@ -41,72 +43,94 @@
                   </HBox>
                </children>
             </StackPane>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <VBox>
                <children>
-                  <MenuBar focusTraversable="false" prefHeight="25.0" prefWidth="150.0">
-                    <menus>
-                      <Menu mnemonicParsing="false" text="File">
-                        <items>
-                          <MenuItem mnemonicParsing="false" text="Close" />
-                        </items>
-                      </Menu>
-                      <Menu mnemonicParsing="false" text="Tools">
-                        <items>
-                          <MenuItem mnemonicParsing="false" text="Delete" />
-                        </items>
-                      </Menu>
-                    </menus>
-                  </MenuBar>
-                  <HBox alignment="BOTTOM_LEFT" prefHeight="24.0" prefWidth="750.0">
-                     <children>
-                        <Button fx:id="loadCacheBtn" mnemonicParsing="false" onAction="#loadCache" text="Load">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" text="Button">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                        </Button>
-                        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                  <ToolBar prefHeight="30.0" prefWidth="1165.0">
+                    <items>
+                        <HBox prefWidth="1150.0">
                            <children>
-                              <StackPane prefHeight="25.0" prefWidth="400.0" HBox.hgrow="NEVER">
-                                 <children>
-                                    <ProgressBar fx:id="progressBar" prefHeight="40.0" prefWidth="482.0" progress="0.0" />
-                                    <Text fx:id="progressText" strokeType="OUTSIDE" strokeWidth="0.0" />
-                                 </children>
-                              </StackPane>
+                            <Button fx:id="loadCacheBtn" mnemonicParsing="false" onAction="#loadCache" text="Load" />
+                              <Pane prefWidth="10.0" HBox.hgrow="ALWAYS" />
+                              <ProgressIndicator fx:id="progressIndicator" prefHeight="19.0" prefWidth="52.0" visible="false">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </ProgressIndicator>
                            </children>
-                           <HBox.margin>
-                              <Insets right="5.0" />
-                           </HBox.margin>
                         </HBox>
-                     </children>
-                  </HBox>
+                    </items>
+                  </ToolBar>
                </children>
             </VBox>
          </children>
       </VBox>
    </top>
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox BorderPane.alignment="CENTER">
          <children>
-            <Pane fx:id="pane" maxHeight="503.0" maxWidth="765.0" minHeight="200.0" minWidth="765.0" prefHeight="503.0" prefWidth="765.0" style="-fx-background-color: #000000;" VBox.vgrow="NEVER">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <rotationAxis>
-                  <Point3D />
-               </rotationAxis>
-            </Pane>
+            <VBox>
+               <children>
+                  <Pane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="503.0" prefWidth="765.0" style="-fx-background-color: #000000;" VBox.vgrow="NEVER">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Pane>
+               </children>
+            </VBox>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                <Button alignment="CENTER" mnemonicParsing="false" text="Widget" />
+                  <Button alignment="CENTER" mnemonicParsing="false" text="Container" />
+                  <Button alignment="CENTER" mnemonicParsing="false" text="Rectangle" />
+                  <Button alignment="CENTER" mnemonicParsing="false" text="Text" />
+                  <Button alignment="CENTER" mnemonicParsing="false" text="Sprite" />
+                  <Button alignment="CENTER" mnemonicParsing="false" text="Model" />
+                  <Button alignment="CENTER" mnemonicParsing="false" text="Tooltip" />
+              </items>
+            </ToolBar>
          </children>
       </VBox>
    </center>
    <left>
-      <StackPane prefHeight="665.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+      <StackPane prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <SplitPane dividerPositions="0.65" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                     <children>
+                        <ListView layoutX="-1.0" layoutY="6.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                     <children>
+                        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="20.0" prefWidth="200.0" text="Hierarchy" textAlignment="CENTER" VBox.vgrow="SOMETIMES" />
+                              <TreeView />
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+         </children></StackPane>
    </left>
    <right>
-      <StackPane prefHeight="665.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+      <StackPane prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Accordion>
+                    <panes>
+                      <TitledPane fx:id="propertyPane" animated="false" text="Properties">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </TitledPane>
+                    </panes>
+                  </Accordion>
+               </children>
+            </VBox>
+         </children></StackPane>
    </right>
 </BorderPane>
