@@ -1,8 +1,7 @@
 package com.greg.controller
 
 import com.greg.App
-import com.greg.selection.RubberBandSelection
-import com.greg.selection.SelectionModel
+import com.greg.canvas.WidgetCanvas
 import com.greg.widget.WidgetRectangle
 import com.greg.widget.WidgetText
 import javafx.animation.PauseTransition
@@ -12,9 +11,7 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.geometry.VPos
 import javafx.scene.Group
-import javafx.scene.canvas.Canvas
 import javafx.scene.control.ProgressIndicator
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.util.Duration
@@ -33,37 +30,71 @@ class Controller : Initializable {
 
     private var offsetY = 0.0
 
-    @FXML private
-    lateinit var canvas: Canvas
-
     @FXML
-    lateinit var pane: Pane
+    lateinit var widgetCanvas: Pane
 
     @FXML
     lateinit var progressIndicator: ProgressIndicator
 
     lateinit var selected: Group
 
-    private var selectionModel = SelectionModel()
+    private lateinit var canvas: WidgetCanvas
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
-        RubberBandSelection(pane, selectionModel)
+        canvas = WidgetCanvas(widgetCanvas)
+
+        /*RubberBandSelection(widgetCanvas, selectionModel)
 
         var text = WidgetText("Here is some text", Color.WHITE)
         text.textOrigin = VPos.TOP
-        pane.children.add(text)
+        widgetCanvas.children.add(text)
         text.setStroke(Color.WHITE)
         var rectangle = WidgetRectangle(50.5, 50.5, 10.0, 10.0)
         rectangle.setStroke(Color.WHITE)
-        pane.children.add(rectangle)
+        widgetCanvas.children.add(rectangle)
         var rectangle2 = WidgetRectangle(45.5, 45.5, 10.0, 10.0)
         rectangle2.setStroke(Color.WHITE)
-        pane.children.add(rectangle2)
+        widgetCanvas.children.add(rectangle2)
 
         selected = Group()
-        pane.children.add(selected)
-        selected.toFront()
+        widgetCanvas.children.add(selected)
+        selected.toFront()*/
+    }
+
+    @FXML
+    fun createWidget() {
+    }
+
+    @FXML
+    fun createContainer() {
+    }
+
+    @FXML
+    fun createRectangle() {
+        var bounds = widgetCanvas.layoutBounds
+        var rectangle = WidgetRectangle(bounds.width / 2.0, bounds.height / 2.0, 10.0, 10.0)
+        rectangle.setStroke(Color.WHITE)
+        widgetCanvas.children.add(rectangle)
+    }
+
+    @FXML
+    fun createText() {
+        var text = WidgetText("Text", Color.WHITE)
+        text.textOrigin = VPos.TOP
+        widgetCanvas.children.add(text)
+    }
+
+    @FXML
+    fun createSprite() {
+    }
+
+    @FXML
+    fun createModel() {
+    }
+
+    @FXML
+    fun createTooltip() {
     }
 
     @FXML
@@ -81,24 +112,6 @@ class Controller : Initializable {
             }
 
         })
-    }
-
-    @FXML
-    fun handleMouseDragged(event: MouseEvent) {
-        val stage = App.mainStage
-
-        stage.x = event.screenX - offsetX
-        stage.y = event.screenY - offsetY
-    }
-
-    @FXML
-    fun handleMousePressed(event: MouseEvent) {
-        val boundsInScene = canvas.localToScene(canvas.boundsInLocal)
-        offsetX = event.sceneX
-        offsetY = event.sceneY
-        mouseX = event.sceneX - boundsInScene.minX
-        mouseY = event.sceneY - boundsInScene.minY
-        click = event.button.ordinal
     }
 
     private fun createTask(task: Task<*>) {

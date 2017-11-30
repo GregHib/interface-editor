@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.canvas.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-
-<!--onMouseDragged="#handleMouseDragged" onMousePressed="#handleMousePressed"-->
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1165.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.greg.controller.Controller">
    <top>
@@ -70,7 +63,7 @@
          <children>
             <VBox>
                <children>
-                  <Pane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="503.0" prefWidth="765.0" style="-fx-background-color: #000000;" VBox.vgrow="NEVER">
+                  <Pane fx:id="widgetCanvas" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="503.0" prefWidth="765.0" style="-fx-background-color: #000000;" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -79,13 +72,13 @@
             </VBox>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                <Button alignment="CENTER" mnemonicParsing="false" text="Widget" />
-                  <Button alignment="CENTER" mnemonicParsing="false" text="Container" />
-                  <Button alignment="CENTER" mnemonicParsing="false" text="Rectangle" />
-                  <Button alignment="CENTER" mnemonicParsing="false" text="Text" />
-                  <Button alignment="CENTER" mnemonicParsing="false" text="Sprite" />
-                  <Button alignment="CENTER" mnemonicParsing="false" text="Model" />
-                  <Button alignment="CENTER" mnemonicParsing="false" text="Tooltip" />
+                <Button fx:id="widget" alignment="CENTER" mnemonicParsing="false" onAction="#createWidget" text="Widget" />
+                  <Button fx:id="container" alignment="CENTER" mnemonicParsing="false" onAction="#createContainer" text="Container" />
+                  <Button fx:id="rectangle" alignment="CENTER" mnemonicParsing="false" onAction="#createRectangle" text="Rectangle" />
+                  <Button fx:id="text" alignment="CENTER" mnemonicParsing="false" onAction="#createText" text="Text" />
+                  <Button fx:id="sprite" alignment="CENTER" mnemonicParsing="false" onAction="#createSprite" text="Sprite" />
+                  <Button fx:id="model" alignment="CENTER" mnemonicParsing="false" onAction="#createModel" text="Model" />
+                  <Button fx:id="tooltip" alignment="CENTER" mnemonicParsing="false" onAction="#createTooltip" text="Tooltip" />
               </items>
             </ToolBar>
          </children>
@@ -105,7 +98,11 @@
                      <children>
                         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <Label alignment="CENTER" prefHeight="20.0" prefWidth="200.0" text="Hierarchy" textAlignment="CENTER" VBox.vgrow="SOMETIMES" />
+                              <TitledPane animated="false" collapsible="false" expanded="false" text="Hierarchy">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                </content>
+                              </TitledPane>
                               <TreeView />
                            </children>
                         </VBox>
