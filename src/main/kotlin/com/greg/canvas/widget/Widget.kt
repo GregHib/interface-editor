@@ -1,6 +1,6 @@
-package com.greg.widget
+package com.greg.canvas.widget
 
-import com.greg.selection.DragModel
+import com.greg.canvas.DragModel
 import javafx.scene.Group
 import javafx.scene.paint.Color
 

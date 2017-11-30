@@ -1,10 +1,10 @@
-package com.greg.selection
+package com.greg.canvas.marquee
 
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.StrokeLineCap
 
-class Marquee: Rectangle() {
+class Marquee : Rectangle() {
 
     private var mouseAnchorX: Double = 0.0
     private var mouseAnchorY: Double = 0.0

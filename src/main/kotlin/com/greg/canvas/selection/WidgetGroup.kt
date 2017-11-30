@@ -1,6 +1,6 @@
-package com.greg.selection
+package com.greg.canvas.selection
 
-import com.greg.widget.Widget
+import com.greg.canvas.widget.Widget
 
 abstract class WidgetGroup {
     private var group: MutableSet<Widget> = HashSet()

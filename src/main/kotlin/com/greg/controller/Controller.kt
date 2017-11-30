@@ -2,8 +2,8 @@ package com.greg.controller
 
 import com.greg.App
 import com.greg.canvas.WidgetCanvas
-import com.greg.widget.WidgetRectangle
-import com.greg.widget.WidgetText
+import com.greg.canvas.widget.WidgetRectangle
+import com.greg.canvas.widget.WidgetText
 import javafx.animation.PauseTransition
 import javafx.application.Platform
 import javafx.concurrent.Task
@@ -20,6 +20,23 @@ import java.util.*
 
 class Controller : Initializable {
 
+
+    /**
+     * Ideas
+     *
+     * On double click on a widget deselect all but that ( and black out rest of canvas? ) display stretching/rotation (photoshop crop like) - enter to finish/ esc to cancel
+     *
+     * Widget x/y which get's the widget location relative to the canvas: will be needed for saving. Might need canvas as a parameter
+     *
+     * Expand marquee out to it's own class with inheritance, so you can switch out marquee type/shape etc..
+     *
+     * Properties panel add different stuff for selection type, edit multiple selections if all the same class
+     *
+     * Move selection using arrow keys by 1px
+     *
+     * Round x/y to 1px (or is it already done cause mouse pos can't be .5 of a pixel?
+     *
+     */
     private var mouseX = 0.0
 
     private var mouseY = 0.0

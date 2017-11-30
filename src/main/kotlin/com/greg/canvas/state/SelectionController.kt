@@ -1,18 +1,19 @@
 package com.greg.canvas.state
 
 import com.greg.Utils.Methods.constrain
+import com.greg.canvas.DragModel
+import com.greg.canvas.marquee.Marquee
 import com.greg.canvas.selection.SelectionGroup
-import com.greg.selection.DragModel
-import com.greg.selection.Marquee
-import com.greg.widget.Widget
+import com.greg.canvas.widget.Widget
 import javafx.event.EventTarget
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Shape
 
-class SelectionController(override var canvas: Pane, private val refresh: Unit) : PaneController {
+class SelectionController(override var canvas: Pane, private var selectionGroup: SelectionGroup, private val refresh: Unit) : PaneController {
 
-    private var selectionGroup = SelectionGroup()
+    //TODO I think this can still be split down into more classes
+
     private var marquee = Marquee()
     private var target: EventTarget? = null
     private var widget: Widget? = null
@@ -97,7 +98,7 @@ class SelectionController(override var canvas: Pane, private val refresh: Unit) 
         if (widget != null && selectionGroup.contains(widget)) {
             selectionGroup.getGroup().forEach { n ->
                 //Bounds of the container
-                val bounds = canvas.localToScene(canvas.layoutBounds)
+                val bounds = canvas.localToScene(canvas.layoutBounds)//TODO what's the difference between this and getCanvasX/Y
 
                 //The actual positioning of the shape relative to the container
                 var actualX = event.sceneX - bounds.minX + n.drag.offsetX!!

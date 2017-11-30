@@ -1,7 +1,6 @@
 package com.greg.canvas.selection
 
-import com.greg.selection.WidgetGroup
-import com.greg.widget.Widget
+import com.greg.canvas.widget.Widget
 import javafx.scene.paint.Color
 
 class SelectionGroup : WidgetGroup() {

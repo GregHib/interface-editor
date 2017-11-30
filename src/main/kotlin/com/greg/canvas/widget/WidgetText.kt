@@ -1,4 +1,4 @@
-package com.greg.widget
+package com.greg.canvas.widget
 
 import javafx.geometry.VPos
 import javafx.scene.paint.Color
