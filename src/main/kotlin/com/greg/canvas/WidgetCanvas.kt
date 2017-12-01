@@ -2,24 +2,22 @@ package com.greg.canvas
 
 import com.greg.canvas.properties.PropertyHandler
 import com.greg.canvas.selection.SelectionGroup
-import com.greg.canvas.state.PaneController
 import com.greg.canvas.state.SelectionController
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 
 class WidgetCanvas {
 
-    private var controller: PaneController
-    private var selectionGroup = SelectionGroup()
-    private var properties: PropertyHandler
+    var canvasPane: Pane
+    private var controller = SelectionController(this)
+    var selectionGroup = SelectionGroup(this)
+    private var properties = PropertyHandler(this)
 
     constructor(canvas: Pane) {
+        this.canvasPane = canvas
         // Mouse events
         // ------------------------------------------------------------------------------
         canvas.addEventFilter<MouseEvent>(MouseEvent.ANY, { e -> handleMouseEvent(e) })
-
-        controller = SelectionController(canvas, selectionGroup, refreshSelection())
-        properties = PropertyHandler(selectionGroup)
     }
 
     private fun handleMouseEvent(e: MouseEvent) {
@@ -31,7 +29,7 @@ class WidgetCanvas {
         }
     }
 
-    private fun refreshSelection() {
+    fun refreshSelection() {
         properties.refresh()
     }
 }

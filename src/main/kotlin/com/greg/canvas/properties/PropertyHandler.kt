@@ -1,11 +1,15 @@
 package com.greg.canvas.properties
 
-import com.greg.canvas.selection.SelectionGroup
+import com.greg.canvas.WidgetCanvas
 
-class PropertyHandler(private var selectionGroup: SelectionGroup) {
+class PropertyHandler(var canvas: WidgetCanvas) {
 
     fun refresh() {
         println("Refresh properties panel")
+
+        for (i in canvas.selectionGroup.getGroup()) {
+            println(i)
+        }
     }
 
 }

@@ -1,9 +1,8 @@
 package com.greg.canvas.state
 
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.Pane
 
-class EditController(override var canvas: Pane) : PaneController {
+class EditController : PaneController {
     override fun handleMousePress(event: MouseEvent) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

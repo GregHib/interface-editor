@@ -5,14 +5,14 @@ import com.greg.canvas.widget.Widget
 abstract class WidgetGroup {
     private var group: MutableSet<Widget> = HashSet()
 
-    open fun add(node: Widget) {
-        group.add(node)
-        handleAddition(node)
+    open fun add(widget: Widget) {
+        group.add(widget)
+        handleAddition(widget)
     }
 
-    fun remove(node: Widget) {
-        group.remove(node)
-        handleRemoval(node)
+    open fun remove(widget: Widget) {
+        group.remove(widget)
+        handleRemoval(widget)
     }
 
     fun clear() {
@@ -25,8 +25,8 @@ abstract class WidgetGroup {
         return group.size
     }
 
-    operator fun contains(node: Widget): Boolean {
-        return group.contains(node)
+    operator fun contains(widget: Widget): Boolean {
+        return group.contains(widget)
     }
 
     fun getGroup(): MutableSet<Widget> {

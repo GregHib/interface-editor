@@ -2,15 +2,14 @@ package com.greg.canvas.state
 
 import com.greg.Utils.Methods.constrain
 import com.greg.canvas.DragModel
+import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.marquee.Marquee
-import com.greg.canvas.selection.SelectionGroup
 import com.greg.canvas.widget.Widget
 import javafx.event.EventTarget
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.Pane
 import javafx.scene.shape.Shape
 
-class SelectionController(override var canvas: Pane, private var selectionGroup: SelectionGroup, private val refresh: Unit) : PaneController {
+class SelectionController(var canvas: WidgetCanvas) : PaneController {
 
     //TODO I think this can still be split down into more classes
 
@@ -30,13 +29,12 @@ class SelectionController(override var canvas: Pane, private var selectionGroup:
 
         if (widget != null && !selected) {
             //or clicked a shape which isn't selected
-            selected = !selectionGroup.contains(widget)
+            selected = !canvas.selectionGroup.contains(widget)
         }
 
         //Clear current selection
         if (!isMultiSelect(event) && selected)
-            selectionGroup.clear()
-
+            canvas.selectionGroup.clear()
 
         //Always toggle the shape clicked
         if (widget != null)
@@ -49,7 +47,7 @@ class SelectionController(override var canvas: Pane, private var selectionGroup:
         if (event.isPrimaryButtonDown) {
             //If marquee box isn't already on the screen and...
             //If clicking blank space or a unselected shape with a multi select key down
-            if (!marquee.selecting && (target !is Shape || (!selectionGroup.contains(widget as Widget) && isMultiSelect(event)))) {
+            if (!marquee.selecting && (target !is Shape || (!canvas.selectionGroup.contains(widget as Widget) && isMultiSelect(event)))) {
                 //Begin marquee selection box
                 marquee.selecting = true
                 addMarqueeBox(event)
@@ -82,12 +80,12 @@ class SelectionController(override var canvas: Pane, private var selectionGroup:
      */
     private fun initPreDrag(event: MouseEvent) {
         //If has items selected
-        if (selectionGroup.size() > 0) {
+        if (canvas.selectionGroup.size() > 0) {
             //Set info needed for drag just in case dragging occurs
-            selectionGroup.getGroup().forEach { n ->
+            canvas.selectionGroup.getGroup().forEach { n ->
                 //save the offset of the shapes position relative to the mouse click
-                var offsetX = canvas.localToScene(n.boundsInParent).minX - event.sceneX
-                var offsetY = canvas.localToScene(n.boundsInParent).minY - event.sceneY
+                var offsetX = canvas.canvasPane.localToScene(n.boundsInParent).minX - event.sceneX
+                var offsetY = canvas.canvasPane.localToScene(n.boundsInParent).minY - event.sceneY
                 n.drag = DragModel(offsetX, offsetY)
             }
         }
@@ -95,25 +93,25 @@ class SelectionController(override var canvas: Pane, private var selectionGroup:
 
     private fun dragSelection(event: MouseEvent) {
         var widget = getWidget(event.target)
-        if (widget != null && selectionGroup.contains(widget)) {
-            selectionGroup.getGroup().forEach { n ->
+        if (widget != null && canvas.selectionGroup.contains(widget)) {
+            canvas.selectionGroup.getGroup().forEach { n ->
                 //Bounds of the container
-                val bounds = canvas.localToScene(canvas.layoutBounds)//TODO what's the difference between this and getCanvasX/Y
+                val bounds = canvas.canvasPane.localToScene(canvas.canvasPane.layoutBounds)//TODO what's the difference between this and getCanvasX/Y
 
                 //The actual positioning of the shape relative to the container
-                var actualX = event.sceneX - bounds.minX + n.drag.offsetX!!
-                var actualY = event.sceneY - bounds.minY + n.drag.offsetY!!
+                var x = event.sceneX - bounds.minX + n.drag.offsetX!!
+                var y = event.sceneY - bounds.minY + n.drag.offsetY!!
 
                 //Size of shape
                 val width = n.layoutBounds.width
                 val height = n.layoutBounds.height
 
                 //Constrain position to within the container
-                actualX = constrain(actualX, bounds.width - width)
-                actualY = constrain(actualY, bounds.height - height)
+                x = constrain(x, bounds.width - width)
+                y = constrain(y, bounds.height - height)
 
                 //Move
-                n.relocate(actualX, actualY)
+                n.relocate(x, y)
 
                 //Display in front
                 n.toFront()
@@ -127,8 +125,8 @@ class SelectionController(override var canvas: Pane, private var selectionGroup:
 
     private fun addMarqueeBox(event: MouseEvent) {
         //Remove any existing boxes as only 1 can exist on screen at a time
-        if (canvas.children.contains(marquee))
-            canvas.children.remove(marquee)
+        if (canvas.canvasPane.children.contains(marquee))
+            canvas.canvasPane.children.remove(marquee)
 
         //calculate the x,y within the widgetCanvas
         var x = getCanvasX(event)
@@ -138,7 +136,7 @@ class SelectionController(override var canvas: Pane, private var selectionGroup:
         marquee.add(x, y)
 
         //add to the widgetCanvas
-        canvas.children.add(marquee)
+        canvas.canvasPane.children.add(marquee)
 
         event.consume()
     }
@@ -148,7 +146,7 @@ class SelectionController(override var canvas: Pane, private var selectionGroup:
         var x = getCanvasX(event)
         var y = getCanvasY(event)
 
-        val bounds = canvas.localToScene(canvas.layoutBounds)
+        val bounds = canvas.canvasPane.localToScene(canvas.canvasPane.layoutBounds)
 
         val width = bounds.width
         val height = bounds.height
@@ -169,7 +167,7 @@ class SelectionController(override var canvas: Pane, private var selectionGroup:
      */
     private fun selectContents(event: MouseEvent) {
         //Add everything in box to selection
-        canvas.children
+        canvas.canvasPane.children
                 .filter {
                     it is Widget && it.boundsInParent.intersects(marquee.boundsInParent)
                 }
@@ -177,23 +175,24 @@ class SelectionController(override var canvas: Pane, private var selectionGroup:
                     handleShape(it as Widget, event)
                 }
 
+        //Refresh
+        canvas.refreshSelection()
+
         //Reset marquee
         marquee.reset()
 
         //Remove from widgetCanvas
-        canvas.children.remove(marquee)
+        canvas.canvasPane.children.remove(marquee)
 
         event.consume()
     }
 
     private fun handleShape(widget: Widget, event: MouseEvent) {
         if (event.isControlDown) {
-            selectionGroup.toggle(widget)
+            canvas.selectionGroup.toggle(widget)
         } else {
-            selectionGroup.add(widget)
+            canvas.selectionGroup.add(widget)
         }
-
-        refresh
     }
 
 
@@ -202,11 +201,11 @@ class SelectionController(override var canvas: Pane, private var selectionGroup:
      */
 
     private fun getCanvasX(event: MouseEvent): Double {
-        return event.sceneX - canvas.localToScene(canvas.boundsInLocal).minX
+        return event.sceneX - canvas.canvasPane.localToScene(canvas.canvasPane.boundsInLocal).minX
     }
 
     private fun getCanvasY(event: MouseEvent): Double {
-        return event.sceneY - canvas.localToScene(canvas.boundsInLocal).minY
+        return event.sceneY - canvas.canvasPane.localToScene(canvas.canvasPane.boundsInLocal).minY
     }
 
     private fun isMultiSelect(event: MouseEvent): Boolean {
