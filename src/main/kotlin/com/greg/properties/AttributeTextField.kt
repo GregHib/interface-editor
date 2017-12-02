@@ -1,6 +1,8 @@
 package com.greg.properties
 
 import com.greg.canvas.widget.WidgetText
+import com.greg.settings.Settings
+import com.greg.settings.SettingsKey
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -37,10 +39,11 @@ class AttributeTextField : TextField {
     }
 
     private fun handleFocusListener(focused: Boolean) {
-        if(focused) {
-
-        } else {
-            accept()
+        if(!focused) {
+            if(Settings.getBoolean(SettingsKey.CANCEL_ON_DEFOCUS))
+                cancel()
+            else
+                accept()
         }
     }
 
