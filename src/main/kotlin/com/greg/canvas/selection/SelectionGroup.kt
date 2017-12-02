@@ -2,7 +2,8 @@ package com.greg.canvas.selection
 
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.widget.Widget
-import javafx.scene.paint.Color
+import com.greg.settings.Settings
+import com.greg.settings.SettingsKey
 
 class SelectionGroup(var canvas: WidgetCanvas) : WidgetGroup() {
 
@@ -27,12 +28,12 @@ class SelectionGroup(var canvas: WidgetCanvas) : WidgetGroup() {
     }
 
     override fun handleAddition(widget: Widget) {
-        widget.setStroke(Color.RED)
+        widget.setStroke(Settings.getColour(SettingsKey.SELECTION_STROKE_COLOUR))
         canvas.refreshSelection()
     }
 
     override fun handleRemoval(widget: Widget) {
-        widget.setStroke(Color.WHITE)
+        widget.setStroke(Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR))
         canvas.refreshSelection()
     }
 }

@@ -32,9 +32,9 @@ class AttributeTextField : TextField {
     }
 
     private fun handleKeyPress(code: KeyCode) {
-        when(code) {
-            KeyCode.ENTER -> { accept() }
-            KeyCode.ESCAPE -> { cancel() }
+        when(code.ordinal) {
+            Settings.getInt(SettingsKey.ACCEPT_KEY_CODE) -> { accept() }
+            Settings.getInt(SettingsKey.CANCEL_KEY_CODE) -> { cancel() }
         }
     }
 

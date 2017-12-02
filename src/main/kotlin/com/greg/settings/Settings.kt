@@ -1,10 +1,11 @@
 package com.greg.settings
 
+import javafx.scene.paint.Color
 import java.util.prefs.Preferences
 
 class Settings {
     companion object {
-        private val prefs = Preferences.userNodeForPackage(Settings::class.java!!)
+        private val prefs = Preferences.userNodeForPackage(Settings::class.java)
 
         fun put(setting: SettingsKey, value: String) {
             prefs.put(setting.key, value)
@@ -32,6 +33,11 @@ class Settings {
 
         fun getInt(setting: SettingsKey): Int {
             return prefs.getInt(setting.key, setting.default as Int)
+        }
+
+        fun getColour(setting: SettingsKey): Color? {
+            val colour = get(setting)
+            return Color.valueOf(colour)
         }
     }
 }
