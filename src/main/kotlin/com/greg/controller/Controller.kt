@@ -4,14 +4,15 @@ import com.greg.App
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.widget.WidgetRectangle
 import com.greg.canvas.widget.WidgetText
+import com.greg.properties.PropertyPanel
 import javafx.animation.PauseTransition
 import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.geometry.VPos
-import javafx.scene.Group
 import javafx.scene.control.ProgressIndicator
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.util.Duration
@@ -37,15 +38,9 @@ class Controller : Initializable {
      * Round x/y to 1px (or is it already done cause mouse pos can't be .5 of a pixel?
      *
      */
-    private var mouseX = 0.0
 
-    private var mouseY = 0.0
-
-    private var click = 0
-
-    private var offsetX = 0.0
-
-    private var offsetY = 0.0
+    @FXML
+    lateinit var propertyPanel: AnchorPane
 
     @FXML
     lateinit var widgetCanvas: Pane
@@ -53,14 +48,13 @@ class Controller : Initializable {
     @FXML
     lateinit var progressIndicator: ProgressIndicator
 
-    lateinit var selected: Group
+    lateinit var canvas: WidgetCanvas
 
-    private lateinit var canvas: WidgetCanvas
+    lateinit var properties: PropertyPanel
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-
-        canvas = WidgetCanvas(widgetCanvas)
-
+        canvas = WidgetCanvas(this)
+        properties = PropertyPanel(this)
         /*RubberBandSelection(widgetCanvas, selectionModel)
 
         var text = WidgetText("Here is some text", Color.WHITE)
