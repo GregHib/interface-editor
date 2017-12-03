@@ -1,19 +1,20 @@
-package com.greg.properties
+package com.greg.properties.attributes.types
 
-import com.greg.canvas.widget.WidgetText
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 
-class AttributeTextField : TextField {
+class TextFieldProperty : TextField {
 
-    private var widget: WidgetText
+    private var accept: (text: String) -> Unit
+    private var default: String?
 
-    constructor(value: WidgetText) {
-        this.widget = value
-        text = value.getText()
+    constructor(default: String?, accept: (text: String) -> Unit) {
+        this.accept = accept
+        this.default = default
+        this.text = default
 
         // Key press
         // ---------------------------------------------------------------
@@ -33,7 +34,7 @@ class AttributeTextField : TextField {
 
     private fun handleKeyPress(code: KeyCode) {
         when(code.ordinal) {
-            Settings.getInt(SettingsKey.ACCEPT_KEY_CODE) -> { accept() }
+            Settings.getInt(SettingsKey.ACCEPT_KEY_CODE) -> { accept(text) }
             Settings.getInt(SettingsKey.CANCEL_KEY_CODE) -> { cancel() }
         }
     }
@@ -43,16 +44,11 @@ class AttributeTextField : TextField {
             if(Settings.getBoolean(SettingsKey.CANCEL_ON_DEFOCUS))
                 cancel()
             else
-                accept()
+                accept(text)
         }
     }
 
-    private fun accept() {
-        widget.setText(text)
-    }
-
     private fun cancel() {
-        text = widget.getText()
-        this.isFocusTraversable = false
+        text = default
     }
 }

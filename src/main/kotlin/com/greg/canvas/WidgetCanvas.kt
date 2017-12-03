@@ -11,7 +11,7 @@ class WidgetCanvas {
     var canvasPane: Pane
     private var selectionControl = SelectionController(this)
     var selectionGroup = SelectionGroup(this)
-    private lateinit var controller: Controller
+    private var controller: Controller
 
     constructor(controller: Controller) {
         this.controller = controller

@@ -1,4 +1,4 @@
-package com.greg.properties
+package com.greg.properties.attributes
 
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
@@ -6,11 +6,11 @@ import javafx.scene.control.Label
 import javafx.scene.control.Separator
 import javafx.scene.layout.VBox
 
-class AttributeSegment: VBox {
+class PropertyGroup : VBox {
 
     var title = Label("Title")
 
-    private val attributes = mutableListOf<Attribute>()
+    private val attributes = mutableListOf<Property>()
 
     constructor(text: String?) {
         prefWidth = 280.0
@@ -33,8 +33,8 @@ class AttributeSegment: VBox {
         children.add(separator)
     }
 
-    fun add(attribute: Attribute) {
-        attributes.add(attribute)
-        children.add(attribute)
+    fun add(vararg property: Property) {
+        attributes.addAll(property)
+        children.addAll(property)
     }
 }

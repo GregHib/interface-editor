@@ -5,16 +5,16 @@ import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.widget.WidgetRectangle
 import com.greg.canvas.widget.WidgetText
 import com.greg.properties.PropertyPanel
+import com.greg.settings.Settings
+import com.greg.settings.SettingsKey
 import javafx.animation.PauseTransition
 import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.geometry.VPos
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
 import javafx.util.Duration
 import java.net.URL
 import java.util.*
@@ -55,22 +55,6 @@ class Controller : Initializable {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         canvas = WidgetCanvas(this)
         properties = PropertyPanel(this)
-        /*RubberBandSelection(widgetCanvas, selectionModel)
-
-        var text = WidgetText("Here is some text", Color.WHITE)
-        text.textOrigin = VPos.TOP
-        widgetCanvas.children.add(text)
-        text.setStroke(Color.WHITE)
-        var rectangle = WidgetRectangle(50.5, 50.5, 10.0, 10.0)
-        rectangle.setStroke(Color.WHITE)
-        widgetCanvas.children.add(rectangle)
-        var rectangle2 = WidgetRectangle(45.5, 45.5, 10.0, 10.0)
-        rectangle2.setStroke(Color.WHITE)
-        widgetCanvas.children.add(rectangle2)
-
-        selected = Group()
-        widgetCanvas.children.add(selected)
-        selected.toFront()*/
     }
 
     @FXML
@@ -83,16 +67,13 @@ class Controller : Initializable {
 
     @FXML
     fun createRectangle() {
-        var bounds = widgetCanvas.layoutBounds
-        var rectangle = WidgetRectangle(bounds.width / 2.0, bounds.height / 2.0, 10.0, 10.0)
-        rectangle.setStroke(Color.WHITE)
+        var rectangle = WidgetRectangle(Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_WIDTH), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_HEIGHT))
         widgetCanvas.children.add(rectangle)
     }
 
     @FXML
     fun createText() {
-        var text = WidgetText("Text", Color.WHITE)
-        text.textOrigin = VPos.TOP
+        var text = WidgetText(Settings.get(SettingsKey.DEFAULT_TEXT_MESSAGE), Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR))
         widgetCanvas.children.add(text)
     }
 

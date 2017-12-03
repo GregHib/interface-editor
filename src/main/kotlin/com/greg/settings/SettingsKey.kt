@@ -9,6 +9,12 @@ enum class SettingsKey(var default: Any) {
     CANCEL_KEY_CODE(KeyCode.ESCAPE.ordinal),
     SELECTION_STROKE_COLOUR(Color.RED.toString()),
     DEFAULT_STROKE_COLOUR(Color.WHITE.toString()),
+    DEFAULT_TEXT_MESSAGE("Text"),
+    DEFAULT_TEXT_COLOUR(Color.WHITE.toString()),
+    DEFAULT_POSITION_X(0.5),
+    DEFAULT_POSITION_Y(0.5),
+    DEFAULT_RECTANGLE_WIDTH(50.0),
+    DEFAULT_RECTANGLE_HEIGHT(50.0),
     ;
 
     val key: String = this.name

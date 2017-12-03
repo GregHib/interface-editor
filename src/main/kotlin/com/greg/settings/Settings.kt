@@ -7,6 +7,10 @@ class Settings {
     companion object {
         private val prefs = Preferences.userNodeForPackage(Settings::class.java)
 
+        fun contains(setting: SettingsKey): Boolean {
+            return prefs.get(setting.key, setting.default as String) != setting.default
+        }
+
         fun put(setting: SettingsKey, value: String) {
             prefs.put(setting.key, value)
         }
@@ -19,8 +23,8 @@ class Settings {
             prefs.putInt(setting.key, value)
         }
 
-        fun contains(setting: SettingsKey): Boolean {
-            return prefs.get(setting.key, setting.default as String) != setting.default
+        fun put(setting: SettingsKey, value: Double) {
+            prefs.putDouble(setting.key, value)
         }
 
         fun get(setting: SettingsKey): String {
@@ -33,6 +37,10 @@ class Settings {
 
         fun getInt(setting: SettingsKey): Int {
             return prefs.getInt(setting.key, setting.default as Int)
+        }
+
+        fun getDouble(setting: SettingsKey): Double {
+            return prefs.getDouble(setting.key, setting.default as Double)
         }
 
         fun getColour(setting: SettingsKey): Color? {

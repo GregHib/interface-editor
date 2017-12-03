@@ -1,6 +1,6 @@
 package com.greg.canvas.state
 
-import com.greg.Utils.Methods.constrain
+import com.greg.Utils.Companion.constrain
 import com.greg.canvas.DragModel
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.marquee.Marquee

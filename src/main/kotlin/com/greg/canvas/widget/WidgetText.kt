@@ -1,51 +1,64 @@
 package com.greg.canvas.widget
 
-import com.greg.properties.Attribute
-import com.greg.properties.AttributeSpacer
-import com.greg.properties.AttributeTextField
+import com.greg.properties.attributes.Property.Companion.createColourPicker
+import com.greg.properties.attributes.Property.Companion.createGroup
+import com.greg.properties.attributes.Property.Companion.createTextField
+import com.greg.properties.attributes.PropertyGroup
+import com.greg.settings.Settings
+import com.greg.settings.SettingsKey
 import javafx.geometry.VPos
-import javafx.scene.control.Label
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.scene.text.Text
 
 class WidgetText : WidgetRectangle {
 
+    private val name: String = "Text"
     private var text: Text = Text()
 
-    constructor(string: String?, colour: Color) : super(0.0, 0.0, 0.0, 0.0) {
-        setText(string)
+    //Width and height arguments will be changed as soon as message is set anyway.
+    constructor(string: String?, colour: Color?) : super(Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), 0.0, 0.0) {
+        message = string
         text.stroke = colour
-
-        super.rectangle.x += 0.5
-        super.rectangle.y += 0.5
+        text.textOrigin = VPos.TOP
         this.children.add(text)
     }
 
-    fun setText(string: String?) {
-        text.text = string
+    private fun refreshSize() {
         super.rectangle.width = text.layoutBounds.width
         super.rectangle.height = text.layoutBounds.height
     }
 
-    fun getText(): String {
-        return text.text
-    }
-
-    var textOrigin: VPos
+    private var message: String?
         get() {
-            return text.textOrigin
+            return text.text
         }
         set(value) {
-            text.textOrigin = value
+            text.text = value
+            refreshSize()
         }
 
-    fun getAttributes(): Attribute {
-        val attribute = Attribute()
-        var label = Label("Message")
-        val spacer = AttributeSpacer()
-        var text = AttributeTextField(this)
-        attribute.children.addAll(label, spacer, text)
-        return attribute
+    private var stroke: Paint
+        get() {
+            return text.stroke
+        }
+        set(value) {
+            text.stroke = value
+        }
+
+    override fun getGroup(): List<PropertyGroup> {
+        var group = mutableListOf<PropertyGroup>()
+
+        group.add(
+                createGroup(name,
+                        createTextField("Message", message, { t -> message = t }),
+                        createColourPicker("Text Colour", stroke as Color, { c -> stroke = c })
+                )
+        )
+
+        group.addAll(super.getGroup())
+
+        return group
     }
 
 }

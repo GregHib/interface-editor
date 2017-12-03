@@ -28,12 +28,12 @@ class SelectionGroup(var canvas: WidgetCanvas) : WidgetGroup() {
     }
 
     override fun handleAddition(widget: Widget) {
-        widget.setStroke(Settings.getColour(SettingsKey.SELECTION_STROKE_COLOUR))
+        widget.setSelection(Settings.getColour(SettingsKey.SELECTION_STROKE_COLOUR))
         canvas.refreshSelection()
     }
 
     override fun handleRemoval(widget: Widget) {
-        widget.setStroke(Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR))
+        widget.setSelection(Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR))
         canvas.refreshSelection()
     }
 }
