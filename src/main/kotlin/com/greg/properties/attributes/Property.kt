@@ -13,12 +13,12 @@ import javafx.scene.paint.Color
 class Property : HBox {
 
     companion object {
-        fun createColourPicker(title: String, default: Color, accept: (colour: Color) -> Unit): Property {
-            return Property(Label(title), PropertySpacer(), ColourPickerProperty(default, accept))
+        fun createColourPicker(title: String, default: Color): Property {
+            return Property(Label(title), PropertySpacer(), ColourPickerProperty(default))
         }
 
-        fun createTextField(title: String, default: String?, accept: (text: String) -> Unit): Property {
-            return Property(Label(title), PropertySpacer(), TextFieldProperty(default, accept))
+        fun createTextField(title: String, default: String?): Property {
+            return Property(Label(title), PropertySpacer(), TextFieldProperty(default))
         }
 
         fun createGroup(title: String, vararg properties: Property): PropertyGroup {

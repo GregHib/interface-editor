@@ -10,7 +10,7 @@ class PropertyGroup : VBox {
 
     var title = Label("Title")
 
-    private val attributes = mutableListOf<Property>()
+    val properties = mutableListOf<Property>()
 
     constructor(text: String?) {
         prefWidth = 280.0
@@ -34,7 +34,7 @@ class PropertyGroup : VBox {
     }
 
     fun add(vararg property: Property) {
-        attributes.addAll(property)
+        properties.addAll(property)
         children.addAll(property)
     }
 }

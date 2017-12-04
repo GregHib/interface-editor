@@ -4,6 +4,8 @@ import com.greg.properties.attributes.Property.Companion.createColourPicker
 import com.greg.properties.attributes.Property.Companion.createGroup
 import com.greg.properties.attributes.Property.Companion.createTextField
 import com.greg.properties.attributes.PropertyGroup
+import com.greg.properties.attributes.types.ColourPickerProperty
+import com.greg.properties.attributes.types.TextFieldProperty
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.geometry.VPos
@@ -46,13 +48,23 @@ class WidgetText : WidgetRectangle {
             text.stroke = value
         }
 
+    override fun handleGroup(groups: MutableList<PropertyGroup>) {
+        val group = groups.first()
+
+        (group.properties[0].children[2] as TextFieldProperty).link({ t -> message = t })
+        (group.properties[1].children[2] as ColourPickerProperty).link({ c -> stroke = c })
+
+        groups.remove(group)
+        super.handleGroup(groups)
+    }
+
     override fun getGroup(): List<PropertyGroup> {
         var group = mutableListOf<PropertyGroup>()
 
         group.add(
                 createGroup(name,
-                        createTextField("Message", message, { t -> message = t }),
-                        createColourPicker("Text Colour", stroke as Color, { c -> stroke = c })
+                        createTextField("Message", message),
+                        createColourPicker("Text Colour", stroke as Color)
                 )
         )
 

@@ -4,14 +4,21 @@ import javafx.scene.control.ColorPicker
 import javafx.scene.paint.Color
 
 
-
 class ColourPickerProperty : ColorPicker {
 
-    constructor(default: Color, accept: (colour: Color) -> Unit) {
-        this.value = default
+    var actions: MutableList<(colour: Color) -> Unit> = mutableListOf()
 
+    constructor(default: Color) {
+        this.value = default
         // Action handler
         // ---------------------------------------------------------------
-        setOnAction { accept(value) }
+        setOnAction {
+            for(action in actions)
+                action(value)
+        }
+    }
+
+    fun link(action: (colour: Color) -> Unit) {
+        this.actions.add(action)
     }
 }

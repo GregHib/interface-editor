@@ -10,4 +10,5 @@ abstract class Widget: Group() {
     lateinit var drag: DragModel
     abstract fun setSelection(colour: Paint?)
     abstract fun getGroup(): List<PropertyGroup>
+    abstract fun handleGroup(groups: MutableList<PropertyGroup>)
 }

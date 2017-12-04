@@ -7,23 +7,42 @@ import javafx.scene.layout.VBox
 
 class PropertyPanel(private var controller: Controller) {
 
+    var groups: List<PropertyGroup>? = null
+
     fun refresh() {
 
         var group = controller.canvas.selectionGroup.getGroup()
         controller.propertyPanel.children.clear()
 
+        groups = null
+
         when {
             group.size == 0 -> controller.propertyPanel.children.add(PropertyGroup("No Selection"))
-            group.size == 1 -> loadProperties(group.first())
-            else -> for (i in group) {
-                println(i)
+            group.size == 1 -> loadProperties(group.first(), group)
+            else -> {
+                var type = group.first().javaClass
+                if(group.stream().allMatch({ e -> e.javaClass == type })) {
+                    loadProperties(group.first(), group)
+                }
             }
         }
     }
 
-    private fun loadProperties(widget: Widget) {
-        var box = VBox()
-        box.children.addAll(widget.getGroup())
-        controller.propertyPanel.children.addAll(box)
+    private fun loadProperties(widget: Widget, widgets: MutableSet<Widget>) {
+        if(groups == null) {
+            var box = VBox()
+            groups = widget.getGroup()
+            box.children.addAll(groups!!)
+            controller.propertyPanel.children.addAll(box)
+        }
+
+        //Link
+        if(groups != null) {
+            for(widget in widgets) {
+                var list = mutableListOf<PropertyGroup>()
+                list.addAll(groups!!)
+                widget.handleGroup(list)
+            }
+        }
     }
 }

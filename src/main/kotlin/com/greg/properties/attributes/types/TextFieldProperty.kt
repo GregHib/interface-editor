@@ -8,11 +8,10 @@ import javafx.scene.input.KeyEvent
 
 class TextFieldProperty : TextField {
 
-    private var accept: (text: String) -> Unit
+    var actions: MutableList<(text: String?) -> Unit> = mutableListOf()
     private var default: String?
 
-    constructor(default: String?, accept: (text: String) -> Unit) {
-        this.accept = accept
+    constructor(default: String?) {
         this.default = default
         this.text = default
 
@@ -48,7 +47,17 @@ class TextFieldProperty : TextField {
         }
     }
 
+    private fun accept(text: String?) {
+        for(action in actions) {
+            action(text)
+        }
+    }
+
     private fun cancel() {
         text = default
+    }
+
+    fun link(action: (text: String?) -> Unit) {
+        this.actions.add(action)
     }
 }
