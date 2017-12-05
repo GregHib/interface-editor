@@ -18,20 +18,20 @@ class PropertyPanel(private var controller: Controller) {
 
         when {
             group.size == 0 -> controller.propertyPanel.children.add(PropertyGroup("No Selection"))
-            group.size == 1 -> loadProperties(group.first(), group)
+            group.size == 1 -> loadProperties(group)
             else -> {
                 var type = group.first().javaClass
                 if(group.stream().allMatch({ e -> e.javaClass == type })) {
-                    loadProperties(group.first(), group)
+                    loadProperties(group)
                 }
             }
         }
     }
 
-    private fun loadProperties(widget: Widget, widgets: MutableSet<Widget>) {
+    private fun loadProperties(widgets: MutableSet<Widget>) {
         if(groups == null) {
             var box = VBox()
-            groups = widget.getGroup()
+            groups = widgets.first().getGroup()
             box.children.addAll(groups!!)
             controller.propertyPanel.children.addAll(box)
         }

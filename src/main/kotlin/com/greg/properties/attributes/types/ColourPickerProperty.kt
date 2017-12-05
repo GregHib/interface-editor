@@ -1,12 +1,13 @@
 package com.greg.properties.attributes.types
 
+import com.greg.properties.attributes.PropertyInterface
 import javafx.scene.control.ColorPicker
 import javafx.scene.paint.Color
 
 
-class ColourPickerProperty : ColorPicker {
+class ColourPickerProperty : ColorPicker, PropertyInterface {
 
-    var actions: MutableList<(colour: Color) -> Unit> = mutableListOf()
+    override var actions: MutableList<(value : Any?) -> Unit> = mutableListOf()
 
     constructor(default: Color) {
         this.value = default
@@ -18,7 +19,9 @@ class ColourPickerProperty : ColorPicker {
         }
     }
 
-    fun link(action: (colour: Color) -> Unit) {
+    override fun link(action: (value: Any?) -> Unit) {
+        if(action !is (value: Color?) -> Unit)
+            throw UnsupportedOperationException()
         this.actions.add(action)
     }
 }

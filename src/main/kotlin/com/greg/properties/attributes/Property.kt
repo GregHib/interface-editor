@@ -1,37 +1,19 @@
 package com.greg.properties.attributes
 
-import com.greg.properties.attributes.types.ColourPickerProperty
-import com.greg.properties.attributes.types.PropertySpacer
-import com.greg.properties.attributes.types.TextFieldProperty
-import javafx.geometry.Insets
-import javafx.geometry.Pos
-import javafx.scene.Node
-import javafx.scene.control.Label
-import javafx.scene.layout.HBox
-import javafx.scene.paint.Color
+import com.greg.canvas.widget.Widget
+import com.greg.properties.PropertyType
+import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
 
-class Property : HBox {
+class Property {
 
-    companion object {
-        fun createColourPicker(title: String, default: Color): Property {
-            return Property(Label(title), PropertySpacer(), ColourPickerProperty(default))
-        }
+    val title: String
+    val type: PropertyType
+    val reflection: KMutableProperty1<out Widget, *>
 
-        fun createTextField(title: String, default: String?): Property {
-            return Property(Label(title), PropertySpacer(), TextFieldProperty(default))
-        }
-
-        fun createGroup(title: String, vararg properties: Property): PropertyGroup {
-            var group = PropertyGroup(title)
-            group.add(*properties)
-            return group
-        }
-    }
-
-    constructor(vararg elements: Node) {
-        prefWidth = 280.0
-        padding = Insets(10.0, 10.0, 10.0, 10.0)
-        alignment = Pos.CENTER
-        children.addAll(elements)
+    constructor(title: String, name: String, type: PropertyType, widget: KClass<out Widget>) {
+        this.title = title
+        this.type = type
+        reflection = Widget.get(name.toLowerCase(), widget)
     }
 }

@@ -1,19 +1,25 @@
 package com.greg.canvas.widget
 
-import com.greg.properties.attributes.Property.Companion.createColourPicker
-import com.greg.properties.attributes.Property.Companion.createGroup
-import com.greg.properties.attributes.Property.Companion.createTextField
+import com.greg.properties.PropertyType
+import com.greg.properties.attributes.Property
 import com.greg.properties.attributes.PropertyGroup
-import com.greg.properties.attributes.types.ColourPickerProperty
-import com.greg.properties.attributes.types.TextFieldProperty
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.geometry.VPos
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.text.Text
+import kotlin.reflect.KMutableProperty1
 
 class WidgetText : WidgetRectangle {
+
+    //TODO FIX having all properties on all parents https://gyazo.com/b720f9f038c94619bcd0886318c69780
+    init {
+        val start = System.currentTimeMillis()
+        properties.add(Property("Message", "message", PropertyType.TEXT_FIELD, WidgetText::class))
+        properties.add(Property("Text Colour", "stroke", PropertyType.COLOUR_PICKER, WidgetText::class))
+        println("Delay: ${System.currentTimeMillis() - start}ms")
+    }
 
     private val name: String = "Text"
     private var text: Text = Text()
@@ -51,26 +57,24 @@ class WidgetText : WidgetRectangle {
     override fun handleGroup(groups: MutableList<PropertyGroup>) {
         val group = groups.first()
 
-        (group.properties[0].children[2] as TextFieldProperty).link({ t -> message = t })
-        (group.properties[1].children[2] as ColourPickerProperty).link({ c -> stroke = c })
+        linkGroup(group, this)
 
         groups.remove(group)
         super.handleGroup(groups)
     }
 
+    override fun handleReflection(property: Property): Any? {
+        return (property.reflection as KMutableProperty1<WidgetText, *>).get(this)
+    }
+
     override fun getGroup(): List<PropertyGroup> {
-        var group = mutableListOf<PropertyGroup>()
+        var groups = mutableListOf<PropertyGroup>()
 
-        group.add(
-                createGroup(name,
-                        createTextField("Message", message),
-                        createColourPicker("Text Colour", stroke as Color)
-                )
-        )
+        groups.add(createPropertyGroup(name))
 
-        group.addAll(super.getGroup())
+        groups.addAll(super.getGroup())
 
-        return group
+        return groups
     }
 
 }
