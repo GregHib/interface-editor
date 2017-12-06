@@ -11,12 +11,13 @@ import kotlin.reflect.KMutableProperty1
 
 open class WidgetRectangle(x: Double, y: Double, width: Double, height: Double): Widget() {
 
+    private val widgetClass = WidgetRectangle::class
     private val name : String = "Rectangle"
     var rectangle = Rectangle(x, y, width, height)
 
     init {
         setSelection(Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR))
-        properties.add(Property("Background fill", "fill", PropertyType.COLOUR_PICKER, WidgetRectangle::class))
+        properties.add(Property("Background fill", "fill", PropertyType.COLOUR_PICKER, widgetClass))
         this.children.add(rectangle)
     }
 
@@ -38,10 +39,10 @@ open class WidgetRectangle(x: Double, y: Double, width: Double, height: Double):
         groups.remove(group)
     }
 
-    override fun getGroup(): List<PropertyGroup> {
+    override fun getGroups(): List<PropertyGroup> {
         var groups = mutableListOf<PropertyGroup>()
 
-        groups.add(createPropertyGroup(name))
+        groups.add(createPropertyGroup(name, widgetClass))
 
         return groups
     }

@@ -1,15 +1,15 @@
 package com.greg.properties.attributes.types
 
-import com.greg.properties.attributes.PropertyInterface
+import com.greg.properties.attributes.Linkable
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 
-class TextFieldProperty : TextField, PropertyInterface {
+class TextFieldProperty : TextField, Linkable {
 
-    override var actions: MutableList<(value: Any?) -> Unit> = mutableListOf()
+    override var links: MutableList<(value: Any?) -> Unit> = mutableListOf()
     private var default: String?
 
     constructor(default: String?) {
@@ -49,7 +49,7 @@ class TextFieldProperty : TextField, PropertyInterface {
     }
 
     private fun accept(text: String?) {
-        for(action in actions) {
+        for(action in links) {
             action(text)
         }
     }
@@ -61,6 +61,6 @@ class TextFieldProperty : TextField, PropertyInterface {
     override fun link(action: (value: Any?) -> Unit) {
         if(action !is (value: String?) -> Unit)
             throw UnsupportedOperationException()
-        this.actions.add(action)
+        this.links.add(action)
     }
 }

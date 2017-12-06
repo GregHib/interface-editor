@@ -31,11 +31,15 @@ class Controller : Initializable {
      *
      * Expand marquee out to it's own class with inheritance, so you can switch out marquee type/shape etc..
      *
-     * Properties panel add different stuff for selection type, edit multiple selections if all the same class
-     *
      * Move selection using arrow keys by 1px
      *
-     * Round x/y to 1px (or is it already done cause mouse pos can't be .5 of a pixel?
+     * Undo/redo links?
+     *
+     * New properties to add: width height, x, y (When changing text don't resize x/y?)
+     *
+     * Two different Nodes on a property row, different layout and how they'd all link
+     * https://gyazo.com/fb3f3a596c270d886fe116ac7188cd56
+     * https://gyazo.com/d17ac37a4aee18625f0037c36aba52d5
      *
      */
 

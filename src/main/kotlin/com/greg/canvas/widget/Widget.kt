@@ -5,8 +5,6 @@ import com.greg.properties.PropertyType
 import com.greg.properties.attributes.Property
 import com.greg.properties.attributes.PropertyGroup
 import com.greg.properties.attributes.PropertyRow
-import com.greg.properties.attributes.types.ColourPickerProperty
-import com.greg.properties.attributes.types.TextFieldProperty
 import javafx.scene.Group
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
@@ -20,9 +18,8 @@ abstract class Widget: Group() {
     var properties = mutableListOf<Property>()
     lateinit var drag: DragModel
     abstract fun setSelection(colour: Paint?)
-    abstract fun getGroup(): List<PropertyGroup>
+    abstract fun getGroups(): List<PropertyGroup>
     abstract fun handleGroup(groups: MutableList<PropertyGroup>)
-
 
     companion object {
         fun get(name: String, widget: KClass<out Widget>): KMutableProperty1<out Widget, *> {
@@ -31,22 +28,30 @@ abstract class Widget: Group() {
     }
 
     fun linkGroup(group: PropertyGroup, widget: Widget) {
-        for ((index, property) in properties.withIndex()) {
-            property.reflection.setter.isAccessible = true
-            when(property.type) {
-                PropertyType.TEXT_FIELD -> (group.properties[index].children.last() as TextFieldProperty).link({ t -> property.reflection.setter.call(widget, t) })
-                PropertyType.COLOUR_PICKER -> (group.properties[index].children.last() as ColourPickerProperty).link({ t -> property.reflection.setter.call(widget, t) })
-            }
-        }
+        properties
+                .filter { it.widgetClass == group.widgetClass }//If the property is same type as group
+                .forEachIndexed { index, property ->
+                    //Add this widget to the list of outputs for the property row
+                    val propertyRow = group.properties[index]
+                    propertyRow.linkableList.last().link({ t -> property.reflection.setter.call(widget, t) })
+                }
     }
 
     abstract fun handleReflection(property: Property): Any?
 
-    fun createPropertyGroup(name:String): PropertyGroup {
-        val group = PropertyRow.createRowGroup(name)
+    fun createPropertyGroup(name:String, widget: KClass<out Widget>): PropertyGroup {
+        //Create a new group
+        val group = PropertyRow.createRowGroup(name, widget)
 
         for (property in properties) {
+            //To check if property is the same type as group
+            if(property.widgetClass != group.widgetClass)
+                continue
+
+            //Force the variable to be accessible to prevent IllegalAccessException if private
             property.reflection.isAccessible = true
+
+            //Handle creation of different types
             when(property.type) {
                 PropertyType.TEXT_FIELD -> group.add(PropertyRow.createTextField(property.title, handleReflection(property).toString()))
                 PropertyType.COLOUR_PICKER -> group.add(PropertyRow.createColourPicker(property.title, handleReflection(property) as Color))

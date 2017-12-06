@@ -13,16 +13,14 @@ import kotlin.reflect.KMutableProperty1
 
 class WidgetText : WidgetRectangle {
 
-    //TODO FIX having all properties on all parents https://gyazo.com/b720f9f038c94619bcd0886318c69780
-    init {
-        val start = System.currentTimeMillis()
-        properties.add(Property("Message", "message", PropertyType.TEXT_FIELD, WidgetText::class))
-        properties.add(Property("Text Colour", "stroke", PropertyType.COLOUR_PICKER, WidgetText::class))
-        println("Delay: ${System.currentTimeMillis() - start}ms")
-    }
-
+    private val widgetClass = WidgetText::class
     private val name: String = "Text"
     private var text: Text = Text()
+
+    init {
+        properties.add(Property("Message", "message", PropertyType.TEXT_FIELD, widgetClass))
+        properties.add(Property("Text Colour", "stroke", PropertyType.COLOUR_PICKER, widgetClass))
+    }
 
     //Width and height arguments will be changed as soon as message is set anyway.
     constructor(string: String?, colour: Color?) : super(Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), 0.0, 0.0) {
@@ -67,12 +65,12 @@ class WidgetText : WidgetRectangle {
         return (property.reflection as KMutableProperty1<WidgetText, *>).get(this)
     }
 
-    override fun getGroup(): List<PropertyGroup> {
+    override fun getGroups(): List<PropertyGroup> {
         var groups = mutableListOf<PropertyGroup>()
 
-        groups.add(createPropertyGroup(name))
+        groups.add(createPropertyGroup(name, widgetClass))
 
-        groups.addAll(super.getGroup())
+        groups.addAll(super.getGroups())
 
         return groups
     }
