@@ -42,13 +42,10 @@ class PropertyPanel(private var controller: Controller) {
     }
 
     private fun refreshValues(widgets: MutableSet<Widget>) {
-
         //Link all selected objects to the property groups
         if(groups != null) {
             for(widget in widgets) {
-                var list = mutableListOf<PropertyGroup>()
-                list.addAll(groups!!)
-                widget.refreshGroups(list)
+                widget.refreshGroups(groups!!, widget)
             }
         }
     }
@@ -67,9 +64,7 @@ class PropertyPanel(private var controller: Controller) {
         //Link all selected objects to the property groups
         if(groups != null) {
             for(widget in widgets) {
-                var list = mutableListOf<PropertyGroup>()
-                list.addAll(groups!!)
-                widget.linkGroups(list)
+                widget.link(groups!!)
             }
         }
     }

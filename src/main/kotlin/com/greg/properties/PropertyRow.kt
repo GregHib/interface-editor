@@ -1,6 +1,6 @@
 package com.greg.properties
 
-import com.greg.canvas.widget.Widget
+import com.greg.canvas.widget.WidgetInterface
 import com.greg.properties.types.ColourPickerProperty
 import com.greg.properties.types.NumberFieldProperty
 import com.greg.properties.types.PropertySpacer
@@ -37,7 +37,7 @@ class PropertyRow : HBox {
             return row
         }
 
-        fun createRowGroup(title: String, widget: KClass<out Widget>, vararg propertyRows: PropertyRow): PropertyGroup {
+        fun createRowGroup(title: String, widget: KClass<out WidgetInterface>, vararg propertyRows: PropertyRow): PropertyGroup {
             var group = PropertyGroup(title, widget)
             group.add(*propertyRows)
             return group

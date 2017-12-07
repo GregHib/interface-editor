@@ -2,7 +2,7 @@ package com.greg.controller
 
 import com.greg.App
 import com.greg.canvas.WidgetCanvas
-import com.greg.canvas.widget.WidgetRectangle
+import com.greg.canvas.widget.Widget
 import com.greg.canvas.widget.WidgetText
 import com.greg.properties.PropertyPanel
 import com.greg.settings.Settings
@@ -73,14 +73,16 @@ class Controller : Initializable {
 
     @FXML
     fun createRectangle() {
-        var rectangle = WidgetRectangle(Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_WIDTH), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_HEIGHT))
+        var rectangle = Widget()
         widgetCanvas.children.add(rectangle)
     }
 
     @FXML
     fun createText() {
+        var widget = Widget()
         var text = WidgetText(Settings.get(SettingsKey.DEFAULT_TEXT_MESSAGE), Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR))
-        widgetCanvas.children.add(text)
+        widget.add(text)
+        widgetCanvas.children.add(widget)
     }
 
     @FXML

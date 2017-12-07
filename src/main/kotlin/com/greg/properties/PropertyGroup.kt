@@ -1,6 +1,6 @@
 package com.greg.properties
 
-import com.greg.canvas.widget.Widget
+import com.greg.canvas.widget.WidgetInterface
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.control.Label
@@ -11,10 +11,10 @@ import kotlin.reflect.KClass
 class PropertyGroup : VBox {
 
     var title = Label("Title")
-    var widgetClass: KClass<out Widget>?
+    var widgetClass: KClass<out WidgetInterface>?
     val properties = mutableListOf<PropertyRow>()
 
-    constructor(text: String?, widget: KClass<out Widget>?) {
+    constructor(text: String?, widget: KClass<out WidgetInterface>?) {
         prefWidth = 280.0
         this.widgetClass = widget
 
