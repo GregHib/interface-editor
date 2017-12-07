@@ -1,6 +1,6 @@
-package com.greg.properties.attributes.types
+package com.greg.properties.types
 
-import com.greg.properties.attributes.Linkable
+import com.greg.properties.Linkable
 import javafx.scene.control.ColorPicker
 import javafx.scene.paint.Color
 
@@ -17,6 +17,10 @@ class ColourPickerProperty : ColorPicker, Linkable {
             for(action in links)
                 action(value)
         }
+    }
+
+    override fun refresh(value: Any?) {
+        this.value = value as Color
     }
 
     override fun link(action: (value: Any?) -> Unit) {

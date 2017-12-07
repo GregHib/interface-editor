@@ -115,6 +115,9 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
 
                 //Display in front
                 n.toFront()
+
+                //Refresh
+                canvas.refreshPosition()
             }
         }
     }

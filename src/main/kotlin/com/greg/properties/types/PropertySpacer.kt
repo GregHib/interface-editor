@@ -1,4 +1,4 @@
-package com.greg.properties.attributes.types
+package com.greg.properties.types
 
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane

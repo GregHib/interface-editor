@@ -1,8 +1,8 @@
 package com.greg.canvas.widget
 
+import com.greg.properties.Property
+import com.greg.properties.PropertyGroup
 import com.greg.properties.PropertyType
-import com.greg.properties.attributes.Property
-import com.greg.properties.attributes.PropertyGroup
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.geometry.VPos
@@ -52,13 +52,22 @@ class WidgetText : WidgetRectangle {
             text.stroke = value
         }
 
-    override fun handleGroup(groups: MutableList<PropertyGroup>) {
+    override fun refreshGroups(groups: MutableList<PropertyGroup>) {
+        val group = groups.first()
+
+//        linkGroup(group, this)
+
+        groups.remove(group)
+        super.refreshGroups(groups)
+    }
+
+    override fun linkGroups(groups: MutableList<PropertyGroup>) {
         val group = groups.first()
 
         linkGroup(group, this)
 
         groups.remove(group)
-        super.handleGroup(groups)
+        super.linkGroups(groups)
     }
 
     override fun handleReflection(property: Property): Any? {

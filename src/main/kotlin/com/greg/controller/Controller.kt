@@ -25,6 +25,8 @@ class Controller : Initializable {
     /**
      * Ideas
      *
+     * 
+     *
      * On double click on a widget deselect all but that ( and black out rest of canvas? ) display stretching/rotation (photoshop crop like) - enter to finish/ esc to cancel
      *
      * Widget x/y which get's the widget location relative to the canvas: will be needed for saving. Might need canvas as a parameter

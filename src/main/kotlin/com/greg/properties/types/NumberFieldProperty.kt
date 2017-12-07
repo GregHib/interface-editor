@@ -1,21 +1,24 @@
-package com.greg.properties.attributes.types
+package com.greg.properties.types
 
-import com.greg.properties.attributes.Linkable
+import com.greg.properties.Linkable
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.scene.control.TextField
+import javafx.scene.control.TextFormatter
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
+import javafx.util.converter.IntegerStringConverter
 
-class TextFieldProperty : TextField, Linkable {
+
+class NumberFieldProperty : TextField, Linkable {
 
     override var links: MutableList<(value: Any?) -> Unit> = mutableListOf()
-    private var default: String?
+    private var default: Int?
 
-    constructor(default: String?) {
+    constructor(default: Int?) {
+        textFormatter = TextFormatter(IntegerStringConverter())
         this.default = default
-        this.text = default
-
+        this.text = default.toString()
         // Key press
         // ---------------------------------------------------------------
         addEventFilter<KeyEvent>(KeyEvent.ANY, { e -> handleKeyEvent(e)})
@@ -48,18 +51,25 @@ class TextFieldProperty : TextField, Linkable {
         }
     }
 
+    override fun refresh(value: Any?) {
+        this.text = (value as Double).toInt().toString()
+    }
+
     private fun accept(text: String?) {
-        for(action in links) {
-            action(text)
+        if(text != null) {
+            var value = text.toIntOrNull()
+            if(value != null)
+                for(action in links)
+                    action(value)
         }
     }
 
     private fun cancel() {
-        text = default
+        text = default.toString()
     }
 
     override fun link(action: (value: Any?) -> Unit) {
-        if(action !is (value: String?) -> Unit)
+        if(action !is (value: Int?) -> Unit)
             throw UnsupportedOperationException()
         this.links.add(action)
     }

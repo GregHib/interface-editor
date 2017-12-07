@@ -1,10 +1,10 @@
 package com.greg.canvas.widget
 
 import com.greg.canvas.DragModel
+import com.greg.properties.Property
+import com.greg.properties.PropertyGroup
+import com.greg.properties.PropertyRow
 import com.greg.properties.PropertyType
-import com.greg.properties.attributes.Property
-import com.greg.properties.attributes.PropertyGroup
-import com.greg.properties.attributes.PropertyRow
 import javafx.scene.Group
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
@@ -19,12 +19,23 @@ abstract class Widget: Group() {
     lateinit var drag: DragModel
     abstract fun setSelection(colour: Paint?)
     abstract fun getGroups(): List<PropertyGroup>
-    abstract fun handleGroup(groups: MutableList<PropertyGroup>)
+    abstract fun linkGroups(groups: MutableList<PropertyGroup>)
+    abstract fun refreshGroups(groups: MutableList<PropertyGroup>)
 
     companion object {
         fun get(name: String, widget: KClass<out Widget>): KMutableProperty1<out Widget, *> {
             return widget.memberProperties.first { it.name == name } as KMutableProperty1<out Widget, *>
         }
+    }
+
+    fun refreshGroup(group: PropertyGroup, widget: Widget) {
+        properties
+                .filter { it.widgetClass == group.widgetClass }//If the property is same type as group
+                .forEachIndexed { index, property ->
+                    //Refresh property with the current value
+                    val propertyRow = group.properties[index]
+                    propertyRow.linkableList.last().refresh(property.reflection.getter.call(widget))
+                }
     }
 
     fun linkGroup(group: PropertyGroup, widget: Widget) {
@@ -55,6 +66,10 @@ abstract class Widget: Group() {
             when(property.type) {
                 PropertyType.TEXT_FIELD -> group.add(PropertyRow.createTextField(property.title, handleReflection(property).toString()))
                 PropertyType.COLOUR_PICKER -> group.add(PropertyRow.createColourPicker(property.title, handleReflection(property) as Color))
+                PropertyType.NUMBER_FIELD -> {
+                    println(handleReflection(property) as Double)
+                    group.add(PropertyRow.createNumberField(property.title, (handleReflection(property) as Double).toInt()))
+                }
             }
         }
 

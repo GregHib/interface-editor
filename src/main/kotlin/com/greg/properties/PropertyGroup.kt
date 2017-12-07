@@ -1,4 +1,4 @@
-package com.greg.properties.attributes
+package com.greg.properties
 
 import com.greg.canvas.widget.Widget
 import javafx.geometry.Orientation

@@ -2,7 +2,6 @@ package com.greg.properties
 
 import com.greg.canvas.widget.Widget
 import com.greg.controller.Controller
-import com.greg.properties.attributes.PropertyGroup
 import javafx.scene.layout.VBox
 
 class PropertyPanel(private var controller: Controller) {
@@ -10,6 +9,20 @@ class PropertyPanel(private var controller: Controller) {
     var groups: List<PropertyGroup>? = null
 
     fun refresh() {
+        var group = controller.canvas.selectionGroup.getGroup()
+
+        when {
+            group.size == 1 -> refreshValues(group)
+            else -> {
+                var type = group.first().javaClass
+                //Display only if all selected are of the same type
+                if(group.stream().allMatch({ e -> e.javaClass == type }))
+                    refreshValues(group)
+            }
+        }
+    }
+
+    fun load() {
 
         var group = controller.canvas.selectionGroup.getGroup()
         controller.propertyPanel.children.clear()
@@ -24,6 +37,18 @@ class PropertyPanel(private var controller: Controller) {
                 //Display only if all selected are of the same type
                 if(group.stream().allMatch({ e -> e.javaClass == type }))
                     loadProperties(group)
+            }
+        }
+    }
+
+    private fun refreshValues(widgets: MutableSet<Widget>) {
+
+        //Link all selected objects to the property groups
+        if(groups != null) {
+            for(widget in widgets) {
+                var list = mutableListOf<PropertyGroup>()
+                list.addAll(groups!!)
+                widget.refreshGroups(list)
             }
         }
     }
@@ -44,7 +69,7 @@ class PropertyPanel(private var controller: Controller) {
             for(widget in widgets) {
                 var list = mutableListOf<PropertyGroup>()
                 list.addAll(groups!!)
-                widget.handleGroup(list)
+                widget.linkGroups(list)
             }
         }
     }

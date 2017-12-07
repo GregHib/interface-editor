@@ -1,9 +1,10 @@
-package com.greg.properties.attributes
+package com.greg.properties
 
 import com.greg.canvas.widget.Widget
-import com.greg.properties.attributes.types.ColourPickerProperty
-import com.greg.properties.attributes.types.PropertySpacer
-import com.greg.properties.attributes.types.TextFieldProperty
+import com.greg.properties.types.ColourPickerProperty
+import com.greg.properties.types.NumberFieldProperty
+import com.greg.properties.types.PropertySpacer
+import com.greg.properties.types.TextFieldProperty
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -29,6 +30,13 @@ class PropertyRow : HBox {
             return row
         }
 
+        fun createNumberField(title: String, default: Int?): PropertyRow {
+            var row = PropertyRow(Label(title), PropertySpacer())
+            println(default)
+            row.add(NumberFieldProperty(default))
+            return row
+        }
+
         fun createRowGroup(title: String, widget: KClass<out Widget>, vararg propertyRows: PropertyRow): PropertyGroup {
             var group = PropertyGroup(title, widget)
             group.add(*propertyRows)
@@ -38,7 +46,7 @@ class PropertyRow : HBox {
 
     constructor(vararg elements: Node) {
         prefWidth = 280.0
-        padding = Insets(10.0, 10.0, 10.0, 10.0)
+        padding = Insets(10.0, 10.0, 0.0, 10.0)
         alignment = Pos.CENTER
         children.addAll(elements)
     }

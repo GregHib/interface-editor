@@ -15,6 +15,8 @@ enum class SettingsKey(var default: Any) {
     DEFAULT_POSITION_Y(0.5),
     DEFAULT_RECTANGLE_WIDTH(50.0),
     DEFAULT_RECTANGLE_HEIGHT(50.0),
+    WIDGET_CANVAS_WIDTH(765.0),
+    WIDGET_CANVAS_HEIGHT(503.0),
     ;
 
     val key: String = this.name

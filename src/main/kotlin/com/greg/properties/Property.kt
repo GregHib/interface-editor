@@ -1,7 +1,6 @@
-package com.greg.properties.attributes
+package com.greg.properties
 
 import com.greg.canvas.widget.Widget
-import com.greg.properties.PropertyType
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 
