@@ -7,19 +7,20 @@ import com.greg.properties.PropertyRow
 import com.greg.properties.PropertyType
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
+import javafx.beans.value.WritableValue
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.paint.Color
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.full.cast
 import kotlin.reflect.full.memberFunctions
 
-class Widget : Group {
+class Widget : Group, WidgetInterface {
 
     private var components = mutableListOf<WidgetInterface>()
 
     constructor(vararg component: Node) {
+        components.add(this)
 
         var rectangle = WidgetRectangle(Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_WIDTH), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_HEIGHT))
         components.add(rectangle)
@@ -59,14 +60,21 @@ class Widget : Group {
     }
 
     fun getGroups(): List<PropertyGroup>? {
-        var list = mutableListOf<PropertyGroup>()
-        for (component in components) {
-            list.add(createPropertyGroup(component::class.simpleName!!, component))
-        }
-        return list
+        return components.map { createPropertyGroup(it::class.simpleName!!, it, it.getWidgetProperties()) }
     }
 
+
     var properties = mutableListOf<Property>()
+
+    init {
+        properties.add(Property("Location X", "layoutXProperty", PropertyType.NUMBER_FIELD, this::class))
+        properties.add(Property("Location Y", "layoutYProperty", PropertyType.NUMBER_FIELD, this::class))
+    }
+
+    override fun getWidgetProperties(): List<Property>? {
+        return properties
+    }
+
     lateinit var drag: DragModel
 
     companion object {
@@ -75,63 +83,62 @@ class Widget : Group {
         }
     }
 
-    fun refreshGroups(groups: List<PropertyGroup>, widget: Widget) {
+    /*
+    TODO there are defiantly too many loops here
+
+    TODO make widget linkable? As layoutX/Y are the position of the widget
+    TODO add Layout titled tab and have it separate (but loaded using same methods as Properties)
+
+    TODO is rectangle needed by default?
+     */
+    fun refreshGroups(groups: List<PropertyGroup>) {
         for(group in groups) {
-            for (component in components) {
-                if(group.widgetClass != component::class)
-                    continue
-                refreshGroup(group, component)
-            }
+            components
+                    .filter { group.widgetClass == it::class }
+                    .forEach { refreshGroup(group, it) }
         }
     }
 
-    fun refreshGroup(group: PropertyGroup, widget: WidgetInterface) {
+    private fun refreshGroup(group: PropertyGroup, widget: WidgetInterface) {
         widget.getWidgetProperties()!!
                 .filter { it.widgetClass == group.widgetClass }//If the property is same type as group
                 .forEachIndexed { index, property ->
                     //Refresh property with the current value
                     val propertyRow = group.properties[index]
-                    propertyRow.linkableList.last().refresh(property.thing.cast(property.reflection.call(widget)).value)
+                    propertyRow.linkableList.last().refresh((property.reflection.call(widget) as WritableValue<*>).value)
                 }
     }
 
 
     fun link(groups: List<PropertyGroup>) {
         for(group in groups) {
-            for (component in components) {
-                if(group.widgetClass != component::class)
-                    continue
-                linkGroup(group, component)
-            }
+            components
+                    .filter { group.widgetClass == it::class }
+                    .forEach { linkGroup(group, it) }
         }
     }
 
-    fun linkGroup(group: PropertyGroup, widget: WidgetInterface) {
+    private fun linkGroup(group: PropertyGroup, widget: WidgetInterface) {
         widget.getWidgetProperties()!!
                 .filter { it.widgetClass == group.widgetClass }//If the property is same type as group
                 .forEachIndexed { index, property ->
                     //Add this widget to the list of outputs for the property row
                     val propertyRow = group.properties[index]
-                    propertyRow.linkableList.last().link({ t -> property.thing.cast(property.reflection.call(widget)).value = t })
+                    propertyRow.linkableList.last().link({ t -> (property.reflection.call(widget) as WritableValue<*>).value = t })
                 }
     }
 
-    fun createPropertyGroup(name: String, widget: WidgetInterface): PropertyGroup {
+    fun createPropertyGroup(name: String, widget: WidgetInterface, properties: List<Property>?): PropertyGroup {
         //Create a new group
         val group = PropertyRow.createRowGroup(name, widget::class)
 
-//        println(name)
-        val properties = widget.getWidgetProperties()
         if (properties != null) {
             for (property in properties) {
-//                println(property)
                 //To check if property is the same type as group
                 if (property.widgetClass != group.widgetClass)
                     continue
 
-                //Force the variable to be accessible to prevent IllegalAccessException if private
-//                property.reflection.isAccessible = true
-                val value = property.thing.cast(property.reflection.call(widget)).value
+                val value = (property.reflection.call(widget) as WritableValue<*>).value
                 //Handle creation of different types
                 when (property.type) {
                     PropertyType.TEXT_FIELD -> group.add(PropertyRow.createTextField(property.title, value.toString()))

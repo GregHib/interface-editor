@@ -49,6 +49,9 @@ class Controller : Initializable {
     lateinit var propertyPanel: AnchorPane
 
     @FXML
+    lateinit var layoutPanel: AnchorPane
+
+    @FXML
     lateinit var widgetCanvas: Pane
 
     @FXML

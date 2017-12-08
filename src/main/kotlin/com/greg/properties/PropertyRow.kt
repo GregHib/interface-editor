@@ -46,7 +46,7 @@ class PropertyRow : HBox {
 
     constructor(vararg elements: Node) {
         prefWidth = 280.0
-        padding = Insets(10.0, 10.0, 0.0, 10.0)
+        padding = Insets(5.0, 10.0, 5.0, 10.0)
         alignment = Pos.CENTER
         children.addAll(elements)
     }

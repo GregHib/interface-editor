@@ -125,6 +125,11 @@
                           <AnchorPane fx:id="propertyPanel" minHeight="0.0" minWidth="0.0" prefHeight="613.0" prefWidth="278.0" />
                         </content>
                       </TitledPane>
+                        <TitledPane animated="false" text="Layout">
+                          <content>
+                            <AnchorPane fx:id="layoutPanel" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          </content>
+                        </TitledPane>
                     </panes>
                   </Accordion>
                </children>

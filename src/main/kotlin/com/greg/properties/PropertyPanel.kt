@@ -6,7 +6,8 @@ import javafx.scene.layout.VBox
 
 class PropertyPanel(private var controller: Controller) {
 
-    var groups: List<PropertyGroup>? = null
+    private var groups: List<PropertyGroup>? = null
+    var layoutGroups: List<PropertyGroup>? = null
 
     fun refresh() {
         var group = controller.canvas.selectionGroup.getGroup()
@@ -45,7 +46,7 @@ class PropertyPanel(private var controller: Controller) {
         //Link all selected objects to the property groups
         if(groups != null) {
             for(widget in widgets) {
-                widget.refreshGroups(groups!!, widget)
+                widget.refreshGroups(groups!!)
             }
         }
     }
