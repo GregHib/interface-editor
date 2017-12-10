@@ -1,4 +1,4 @@
-package com.greg.properties
+package com.greg.panels.attributes
 
 interface Linkable {
 

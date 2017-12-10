@@ -1,4 +1,4 @@
-package com.greg.properties
+package com.greg.panels.attributes.parts
 
 import com.greg.canvas.widget.WidgetInterface
 import javafx.geometry.Orientation
@@ -10,11 +10,10 @@ import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import kotlin.reflect.KClass
 
-class PropertyGroup : VBox {
+class AttributeGroup : VBox {
 
-    var title = Label("Title")
     var widgetClass: KClass<out WidgetInterface>?
-    val properties = mutableListOf<PropertyRow>()
+    val properties = mutableListOf<AttributeRow>()
 
     constructor(text: String?, widget: KClass<out WidgetInterface>?) {
         prefWidth = 278.0
@@ -28,7 +27,7 @@ class PropertyGroup : VBox {
         children.add(separator)
 
         //Title
-        title.text = text
+        var title = Label(text)
         title.prefWidth = 278.0
         title.alignment = Pos.CENTER
         children.add(title)
@@ -39,9 +38,9 @@ class PropertyGroup : VBox {
         children.add(separator)
     }
 
-    fun add(vararg propertyRow: PropertyRow) {
-        properties.addAll(propertyRow)
-        children.addAll(propertyRow)
+    fun add(vararg attributeRow: AttributeRow) {
+        properties.addAll(attributeRow)
+        children.addAll(attributeRow)
     }
 
     fun size(): Int {

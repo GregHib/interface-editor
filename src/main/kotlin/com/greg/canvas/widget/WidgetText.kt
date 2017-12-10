@@ -1,8 +1,8 @@
 package com.greg.canvas.widget
 
-import com.greg.panels.attributes.AttributePaneType
-import com.greg.properties.Property
-import com.greg.properties.PropertyType
+import com.greg.panels.attributes.parts.pane.AttributePaneType
+import com.greg.panels.attributes.Attribute
+import com.greg.panels.attributes.AttributeType
 import javafx.geometry.VPos
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
@@ -10,11 +10,11 @@ import javafx.scene.text.Text
 
 class WidgetText : Text, WidgetInterface {
 
-    var properties = mutableListOf<Property>()
+    var properties = mutableListOf<Attribute>()
 
     init {
-//        properties.add(Property("Message", "message", PropertyType.TEXT_FIELD, this::class))
-        properties.add(Property("Text Colour", "strokeProperty", PropertyType.COLOUR_PICKER, this::class))
+//        properties.add(Attribute("Message", "message", AttributeType.TEXT_FIELD, this::class))
+        properties.add(Attribute("Text Colour", "strokeProperty", AttributeType.COLOUR_PICKER, this::class))
     }
 
     //Width and height arguments will be changed as soon as message is set anyway.
@@ -39,13 +39,13 @@ class WidgetText : Text, WidgetInterface {
             refreshSize()
         }
 
-    override fun getProperties(type: AttributePaneType): List<Property>? {
+    override fun getProperties(type: AttributePaneType): List<Attribute>? {
         if(type == AttributePaneType.PROPERTIES)
             return properties
         return null
     }
 
-    /*override fun refreshGroups(groups: MutableList<PropertyGroup>) {
+    /*override fun refreshGroups(groups: MutableList<AttributeGroup>) {
         val group = groups.first()
 
 //        linkGroup(group, this)
@@ -54,7 +54,7 @@ class WidgetText : Text, WidgetInterface {
         super.refreshGroups(groups)
     }
 
-    override fun linkGroups(groups: MutableList<PropertyGroup>) {
+    override fun linkGroups(groups: MutableList<AttributeGroup>) {
         val group = groups.first()
 
         linkGroup(group, this)
@@ -63,14 +63,14 @@ class WidgetText : Text, WidgetInterface {
         super.linkGroups(groups)
     }
 
-    override fun handleReflection(property: Property): Any? {
+    override fun handleReflection(property: Attribute): Any? {
         return (property.reflection as KMutableProperty1<WidgetText, *>).get(this)
     }
 
-    override fun getGroups(): List<PropertyGroup> {
-        var groups = mutableListOf<PropertyGroup>()
+    override fun getGroups(): List<AttributeGroup> {
+        var groups = mutableListOf<AttributeGroup>()
 
-        groups.add(createPropertyGroup(name, widgetClass))
+        groups.add(createGroup(name, widgetClass))
 
         groups.addAll(super.getGroups())
 

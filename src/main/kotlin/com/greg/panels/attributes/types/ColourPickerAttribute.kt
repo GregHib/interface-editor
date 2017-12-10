@@ -1,11 +1,11 @@
-package com.greg.properties.types
+package com.greg.panels.attributes.types
 
-import com.greg.properties.Linkable
+import com.greg.panels.attributes.Linkable
 import javafx.scene.control.ColorPicker
 import javafx.scene.paint.Color
 
 
-class ColourPickerProperty : ColorPicker, Linkable {
+class ColourPickerAttribute : ColorPicker, Linkable {
 
     override var links: MutableList<(value : Any?) -> Unit> = mutableListOf()
 

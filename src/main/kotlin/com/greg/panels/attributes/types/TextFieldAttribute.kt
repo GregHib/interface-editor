@@ -1,13 +1,13 @@
-package com.greg.properties.types
+package com.greg.panels.attributes.types
 
-import com.greg.properties.Linkable
+import com.greg.panels.attributes.Linkable
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 
-class TextFieldProperty : TextField, Linkable {
+class TextFieldAttribute : TextField, Linkable {
 
     override var links: MutableList<(value: Any?) -> Unit> = mutableListOf()
     private var default: String?

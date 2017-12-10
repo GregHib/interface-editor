@@ -1,8 +1,8 @@
 package com.greg.canvas.widget
 
-import com.greg.panels.attributes.AttributePaneType
-import com.greg.properties.Property
+import com.greg.panels.attributes.parts.pane.AttributePaneType
+import com.greg.panels.attributes.Attribute
 
 interface WidgetInterface {
-    fun getProperties(type: AttributePaneType): List<Property>?
+    fun getProperties(type: AttributePaneType): List<Attribute>?
 }

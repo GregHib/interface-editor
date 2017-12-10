@@ -1,11 +1,11 @@
 package com.greg.canvas.widget
 
 import com.greg.canvas.DragModel
-import com.greg.panels.attributes.AttributePaneType
-import com.greg.properties.Property
-import com.greg.properties.PropertyGroup
-import com.greg.properties.PropertyRow
-import com.greg.properties.PropertyType
+import com.greg.panels.attributes.Attribute
+import com.greg.panels.attributes.AttributeType
+import com.greg.panels.attributes.parts.AttributeGroup
+import com.greg.panels.attributes.parts.AttributeRow
+import com.greg.panels.attributes.parts.pane.AttributePaneType
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.beans.value.WritableValue
@@ -43,44 +43,44 @@ class Widget : Group, WidgetInterface {
     }
 
     fun setWidth(width: Double) {
-        val component = components.first()
+        val component = components[1]
         if (component is WidgetRectangle)
             component.width = width
     }
 
     fun setHeight(height: Double) {
-        val component = components.first()
+        val component = components[1]
         if (component is WidgetRectangle)
             component.height = height
     }
 
     fun setSelection(colour: Color?) {
-        val component = components.first()
+        val component = components[1]
         if (component is WidgetRectangle)
             component.stroke = colour
     }
 
-    fun getGroups(type: AttributePaneType): List<PropertyGroup>? {
-        val list = mutableListOf<PropertyGroup>()
+    fun getGroups(type: AttributePaneType): List<AttributeGroup>? {
+        val list = mutableListOf<AttributeGroup>()
         for (component in components) {
 
             val properties = component.getProperties(type)
             if (properties != null)
-                list.add(createPropertyGroup(component::class.simpleName!!, component, properties))
+                list.add(createGroup(component::class.simpleName!!, component, properties))
         }
 
         return list
     }
 
 
-    var attributes = mutableListOf<Property>()
+    var attributes = mutableListOf<Attribute>()
 
     init {
-        attributes.add(Property("Location X", "layoutXProperty", PropertyType.NUMBER_FIELD, this::class))
-        attributes.add(Property("Location Y", "layoutYProperty", PropertyType.NUMBER_FIELD, this::class))
+        attributes.add(Attribute("Location X", "layoutXProperty", AttributeType.NUMBER_FIELD, this::class))
+        attributes.add(Attribute("Location Y", "layoutYProperty", AttributeType.NUMBER_FIELD, this::class))
     }
 
-    override fun getProperties(type: AttributePaneType): List<Property>? {
+    override fun getProperties(type: AttributePaneType): List<Attribute>? {
         when (type) {
             AttributePaneType.LAYOUT -> return attributes
         }
@@ -95,15 +95,7 @@ class Widget : Group, WidgetInterface {
         }
     }
 
-    /*
-    TODO there are defiantly too many loops here
-
-    TODO make widget linkable? As layoutX/Y are the position of the widget
-    TODO add Layout titled tab and have it separate (but loaded using same methods as Properties)
-
-    TODO is rectangle needed by default?
-     */
-    fun refreshGroups(groups: List<PropertyGroup>, type: AttributePaneType) {
+    fun refreshGroups(groups: List<AttributeGroup>, type: AttributePaneType) {
         for (group in groups) {
             components
                     .filter { group.widgetClass == it::class }
@@ -111,7 +103,7 @@ class Widget : Group, WidgetInterface {
         }
     }
 
-    private fun refreshGroup(group: PropertyGroup, widget: WidgetInterface, type: AttributePaneType) {
+    private fun refreshGroup(group: AttributeGroup, widget: WidgetInterface, type: AttributePaneType) {
         widget.getProperties(type)
                 ?.filter { it.widgetClass == group.widgetClass }
                 ?.forEachIndexed { index, property ->
@@ -122,7 +114,7 @@ class Widget : Group, WidgetInterface {
     }
 
 
-    fun link(groups: List<PropertyGroup>, type: AttributePaneType) {
+    fun link(groups: List<AttributeGroup>, type: AttributePaneType) {
         for (group in groups) {
             components
                     .filter { group.widgetClass == it::class }
@@ -130,7 +122,7 @@ class Widget : Group, WidgetInterface {
         }
     }
 
-    private fun linkGroup(group: PropertyGroup, widget: WidgetInterface, type: AttributePaneType) {
+    private fun linkGroup(group: AttributeGroup, widget: WidgetInterface, type: AttributePaneType) {
         widget.getProperties(type)
                 ?.filter { it.widgetClass == group.widgetClass }//If the property is same type as group
                 ?.forEachIndexed { index, property ->
@@ -140,12 +132,12 @@ class Widget : Group, WidgetInterface {
                 }
     }
 
-    fun createPropertyGroup(name: String, widget: WidgetInterface, properties: List<Property>?): PropertyGroup {
+    private fun createGroup(name: String, widget: WidgetInterface, attributes: List<Attribute>?): AttributeGroup {
         //Create a new group
-        val group = PropertyRow.createRowGroup(name, widget::class)
+        val group = AttributeGroup(name, widget::class)
 
-        if (properties != null) {
-            for (property in properties) {
+        if (attributes != null) {
+            for (property in attributes) {
                 //To check if property is the same type as group
                 if (property.widgetClass != group.widgetClass)
                     continue
@@ -153,9 +145,9 @@ class Widget : Group, WidgetInterface {
                 val value = (property.reflection.call(widget) as WritableValue<*>).value
                 //Handle creation of different types
                 when (property.type) {
-                    PropertyType.TEXT_FIELD -> group.add(PropertyRow.createTextField(property.title, value.toString()))
-                    PropertyType.COLOUR_PICKER -> group.add(PropertyRow.createColourPicker(property.title, value as Color))
-                    PropertyType.NUMBER_FIELD -> group.add(PropertyRow.createNumberField(property.title, (value as Double).toInt()))
+                    AttributeType.TEXT_FIELD -> group.add(AttributeRow.createTextField(property.title, value.toString()))
+                    AttributeType.COLOUR_PICKER -> group.add(AttributeRow.createColourPicker(property.title, value as Color))
+                    AttributeType.NUMBER_FIELD -> group.add(AttributeRow.createNumberField(property.title, (value as Double).toInt()))
                 }
             }
         }

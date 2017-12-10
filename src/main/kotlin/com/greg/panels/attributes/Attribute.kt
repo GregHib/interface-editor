@@ -1,18 +1,18 @@
-package com.greg.properties
+package com.greg.panels.attributes
 
 import com.greg.canvas.widget.Widget
 import com.greg.canvas.widget.WidgetInterface
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 
-class Property {
+class Attribute {
 
     val title: String
-    val type: PropertyType
+    val type: AttributeType
     val widgetClass: KClass<out WidgetInterface>
     val reflection: KFunction<out WidgetInterface>
 
-    constructor(title: String, name: String, type: PropertyType, widget: KClass<out WidgetInterface>) {
+    constructor(title: String, name: String, type: AttributeType, widget: KClass<out WidgetInterface>) {
         this.title = title
         this.type = type
         this.widgetClass = widget

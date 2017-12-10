@@ -1,13 +1,13 @@
-package com.greg.panels.attributes
+package com.greg.panels.attributes.parts.pane
 
-import com.greg.properties.PropertyGroup
+import com.greg.panels.attributes.parts.AttributeGroup
 import javafx.geometry.Insets
 import javafx.scene.control.TitledPane
 import javafx.scene.layout.AnchorPane
 
 class AttributePane : TitledPane {
 
-    var groups: List<PropertyGroup>? = null
+    var groups: List<AttributeGroup>? = null
     var paneType: AttributePaneType
 
     constructor(title: String, type: AttributePaneType) {

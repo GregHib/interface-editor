@@ -1,9 +1,9 @@
-package com.greg.properties
+package com.greg.panels.attributes.parts
 
 import com.greg.canvas.widget.Widget
 import com.greg.controller.Controller
-import com.greg.panels.attributes.AttributePane
-import com.greg.panels.attributes.AttributePaneType
+import com.greg.panels.attributes.parts.pane.AttributePane
+import com.greg.panels.attributes.parts.pane.AttributePaneType
 import javafx.scene.layout.VBox
 
 class AttributesPanel {
@@ -33,7 +33,7 @@ class AttributesPanel {
 
     }
 
-    fun refresh(pane: AttributePane, widgets: MutableSet<Widget>) {
+    private fun refresh(pane: AttributePane, widgets: MutableSet<Widget>) {
         when {
             widgets.size == 1 -> refreshValues(pane, widgets)
             else -> {
@@ -47,7 +47,7 @@ class AttributesPanel {
 
     private fun refreshValues(pane: AttributePane, widgets: MutableSet<Widget>) {
         //Link all selected objects to the property groups
-        if(properties.groups != null) {
+        if(pane.groups != null) {
             for(widget in widgets) {
                 widget.refreshGroups(layout.groups!!, pane.paneType)
             }
@@ -68,7 +68,7 @@ class AttributesPanel {
 
         when {
             widgets.size == 0 -> {
-                pane.getPane().children.add(PropertyGroup("No Selection", null))
+                pane.getPane().children.add(AttributeGroup("No Selection", null))
             }
             widgets.size == 1 -> loadProperties(pane, widgets)
             else -> {

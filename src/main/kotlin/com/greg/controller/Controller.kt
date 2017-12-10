@@ -4,7 +4,7 @@ import com.greg.App
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.widget.Widget
 import com.greg.canvas.widget.WidgetText
-import com.greg.properties.AttributesPanel
+import com.greg.panels.attributes.parts.AttributesPanel
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.animation.PauseTransition
