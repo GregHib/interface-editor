@@ -1,5 +1,6 @@
 package com.greg.canvas.widget
 
+import com.greg.panels.attributes.AttributePaneType
 import com.greg.properties.Property
 import com.greg.properties.PropertyType
 import com.greg.settings.Settings
@@ -15,11 +16,11 @@ class WidgetRectangle(x: Double, y: Double, width: Double, height: Double) : Rec
         properties.add(Property("Background fill", "fillProperty", PropertyType.COLOUR_PICKER, this::class))
         properties.add(Property("Width", "widthProperty", PropertyType.NUMBER_FIELD, this::class))
         properties.add(Property("Height", "heightProperty", PropertyType.NUMBER_FIELD, this::class))
-//        properties.add(Property("Location X", "layoutXProperty", PropertyType.NUMBER_FIELD, this::class))
-//        properties.add(Property("Location Y", "layoutYProperty", PropertyType.NUMBER_FIELD, this::class))
     }
 
-    override fun getWidgetProperties(): List<Property>? {
-        return properties
+    override fun getProperties(type: AttributePaneType): List<Property>? {
+        if(type == AttributePaneType.PROPERTIES)
+            return properties
+        return null
     }
 }

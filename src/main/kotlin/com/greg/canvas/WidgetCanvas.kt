@@ -31,11 +31,11 @@ class WidgetCanvas {
     }
 
     fun refreshSelection() {
-        controller.properties.load()
+        controller.attributes.reload()
     }
 
 
     fun refreshPosition() {
-        controller.properties.refresh()
+        controller.attributes.refresh()
     }
 }

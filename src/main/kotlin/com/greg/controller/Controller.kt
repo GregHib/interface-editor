@@ -4,7 +4,7 @@ import com.greg.App
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.widget.Widget
 import com.greg.canvas.widget.WidgetText
-import com.greg.properties.PropertyPanel
+import com.greg.properties.AttributesPanel
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.animation.PauseTransition
@@ -12,8 +12,8 @@ import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.control.Accordion
 import javafx.scene.control.ProgressIndicator
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.util.Duration
 import java.net.URL
@@ -25,7 +25,7 @@ class Controller : Initializable {
     /**
      * Ideas
      *
-     * 
+     * https://gyazo.com/407615643f5a46f34ee82f60252ec86e
      *
      * On double click on a widget deselect all but that ( and black out rest of canvas? ) display stretching/rotation (photoshop crop like) - enter to finish/ esc to cancel
      *
@@ -46,10 +46,7 @@ class Controller : Initializable {
      */
 
     @FXML
-    lateinit var propertyPanel: AnchorPane
-
-    @FXML
-    lateinit var layoutPanel: AnchorPane
+    lateinit var attributesPanel: Accordion
 
     @FXML
     lateinit var widgetCanvas: Pane
@@ -59,11 +56,11 @@ class Controller : Initializable {
 
     lateinit var canvas: WidgetCanvas
 
-    lateinit var properties: PropertyPanel
+    lateinit var attributes: AttributesPanel
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         canvas = WidgetCanvas(this)
-        properties = PropertyPanel(this)
+        attributes = AttributesPanel(this)
     }
 
     @FXML

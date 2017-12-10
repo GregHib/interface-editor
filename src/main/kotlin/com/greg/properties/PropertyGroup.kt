@@ -5,6 +5,8 @@ import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.Separator
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import kotlin.reflect.KClass
 
@@ -15,7 +17,8 @@ class PropertyGroup : VBox {
     val properties = mutableListOf<PropertyRow>()
 
     constructor(text: String?, widget: KClass<out WidgetInterface>?) {
-        prefWidth = 280.0
+        prefWidth = 278.0
+        HBox.setHgrow(this, Priority.ALWAYS)
         this.widgetClass = widget
 
 
@@ -26,7 +29,7 @@ class PropertyGroup : VBox {
 
         //Title
         title.text = text
-        title.prefWidth = 280.0
+        title.prefWidth = 278.0
         title.alignment = Pos.CENTER
         children.add(title)
 

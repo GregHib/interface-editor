@@ -32,7 +32,6 @@ class PropertyRow : HBox {
 
         fun createNumberField(title: String, default: Int?): PropertyRow {
             var row = PropertyRow(Label(title), PropertySpacer())
-            println(default)
             row.add(NumberFieldProperty(default))
             return row
         }

@@ -116,22 +116,9 @@
    <right>
       <StackPane prefHeight="543.0" prefWidth="280.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox prefHeight="543.0" prefWidth="280.0">
+            <VBox maxWidth="280.0" prefHeight="543.0" prefWidth="280.0">
                <children>
-                  <Accordion>
-                    <panes>
-                      <TitledPane animated="false" text="Properties">
-                        <content>
-                          <AnchorPane fx:id="propertyPanel" minHeight="0.0" minWidth="0.0" prefHeight="613.0" prefWidth="278.0" />
-                        </content>
-                      </TitledPane>
-                        <TitledPane animated="false" text="Layout">
-                          <content>
-                            <AnchorPane fx:id="layoutPanel" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                          </content>
-                        </TitledPane>
-                    </panes>
-                  </Accordion>
+                  <Accordion fx:id="attributesPanel" maxWidth="280.0" />
                </children>
             </VBox>
          </children></StackPane>

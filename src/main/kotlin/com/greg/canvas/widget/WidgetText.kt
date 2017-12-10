@@ -1,6 +1,8 @@
 package com.greg.canvas.widget
 
+import com.greg.panels.attributes.AttributePaneType
 import com.greg.properties.Property
+import com.greg.properties.PropertyType
 import javafx.geometry.VPos
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
@@ -8,13 +10,12 @@ import javafx.scene.text.Text
 
 class WidgetText : Text, WidgetInterface {
 
-    private val widgetClass = WidgetText::class
-    private val name: String = "Text"
+    var properties = mutableListOf<Property>()
 
-//    init {
-//        properties.add(Property("Message", "message", PropertyType.TEXT_FIELD, widgetClass))
-//        properties.add(Property("Text Colour", "stroke", PropertyType.COLOUR_PICKER, widgetClass))
-//    }
+    init {
+//        properties.add(Property("Message", "message", PropertyType.TEXT_FIELD, this::class))
+        properties.add(Property("Text Colour", "strokeProperty", PropertyType.COLOUR_PICKER, this::class))
+    }
 
     //Width and height arguments will be changed as soon as message is set anyway.
     constructor(string: String?, colour: Color?) : super(string) {
@@ -38,7 +39,9 @@ class WidgetText : Text, WidgetInterface {
             refreshSize()
         }
 
-    override fun getWidgetProperties(): List<Property>? {
+    override fun getProperties(type: AttributePaneType): List<Property>? {
+        if(type == AttributePaneType.PROPERTIES)
+            return properties
         return null
     }
 

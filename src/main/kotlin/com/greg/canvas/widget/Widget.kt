@@ -1,6 +1,7 @@
 package com.greg.canvas.widget
 
 import com.greg.canvas.DragModel
+import com.greg.panels.attributes.AttributePaneType
 import com.greg.properties.Property
 import com.greg.properties.PropertyGroup
 import com.greg.properties.PropertyRow
@@ -59,20 +60,31 @@ class Widget : Group, WidgetInterface {
             component.stroke = colour
     }
 
-    fun getGroups(): List<PropertyGroup>? {
-        return components.map { createPropertyGroup(it::class.simpleName!!, it, it.getWidgetProperties()) }
+    fun getGroups(type: AttributePaneType): List<PropertyGroup>? {
+        val list = mutableListOf<PropertyGroup>()
+        for (component in components) {
+
+            val properties = component.getProperties(type)
+            if (properties != null)
+                list.add(createPropertyGroup(component::class.simpleName!!, component, properties))
+        }
+
+        return list
     }
 
 
-    var properties = mutableListOf<Property>()
+    var attributes = mutableListOf<Property>()
 
     init {
-        properties.add(Property("Location X", "layoutXProperty", PropertyType.NUMBER_FIELD, this::class))
-        properties.add(Property("Location Y", "layoutYProperty", PropertyType.NUMBER_FIELD, this::class))
+        attributes.add(Property("Location X", "layoutXProperty", PropertyType.NUMBER_FIELD, this::class))
+        attributes.add(Property("Location Y", "layoutYProperty", PropertyType.NUMBER_FIELD, this::class))
     }
 
-    override fun getWidgetProperties(): List<Property>? {
-        return properties
+    override fun getProperties(type: AttributePaneType): List<Property>? {
+        when (type) {
+            AttributePaneType.LAYOUT -> return attributes
+        }
+        return null
     }
 
     lateinit var drag: DragModel
@@ -91,37 +103,37 @@ class Widget : Group, WidgetInterface {
 
     TODO is rectangle needed by default?
      */
-    fun refreshGroups(groups: List<PropertyGroup>) {
-        for(group in groups) {
+    fun refreshGroups(groups: List<PropertyGroup>, type: AttributePaneType) {
+        for (group in groups) {
             components
                     .filter { group.widgetClass == it::class }
-                    .forEach { refreshGroup(group, it) }
+                    .forEach { refreshGroup(group, it, type) }
         }
     }
 
-    private fun refreshGroup(group: PropertyGroup, widget: WidgetInterface) {
-        widget.getWidgetProperties()!!
-                .filter { it.widgetClass == group.widgetClass }//If the property is same type as group
-                .forEachIndexed { index, property ->
-                    //Refresh property with the current value
-                    val propertyRow = group.properties[index]
-                    propertyRow.linkableList.last().refresh((property.reflection.call(widget) as WritableValue<*>).value)
-                }
-    }
-
-
-    fun link(groups: List<PropertyGroup>) {
-        for(group in groups) {
-            components
-                    .filter { group.widgetClass == it::class }
-                    .forEach { linkGroup(group, it) }
+    private fun refreshGroup(group: PropertyGroup, widget: WidgetInterface, type: AttributePaneType) {
+        widget.getProperties(type)
+                ?.filter { it.widgetClass == group.widgetClass }
+                ?.forEachIndexed { index, property ->
+            //Refresh property with the current value
+            val propertyRow = group.properties[index]
+            propertyRow.linkableList.last().refresh((property.reflection.call(widget) as WritableValue<*>).value)
         }
     }
 
-    private fun linkGroup(group: PropertyGroup, widget: WidgetInterface) {
-        widget.getWidgetProperties()!!
-                .filter { it.widgetClass == group.widgetClass }//If the property is same type as group
-                .forEachIndexed { index, property ->
+
+    fun link(groups: List<PropertyGroup>, type: AttributePaneType) {
+        for (group in groups) {
+            components
+                    .filter { group.widgetClass == it::class }
+                    .forEach { linkGroup(group, it, type) }
+        }
+    }
+
+    private fun linkGroup(group: PropertyGroup, widget: WidgetInterface, type: AttributePaneType) {
+        widget.getProperties(type)
+                ?.filter { it.widgetClass == group.widgetClass }//If the property is same type as group
+                ?.forEachIndexed { index, property ->
                     //Add this widget to the list of outputs for the property row
                     val propertyRow = group.properties[index]
                     propertyRow.linkableList.last().link({ t -> (property.reflection.call(widget) as WritableValue<*>).value = t })
