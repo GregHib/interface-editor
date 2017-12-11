@@ -10,19 +10,17 @@ import javafx.scene.input.KeyEvent
 import javafx.util.converter.IntegerStringConverter
 
 
-class NumberFieldAttribute : TextField, Linkable {
+class NumberFieldAttribute(private var default: Int?) : TextField(), Linkable {
 
     override var links: MutableList<(value: Any?) -> Unit> = mutableListOf()
-    private var default: Int?
 
-    constructor(default: Int?) {
+    init {
         textFormatter = TextFormatter(IntegerStringConverter())
-        this.default = default
         this.text = default.toString()
+
         // Key press
         // ---------------------------------------------------------------
         addEventFilter<KeyEvent>(KeyEvent.ANY, { e -> handleKeyEvent(e)})
-
 
         // Focus listener
         // ---------------------------------------------------------------
@@ -44,7 +42,7 @@ class NumberFieldAttribute : TextField, Linkable {
 
     private fun handleFocusListener(focused: Boolean) {
         if(!focused) {
-            if(Settings.getBoolean(SettingsKey.CANCEL_ON_DEFOCUS))
+            if(Settings.getBoolean(SettingsKey.CANCEL_ON_UNFOCUSED))
                 cancel()
             else
                 accept(text)
@@ -57,7 +55,7 @@ class NumberFieldAttribute : TextField, Linkable {
 
     private fun accept(text: String?) {
         if(text != null) {
-            var value = text.toIntOrNull()
+            val value = text.toIntOrNull()
             if(value != null)
                 for(action in links)
                     action(value)

@@ -84,15 +84,15 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
             //Set info needed for drag just in case dragging occurs
             canvas.selectionGroup.getGroup().forEach { n ->
                 //save the offset of the shapes position relative to the mouse click
-                var offsetX = canvas.canvasPane.localToScene(n.boundsInParent).minX - event.sceneX
-                var offsetY = canvas.canvasPane.localToScene(n.boundsInParent).minY - event.sceneY
+                val offsetX = canvas.canvasPane.localToScene(n.boundsInParent).minX - event.sceneX
+                val offsetY = canvas.canvasPane.localToScene(n.boundsInParent).minY - event.sceneY
                 n.drag = DragModel(offsetX, offsetY)
             }
         }
     }
 
     private fun dragSelection(event: MouseEvent) {
-        var widget = getWidget(event.target)
+        val widget = getWidget(event.target)
         if (widget != null && canvas.selectionGroup.contains(widget)) {
             canvas.selectionGroup.getGroup().forEach { n ->
                 //Bounds of the container
@@ -132,8 +132,8 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
             canvas.canvasPane.children.remove(marquee)
 
         //calculate the x,y within the widgetCanvas
-        var x = getCanvasX(event)
-        var y = getCanvasY(event)
+        val x = getCanvasX(event)
+        val y = getCanvasY(event)
 
         //create a marquee box
         marquee.add(x, y)
@@ -217,7 +217,7 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
 
     private fun getWidget(target: EventTarget?): Widget? {
         if (target is Shape) {
-            var parent = target.parent
+            val parent = target.parent
             if (parent is Widget)
                 return parent
         }

@@ -4,13 +4,13 @@ import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
-import javafx.stage.Stage
-import javafx.stage.StageStyle
 import javafx.scene.canvas.Canvas
-import javafx.scene.paint.Color
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
+import javafx.stage.Stage
+import javafx.stage.StageStyle
 
 
 class App : Application() {
@@ -30,7 +30,7 @@ class App : Application() {
     private fun drawLayered() {
         val sharpCanvas = createCanvasGrid(600.0, 300.0, 16, Color.GRAY)
         val sharpCanvas2 = createCanvasGrid(600.0, 300.0, 32, Color.BLACK)
-        var group = BorderPane()
+        val group = BorderPane()
         val pane = Pane()
         pane.children.add(sharpCanvas)
         pane.children.add(sharpCanvas2)

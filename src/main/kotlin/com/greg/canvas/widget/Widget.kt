@@ -12,25 +12,43 @@ import javafx.beans.value.WritableValue
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.paint.Color
+import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
 import kotlin.reflect.full.memberFunctions
+import kotlin.reflect.full.memberProperties
 
-class Widget : Group, WidgetInterface {
+class Widget(vararg component: Node) : Group(), WidgetInterface {
 
     private var components = mutableListOf<WidgetInterface>()
+    var attributes = mutableListOf<Attribute>()
+    lateinit var drag: DragModel
 
-    constructor(vararg component: Node) {
+    init {
+        attributes.add(Attribute("Location X", "layoutXProperty", AttributeType.NUMBER_FIELD, this::class))
+        attributes.add(Attribute("Location Y", "layoutYProperty", AttributeType.NUMBER_FIELD, this::class))
+    }
+
+    init {
         components.add(this)
-
-        var rectangle = WidgetRectangle(Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_WIDTH), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_HEIGHT))
+        val rectangle = WidgetRectangle(Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_WIDTH), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_HEIGHT))
         components.add(rectangle)
         children.add(rectangle)
-
         for (com in component)
             add(com)
     }
 
+    companion object {
+        fun get(name: String, widget: KClass<WidgetInterface>, function: Boolean): KCallable<*> {
+            return if(function)
+                widget.memberFunctions.first { it.name == name }
+            else
+                widget.memberProperties.first { it.name == name }
+        }
+    }
+
+    override fun getAttributes(type: AttributePaneType): List<Attribute>? {
+        return if(type == AttributePaneType.LAYOUT) attributes else null
+    }
 
     fun add(vararg node: Node) {
         for (n in node) {
@@ -42,13 +60,13 @@ class Widget : Group, WidgetInterface {
         }
     }
 
-    fun setWidth(width: Double) {
+    private fun setWidth(width: Double) {
         val component = components[1]
         if (component is WidgetRectangle)
             component.width = width
     }
 
-    fun setHeight(height: Double) {
+    private fun setHeight(height: Double) {
         val component = components[1]
         if (component is WidgetRectangle)
             component.height = height
@@ -60,42 +78,12 @@ class Widget : Group, WidgetInterface {
             component.stroke = colour
     }
 
-    fun getGroups(type: AttributePaneType): List<AttributeGroup>? {
-        val list = mutableListOf<AttributeGroup>()
-        for (component in components) {
 
-            val properties = component.getProperties(type)
-            if (properties != null)
-                list.add(createGroup(component::class.simpleName!!, component, properties))
-        }
+    /**
+     * Attribute refreshing
+     */
 
-        return list
-    }
-
-
-    var attributes = mutableListOf<Attribute>()
-
-    init {
-        attributes.add(Attribute("Location X", "layoutXProperty", AttributeType.NUMBER_FIELD, this::class))
-        attributes.add(Attribute("Location Y", "layoutYProperty", AttributeType.NUMBER_FIELD, this::class))
-    }
-
-    override fun getProperties(type: AttributePaneType): List<Attribute>? {
-        when (type) {
-            AttributePaneType.LAYOUT -> return attributes
-        }
-        return null
-    }
-
-    lateinit var drag: DragModel
-
-    companion object {
-        fun get(name: String, widget: KClass<out WidgetInterface>): KFunction<out WidgetInterface> {
-            return widget.memberFunctions.first { it.name == name } as KFunction<out WidgetInterface>
-        }
-    }
-
-    fun refreshGroups(groups: List<AttributeGroup>, type: AttributePaneType) {
+    fun refresh(groups: List<AttributeGroup>, type: AttributePaneType) {
         for (group in groups) {
             components
                     .filter { group.widgetClass == it::class }
@@ -104,7 +92,7 @@ class Widget : Group, WidgetInterface {
     }
 
     private fun refreshGroup(group: AttributeGroup, widget: WidgetInterface, type: AttributePaneType) {
-        widget.getProperties(type)
+        widget.getAttributes(type)
                 ?.filter { it.widgetClass == group.widgetClass }
                 ?.forEachIndexed { index, property ->
             //Refresh property with the current value
@@ -113,6 +101,10 @@ class Widget : Group, WidgetInterface {
         }
     }
 
+
+    /**
+     * Attribute linking
+     */
 
     fun link(groups: List<AttributeGroup>, type: AttributePaneType) {
         for (group in groups) {
@@ -123,13 +115,28 @@ class Widget : Group, WidgetInterface {
     }
 
     private fun linkGroup(group: AttributeGroup, widget: WidgetInterface, type: AttributePaneType) {
-        widget.getProperties(type)
+        widget.getAttributes(type)
                 ?.filter { it.widgetClass == group.widgetClass }//If the property is same type as group
                 ?.forEachIndexed { index, property ->
                     //Add this widget to the list of outputs for the property row
                     val propertyRow = group.properties[index]
-                    propertyRow.linkableList.last().link({ t -> (property.reflection.call(widget) as WritableValue<*>).value = t })
+                    propertyRow.linkableList.last().link({ t -> property.setValue(widget, t) })
                 }
+    }
+
+    /**
+     * Group creation
+     */
+
+    fun getGroups(type: AttributePaneType): List<AttributeGroup>? {
+        val list = mutableListOf<AttributeGroup>()
+        for (component in components) {
+
+            val attributes = component.getAttributes(type)
+            if (attributes != null)
+                list.add(createGroup(component::class.simpleName!!, component, attributes))
+        }
+        return list
     }
 
     private fun createGroup(name: String, widget: WidgetInterface, attributes: List<Attribute>?): AttributeGroup {
@@ -137,17 +144,19 @@ class Widget : Group, WidgetInterface {
         val group = AttributeGroup(name, widget::class)
 
         if (attributes != null) {
-            for (property in attributes) {
-                //To check if property is the same type as group
-                if (property.widgetClass != group.widgetClass)
+            for (attribute in attributes) {
+                //To check if attribute is the same type as group
+                if (attribute.widgetClass != group.widgetClass)
                     continue
 
-                val value = (property.reflection.call(widget) as WritableValue<*>).value
+                //Get the attribute's current value via reflection
+                val value = attribute.getValue(widget)
+
                 //Handle creation of different types
-                when (property.type) {
-                    AttributeType.TEXT_FIELD -> group.add(AttributeRow.createTextField(property.title, value.toString()))
-                    AttributeType.COLOUR_PICKER -> group.add(AttributeRow.createColourPicker(property.title, value as Color))
-                    AttributeType.NUMBER_FIELD -> group.add(AttributeRow.createNumberField(property.title, (value as Double).toInt()))
+                when (attribute.type) {
+                    AttributeType.TEXT_FIELD -> group.add(AttributeRow.createTextField(attribute.title, value.toString()))
+                    AttributeType.COLOUR_PICKER -> group.add(AttributeRow.createColourPicker(attribute.title, value as Color))
+                    AttributeType.NUMBER_FIELD -> group.add(AttributeRow.createNumberField(attribute.title, (value as Double).toInt()))
                 }
             }
         }

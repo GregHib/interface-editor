@@ -5,21 +5,10 @@ import javafx.geometry.Insets
 import javafx.scene.control.TitledPane
 import javafx.scene.layout.AnchorPane
 
-class AttributePane : TitledPane {
+class AttributePane(title: String, type: AttributePaneType) : TitledPane() {
 
     var groups: List<AttributeGroup>? = null
-    var paneType: AttributePaneType
-
-    constructor(title: String, type: AttributePaneType) {
-        this.text = title
-        this.paneType = type
-
-        maxWidth = 280.0
-
-        val pane = AnchorPane()
-        pane.padding = Insets(0.0, 0.0, 0.0, 0.0)
-        content = pane
-    }
+    var paneType: AttributePaneType = type
 
     fun getPane(): AnchorPane {
         return content as AnchorPane
@@ -27,5 +16,13 @@ class AttributePane : TitledPane {
 
     fun getType(): AttributePaneType {
         return paneType
+    }
+
+    init {
+        text = title
+        maxWidth = 280.0
+        val pane = AnchorPane()
+        pane.padding = Insets(0.0, 0.0, 0.0, 0.0)
+        content = pane
     }
 }

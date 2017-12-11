@@ -1,9 +1,9 @@
 package com.greg.panels.attributes.parts
 
 import com.greg.panels.attributes.Linkable
+import com.greg.panels.attributes.types.AttributeSpacer
 import com.greg.panels.attributes.types.ColourPickerAttribute
 import com.greg.panels.attributes.types.NumberFieldAttribute
-import com.greg.panels.attributes.types.AttributeSpacer
 import com.greg.panels.attributes.types.TextFieldAttribute
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -12,7 +12,7 @@ import javafx.scene.control.Label
 import javafx.scene.layout.HBox
 import javafx.scene.paint.Color
 
-class AttributeRow : HBox {
+class AttributeRow(vararg elements: Node) : HBox() {
 
     var linkableList = mutableListOf<Linkable>()
 
@@ -30,17 +30,10 @@ class AttributeRow : HBox {
         }
 
         private fun createRow(title: String, default: Linkable): AttributeRow {
-            var row = AttributeRow(Label(title), AttributeSpacer())
+            val row = AttributeRow(Label(title), AttributeSpacer())
             row.add(default)
             return row
         }
-    }
-
-    constructor(vararg elements: Node) {
-        prefWidth = 280.0
-        padding = Insets(5.0, 10.0, 5.0, 10.0)
-        alignment = Pos.CENTER
-        children.addAll(elements)
     }
 
     fun add(vararg elements: Linkable) {
@@ -51,5 +44,12 @@ class AttributeRow : HBox {
                 children.add(element)
         }
         linkableList.addAll(elements)
+    }
+
+    init {
+        prefWidth = 280.0
+        padding = Insets(5.0, 10.0, 5.0, 10.0)
+        alignment = Pos.CENTER
+        children.addAll(elements)
     }
 }

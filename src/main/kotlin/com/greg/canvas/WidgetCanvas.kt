@@ -6,16 +6,13 @@ import com.greg.controller.Controller
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 
-class WidgetCanvas {
+class WidgetCanvas(private var controller: Controller) {
 
-    var canvasPane: Pane
+    var canvasPane: Pane = controller.widgetCanvas
     private var selectionControl = SelectionController(this)
     var selectionGroup = SelectionGroup(this)
-    private var controller: Controller
 
-    constructor(controller: Controller) {
-        this.controller = controller
-        this.canvasPane = controller.widgetCanvas
+    init {
         // Mouse events
         // ------------------------------------------------------------------------------
         controller.widgetCanvas.addEventFilter<MouseEvent>(MouseEvent.ANY, { e -> handleMouseEvent(e) })
@@ -33,7 +30,6 @@ class WidgetCanvas {
     fun refreshSelection() {
         controller.attributes.reload()
     }
-
 
     fun refreshPosition() {
         controller.attributes.refresh()

@@ -10,40 +10,36 @@ import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import kotlin.reflect.KClass
 
-class AttributeGroup : VBox {
+class AttributeGroup//Separator
 
-    var widgetClass: KClass<out WidgetInterface>?
+//Title
+
+//Separator
+(text: String?, widget: KClass<out WidgetInterface>?) : VBox() {
+
+    var widgetClass: KClass<out WidgetInterface>? = widget
     val properties = mutableListOf<AttributeRow>()
-
-    constructor(text: String?, widget: KClass<out WidgetInterface>?) {
-        prefWidth = 278.0
-        HBox.setHgrow(this, Priority.ALWAYS)
-        this.widgetClass = widget
-
-
-        //Separator
-        var separator = Separator()
-        separator.orientation = Orientation.HORIZONTAL
-        children.add(separator)
-
-        //Title
-        var title = Label(text)
-        title.prefWidth = 278.0
-        title.alignment = Pos.CENTER
-        children.add(title)
-
-        //Separator
-        separator = Separator()
-        separator.orientation = Orientation.HORIZONTAL
-        children.add(separator)
-    }
 
     fun add(vararg attributeRow: AttributeRow) {
         properties.addAll(attributeRow)
         children.addAll(attributeRow)
     }
 
-    fun size(): Int {
-        return properties.size
+    init {
+        prefWidth = 278.0
+        HBox.setHgrow(this, Priority.ALWAYS)
+
+        var separator = Separator()
+        separator.orientation = Orientation.HORIZONTAL
+        children.add(separator)
+
+        val title = Label(text)
+        title.prefWidth = 278.0
+        title.alignment = Pos.CENTER
+        children.add(title)
+
+        separator = Separator()
+        separator.orientation = Orientation.HORIZONTAL
+        children.add(separator)
     }
 }

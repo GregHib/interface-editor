@@ -7,19 +7,16 @@ import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 
-class TextFieldAttribute : TextField, Linkable {
+class TextFieldAttribute(private var default: String?) : TextField(), Linkable {
 
     override var links: MutableList<(value: Any?) -> Unit> = mutableListOf()
-    private var default: String?
 
-    constructor(default: String?) {
-        this.default = default
-        this.text = default
+    init {
+        text = default
 
         // Key press
         // ---------------------------------------------------------------
         addEventFilter<KeyEvent>(KeyEvent.ANY, { e -> handleKeyEvent(e)})
-
 
         // Focus listener
         // ---------------------------------------------------------------
@@ -41,7 +38,7 @@ class TextFieldAttribute : TextField, Linkable {
 
     private fun handleFocusListener(focused: Boolean) {
         if(!focused) {
-            if(Settings.getBoolean(SettingsKey.CANCEL_ON_DEFOCUS))
+            if(Settings.getBoolean(SettingsKey.CANCEL_ON_UNFOCUSED))
                 cancel()
             else
                 accept(text)
@@ -49,6 +46,7 @@ class TextFieldAttribute : TextField, Linkable {
     }
 
     override fun refresh(value: Any?) {
+        println("Refresh $value")
         this.text = value as String
     }
 
@@ -63,8 +61,6 @@ class TextFieldAttribute : TextField, Linkable {
     }
 
     override fun link(action: (value: Any?) -> Unit) {
-        if(action !is (value: String?) -> Unit)
-            throw UnsupportedOperationException()
         this.links.add(action)
     }
 }

@@ -1,15 +1,15 @@
 package com.greg.canvas.widget
 
-import com.greg.panels.attributes.parts.pane.AttributePaneType
 import com.greg.panels.attributes.Attribute
 import com.greg.panels.attributes.AttributeType
+import com.greg.panels.attributes.parts.pane.AttributePaneType
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.scene.shape.Rectangle
 
 class WidgetRectangle(x: Double, y: Double, width: Double, height: Double) : Rectangle(x, y, width, height), WidgetInterface {
 
-    var properties = mutableListOf<Attribute>()
+    private var properties = mutableListOf<Attribute>()
 
     init {
         stroke = Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR)
@@ -18,7 +18,7 @@ class WidgetRectangle(x: Double, y: Double, width: Double, height: Double) : Rec
         properties.add(Attribute("Height", "heightProperty", AttributeType.NUMBER_FIELD, this::class))
     }
 
-    override fun getProperties(type: AttributePaneType): List<Attribute>? {
+    override fun getAttributes(type: AttributePaneType): List<Attribute>? {
         if(type == AttributePaneType.PROPERTIES)
             return properties
         return null

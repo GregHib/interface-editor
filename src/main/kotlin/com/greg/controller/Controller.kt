@@ -27,7 +27,7 @@ class Controller : Initializable {
      *
      * https://gyazo.com/407615643f5a46f34ee82f60252ec86e
      *
-     * On double click on a widget deselect all but that ( and black out rest of canvas? ) display stretching/rotation (photoshop crop like) - enter to finish/ esc to cancel
+     * On double click on a widget deselect all but that ( and black out rest of canvas? ) display stretching/rotation (photo shop crop like) - enter to finish/ esc to cancel
      *
      * Widget x/y which get's the widget location relative to the canvas: will be needed for saving. Might need canvas as a parameter
      *
@@ -73,14 +73,14 @@ class Controller : Initializable {
 
     @FXML
     fun createRectangle() {
-        var rectangle = Widget()
+        val rectangle = Widget()
         widgetCanvas.children.add(rectangle)
     }
 
     @FXML
     fun createText() {
-        var widget = Widget()
-        var text = WidgetText(Settings.get(SettingsKey.DEFAULT_TEXT_MESSAGE), Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR))
+        val widget = Widget()
+        val text = WidgetText(Settings.get(SettingsKey.DEFAULT_TEXT_MESSAGE), Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR))
         widget.add(text)
         widgetCanvas.children.add(widget)
     }
