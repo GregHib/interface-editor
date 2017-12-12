@@ -1,31 +1,15 @@
 package com.greg.canvas.widget
 
-import com.greg.canvas.DragModel
 import com.greg.panels.attributes.Attribute
 import com.greg.panels.attributes.AttributeType
 import com.greg.panels.attributes.parts.AttributeGroup
 import com.greg.panels.attributes.parts.AttributeRow
 import com.greg.panels.attributes.parts.pane.AttributePaneType
-import javafx.scene.Group
 import javafx.scene.paint.Color
 
-class Widget : Group, WidgetInterface {
+class Widget(builder: WidgetBuilder) : WidgetData(builder),  WidgetInterface {
 
-    constructor(builder: WidgetBuilder) {
-        components.add(this)
-
-        for (component in builder.components) {
-            if (component is WidgetInterface)
-                components.add(component)
-            children.add(component)
-            setWidth(component.layoutBounds.width)
-            setHeight(component.layoutBounds.height)
-        }
-    }
-
-    private var components = mutableListOf<WidgetInterface>()
-    var attributes = mutableListOf<Attribute>()
-    lateinit var drag: DragModel
+    private var attributes = mutableListOf<Attribute>()
 
     init {
         attributes.add(Attribute("Location X", "layoutXProperty", AttributeType.NUMBER_FIELD, this::class))
@@ -35,25 +19,6 @@ class Widget : Group, WidgetInterface {
     override fun getAttributes(type: AttributePaneType): List<Attribute>? {
         return if(type == AttributePaneType.LAYOUT) attributes else null
     }
-
-    private fun setWidth(width: Double) {
-        val component = components[1]
-        if (component is WidgetRectangle)
-            component.width = width
-    }
-
-    private fun setHeight(height: Double) {
-        val component = components[1]
-        if (component is WidgetRectangle)
-            component.height = height
-    }
-
-    fun setSelection(colour: Color?) {
-        val component = components[1]
-        if (component is WidgetRectangle)
-            component.stroke = colour
-    }
-
 
     /**
      * Attribute refreshing
@@ -103,7 +68,6 @@ class Widget : Group, WidgetInterface {
     /**
      * Group creation
      */
-
     fun getGroups(type: AttributePaneType): List<AttributeGroup>? {
         val list = mutableListOf<AttributeGroup>()
         for (component in components) {

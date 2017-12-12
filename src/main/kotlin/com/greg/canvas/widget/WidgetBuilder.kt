@@ -6,6 +6,10 @@ class WidgetBuilder {
 
     var components = mutableListOf<Node>()
 
+    init {
+        addRectangle()
+    }
+
     fun build(): Widget {
         return Widget(this)
     }

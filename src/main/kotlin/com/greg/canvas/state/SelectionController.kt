@@ -82,39 +82,40 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
         //If has items selected
         if (canvas.selectionGroup.size() > 0) {
             //Set info needed for drag just in case dragging occurs
-            canvas.selectionGroup.getGroup().forEach { n ->
+            canvas.selectionGroup.getGroup().forEach { widget ->
                 //save the offset of the shapes position relative to the mouse click
-                val offsetX = canvas.canvasPane.localToScene(n.boundsInParent).minX - event.sceneX
-                val offsetY = canvas.canvasPane.localToScene(n.boundsInParent).minY - event.sceneY
-                n.drag = DragModel(offsetX, offsetY)
+                val offsetX = canvas.canvasPane.localToScene(widget.boundsInParent).minX - event.sceneX
+                val offsetY = canvas.canvasPane.localToScene(widget.boundsInParent).minY - event.sceneY
+                widget.drag = DragModel(offsetX, offsetY)
             }
         }
     }
 
     private fun dragSelection(event: MouseEvent) {
-        val widget = getWidget(event.target)
-        if (widget != null && canvas.selectionGroup.contains(widget)) {
-            canvas.selectionGroup.getGroup().forEach { n ->
+        val widgetTarget = getWidget(event.target)
+        if (widgetTarget != null && canvas.selectionGroup.contains(widgetTarget)) {
+            canvas.selectionGroup.getGroup().forEach { widget ->
+
                 //Bounds of the container
                 val bounds = canvas.canvasPane.localToScene(canvas.canvasPane.layoutBounds)//TODO what's the difference between this and getCanvasX/Y
 
                 //The actual positioning of the shape relative to the container
-                var x = event.sceneX - bounds.minX + n.drag.offsetX!!
-                var y = event.sceneY - bounds.minY + n.drag.offsetY!!
+                var x = event.sceneX - bounds.minX + widget.drag!!.offsetX!!
+                var y = event.sceneY - bounds.minY + widget.drag!!.offsetY!!
 
                 //Size of shape
-                val width = n.layoutBounds.width
-                val height = n.layoutBounds.height
+                val width = widget.layoutBounds.width
+                val height = widget.layoutBounds.height
 
                 //Constrain position to within the container
                 x = constrain(x, bounds.width - width)
                 y = constrain(y, bounds.height - height)
 
                 //Move
-                n.relocate(x, y)
+                widget.relocate(x, y)
 
                 //Display in front
-                n.toFront()
+                widget.toFront()
 
                 //Refresh
                 canvas.refreshPosition()

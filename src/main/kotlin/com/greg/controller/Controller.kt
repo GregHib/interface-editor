@@ -72,15 +72,12 @@ class Controller : Initializable {
 
     @FXML
     fun createRectangle() {
-        val builder = WidgetBuilder()
-        builder.addRectangle()
-        widgetCanvas.children.add(builder.build())
+        widgetCanvas.children.add(WidgetBuilder().build())
     }
 
     @FXML
     fun createText() {
         val builder = WidgetBuilder()
-        builder.addRectangle()
         builder.addText()
         widgetCanvas.children.add(builder.build())
     }
