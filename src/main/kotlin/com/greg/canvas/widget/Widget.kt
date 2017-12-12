@@ -6,18 +6,22 @@ import com.greg.panels.attributes.AttributeType
 import com.greg.panels.attributes.parts.AttributeGroup
 import com.greg.panels.attributes.parts.AttributeRow
 import com.greg.panels.attributes.parts.pane.AttributePaneType
-import com.greg.settings.Settings
-import com.greg.settings.SettingsKey
-import javafx.beans.value.WritableValue
 import javafx.scene.Group
-import javafx.scene.Node
 import javafx.scene.paint.Color
-import kotlin.reflect.KCallable
-import kotlin.reflect.KClass
-import kotlin.reflect.full.memberFunctions
-import kotlin.reflect.full.memberProperties
 
-class Widget(vararg component: Node) : Group(), WidgetInterface {
+class Widget : Group, WidgetInterface {
+
+    constructor(builder: WidgetBuilder) {
+        components.add(this)
+
+        for (component in builder.components) {
+            if (component is WidgetInterface)
+                components.add(component)
+            children.add(component)
+            setWidth(component.layoutBounds.width)
+            setHeight(component.layoutBounds.height)
+        }
+    }
 
     private var components = mutableListOf<WidgetInterface>()
     var attributes = mutableListOf<Attribute>()
@@ -28,36 +32,8 @@ class Widget(vararg component: Node) : Group(), WidgetInterface {
         attributes.add(Attribute("Location Y", "layoutYProperty", AttributeType.NUMBER_FIELD, this::class))
     }
 
-    init {
-        components.add(this)
-        val rectangle = WidgetRectangle(Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_WIDTH), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_HEIGHT))
-        components.add(rectangle)
-        children.add(rectangle)
-        for (com in component)
-            add(com)
-    }
-
-    companion object {
-        fun get(name: String, widget: KClass<WidgetInterface>, function: Boolean): KCallable<*> {
-            return if(function)
-                widget.memberFunctions.first { it.name == name }
-            else
-                widget.memberProperties.first { it.name == name }
-        }
-    }
-
     override fun getAttributes(type: AttributePaneType): List<Attribute>? {
         return if(type == AttributePaneType.LAYOUT) attributes else null
-    }
-
-    fun add(vararg node: Node) {
-        for (n in node) {
-            if (n is WidgetInterface)
-                components.add(n)
-            children.add(n)
-            setWidth(n.layoutBounds.width)
-            setHeight(n.layoutBounds.height)
-        }
     }
 
     private fun setWidth(width: Double) {
@@ -97,7 +73,7 @@ class Widget(vararg component: Node) : Group(), WidgetInterface {
                 ?.forEachIndexed { index, property ->
             //Refresh property with the current value
             val propertyRow = group.properties[index]
-            propertyRow.linkableList.last().refresh((property.reflection.call(widget) as WritableValue<*>).value)
+            propertyRow.linkableList.last().refresh(property.getValue(widget))
         }
     }
 

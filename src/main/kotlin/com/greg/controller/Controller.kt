@@ -2,11 +2,8 @@ package com.greg.controller
 
 import com.greg.App
 import com.greg.canvas.WidgetCanvas
-import com.greg.canvas.widget.Widget
-import com.greg.canvas.widget.WidgetText
+import com.greg.canvas.widget.WidgetBuilder
 import com.greg.panels.attributes.parts.AttributesPanel
-import com.greg.settings.Settings
-import com.greg.settings.SettingsKey
 import javafx.animation.PauseTransition
 import javafx.application.Platform
 import javafx.concurrent.Task
@@ -26,6 +23,8 @@ class Controller : Initializable {
      * Ideas
      *
      * https://gyazo.com/407615643f5a46f34ee82f60252ec86e
+     *
+     * classType can probably be removed with all the this::class's for creating attributes as you can get the type directly from the widget
      *
      * On double click on a widget deselect all but that ( and black out rest of canvas? ) display stretching/rotation (photo shop crop like) - enter to finish/ esc to cancel
      *
@@ -73,16 +72,17 @@ class Controller : Initializable {
 
     @FXML
     fun createRectangle() {
-        val rectangle = Widget()
-        widgetCanvas.children.add(rectangle)
+        val builder = WidgetBuilder()
+        builder.addRectangle()
+        widgetCanvas.children.add(builder.build())
     }
 
     @FXML
     fun createText() {
-        val widget = Widget()
-        val text = WidgetText(Settings.get(SettingsKey.DEFAULT_TEXT_MESSAGE), Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR))
-        widget.add(text)
-        widgetCanvas.children.add(widget)
+        val builder = WidgetBuilder()
+        builder.addRectangle()
+        builder.addText()
+        widgetCanvas.children.add(builder.build())
     }
 
     @FXML
