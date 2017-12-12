@@ -2,7 +2,7 @@ package com.greg.controller
 
 import com.greg.App
 import com.greg.canvas.WidgetCanvas
-import com.greg.canvas.widget.WidgetBuilder
+import com.greg.canvas.widget.*
 import com.greg.panels.attributes.parts.AttributesPanel
 import javafx.animation.PauseTransition
 import javafx.application.Platform
@@ -15,6 +15,9 @@ import javafx.scene.layout.Pane
 import javafx.util.Duration
 import java.net.URL
 import java.util.*
+import kotlin.reflect.KClass
+import kotlin.reflect.full.memberFunctions
+import kotlin.reflect.full.memberProperties
 
 class Controller : Initializable {
 
@@ -58,8 +61,19 @@ class Controller : Initializable {
     lateinit var attributes: AttributesPanel
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        val start = System.currentTimeMillis()
+        preload(WidgetText::class)
+        preload(WidgetRectangle::class)
+        preload(Widget::class)
+        println("Preload complete in ${System.currentTimeMillis() - start}ms")
+
         canvas = WidgetCanvas(this)
         attributes = AttributesPanel(this)
+    }
+
+    private fun preload(kClass: KClass<out AttributeWidget>) {
+        kClass.memberFunctions
+        kClass.memberProperties
     }
 
     @FXML
