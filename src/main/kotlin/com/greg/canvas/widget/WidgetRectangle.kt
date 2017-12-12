@@ -18,9 +18,7 @@ class WidgetRectangle : Rectangle, WidgetInterface {
         properties.add(Attribute("Height", "heightProperty", AttributeType.NUMBER_FIELD, this::class))
     }
 
-    constructor(x: Double, y: Double, width: Double, height: Double) : super (x, y, width, height)
-
-    constructor() : super(Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_WIDTH), Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_HEIGHT))
+    constructor(x: Double = Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), y: Double = Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), width: Double = Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_WIDTH), height: Double = Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_HEIGHT)) : super (x, y, width, height)
 
     override fun getAttributes(type: AttributePaneType): List<Attribute>? {
         if(type == AttributePaneType.PROPERTIES)

@@ -8,14 +8,10 @@ import javafx.scene.layout.AnchorPane
 class AttributePane(title: String, type: AttributePaneType) : TitledPane() {
 
     var groups: List<AttributeGroup>? = null
-    var paneType: AttributePaneType = type
+    var type: AttributePaneType = type
 
     fun getPane(): AnchorPane {
         return content as AnchorPane
-    }
-
-    fun getType(): AttributePaneType {
-        return paneType
     }
 
     init {

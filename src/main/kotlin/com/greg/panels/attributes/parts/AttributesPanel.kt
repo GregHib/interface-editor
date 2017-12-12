@@ -18,11 +18,9 @@ class AttributesPanel(private var controller: Controller) {
     }
 
     fun refresh() {
-        val group = controller.canvas.selectionGroup.getGroup()
-
         controller.attributesPanel.panes
                 .filterIsInstance<AttributePane>()
-                .forEach { refresh(it, group) }
+                .forEach { refresh(it, controller.canvas.selectionGroup.getGroup()) }
 
     }
 
@@ -40,18 +38,15 @@ class AttributesPanel(private var controller: Controller) {
 
     private fun refreshValues(pane: AttributePane, widgets: MutableSet<Widget>) {
         //Link all selected objects to the property groups
-        if(pane.groups != null) {
-            for(widget in widgets) {
-                widget.refresh(layout.groups!!, pane.paneType)
-            }
-        }
+        if(pane.groups != null)
+            for(widget in widgets)
+                widget.refresh(layout.groups!!, pane.type)
     }
 
     fun reload() {
-        val group = controller.canvas.selectionGroup.getGroup()
         controller.attributesPanel.panes
                 .filterIsInstance<AttributePane>()
-                .forEach { reload(it, group) }
+                .forEach { pane -> reload(pane, controller.canvas.selectionGroup.getGroup()) }
     }
 
     private fun reload(pane: AttributePane, widgets: MutableSet<Widget>) {
@@ -77,16 +72,14 @@ class AttributesPanel(private var controller: Controller) {
         //First object will always be correct as selection is either 1 or of all the same type
         if(pane.groups == null) {
             val box = VBox()
-            pane.groups = widgets.first().getGroups(pane.getType())
+            pane.groups = widgets.first().getGroups(pane.type)
             box.children.addAll(pane.groups!!)
             pane.getPane().children.addAll(box)
         }
 
         //Link all selected objects to the property groups
-        if(pane.groups != null) {
-            for(widget in widgets) {
-                widget.link(pane.groups!!, pane.paneType)
-            }
-        }
+        if(pane.groups != null)
+            for(widget in widgets)
+                widget.link(pane)
     }
 }

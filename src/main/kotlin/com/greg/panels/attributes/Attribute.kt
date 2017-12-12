@@ -11,8 +11,6 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
 class Attribute(val title: String, name: String, val type: AttributeType, widget: KClass<out WidgetInterface>) {
-
-    val widgetClass: KClass<out WidgetInterface> = widget
     private val reflection: KCallable<WidgetInterface>
     private val function: Boolean = name.endsWith("Property")
 
@@ -41,6 +39,6 @@ class Attribute(val title: String, name: String, val type: AttributeType, widget
     }
 
     override fun toString(): String {
-        return "$title $type $widgetClass"
+        return "$title $type"
     }
 }

@@ -46,7 +46,6 @@ class TextFieldAttribute(private var default: String?) : TextField(), Linkable {
     }
 
     override fun refresh(value: Any?) {
-        println("Refresh $value")
         this.text = value as String
     }
 

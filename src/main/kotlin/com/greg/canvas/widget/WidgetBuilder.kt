@@ -4,7 +4,7 @@ import javafx.scene.Node
 
 class WidgetBuilder {
 
-    var components = mutableListOf<Node>()
+    val components = mutableListOf<Node>()
 
     init {
         addRectangle()
@@ -14,7 +14,7 @@ class WidgetBuilder {
         return Widget(this)
     }
 
-    fun addRectangle() {
+    private fun addRectangle() {
         components.add(WidgetRectangle())
     }
 

@@ -13,19 +13,15 @@ import javafx.scene.text.Text
 class WidgetText : Text, WidgetInterface {
 
     private var properties = mutableListOf<Attribute>()
-    private var colour: Color? = null
 
     init {
         properties.add(Attribute("Message", "message", AttributeType.TEXT_FIELD, this::class))
         properties.add(Attribute("Text Colour", "strokeProperty", AttributeType.COLOUR_PICKER, this::class))
     }
 
-    constructor() {
-        WidgetText(Settings.get(SettingsKey.DEFAULT_TEXT_MESSAGE), Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR))
-    }
-
-    constructor(string: String?, colour: Color?) : super(string) {
-        this.colour = colour
+    constructor(string: String? = Settings.get(SettingsKey.DEFAULT_TEXT_MESSAGE), colour: Color? = Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR)) : super(string) {
+        stroke = colour as Paint
+        textOrigin = VPos.TOP
     }
 
 
@@ -47,11 +43,6 @@ class WidgetText : Text, WidgetInterface {
         if(type == AttributePaneType.PROPERTIES)
             return properties
         return null
-    }
-
-    init {
-        stroke = colour as Paint
-        textOrigin = VPos.TOP
     }
 
 }

@@ -11,12 +11,13 @@ open class WidgetData: Group {
     var drag: DragModel? = null
 
     constructor(builder: WidgetBuilder) {
-        //Add widget it's self as an attribute component
-        add(this.parent)
-
         //Add all the rest, default just rectangle
         for (component in builder.components)
             add(component)
+    }
+
+    protected fun addToStart(component: WidgetInterface) {
+        components.add(0, component)
     }
 
     protected fun add(component: Node) {
@@ -40,6 +41,9 @@ open class WidgetData: Group {
     }
 
     private fun getRectangle(): WidgetRectangle? {
+        if(components.size <= 1)
+            return null
+
         val component = components[1]
         if (component is WidgetRectangle)
             return component
