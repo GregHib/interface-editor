@@ -84,8 +84,8 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
             //Set info needed for drag just in case dragging occurs
             canvas.selectionGroup.getGroup().forEach { widget ->
                 //save the offset of the shapes position relative to the mouse click
-                val offsetX = canvas.canvasPane.localToScene(widget.boundsInParent).minX - event.sceneX
-                val offsetY = canvas.canvasPane.localToScene(widget.boundsInParent).minY - event.sceneY
+                val offsetX = canvas.canvasPane.localToScene(widget.getNode().boundsInParent).minX - event.sceneX
+                val offsetY = canvas.canvasPane.localToScene(widget.getNode().boundsInParent).minY - event.sceneY
                 widget.drag = DragModel(offsetX, offsetY)
             }
         }
@@ -104,18 +104,18 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
                 var y = event.sceneY - bounds.minY + widget.drag!!.offsetY!!
 
                 //Size of shape
-                val width = widget.layoutBounds.width
-                val height = widget.layoutBounds.height
+                val width = widget.getNode().layoutBounds.width
+                val height = widget.getNode().layoutBounds.height
 
                 //Constrain position to within the container
                 x = constrain(x, bounds.width - width)
                 y = constrain(y, bounds.height - height)
 
                 //Move
-                widget.relocate(x, y)
+                widget.getNode().relocate(x, y)
 
                 //Display in front
-                widget.toFront()
+                widget.getNode().toFront()
 
                 //Refresh
                 canvas.refreshPosition()

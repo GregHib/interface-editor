@@ -1,11 +1,14 @@
 package com.greg.canvas.widget
 
 import com.greg.canvas.DragModel
-import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.paint.Color
 
-open class WidgetData: Group {
+abstract class WidgetData: AttributeWidget {
+
+    override fun getNode(): Node {
+        return this
+    }
 
     var components = mutableListOf<WidgetInterface>()
     var drag: DragModel? = null
@@ -20,24 +23,23 @@ open class WidgetData: Group {
         components.add(0, component)
     }
 
-    protected fun add(component: Node) {
-        if (component is WidgetInterface)
-            components.add(component)
-        children.add(component)
-        setWidth(component.layoutBounds.width)
-        setHeight(component.layoutBounds.height)
+    protected fun add(component: AttributeWidget) {
+        components.add(component)
+        children.add(component.getNode())
+        setWidth(component.getNode().layoutBounds.width)
+        setHeight(component.getNode().layoutBounds.height)
     }
 
     private fun setWidth(width: Double) {
-        getRectangle()?.width = width
+        getRectangle()?.getRectangle()?.width = width
     }
 
     private fun setHeight(height: Double) {
-        getRectangle()?.height = height
+        getRectangle()?.getRectangle()?.height = height
     }
 
     fun setSelection(colour: Color?) {
-        getRectangle()?.stroke = colour
+        getRectangle()?.getRectangle()?.stroke = colour
     }
 
     private fun getRectangle(): WidgetRectangle? {

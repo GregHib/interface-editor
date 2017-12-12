@@ -1,10 +1,8 @@
 package com.greg.canvas.widget
 
-import javafx.scene.Node
-
 class WidgetBuilder {
 
-    val components = mutableListOf<Node>()
+    val components = mutableListOf<AttributeWidget>()
 
     init {
         addRectangle()

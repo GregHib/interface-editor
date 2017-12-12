@@ -7,18 +7,12 @@ import com.greg.panels.attributes.parts.AttributeRowBuilder
 import com.greg.panels.attributes.parts.pane.AttributePane
 import com.greg.panels.attributes.parts.pane.AttributePaneType
 
-class Widget(builder: WidgetBuilder) : WidgetData(builder), WidgetInterface {
-
-    private val attributes = mutableListOf<Attribute>()
+class Widget(builder: WidgetBuilder) : WidgetData(builder) {
 
     init {
         addToStart(this)
-        attributes.add(Attribute("Location X", "layoutXProperty", AttributeType.NUMBER_FIELD, this::class))
-        attributes.add(Attribute("Location Y", "layoutYProperty", AttributeType.NUMBER_FIELD, this::class))
-    }
-
-    override fun getAttributes(type: AttributePaneType): List<Attribute>? {
-        return if (type == AttributePaneType.LAYOUT) attributes else null
+        attributes.addLayout("Location X", "layoutXProperty", AttributeType.NUMBER_FIELD)
+        attributes.addLayout("Location Y", "layoutYProperty", AttributeType.NUMBER_FIELD)
     }
 
     /**
@@ -28,15 +22,15 @@ class Widget(builder: WidgetBuilder) : WidgetData(builder), WidgetInterface {
     fun refresh(groups: List<AttributeGroup>, type: AttributePaneType) {
         for (group in groups) {
             components
-                    .filter { group.widgetClass == it::class }
-                    .forEach { refreshGroup(group, it, type) }
+                    .filter { widget -> group.widgetClass == widget::class }
+                    .forEach { widget -> refreshGroup(group, widget, type) }
         }
     }
 
     private fun refreshGroup(group: AttributeGroup, widget: WidgetInterface, type: AttributePaneType) {
         widget.getAttributes(type)?.forEachIndexed { index, property ->
             //Refresh property with the current value
-            val propertyRow = group.properties[index]
+            val propertyRow = group.rows[index]
             propertyRow.linkableList.last().refresh(property.getValue(widget))
         }
     }
@@ -57,7 +51,7 @@ class Widget(builder: WidgetBuilder) : WidgetData(builder), WidgetInterface {
     private fun linkGroup(group: AttributeGroup, widget: WidgetInterface, type: AttributePaneType) {
         widget.getAttributes(type)?.forEachIndexed { index, property ->
             //Add this widget to the list of outputs for the property row
-            val propertyRow = group.properties[index]
+            val propertyRow = group.rows[index]
             propertyRow.linkableList.last().link({ value -> property.setValue(widget, value) })
         }
     }
@@ -69,26 +63,24 @@ class Widget(builder: WidgetBuilder) : WidgetData(builder), WidgetInterface {
         val list = mutableListOf<AttributeGroup>()
         for (component in components) {
             val attributes = component.getAttributes(type)
-            if (attributes != null)
+            if (attributes != null && attributes.isNotEmpty())
                 list.add(createGroup(component::class.simpleName!!, component, attributes))
         }
         return list
     }
 
-    private fun createGroup(name: String, widget: WidgetInterface, attributes: List<Attribute>?): AttributeGroup {
+    private fun createGroup(name: String, widget: WidgetInterface, attributes: List<Attribute>): AttributeGroup {
         //Create a new group
         val group = AttributeGroup(name, widget::class)
 
-        if (attributes != null) {
-            for (attribute in attributes) {
-                //Get the attribute's current value via reflection
-                val value = attribute.getValue(widget)
+        for (attribute in attributes) {
+            //Get the attribute's current value via reflection
+            val value = attribute.getValue(widget)
 
-                //Create and add row
-                val builder = AttributeRowBuilder(attribute.title)
-                builder.addAttribute(attribute.type, value)
-                group.add(builder.build())
-            }
+            //Create and add row
+            val builder = AttributeRowBuilder(attribute.title)
+            builder.addAttribute(attribute.type, value)
+            group.add(builder.build())
         }
 
         return group

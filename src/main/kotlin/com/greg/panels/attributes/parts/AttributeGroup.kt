@@ -13,11 +13,11 @@ import kotlin.reflect.KClass
 class AttributeGroup(text: String?, widget: KClass<out WidgetInterface>?) : VBox() {
 
     var widgetClass: KClass<out WidgetInterface>? = widget
-    val properties = mutableListOf<AttributeRow>()
+    val rows = mutableListOf<AttributeRow>()
 
-    fun add(vararg attributeRow: AttributeRow) {
-        properties.addAll(attributeRow)
-        children.addAll(attributeRow)
+    fun add(row: AttributeRow) {
+        rows.add(row)
+        children.add(row)
     }
 
     init {
