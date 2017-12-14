@@ -25,7 +25,13 @@ class Controller : Initializable {
     /**
      * Ideas
      *
+     * TODO fix/make sure that a rectangle at 10,10 is displayed at exactly 10,10. If size is 50 it is exactly 50px's wide, isn't blurred lines & matches width in attributes
+     *
      * https://gyazo.com/407615643f5a46f34ee82f60252ec86e
+     *
+     * Deleting objects
+     *
+     * Copying existing objects
      *
      * classType can probably be removed with all the this::class's for creating attributes as you can get the type directly from the widget
      *

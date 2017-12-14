@@ -5,14 +5,16 @@ import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.scene.Node
 import javafx.scene.shape.Rectangle
+import javafx.scene.shape.StrokeType
 
 class WidgetRectangle : AttributeWidget {
 
     private val rectangle: Rectangle
 
-    constructor(x: Double = Settings.getDouble(SettingsKey.DEFAULT_POSITION_X) + 0.5, y: Double = Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y) + 0.5, width: Double = Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_WIDTH) - 1, height: Double = Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_HEIGHT) - 1) {
+    constructor(x: Double = Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), y: Double = Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), width: Double = Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_WIDTH), height: Double = Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_HEIGHT)) {
         rectangle = Rectangle(x, y, width, height)
         rectangle.stroke = Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR)
+        rectangle.strokeType = StrokeType.INSIDE
 
         attributes.addProperty("Background fill", "fillProperty", AttributeType.COLOUR_PICKER)
         attributes.addProperty("Width", "widthProperty", AttributeType.NUMBER_FIELD)

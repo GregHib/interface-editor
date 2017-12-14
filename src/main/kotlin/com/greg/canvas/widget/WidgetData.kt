@@ -41,7 +41,6 @@ abstract class WidgetData: AttributeWidget {
     }
 
     fun getRectangle(): WidgetRectangle {
-        println(components)
         return components[1] as WidgetRectangle
     }
 
