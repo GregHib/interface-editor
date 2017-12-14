@@ -26,30 +26,23 @@ abstract class WidgetData: AttributeWidget {
     protected fun add(component: AttributeWidget) {
         components.add(component)
         children.add(component.getNode())
-        setWidth(component.getNode().layoutBounds.width)
-        setHeight(component.getNode().layoutBounds.height)
     }
 
     private fun setWidth(width: Double) {
-        getRectangle()?.getRectangle()?.width = width
+        getRectangle().getRectangle()?.width = width
     }
 
     private fun setHeight(height: Double) {
-        getRectangle()?.getRectangle()?.height = height
+        getRectangle().getRectangle()?.height = height
     }
 
     fun setSelection(colour: Color?) {
-        getRectangle()?.getRectangle()?.stroke = colour
+        getRectangle().getRectangle()?.stroke = colour
     }
 
-    private fun getRectangle(): WidgetRectangle? {
-        if(components.size <= 1)
-            return null
-
-        val component = components[1]
-        if (component is WidgetRectangle)
-            return component
-        return null
+    fun getRectangle(): WidgetRectangle {
+        println(components)
+        return components[1] as WidgetRectangle
     }
 
 }

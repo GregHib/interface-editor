@@ -1,6 +1,7 @@
 package com.greg.canvas
 
 import com.greg.canvas.selection.SelectionGroup
+import com.greg.canvas.state.PaneController
 import com.greg.canvas.state.SelectionController
 import com.greg.controller.Controller
 import javafx.scene.input.MouseEvent
@@ -9,7 +10,7 @@ import javafx.scene.layout.Pane
 class WidgetCanvas(private var controller: Controller) {
 
     var canvasPane: Pane = controller.widgetCanvas
-    private var selectionControl = SelectionController(this)
+    var selectionControl: PaneController = SelectionController(this)
     var selectionGroup = SelectionGroup(this)
 
     init {
