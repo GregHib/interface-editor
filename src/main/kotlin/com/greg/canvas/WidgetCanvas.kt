@@ -34,5 +34,6 @@ class WidgetCanvas(private var controller: Controller) {
 
     fun refreshPosition() {
         controller.attributes.refresh()
+        selectionControl.refresh()
     }
 }

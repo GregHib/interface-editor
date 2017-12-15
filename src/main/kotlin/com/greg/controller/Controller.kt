@@ -25,13 +25,15 @@ class Controller : Initializable {
     /**
      * Ideas
      *
-     * TODO fix/make sure that a rectangle at 10,10 is displayed at exactly 10,10. If size is 50 it is exactly 50px's wide, isn't blurred lines & matches width in attributes
+     * Change refreshPosition to refresh a specific attribute
      *
      * https://gyazo.com/407615643f5a46f34ee82f60252ec86e
      *
      * Deleting objects
      *
      * Copying existing objects
+     *
+     * Send back one, bring forward one, send to back, bring to front (but not in front of edit mode components)
      *
      * classType can probably be removed with all the this::class's for creating attributes as you can get the type directly from the widget
      *
@@ -92,12 +94,12 @@ class Controller : Initializable {
 
     @FXML
     fun createRectangle() {
-        widgetCanvas.children.add(WidgetBuilder().build())
+        widgetCanvas.children.add(WidgetBuilder(canvas).build())
     }
 
     @FXML
     fun createText() {
-        val builder = WidgetBuilder()
+        val builder = WidgetBuilder(canvas)
         builder.addText()
         widgetCanvas.children.add(builder.build())
     }

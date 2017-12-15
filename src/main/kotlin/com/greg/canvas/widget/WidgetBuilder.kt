@@ -1,6 +1,8 @@
 package com.greg.canvas.widget
 
-class WidgetBuilder {
+import com.greg.canvas.WidgetCanvas
+
+class WidgetBuilder(val canvas: WidgetCanvas) {
 
     val components = mutableListOf<AttributeWidget>()
 
@@ -9,7 +11,7 @@ class WidgetBuilder {
     }
 
     fun build(): Widget {
-        return Widget(this)
+        return Widget(this).init(canvas)
     }
 
     private fun addRectangle() {

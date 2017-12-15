@@ -13,4 +13,6 @@ interface PaneController {
     fun handleDoubleClick(event: MouseEvent)
 
     fun handleMouseClick(event: MouseEvent)
+
+    fun refresh()
 }

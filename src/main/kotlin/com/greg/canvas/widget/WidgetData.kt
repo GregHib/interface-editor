@@ -1,6 +1,8 @@
 package com.greg.canvas.widget
 
 import com.greg.canvas.DragModel
+import com.greg.settings.Settings
+import com.greg.settings.SettingsKey
 import javafx.scene.Node
 import javafx.scene.paint.Color
 
@@ -28,11 +30,11 @@ abstract class WidgetData: AttributeWidget {
         children.add(component.getNode())
     }
 
-    private fun setWidth(width: Double) {
+    fun setWidth(width: Double) {
         getRectangle().getRectangle()?.width = width
     }
 
-    private fun setHeight(height: Double) {
+    fun setHeight(height: Double) {
         getRectangle().getRectangle()?.height = height
     }
 
@@ -44,4 +46,12 @@ abstract class WidgetData: AttributeWidget {
         return components[1] as WidgetRectangle
     }
 
+    fun getMinimumWidth(): Double {
+        return Settings.getDouble(SettingsKey.DEFAULT_WIDGET_MINIMUM_WIDTH)
+    }
+
+
+    fun getMinimumHeight(): Double {
+        return Settings.getDouble(SettingsKey.DEFAULT_WIDGET_MINIMUM_HEIGHT)
+    }
 }

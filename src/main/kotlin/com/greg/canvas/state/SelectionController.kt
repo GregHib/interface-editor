@@ -1,7 +1,8 @@
 package com.greg.canvas.state
 
 import com.greg.Utils.Companion.constrain
-import com.greg.canvas.DragModel
+import com.greg.Utils.Companion.moveInCanvas
+import com.greg.Utils.Companion.setWidgetDrag
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.marquee.Marquee
 import com.greg.canvas.widget.Widget
@@ -10,7 +11,6 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Shape
 
 class SelectionController(var canvas: WidgetCanvas) : PaneController {
-
     //TODO I think this can still be split down into more classes
 
     private var marquee = Marquee()
@@ -87,9 +87,7 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
             //Set info needed for drag just in case dragging occurs
             canvas.selectionGroup.getGroup().forEach { widget ->
                 //save the offset of the shapes position relative to the mouse click
-                val offsetX = canvas.canvasPane.localToScene(widget.boundsInParent).minX - event.sceneX
-                val offsetY = canvas.canvasPane.localToScene(widget.boundsInParent).minY - event.sceneY
-                widget.drag = DragModel(offsetX, offsetY)
+                setWidgetDrag(widget, event, canvas)
             }
         }
     }
@@ -98,30 +96,8 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
         val widgetTarget = getWidget(event.target)
         if (widgetTarget != null && canvas.selectionGroup.contains(widgetTarget)) {
             canvas.selectionGroup.getGroup().forEach { widget ->
-
-                //Bounds of the container
-                val bounds = canvas.canvasPane.localToScene(canvas.canvasPane.layoutBounds)//TODO what's the difference between this and getCanvasX/Y
-
-                //The actual positioning of the shape relative to the container
-                var x = event.sceneX - bounds.minX + widget.drag!!.offsetX!!
-                var y = event.sceneY - bounds.minY + widget.drag!!.offsetY!!
-
-                //Size of shape
-                val width = widget.layoutBounds.width
-                val height = widget.layoutBounds.height
-
-                //Constrain position to within the container
-                x = constrain(x, bounds.width - width)
-                y = constrain(y, bounds.height - height)
-
                 //Move
-                widget.relocate(x, y)
-
-                //Display in front
-                widget.toFront()
-
-                //Refresh
-                canvas.refreshPosition()
+                moveInCanvas(event, canvas, widget)
             }
         }
     }
@@ -227,5 +203,8 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
         }
 
         return null
+    }
+
+    override fun refresh() {
     }
 }

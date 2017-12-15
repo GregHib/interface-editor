@@ -1,5 +1,6 @@
 package com.greg.canvas.widget
 
+import com.greg.canvas.WidgetCanvas
 import com.greg.panels.attributes.Attribute
 import com.greg.panels.attributes.AttributeType
 import com.greg.panels.attributes.parts.AttributeGroup
@@ -7,12 +8,20 @@ import com.greg.panels.attributes.parts.AttributeRowBuilder
 import com.greg.panels.attributes.parts.pane.AttributePane
 import com.greg.panels.attributes.parts.pane.AttributePaneType
 
+
+
 class Widget(builder: WidgetBuilder) : WidgetData(builder) {
 
     init {
         addToStart(this)
         attributes.addLayout("Location X", "layoutXProperty", AttributeType.NUMBER_FIELD)
         attributes.addLayout("Location Y", "layoutYProperty", AttributeType.NUMBER_FIELD)
+    }
+
+    fun init(canvas: WidgetCanvas): Widget {
+        layoutXProperty().addListener { _, _, _ -> canvas.refreshPosition() }
+        layoutYProperty().addListener { _, _, _ -> canvas.refreshPosition() }
+        return this
     }
 
     /**
