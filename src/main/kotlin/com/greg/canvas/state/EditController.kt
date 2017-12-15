@@ -119,7 +119,8 @@ class EditController(var canvas: WidgetCanvas, var widget: Widget) : PaneControl
         if (click != null && widget.drag != null) {
             val target = click?.target
             if (target is Stretcher) {
-                val bounds = canvas.canvasPane.localToScene(canvas.canvasPane.layoutBounds)//TODO what's the difference between this and getCanvasX/Y
+                val bounds = canvas.canvasPane.localToScene(canvas.canvasPane.layoutBounds)
+                //TODO combine these into 1 method, handle using Direction.NORTH/SOUTH etc.. when adding.
                 when (tabs.indexOf(target)) {
                     1 -> {//North
                         //The actual positioning of the shape relative to the container

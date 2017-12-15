@@ -111,12 +111,8 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
         if (canvas.canvasPane.children.contains(marquee))
             canvas.canvasPane.children.remove(marquee)
 
-        //calculate the x,y within the widgetCanvas
-        val x = getCanvasX(event)
-        val y = getCanvasY(event)
-
         //create a marquee box
-        marquee.add(x, y)
+        marquee.add(event.x, event.y)
 
         //add to the widgetCanvas
         canvas.canvasPane.children.add(marquee)
@@ -125,21 +121,12 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
     }
 
     private fun drawMarqueeBox(event: MouseEvent) {
-        //get x, y local to widgetCanvas
-        var x = getCanvasX(event)
-        var y = getCanvasY(event)
 
+        //Bounds of the canvas
         val bounds = canvas.canvasPane.localToScene(canvas.canvasPane.layoutBounds)
 
-        val width = bounds.width
-        val height = bounds.height
-
-        //Cap to widgetCanvas size
-        x = constrain(x, width)
-        y = constrain(y, height)
-
-        //draw at that position
-        marquee.draw(x, y)
+        //draw at that position capping to canvas borders
+        marquee.draw(constrain(event.x, bounds.width), constrain(event.y, bounds.height))
 
         event.consume()
     }
@@ -182,14 +169,6 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
     /**
      * Convenience functions
      */
-
-    private fun getCanvasX(event: MouseEvent): Double {
-        return event.sceneX - canvas.canvasPane.localToScene(canvas.canvasPane.boundsInLocal).minX
-    }
-
-    private fun getCanvasY(event: MouseEvent): Double {
-        return event.sceneY - canvas.canvasPane.localToScene(canvas.canvasPane.boundsInLocal).minY
-    }
 
     private fun isMultiSelect(event: MouseEvent): Boolean {
         return event.isShiftDown || event.isControlDown

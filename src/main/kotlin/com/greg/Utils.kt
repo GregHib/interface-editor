@@ -18,11 +18,11 @@ class Utils {
 
         fun moveInCanvas(event: MouseEvent, canvas: WidgetCanvas, widget: Widget) {
             //Bounds of the container
-            val bounds = canvas.canvasPane.localToScene(canvas.canvasPane.layoutBounds)//TODO what's the difference between this and getCanvasX/Y
+            val bounds = canvas.canvasPane.localToScene(canvas.canvasPane.layoutBounds)
 
             //The actual positioning of the shape relative to the container
-            var x = event.sceneX - bounds.minX + widget.drag!!.offsetX!!
-            var y = event.sceneY - bounds.minY + widget.drag!!.offsetY!!
+            var x = event.x + widget.drag!!.offsetX!!
+            var y = event.y + widget.drag!!.offsetY!!
 
             //Size of shape
             val width = widget.layoutBounds.width
@@ -38,6 +38,7 @@ class Utils {
         }
 
         fun setWidgetDrag(widget: Widget, event: MouseEvent, canvas: WidgetCanvas) {
+            //TODO these can be changed
             val offsetX = canvas.canvasPane.localToScene(widget.boundsInParent).minX - event.sceneX
             val offsetY = canvas.canvasPane.localToScene(widget.boundsInParent).minY - event.sceneY
             widget.drag = DragModel(offsetX, offsetY)
