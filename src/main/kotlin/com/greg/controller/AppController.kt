@@ -11,6 +11,7 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Accordion
 import javafx.scene.control.ProgressIndicator
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Pane
 import javafx.util.Duration
 import java.net.URL
@@ -19,13 +20,11 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 
-class Controller : Initializable {
+class AppController : Initializable {
 
 
     /**
      * Ideas
-     *
-     * Change refreshPosition to refresh a specific attribute
      *
      * Resize with shift down resize's relative to start layout 1:1
      *
@@ -84,6 +83,16 @@ class Controller : Initializable {
     private fun preload(kClass: KClass<out AttributeWidget>) {
         kClass.memberFunctions
         kClass.memberProperties
+    }
+
+    @FXML
+    fun handleKeyPress(event: KeyEvent) {
+        canvas.handleKeyPress(event)
+    }
+
+    @FXML
+    fun handleKeyRelease(event: KeyEvent) {
+        canvas.handleKeyRelease(event)
     }
 
     @FXML

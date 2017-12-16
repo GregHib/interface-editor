@@ -9,14 +9,15 @@ import javafx.geometry.Bounds
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
 
-class ResizeController(val canvas: WidgetCanvas, val widget: Widget) {
+class ResizeController(private val canvas: WidgetCanvas, private val widget: Widget) {
 
     private val tabs = TabHandler()
 
     private val rect = widget.getRectangle().getNode() as Rectangle
 
-    var startWidth = rect.layoutBounds.width
-    var startHeight = rect.layoutBounds.height
+    private var startWidth = rect.layoutBounds.width
+    private var startHeight = rect.layoutBounds.height
+    var shift = false
 
     var click: MouseEvent? = null
 
@@ -46,7 +47,10 @@ class ResizeController(val canvas: WidgetCanvas, val widget: Widget) {
         tabs.close()
     }
 
+    //(original height / original width) x new width = new height
+
     fun resize(direction: Direction, event: MouseEvent, bounds: Bounds) {
+
         //If is horizontal aka x not y
         val horizontal = direction == Direction.EAST || direction == Direction.WEST
 
@@ -87,7 +91,6 @@ class ResizeController(val canvas: WidgetCanvas, val widget: Widget) {
         //Maximum bounds
         val bound = if(horizontal) bounds.width else bounds.height
 
-
         var value: Double
         var dimension: Double
 
@@ -115,7 +118,7 @@ class ResizeController(val canvas: WidgetCanvas, val widget: Widget) {
 
             //Constrain the position to the canvas and it's minimum size
             val position = side
-            value = Utils.constrain(position, max)//Min is 0 by default
+            value = Utils.constrain(position, max)
 
             //New width/height = opposite side - current side position
             dimension = opposite - value
@@ -136,6 +139,7 @@ class ResizeController(val canvas: WidgetCanvas, val widget: Widget) {
             //New width/height = original size + difference between original side and current side position (correcting for mouse offset ofc)
             dimension = start + (value - actualOffset - click)
         }
+
 
         // Set
         //---------------------

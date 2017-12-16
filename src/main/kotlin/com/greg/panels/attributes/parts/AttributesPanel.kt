@@ -1,26 +1,26 @@
 package com.greg.panels.attributes.parts
 
 import com.greg.canvas.widget.Widget
-import com.greg.controller.Controller
+import com.greg.controller.AppController
 import com.greg.panels.attributes.parts.pane.AttributePane
 import com.greg.panels.attributes.parts.pane.AttributePaneType
 import javafx.scene.layout.VBox
 
-class AttributesPanel(private var controller: Controller) {
+class AttributesPanel(private var appController: AppController) {
 
     private var properties = AttributePane("Properties", AttributePaneType.PROPERTIES)
     private var layout = AttributePane("Layout", AttributePaneType.LAYOUT)
 
     init {
-        controller.attributesPanel.panes.add(properties)
-        controller.attributesPanel.panes.add(layout)
-        controller.attributesPanel.expandedPane = properties
+        appController.attributesPanel.panes.add(properties)
+        appController.attributesPanel.panes.add(layout)
+        appController.attributesPanel.expandedPane = properties
     }
 
     fun reload() {
-        controller.attributesPanel.panes
+        appController.attributesPanel.panes
                 .filterIsInstance<AttributePane>()
-                .forEach { pane -> reload(pane, controller.canvas.selectionGroup.getGroup()) }
+                .forEach { pane -> reload(pane, appController.canvas.selectionGroup.getGroup()) }
     }
 
     private fun reload(pane: AttributePane, widgets: MutableSet<Widget>) {

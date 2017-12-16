@@ -1,5 +1,6 @@
 package com.greg.canvas.state
 
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 
 interface PaneController {
@@ -13,6 +14,10 @@ interface PaneController {
     fun handleDoubleClick(event: MouseEvent)
 
     fun handleMouseClick(event: MouseEvent)
+
+    fun handleKeyPress(event: KeyEvent)
+
+    fun handleKeyRelease(event: KeyEvent)
 
     fun refresh()
 }

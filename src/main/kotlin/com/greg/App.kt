@@ -19,7 +19,6 @@ class App : Application() {
         mainStage = stage
         val root = FXMLLoader.load<Parent>(javaClass.getResource("/main.fxml"))
         stage.title = "Better interface editor"
-
         stage.scene = Scene(root)
         stage.initStyle(StageStyle.UNDECORATED)
         stage.show()

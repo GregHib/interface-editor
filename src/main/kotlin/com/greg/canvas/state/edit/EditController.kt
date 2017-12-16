@@ -9,6 +9,7 @@ import com.greg.canvas.state.edit.resize.ResizeController
 import com.greg.canvas.state.edit.resize.ResizeTab
 import com.greg.canvas.state.selection.SelectionController
 import com.greg.canvas.widget.Widget
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Path
@@ -32,7 +33,7 @@ class EditController(var canvas: WidgetCanvas, val widget: Widget) : PaneControl
     private fun close() {
         canvas.canvasPane.children.remove(path)
         controller.close()
-        canvas.selectionControl = SelectionController(canvas)
+        canvas.controller = SelectionController(canvas)
     }
 
     override fun handleMousePress(event: MouseEvent) {
@@ -77,8 +78,16 @@ class EditController(var canvas: WidgetCanvas, val widget: Widget) : PaneControl
     override fun handleMouseClick(event: MouseEvent) {
     }
 
+    override fun handleKeyPress(event: KeyEvent) {
+        controller.shift = event.isShiftDown
+    }
+
+    override fun handleKeyRelease(event: KeyEvent) {
+        controller.shift = event.isShiftDown
+    }
+
     override fun refresh() {
-        //Better way rather than remove/recreate every time?
+        //TODO Better way rather than remove/recreate every time?
         val node = widget.getNode()
         val rect = widget.getRectangle().getNode() as Rectangle
 

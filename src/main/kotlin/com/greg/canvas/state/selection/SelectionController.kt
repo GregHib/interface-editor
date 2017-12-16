@@ -9,6 +9,7 @@ import com.greg.canvas.state.edit.EditController
 import com.greg.canvas.state.selection.marquee.Marquee
 import com.greg.canvas.widget.Widget
 import javafx.event.EventTarget
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Shape
 
@@ -74,10 +75,16 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
     override fun handleDoubleClick(event: MouseEvent) {
         val widget = getWidget(event.target)
         if(widget != null)
-            canvas.selectionControl = EditController(canvas, widget)
+            canvas.controller = EditController(canvas, widget)
     }
 
     override fun handleMouseClick(event: MouseEvent) {
+    }
+
+    override fun handleKeyPress(event: KeyEvent) {
+    }
+
+    override fun handleKeyRelease(event: KeyEvent) {
     }
 
     /**
