@@ -5,9 +5,9 @@ import com.greg.Utils.Companion.setWidgetDrag
 import com.greg.canvas.DragModel
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.state.PaneController
-import com.greg.canvas.state.selection.SelectionController
 import com.greg.canvas.state.edit.resize.ResizeController
 import com.greg.canvas.state.edit.resize.ResizeTab
+import com.greg.canvas.state.selection.SelectionController
 import com.greg.canvas.widget.Widget
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
@@ -63,6 +63,7 @@ class EditController(var canvas: WidgetCanvas, val widget: Widget) : PaneControl
         } else if (event.target is Rectangle) {//Dragging
             Utils.moveInCanvas(event, canvas, widget)
         }
+        refresh()
     }
 
     override fun handleMouseRelease(event: MouseEvent) {
