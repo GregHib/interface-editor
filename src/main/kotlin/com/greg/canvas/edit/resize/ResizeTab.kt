@@ -1,11 +1,11 @@
-package com.greg.canvas.edit
+package com.greg.canvas.edit.resize
 
 import com.greg.App
 import javafx.scene.Cursor
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
 
-class Stretcher(width: Double, height: Double) : Rectangle(width, height) {
+class ResizeTab(width: Double, height: Double) : Rectangle(width, height) {
     fun addCursor(cursor: Cursor) {
         addEventFilter<MouseEvent>(MouseEvent.ANY, { e ->
             if (e.eventType == MouseEvent.MOUSE_ENTERED) {
@@ -15,6 +15,4 @@ class Stretcher(width: Double, height: Double) : Rectangle(width, height) {
             }
         })
     }
-
-
 }
