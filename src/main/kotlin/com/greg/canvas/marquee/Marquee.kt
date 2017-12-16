@@ -3,6 +3,7 @@ package com.greg.canvas.marquee
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.StrokeLineCap
+import javafx.scene.shape.StrokeType
 
 class Marquee : Rectangle() {
 
@@ -14,6 +15,7 @@ class Marquee : Rectangle() {
         stroke = Color.BLUE
         strokeWidth = 1.0
         strokeLineCap = StrokeLineCap.ROUND
+        strokeType = StrokeType.INSIDE
         fill = Color.LIGHTBLUE.deriveColor(0.0, 1.2, 1.0, 0.6)
     }
 
@@ -29,18 +31,18 @@ class Marquee : Rectangle() {
 
     fun draw(drawX: Double, drawY: Double) {
         if(drawX > mouseAnchorX) {
-            x = mouseAnchorX - 0.5
+            x = mouseAnchorX
             width = drawX - mouseAnchorX
         } else {
-            x = drawX + 0.5
+            x = drawX
             width = mouseAnchorX - drawX
         }
 
         if(drawY > mouseAnchorY) {
-            y = mouseAnchorY - 0.5
+            y = mouseAnchorY
             height = drawY - mouseAnchorY
         } else {
-            y = drawY + 0.5
+            y = drawY
             height = mouseAnchorY - drawY
         }
     }
