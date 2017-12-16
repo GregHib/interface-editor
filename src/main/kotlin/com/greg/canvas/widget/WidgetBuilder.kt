@@ -11,7 +11,7 @@ class WidgetBuilder(val canvas: WidgetCanvas) {
     }
 
     fun build(): Widget {
-        return Widget(this).init(canvas)
+        return Widget(this)
     }
 
     private fun addRectangle() {

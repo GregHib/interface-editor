@@ -1,4 +1,4 @@
-package com.greg.canvas.selection
+package com.greg.canvas.state.selection
 
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.widget.Widget

@@ -4,6 +4,7 @@ import com.greg.canvas.DragModel
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.widget.Widget
 import javafx.scene.input.MouseEvent
+import kotlin.math.round
 
 class Utils {
     companion object {
@@ -13,7 +14,7 @@ class Utils {
         }
 
         fun constrain(value: Double, min: Double, max: Double): Double {
-            return if (value < min) min else if (value > max) max else value
+            return round(if (value < min) min else if (value > max) max else value)
         }
 
         fun moveInCanvas(event: MouseEvent, canvas: WidgetCanvas, widget: Widget) {
@@ -25,8 +26,8 @@ class Utils {
             var y = event.y + widget.drag!!.offsetY!!
 
             //Size of shape
-            val width = widget.layoutBounds.width
-            val height = widget.layoutBounds.height
+            val width = widget.getRectangle().getNode().layoutBounds.width
+            val height = widget.getRectangle().getNode().layoutBounds.height
 
             //Constrain position to within the container
             //TODO move constraints to a relocate override?
@@ -34,13 +35,17 @@ class Utils {
             y = constrain(y, bounds.height - height)
 
             //Move
-            widget.relocate(x, y)
+            widget.getNode().layoutX = x
+            widget.getNode().layoutY = y
         }
 
         fun setWidgetDrag(widget: Widget, event: MouseEvent, canvas: WidgetCanvas) {
-            //TODO these can be changed
-            val offsetX = canvas.canvasPane.localToScene(widget.boundsInParent).minX - event.sceneX
-            val offsetY = canvas.canvasPane.localToScene(widget.boundsInParent).minY - event.sceneY
+            //TODO these seems better but is off by like .25?
+            //widget.getNode().layoutX - event.x
+            //widget.getNode().layoutY - event.y
+            val offsetX = canvas.canvasPane.localToScene(widget.getNode().boundsInParent).minX - event.sceneX
+            val offsetY = canvas.canvasPane.localToScene(widget.getNode().boundsInParent).minY - event.sceneY
+//            println("${canvas.canvasPane.localToScene(widget.boundsInParent).minX} ${event.sceneX} ${event.x} ${widget.getNode().layoutX}")
             widget.drag = DragModel(offsetX, offsetY)
         }
     }

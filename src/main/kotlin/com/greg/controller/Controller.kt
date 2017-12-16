@@ -27,6 +27,8 @@ class Controller : Initializable {
      *
      * Change refreshPosition to refresh a specific attribute
      *
+     * Resize with shift down resize's relative to start layout 1:1
+     *
      * https://gyazo.com/407615643f5a46f34ee82f60252ec86e
      *
      * Deleting objects

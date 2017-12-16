@@ -1,4 +1,4 @@
-package com.greg.canvas.edit.resize
+package com.greg.canvas.state.edit.resize
 
 import com.greg.canvas.widget.Widget
 import com.greg.settings.Settings

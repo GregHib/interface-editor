@@ -24,6 +24,7 @@ class WidgetRectangle : AttributeWidget {
     override fun getNode(): Node {
         return getRectangle()
     }
+
     fun getRectangle(): Rectangle {
         return rectangle
     }

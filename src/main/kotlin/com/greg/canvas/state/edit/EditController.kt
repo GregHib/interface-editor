@@ -1,11 +1,13 @@
-package com.greg.canvas.state
+package com.greg.canvas.state.edit
 
 import com.greg.Utils
 import com.greg.Utils.Companion.setWidgetDrag
 import com.greg.canvas.DragModel
 import com.greg.canvas.WidgetCanvas
-import com.greg.canvas.edit.resize.ResizeController
-import com.greg.canvas.edit.resize.ResizeTab
+import com.greg.canvas.state.PaneController
+import com.greg.canvas.state.selection.SelectionController
+import com.greg.canvas.state.edit.resize.ResizeController
+import com.greg.canvas.state.edit.resize.ResizeTab
 import com.greg.canvas.widget.Widget
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color

@@ -17,32 +17,6 @@ class AttributesPanel(private var controller: Controller) {
         controller.attributesPanel.expandedPane = properties
     }
 
-    fun refresh() {
-        controller.attributesPanel.panes
-                .filterIsInstance<AttributePane>()
-                .forEach { refresh(it, controller.canvas.selectionGroup.getGroup()) }
-
-    }
-
-    private fun refresh(pane: AttributePane, widgets: MutableSet<Widget>) {
-        when {
-            widgets.size == 1 -> refreshValues(pane, widgets)
-            else -> {
-                val type = widgets.first().javaClass
-                //Display only if all selected are of the same type
-                if(widgets.stream().allMatch({ e -> e.javaClass == type }))
-                    refreshValues(pane, widgets)
-            }
-        }
-    }
-
-    private fun refreshValues(pane: AttributePane, widgets: MutableSet<Widget>) {
-        //Link all selected objects to the property groups
-        if(pane.groups != null)
-            for(widget in widgets)
-                widget.refresh(layout.groups!!, pane.type)
-    }
-
     fun reload() {
         controller.attributesPanel.panes
                 .filterIsInstance<AttributePane>()
@@ -73,6 +47,7 @@ class AttributesPanel(private var controller: Controller) {
         if(pane.groups == null) {
             val box = VBox()
             pane.groups = widgets.first().getGroups(pane.type)
+            widgets.first().init(pane.groups!!)
             box.children.addAll(pane.groups!!)
             pane.getPane().children.addAll(box)
         }

@@ -1,10 +1,12 @@
-package com.greg.canvas.state
+package com.greg.canvas.state.selection
 
 import com.greg.Utils.Companion.constrain
 import com.greg.Utils.Companion.moveInCanvas
 import com.greg.Utils.Companion.setWidgetDrag
 import com.greg.canvas.WidgetCanvas
-import com.greg.canvas.marquee.Marquee
+import com.greg.canvas.state.PaneController
+import com.greg.canvas.state.edit.EditController
+import com.greg.canvas.state.selection.marquee.Marquee
 import com.greg.canvas.widget.Widget
 import javafx.event.EventTarget
 import javafx.scene.input.MouseEvent

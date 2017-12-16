@@ -1,4 +1,4 @@
-package com.greg.canvas.marquee
+package com.greg.canvas.state.selection.marquee
 
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle

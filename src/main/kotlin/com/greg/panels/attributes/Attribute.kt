@@ -30,6 +30,14 @@ class Attribute(val title: String, private val name: String, val type: Attribute
         return if(function) (reflection.call(widget.getNode()) as WritableValue<*>).value else (reflection as KProperty).getter.call(widget.getNode())
     }
 
+    fun isProperty(): Boolean {
+        return function
+    }
+
+    fun getProperty(widget: WidgetInterface): Any {
+        return if(function) (reflection.call(widget.getNode()) as WritableValue<*>) else (reflection.call(widget.getNode()) as WritableValue<*>)//Unknown - no support for non-functions/non-properties
+    }
+
     fun setValue(widget: WidgetInterface, value: Any?) {
         if(function) {
             (reflection.call(widget.getNode()) as WritableValue<*>).value = value

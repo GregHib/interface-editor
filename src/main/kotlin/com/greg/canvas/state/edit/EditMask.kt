@@ -1,4 +1,4 @@
-package com.greg.canvas.edit
+package com.greg.canvas.state.edit
 
 import javafx.scene.Group
 import javafx.scene.Scene

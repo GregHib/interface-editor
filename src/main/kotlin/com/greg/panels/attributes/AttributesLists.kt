@@ -3,6 +3,10 @@ package com.greg.panels.attributes
 import com.greg.canvas.widget.AttributeWidget
 import com.greg.panels.attributes.parts.pane.AttributePaneType
 
+/*
+    A list of lists
+    AttributesLists is a list of AttributeList
+ */
 class AttributesLists(widget: AttributeWidget) {
 
     private var attributes = mutableListOf<AttributeList>()

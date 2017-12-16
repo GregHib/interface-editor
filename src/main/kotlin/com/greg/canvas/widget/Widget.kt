@@ -1,13 +1,12 @@
 package com.greg.canvas.widget
 
-import com.greg.canvas.WidgetCanvas
 import com.greg.panels.attributes.Attribute
 import com.greg.panels.attributes.AttributeType
 import com.greg.panels.attributes.parts.AttributeGroup
 import com.greg.panels.attributes.parts.AttributeRowBuilder
 import com.greg.panels.attributes.parts.pane.AttributePane
 import com.greg.panels.attributes.parts.pane.AttributePaneType
-
+import javafx.beans.value.ObservableValue
 
 
 class Widget(builder: WidgetBuilder) : WidgetData(builder) {
@@ -18,35 +17,38 @@ class Widget(builder: WidgetBuilder) : WidgetData(builder) {
         attributes.addLayout("Location Y", "layoutYProperty", AttributeType.NUMBER_FIELD)
     }
 
-    fun init(canvas: WidgetCanvas): Widget {
-        layoutXProperty().addListener { _, _, _ -> canvas.refreshPosition() }
-        layoutYProperty().addListener { _, _, _ -> canvas.refreshPosition() }
-        return this
-    }
 
     /**
-     * Attribute refreshing
+     * Initialisation
+     * - Adds change listener to widget attribute value change
      */
 
-    fun refresh(groups: List<AttributeGroup>, type: AttributePaneType) {
+    fun init(groups: List<AttributeGroup>) {
         for (group in groups) {
             components
                     .filter { widget -> group.widgetClass == widget::class }
-                    .forEach { widget -> refreshGroup(group, widget, type) }
+                    .forEach { widget ->
+                            for (type in AttributePaneType.values())
+                                initGroup(group, widget, type)
+                    }
         }
     }
 
-    private fun refreshGroup(group: AttributeGroup, widget: WidgetInterface, type: AttributePaneType) {
-        widget.getAttributes(type)?.forEachIndexed { index, property ->
-            //Refresh property with the current value
-            val propertyRow = group.rows[index]
-            propertyRow.linkableList.last().refresh(property.getValue(widget))
+    private fun initGroup(group: AttributeGroup, widget: WidgetInterface, type: AttributePaneType) {
+        widget.getAttributes(type)?.forEachIndexed { index, attribute ->
+            //If attribute is a property (All are?)
+            if (attribute.isProperty()) {
+                val prop = attribute.getProperty(widget) as ObservableValue<*>
+                //Add listener so linked attribute is updated every time value is changed
+                prop.addListener { _, _, newValue -> group.rows[index].linkableList.last().refresh(newValue) }
+            }
         }
     }
 
 
     /**
      * Attribute linking
+     * - Links panel attribute to change correct widget
      */
 
     fun link(pane: AttributePane) {
@@ -58,16 +60,19 @@ class Widget(builder: WidgetBuilder) : WidgetData(builder) {
     }
 
     private fun linkGroup(group: AttributeGroup, widget: WidgetInterface, type: AttributePaneType) {
-        widget.getAttributes(type)?.forEachIndexed { index, property ->
+        widget.getAttributes(type)?.forEachIndexed { index, attribute ->
             //Add this widget to the list of outputs for the property row
-            val propertyRow = group.rows[index]
-            propertyRow.linkableList.last().link({ value -> property.setValue(widget, value) })
+            val row = group.rows[index]
+            //First as currently only supports 1 linkable
+            row.linkableList.first().link({ value -> attribute.setValue(widget, value) })
         }
     }
 
     /**
      * Group creation
+     * - Creates AttributeGroup
      */
+
     fun getGroups(type: AttributePaneType): List<AttributeGroup>? {
         val list = mutableListOf<AttributeGroup>()
         for (component in components) {

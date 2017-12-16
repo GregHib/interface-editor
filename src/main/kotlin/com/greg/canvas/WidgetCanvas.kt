@@ -1,8 +1,8 @@
 package com.greg.canvas
 
-import com.greg.canvas.selection.SelectionGroup
 import com.greg.canvas.state.PaneController
-import com.greg.canvas.state.SelectionController
+import com.greg.canvas.state.selection.SelectionController
+import com.greg.canvas.state.selection.SelectionGroup
 import com.greg.controller.Controller
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
@@ -30,10 +30,5 @@ class WidgetCanvas(private var controller: Controller) {
 
     fun refreshSelection() {
         controller.attributes.reload()
-    }
-
-    fun refreshPosition() {
-        controller.attributes.refresh()
-        selectionControl.refresh()
     }
 }
