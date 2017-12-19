@@ -1,6 +1,6 @@
 package com.greg.canvas.state.edit.resize
 
-import com.greg.Utils
+import com.greg.Utils.Companion.constrain
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.widget.Widget
 import com.greg.settings.Settings
@@ -116,7 +116,7 @@ class ResizeController(private val canvas: WidgetCanvas, private val widget: Wid
 
             //Constrain the position to the canvas and it's minimum size
             val position = side
-            value = Utils.constrain(position, max)
+            value = constrain(position, max)
 
             //New width/height = opposite side - current side position
             dimension = opposite - value
@@ -132,7 +132,7 @@ class ResizeController(private val canvas: WidgetCanvas, private val widget: Wid
             val opposite = (click + offset) + size
 
             //Constrain to canvas and self
-            value = Utils.constrain(side, opposite, bound)
+            value = constrain(side, opposite, bound)
 
             //New width/height = original size + difference between original side and current side position (correcting for mouse offset ofc)
             dimension = start + (value - actualOffset - click)

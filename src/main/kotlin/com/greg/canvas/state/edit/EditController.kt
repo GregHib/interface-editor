@@ -1,7 +1,5 @@
 package com.greg.canvas.state.edit
 
-import com.greg.Utils
-import com.greg.Utils.Companion.setWidgetDrag
 import com.greg.canvas.DragModel
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.state.PaneController
@@ -19,7 +17,7 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.shape.Shape
 
 
-class EditController(var canvas: WidgetCanvas, val widget: Widget) : PaneController, WidgetChangeInterface {
+class EditController(override var canvas: WidgetCanvas, val widget: Widget) : PaneController, WidgetChangeInterface {
 
     private val controller = ResizeController(canvas, widget)
     private val listener = WidgetChangeListener(this)
@@ -68,7 +66,7 @@ class EditController(var canvas: WidgetCanvas, val widget: Widget) : PaneControl
                     controller.resize(direction, event, bounds)
             }
         } else if (event.target is Rectangle) {//Dragging
-            Utils.moveInCanvas(event, canvas, widget)
+            moveInCanvas(widget, event)
         }
     }
 

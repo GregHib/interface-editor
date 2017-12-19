@@ -24,15 +24,16 @@ class AppController : Initializable {
 
 
     /**
-     * Ideas
-     *
-     * Refreshing edit path when panel attribute is changed
-     *
      * https://gyazo.com/407615643f5a46f34ee82f60252ec86e
+     *
+     *
+     * Ideas
      *
      * Deleting objects
      *
      * Copying/cloning existing objects
+     *
+     * Arrow key movement extract to class and implement in edit controller
      *
      * Send back one, bring forward one, send to back, bring to front (but not in front of edit mode components)
      *
@@ -44,7 +45,13 @@ class AppController : Initializable {
      *
      * Expand marquee out to it's own class with inheritance, so you can switch out marquee type/shape etc..
      *
+     * The way the edit mode is refresh can be improved.
+     *
+     * Also widget change listener has room for optimisations as it refresh's multiple times if x/y width/height are changed simultaneously
+     *
      * Move selection using arrow keys by 1px
+     *
+     * Advanced arrow key movement system, ideally without a game-loop see : https://stackoverflow.com/questions/21331519/how-to-get-smooth-animation-with-keypress-event-in-javafx
      *
      * Resize with shift = aspect ratio
      *

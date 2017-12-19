@@ -1,19 +1,20 @@
 package com.greg.canvas.state.selection
 
 import com.greg.Utils.Companion.constrain
-import com.greg.Utils.Companion.moveInCanvas
-import com.greg.Utils.Companion.setWidgetDrag
 import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.state.PaneController
 import com.greg.canvas.state.edit.EditController
 import com.greg.canvas.state.selection.marquee.Marquee
 import com.greg.canvas.widget.Widget
 import javafx.event.EventTarget
+import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Shape
 
-class SelectionController(var canvas: WidgetCanvas) : PaneController {
+
+
+class SelectionController(override var canvas: WidgetCanvas) : PaneController {
     //TODO I think this can still be split down into more classes
 
     private var marquee = Marquee()
@@ -79,12 +80,36 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
     }
 
     override fun handleMouseClick(event: MouseEvent) {
+        canvas.canvasPane.requestFocus()
     }
 
+    private var moveHorizontal = 0.0
+    private var moveVertical = 0.0
+
     override fun handleKeyPress(event: KeyEvent) {
+        when(event.code) {
+            KeyCode.RIGHT -> moveHorizontal = 1.0
+            KeyCode.LEFT -> moveHorizontal = -1.0
+            KeyCode.UP -> moveVertical = -1.0
+            KeyCode.DOWN -> moveVertical = 1.0
+        }
+        moveSelection(event,  moveHorizontal, moveVertical)
+    }
+
+    private fun moveSelection(event: KeyEvent, x: Double, y: Double) {
+        canvas.selectionGroup.getGroup().forEach { widget ->
+            move(widget, if(event.isShiftDown) x * 10.0 else x, if(event.isShiftDown) y * 10.0 else y)
+        }
+
+        //Stops the key event here
+        event.consume()
     }
 
     override fun handleKeyRelease(event: KeyEvent) {
+        when(event.code) {
+            KeyCode.RIGHT, KeyCode.LEFT -> moveHorizontal = 0.0
+            KeyCode.UP, KeyCode.DOWN -> moveVertical = 0.0
+        }
     }
 
     /**
@@ -106,7 +131,7 @@ class SelectionController(var canvas: WidgetCanvas) : PaneController {
         if (widgetTarget != null && canvas.selectionGroup.contains(widgetTarget)) {
             canvas.selectionGroup.getGroup().forEach { widget ->
                 //Move
-                moveInCanvas(event, canvas, widget)
+                moveInCanvas(widget, event)
             }
         }
     }
