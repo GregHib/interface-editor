@@ -92,6 +92,8 @@ class SelectionController(override var canvas: WidgetCanvas) : PaneController {
             KeyCode.LEFT -> moveHorizontal = -1.0
             KeyCode.UP -> moveVertical = -1.0
             KeyCode.DOWN -> moveVertical = 1.0
+            else -> {
+            }
         }
         moveSelection(event,  moveHorizontal, moveVertical)
     }
@@ -105,10 +107,25 @@ class SelectionController(override var canvas: WidgetCanvas) : PaneController {
         event.consume()
     }
 
+    private fun deleteSelection() {
+        canvas.selectionGroup.getGroup().forEach { widget ->
+            val success = canvas.canvasPane.children.remove(widget)
+            if(!success)
+                println("Error deleting widget")
+        }
+        canvas.selectionGroup.clear()
+    }
+
     override fun handleKeyRelease(event: KeyEvent) {
         when(event.code) {
             KeyCode.RIGHT, KeyCode.LEFT -> moveHorizontal = 0.0
             KeyCode.UP, KeyCode.DOWN -> moveVertical = 0.0
+            KeyCode.DELETE -> {
+                deleteSelection()
+                event.consume()
+            }
+            else -> {
+            }
         }
     }
 
@@ -216,8 +233,5 @@ class SelectionController(override var canvas: WidgetCanvas) : PaneController {
         }
 
         return null
-    }
-
-    override fun refresh() {
     }
 }

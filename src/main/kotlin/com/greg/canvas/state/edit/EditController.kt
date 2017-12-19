@@ -93,7 +93,7 @@ class EditController(override var canvas: WidgetCanvas, val widget: Widget) : Pa
         refresh()
     }
 
-    override fun refresh() {
+    private fun refresh() {
         //TODO Better way rather than remove/recreate every time?
         val node = widget.getNode()
         val rect = widget.getRectangle().getNode() as Rectangle

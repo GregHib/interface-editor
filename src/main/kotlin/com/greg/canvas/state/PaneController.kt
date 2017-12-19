@@ -25,8 +25,6 @@ interface PaneController {
 
     fun handleKeyRelease(event: KeyEvent)
 
-    fun refresh()
-
     /**
      * Functions
      */
