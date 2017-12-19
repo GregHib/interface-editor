@@ -26,13 +26,13 @@ class AppController : Initializable {
     /**
      * Ideas
      *
-     * Resize with shift down resize's relative to start layout 1:1
+     * Refreshing edit path when panel attribute is changed
      *
      * https://gyazo.com/407615643f5a46f34ee82f60252ec86e
      *
      * Deleting objects
      *
-     * Copying existing objects
+     * Copying/cloning existing objects
      *
      * Send back one, bring forward one, send to back, bring to front (but not in front of edit mode components)
      *
@@ -45,6 +45,8 @@ class AppController : Initializable {
      * Expand marquee out to it's own class with inheritance, so you can switch out marquee type/shape etc..
      *
      * Move selection using arrow keys by 1px
+     *
+     * Resize with shift = aspect ratio
      *
      * Undo/redo links?
      *

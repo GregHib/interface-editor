@@ -7,6 +7,8 @@ import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.state.PaneController
 import com.greg.canvas.state.edit.resize.ResizeController
 import com.greg.canvas.state.edit.resize.ResizeTab
+import com.greg.canvas.state.edit.resize.WidgetChangeInterface
+import com.greg.canvas.state.edit.resize.WidgetChangeListener
 import com.greg.canvas.state.selection.SelectionController
 import com.greg.canvas.widget.Widget
 import javafx.scene.input.KeyEvent
@@ -17,9 +19,10 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.shape.Shape
 
 
-class EditController(var canvas: WidgetCanvas, val widget: Widget) : PaneController {
+class EditController(var canvas: WidgetCanvas, val widget: Widget) : PaneController, WidgetChangeInterface {
 
     private val controller = ResizeController(canvas, widget)
+    private val listener = WidgetChangeListener(this)
 
     private var path: Shape? = null
 
@@ -28,9 +31,12 @@ class EditController(var canvas: WidgetCanvas, val widget: Widget) : PaneControl
 
         //Add all tabs to canvas
         controller.start(widget)
+
+        listener.link(widget)
     }
 
     private fun close() {
+        listener.unlink()
         canvas.canvasPane.children.remove(path)
         controller.close()
         canvas.controller = SelectionController(canvas)
@@ -64,7 +70,6 @@ class EditController(var canvas: WidgetCanvas, val widget: Widget) : PaneControl
         } else if (event.target is Rectangle) {//Dragging
             Utils.moveInCanvas(event, canvas, widget)
         }
-        refresh()
     }
 
     override fun handleMouseRelease(event: MouseEvent) {
@@ -84,6 +89,10 @@ class EditController(var canvas: WidgetCanvas, val widget: Widget) : PaneControl
 
     override fun handleKeyRelease(event: KeyEvent) {
         controller.shift = event.isShiftDown
+    }
+
+    override fun onChange() {
+        refresh()
     }
 
     override fun refresh() {

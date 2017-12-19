@@ -47,8 +47,6 @@ class ResizeController(private val canvas: WidgetCanvas, private val widget: Wid
         tabs.close()
     }
 
-    //(original height / original width) x new width = new height
-
     fun resize(direction: Direction, event: MouseEvent, bounds: Bounds) {
 
         //If is horizontal aka x not y
