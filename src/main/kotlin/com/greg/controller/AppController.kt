@@ -22,49 +22,6 @@ import kotlin.reflect.full.memberProperties
 
 class AppController : Initializable {
 
-
-    /**
-     * https://gyazo.com/407615643f5a46f34ee82f60252ec86e
-     *
-     *
-     * Ideas
-     *
-     * Deleting objects
-     *
-     * Copying/cloning existing objects
-     *
-     * Arrow key movement extract to class and implement in edit controller
-     *
-     * Send back one, bring forward one, send to back, bring to front (but not in front of edit mode components)
-     *
-     * classType can probably be removed with all the this::class's for creating attributes as you can get the type directly from the widget
-     *
-     * On double click on a widget deselect all but that ( and black out rest of canvas? ) display stretching/rotation (photo shop crop like) - enter to finish/ esc to cancel
-     *
-     * Widget x/y which get's the widget location relative to the canvas: will be needed for saving. Might need canvas as a parameter
-     *
-     * Expand marquee out to it's own class with inheritance, so you can switch out marquee type/shape etc..
-     *
-     * The way the edit mode is refresh can be improved.
-     *
-     * Also widget change listener has room for optimisations as it refresh's multiple times if x/y width/height are changed simultaneously
-     *
-     * Move selection using arrow keys by 1px
-     *
-     * Advanced arrow key movement system, ideally without a game-loop see : https://stackoverflow.com/questions/21331519/how-to-get-smooth-animation-with-keypress-event-in-javafx
-     *
-     * Resize with shift = aspect ratio
-     *
-     * Undo/redo links?
-     *
-     * New properties to add: width height, x, y (When changing text don't resize x/y?)
-     *
-     * Two different Nodes on a property row, different layout and how they'd all link
-     * https://gyazo.com/fb3f3a596c270d886fe116ac7188cd56
-     * https://gyazo.com/d17ac37a4aee18625f0037c36aba52d5
-     *
-     */
-
     @FXML
     lateinit var attributesPanel: Accordion
 

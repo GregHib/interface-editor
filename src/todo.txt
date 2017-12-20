@@ -1,0 +1,25 @@
+Component naming
+https://gyazo.com/407615643f5a46f34ee82f60252ec86e
+
+// Features
+//----------------------
+Make widget cloneable - control c + p
+Undo / redo actions, add, delete, change values
+Exit edit mode using esc key (undo changes too?)
+Send back one, bring forward one, send to back, bring to front (but not in front of edit mode components)
+Undo/redo links? - Not sure what I meant 20/12/17
+
+
+// Tidy up
+//----------------------
+Arrow key movement extract to class and implement in edit controller
+Expand marquee out to it's own class with inheritance, so you can switch out marquee type/shape etc..
+
+
+// Improvements
+//----------------------
+Resize with shift = aspect ratio
+Support for multiple attributes on a row e.g https://gyazo.com/fb3f3a596c270d886fe116ac7188cd56 https://gyazo.com/d17ac37a4aee18625f0037c36aba52d5
+The way the edit mode outline is refreshed can be improved.
+Also widget change listener has room for optimisations as it refresh's multiple times if x/y width/height are changed simultaneously
+Advanced arrow key movement system, ideally without a game-loop see : https://stackoverflow.com/questions/21331519/how-to-get-smooth-animation-with-keypress-event-in-javaf
