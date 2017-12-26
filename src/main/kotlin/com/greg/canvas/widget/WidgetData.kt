@@ -50,7 +50,6 @@ abstract class WidgetData: AttributeWidget {
         return Settings.getDouble(SettingsKey.DEFAULT_WIDGET_MINIMUM_WIDTH)
     }
 
-
     fun getMinimumHeight(): Double {
         return Settings.getDouble(SettingsKey.DEFAULT_WIDGET_MINIMUM_HEIGHT)
     }

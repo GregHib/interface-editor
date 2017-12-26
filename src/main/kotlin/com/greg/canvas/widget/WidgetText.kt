@@ -20,6 +20,7 @@ class WidgetText : AttributeWidget {
 
         attributes.addProperty("Message", "textProperty", AttributeType.TEXT_FIELD)
         attributes.addProperty("Text Colour", "strokeProperty", AttributeType.COLOUR_PICKER)
+
     }
 
     override fun getNode(): Node {

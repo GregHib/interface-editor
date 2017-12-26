@@ -5,13 +5,12 @@ import com.greg.canvas.WidgetCanvas
 import com.greg.canvas.state.PaneController
 import com.greg.canvas.state.edit.EditController
 import com.greg.canvas.state.selection.marquee.Marquee
-import com.greg.canvas.widget.Widget
+import com.greg.canvas.widget.*
+import com.greg.panels.attributes.Attribute
+import com.greg.panels.attributes.parts.pane.AttributePaneType
 import javafx.event.EventTarget
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
+import javafx.scene.input.*
 import javafx.scene.shape.Shape
-
 
 
 class SelectionController(override var canvas: WidgetCanvas) : PaneController {
@@ -75,7 +74,7 @@ class SelectionController(override var canvas: WidgetCanvas) : PaneController {
 
     override fun handleDoubleClick(event: MouseEvent) {
         val widget = getWidget(event.target)
-        if(widget != null)
+        if (widget != null)
             canvas.controller = EditController(canvas, widget)
     }
 
@@ -87,20 +86,140 @@ class SelectionController(override var canvas: WidgetCanvas) : PaneController {
     private var moveVertical = 0.0
 
     override fun handleKeyPress(event: KeyEvent) {
-        when(event.code) {
+        when (event.code) {
             KeyCode.RIGHT -> moveHorizontal = 1.0
             KeyCode.LEFT -> moveHorizontal = -1.0
             KeyCode.UP -> moveVertical = -1.0
             KeyCode.DOWN -> moveVertical = 1.0
+            KeyCode.C -> {
+            }
             else -> {
             }
         }
-        moveSelection(event,  moveHorizontal, moveVertical)
+
+        if (event.isControlDown) {
+            when (event.code) {
+                KeyCode.X -> {
+                    copySelection(event)
+                    deleteSelection()
+                }
+                KeyCode.C -> {
+                    copySelection(event)
+                }
+                KeyCode.V -> {
+                    pasteSelection(event)
+                }
+                else -> {
+                }
+            }
+        }
+        if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
+            moveSelection(event, moveHorizontal, moveVertical)
+    }
+
+    private fun isWidget(name: String): Boolean {
+        return when (name) {
+            WidgetText::class.simpleName -> true
+            WidgetRectangle::class.simpleName -> true
+            Widget::class.simpleName -> true
+            else -> false
+        }
+    }
+
+    private fun pasteSelection(event: KeyEvent) {
+        val clipboard = Clipboard.getSystemClipboard()
+        val string = clipboard.string
+
+        //Check clipboard isn't empty & can be split
+        if(string.isNullOrEmpty() || !string.contains("\n"))
+            return
+
+        //Split clipboard into lines
+        val lines = string.split("\n")
+
+        //Check the first line is a valid widget type
+        if (!isWidget(lines.first()))
+            return
+
+        //Begin the widget creation
+        var index = 0
+        val attributes = mutableListOf<Attribute>()
+        val components = mutableListOf<WidgetInterface>()
+
+        //Clear the current selection
+        canvas.selectionGroup.clear()
+
+
+        //For each line
+        for (line in lines) {
+            //If is a valid widget name
+            if (isWidget(line)) {
+                //Create widget of the corresponding type
+                val widget = WidgetBuilder(canvas, line).build()
+                canvas.canvasPane.children.add(widget)
+                canvas.selectionGroup.add(widget)
+
+                //Reset all of the reused values
+                index = 0
+                attributes.clear()
+                components.clear()
+
+                //Map all of the attributes for this widget type
+                for (component in widget.components.reversed()) {
+                    AttributePaneType.values()
+                            .mapNotNull { component.getAttributes(it) }
+                            .filter { it.isNotEmpty() }
+                            .flatMap { it.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.title })) }
+                            .forEach {
+                                attributes.add(it)
+                                components.add(component)
+                            }
+                }
+            } else {
+                //Otherwise it's an attribute
+
+                //If it's not out of bounds
+                if(index >= attributes.size)
+                    return
+
+                //Set the attribute value of the cloned widget to the one in the paste
+                attributes[index].setValue(components[index], attributes[index].type.convert(line))
+                index++
+            }
+        }
+
+        //Stops the key event here
+        event.consume()
+    }
+
+    private fun copySelection(event: KeyEvent) {
+        val clipboard = Clipboard.getSystemClipboard()
+
+        //Convert selected widget's into a string of attribute values
+        var string = ""
+        canvas.selectionGroup.getGroup().forEach { widget ->
+            string += "${widget.components.reversed().first()::class.simpleName}\n"
+            for (component in widget.components.reversed()) {
+                AttributePaneType.values()
+                        .mapNotNull { component.getAttributes(it) }
+                        .filter { it.isNotEmpty() }
+                        .flatMap { it.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.title })) }
+                        .forEach { string += "${it.getValue(component)}\n" }
+            }
+        }
+
+        //Set the clipboard
+        val content = ClipboardContent()
+        content.putString(string.substring(0, string.length - 1))//Remove the extra line space
+        clipboard.setContent(content)
+
+        //Stops the key event here
+        event.consume()
     }
 
     private fun moveSelection(event: KeyEvent, x: Double, y: Double) {
         canvas.selectionGroup.getGroup().forEach { widget ->
-            move(widget, if(event.isShiftDown) x * 10.0 else x, if(event.isShiftDown) y * 10.0 else y)
+            move(widget, if (event.isShiftDown) x * 10.0 else x, if (event.isShiftDown) y * 10.0 else y)
         }
 
         //Stops the key event here
@@ -110,14 +229,14 @@ class SelectionController(override var canvas: WidgetCanvas) : PaneController {
     private fun deleteSelection() {
         canvas.selectionGroup.getGroup().forEach { widget ->
             val success = canvas.canvasPane.children.remove(widget)
-            if(!success)
+            if (!success)
                 println("Error deleting widget")
         }
         canvas.selectionGroup.clear()
     }
 
     override fun handleKeyRelease(event: KeyEvent) {
-        when(event.code) {
+        when (event.code) {
             KeyCode.RIGHT, KeyCode.LEFT -> moveHorizontal = 0.0
             KeyCode.UP, KeyCode.DOWN -> moveVertical = 0.0
             KeyCode.DELETE -> {
