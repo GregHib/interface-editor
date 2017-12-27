@@ -65,10 +65,4 @@ class NumberFieldElement(private var default: Int?) : TextField(), Element {
     private fun cancel() {
         text = default.toString()
     }
-
-    override fun link(action: (value: Any?) -> Unit) {
-        if(action !is (value: Int?) -> Unit)
-            throw UnsupportedOperationException()
-        this.links.add(action)
-    }
 }

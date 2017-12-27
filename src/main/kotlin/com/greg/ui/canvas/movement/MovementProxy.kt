@@ -59,7 +59,7 @@ class MovementProxy(private val pane: Pane, private val selection: Selection) {
     }
 
     private fun clone() {
-        if(selection != null && !cloned) {
+        if(!cloned) {
             selection.clone()
             cloned = true
         }
@@ -76,8 +76,6 @@ class MovementProxy(private val pane: Pane, private val selection: Selection) {
         //Size of shape
         val width = widget.getRectangle().getNode().layoutBounds.width
         val height = widget.getRectangle().getNode().layoutBounds.height
-
-        //TODO move set constraints to a widget override function for setting layoutX/Y?
 
         //Constrain position to within the container
         val x = constrain(targetX, bounds.width - width)

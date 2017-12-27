@@ -1,126 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPress" onKeyReleased="#handleKeyRelease" prefWidth="1325.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.greg.controller.Controller">
    <top>
-      <VBox prefWidth="750.0" BorderPane.alignment="CENTER">
-         <children>
-            <StackPane prefWidth="750.0">
-               <children>
-                  <HBox alignment="CENTER">
-                     <children>
-                        <Label alignment="CENTER" text="Better Interface Editor" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_RIGHT">
-                     <children>
-                        <Button fx:id="minBtn" mnemonicParsing="false" onAction="#minimizeProgram" prefHeight="20.0" prefWidth="25.0">
-                           <HBox.margin>
-                              <Insets right="4.0" />
-                           </HBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="25.0">
-                           <HBox.margin>
-                              <Insets right="4.0" />
-                           </HBox.margin>
-                        </Button>
-                        <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#closeProgram" prefHeight="20.0" prefWidth="25.0">
-                           <HBox.margin>
-                              <Insets right="4.0" />
-                           </HBox.margin>
-                        </Button>
-                     </children>
-                  </HBox>
-               </children>
-            </StackPane>
-            <VBox>
-               <children>
-                  <ToolBar prefHeight="30.0" prefWidth="1165.0">
-                    <items>
-                        <HBox prefWidth="1150.0">
-                           <children>
-                            <Button fx:id="loadCacheBtn" mnemonicParsing="false" onAction="#loadCache" text="Load" />
-                              <Pane prefWidth="10.0" HBox.hgrow="ALWAYS" />
-                              <ProgressIndicator fx:id="progressIndicator" prefHeight="19.0" prefWidth="52.0" visible="false">
-                                 <opaqueInsets>
-                                    <Insets />
-                                 </opaqueInsets>
-                              </ProgressIndicator>
-                           </children>
-                        </HBox>
-                    </items>
-                  </ToolBar>
-               </children>
-            </VBox>
-         </children>
-      </VBox>
+       <VBox prefWidth="750.0" BorderPane.alignment="CENTER">
+           <StackPane prefWidth="750.0">
+               <HBox alignment="CENTER">
+                   <Label alignment="CENTER" text="Better Interface Editor"/>
+               </HBox>
+               <HBox alignment="CENTER_RIGHT">
+                   <Button fx:id="minBtn" mnemonicParsing="false" onAction="#minimizeProgram" prefHeight="20.0"
+                           prefWidth="25.0">
+                       <HBox.margin>
+                           <Insets right="4.0"/>
+                       </HBox.margin>
+                   </Button>
+                   <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="25.0">
+                       <HBox.margin>
+                           <Insets right="4.0"/>
+                       </HBox.margin>
+                   </Button>
+                   <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#closeProgram" prefHeight="20.0"
+                           prefWidth="25.0">
+                       <HBox.margin>
+                           <Insets right="4.0"/>
+                       </HBox.margin>
+                   </Button>
+               </HBox>
+           </StackPane>
+           <VBox>
+               <ToolBar prefHeight="30.0" prefWidth="1165.0">
+                   <items>
+                       <HBox prefWidth="1150.0">
+                           <Button fx:id="loadCacheBtn" mnemonicParsing="false" onAction="#loadCache"
+                                   text="Load"/>
+                           <Pane prefWidth="10.0" HBox.hgrow="ALWAYS"/>
+                           <ProgressIndicator fx:id="progressIndicator" prefHeight="19.0" prefWidth="52.0"
+                                              visible="false">
+                               <opaqueInsets>
+                                   <Insets/>
+                               </opaqueInsets>
+                           </ProgressIndicator>
+                       </HBox>
+                   </items>
+               </ToolBar>
+           </VBox>
+       </VBox>
    </top>
    <center>
-      <VBox BorderPane.alignment="CENTER">
-         <children>
-            <VBox>
-               <children>
-                  <Pane fx:id="widgetCanvas" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="503.0" prefWidth="765.0" style="-fx-background-color: #000000;" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </Pane>
-               </children>
-            </VBox>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
-              <items>
-                <Button fx:id="widget" alignment="CENTER" mnemonicParsing="false" onAction="#createWidget" text="Widget" />
-                  <Button fx:id="container" alignment="CENTER" mnemonicParsing="false" onAction="#createContainer" text="Container" />
-                  <Button fx:id="rectangle" alignment="CENTER" mnemonicParsing="false" onAction="#createRectangle" text="Rectangle" />
-                  <Button fx:id="text" alignment="CENTER" mnemonicParsing="false" onAction="#createText" text="Text" />
-                  <Button fx:id="sprite" alignment="CENTER" mnemonicParsing="false" onAction="#createSprite" text="Sprite" />
-                  <Button fx:id="model" alignment="CENTER" mnemonicParsing="false" onAction="#createModel" text="Model" />
-                  <Button fx:id="tooltip" alignment="CENTER" mnemonicParsing="false" onAction="#createTooltip" text="Tooltip" />
-              </items>
-            </ToolBar>
-         </children>
-      </VBox>
+       <VBox BorderPane.alignment="CENTER">
+           <VBox>
+               <Pane fx:id="widgetCanvas" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                     minWidth="-Infinity" prefHeight="503.0" prefWidth="765.0"
+                     style="-fx-background-color: #000000;" VBox.vgrow="NEVER">
+                   <VBox.margin>
+                       <Insets/>
+                   </VBox.margin>
+               </Pane>
+           </VBox>
+           <ToolBar prefHeight="40.0" prefWidth="200.0">
+               <items>
+                   <Button fx:id="widget" alignment="CENTER" mnemonicParsing="false" onAction="#createWidget"
+                           text="Widget"/>
+                   <Button fx:id="container" alignment="CENTER" mnemonicParsing="false" onAction="#createContainer"
+                           text="Container"/>
+                   <Button fx:id="rectangle" alignment="CENTER" mnemonicParsing="false" onAction="#createRectangle"
+                           text="Rectangle"/>
+                   <Button fx:id="text" alignment="CENTER" mnemonicParsing="false" onAction="#createText" text="Text"/>
+                   <Button fx:id="sprite" alignment="CENTER" mnemonicParsing="false" onAction="#createSprite"
+                           text="Sprite"/>
+                   <Button fx:id="model" alignment="CENTER" mnemonicParsing="false" onAction="#createModel"
+                           text="Model"/>
+                   <Button fx:id="tooltip" alignment="CENTER" mnemonicParsing="false" onAction="#createTooltip"
+                           text="Tooltip"/>
+               </items>
+           </ToolBar>
+       </VBox>
    </center>
    <left>
-      <StackPane prefHeight="543.0" prefWidth="280.0" BorderPane.alignment="CENTER">
-         <children>
-            <SplitPane dividerPositions="0.65" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
-              <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                     <children>
-                        <ListView layoutX="-1.0" layoutY="6.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                     <children>
-                        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                              <TitledPane animated="false" collapsible="false" expanded="false" text="Hierarchy">
-                                <content>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                </content>
-                              </TitledPane>
-                              <TreeView />
-                           </children>
-                        </VBox>
-                     </children>
-                  </AnchorPane>
-              </items>
-            </SplitPane>
-         </children></StackPane>
+       <StackPane prefHeight="543.0" prefWidth="280.0" BorderPane.alignment="CENTER">
+           <SplitPane dividerPositions="0.65" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
+               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                   <ListView layoutX="-1.0" layoutY="6.0" AnchorPane.bottomAnchor="0.0"
+                             AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                             AnchorPane.topAnchor="0.0"/>
+               </AnchorPane>
+               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                   <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                         AnchorPane.topAnchor="0.0">
+                       <TitledPane animated="false" collapsible="false" expanded="false" text="Hierarchy">
+                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
+                                       prefWidth="200.0"/>
+                       </TitledPane>
+                       <TreeView/>
+                   </VBox>
+               </AnchorPane>
+           </SplitPane>
+       </StackPane>
    </left>
    <right>
-      <StackPane prefHeight="543.0" prefWidth="280.0" BorderPane.alignment="CENTER">
-         <children>
-            <VBox maxWidth="280.0" prefHeight="543.0" prefWidth="280.0">
-               <children>
-                  <Accordion fx:id="attributesPanel" maxWidth="280.0" />
-               </children>
-            </VBox>
-         </children></StackPane>
+       <StackPane prefHeight="543.0" prefWidth="280.0" BorderPane.alignment="CENTER">
+           <VBox maxWidth="280.0" prefHeight="543.0" prefWidth="280.0">
+               <Accordion fx:id="attributesPanel" maxWidth="280.0"/>
+           </VBox>
+       </StackPane>
    </right>
 </BorderPane>

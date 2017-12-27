@@ -6,10 +6,9 @@ import javafx.geometry.Insets
 import javafx.scene.control.TitledPane
 import javafx.scene.layout.AnchorPane
 
-class Panel(title: String, type: PanelType) : TitledPane() {
+class Panel(title: String, var type: PanelType) : TitledPane() {
 
     var groups: List<Column>? = null
-    var type: PanelType = type
 
     fun getPane(): AnchorPane {
         return content as AnchorPane

@@ -92,8 +92,8 @@ class ResizeBox(private val widget: WidgetGroup, private val pane: Pane) {
         //Maximum bounds
         val bound = if(horizontal) bounds.width else bounds.height
 
-        var value: Double
-        var dimension: Double
+        val value: Double
+        val dimension: Double
 
         // Calculate
         //---------------------
@@ -110,7 +110,7 @@ class ResizeBox(private val widget: WidgetGroup, private val pane: Pane) {
 
         if(firstHalf) {
             //Current position of the side being moved
-            var side = event + offset
+            val side = event + offset
             //Opposite side position = side being moved's start position + original size
             val opposite = (click + offset) + start
 
@@ -126,7 +126,7 @@ class ResizeBox(private val widget: WidgetGroup, private val pane: Pane) {
         } else {
             //Offset is distance between original click and n/w side
             //So add start width/height to get actual offset
-            var actualOffset = start + offset
+            val actualOffset = start + offset
 
             //Current side = current mouse position + actual offset
             val side = actualOffset + event

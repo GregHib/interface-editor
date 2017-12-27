@@ -15,8 +15,8 @@ class MouseMovement(private val movement: MovementProxy, private val selection: 
 
     private fun moveEvent(widget: WidgetGroup, event: MouseEvent) {
         //The actual positioning of the shape with mouse offset corrected
-        var x = event.x + widget.start!!.offsetX!!
-        var y = event.y + widget.start!!.offsetY!!
+        val x = event.x + widget.start!!.offsetX!!
+        val y = event.y + widget.start!!.offsetY!!
 
         movement.moveWidget(widget, x, y)
     }

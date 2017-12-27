@@ -7,33 +7,41 @@ import com.greg.ui.panel.panels.element.elements.NumberFieldElement
 import com.greg.ui.panel.panels.element.elements.TextFieldElement
 import javafx.scene.paint.Color
 
-class RowBuilder {
-
-    constructor(title: String? = null) {
-        addTitle(title)
-        addSpace()
-    }
+class RowBuilder(title: String? = null) {
 
     val componentList = mutableListOf<ElementType>()
     val components = mutableListOf<Any?>()
 
-    fun addTitle(title: String?) {
+    init {
+        addTitle(title)
+        addSpace()
+    }
+
+    fun addAttribute(type: AttributeType, value: Any) {
+        when (type) {
+            AttributeType.TEXT_FIELD -> addTextField(value.toString())
+            AttributeType.COLOUR_PICKER -> addColourPicker(value as Color)
+            AttributeType.NUMBER_FIELD -> addNumberField((value as Double).toInt())
+        }
+    }
+
+    private fun addTitle(title: String?) {
         add(ElementType.TITLE, title)
     }
 
-    fun addSpace() {
+    private fun addSpace() {
         add(ElementType.SPACE)
     }
 
-    fun addTextField(default: String?) {
+    private fun addTextField(default: String?) {
         add(ElementType.ATTRIBUTE, TextFieldElement(default))
     }
 
-    fun addNumberField(default: Int?) {
+    private fun addNumberField(default: Int?) {
         add(ElementType.ATTRIBUTE, NumberFieldElement(default))
     }
 
-    fun addColourPicker(default: Color?) {
+    private fun addColourPicker(default: Color?) {
         add(ElementType.ATTRIBUTE, ColourPickerElement(default))
     }
 
@@ -44,13 +52,5 @@ class RowBuilder {
 
     fun build() : Row {
         return Row(this)
-    }
-
-    fun addAttribute(type: AttributeType, value: Any) {
-        when (type) {
-            AttributeType.TEXT_FIELD -> addTextField(value.toString())
-            AttributeType.COLOUR_PICKER -> addColourPicker(value as Color)
-            AttributeType.NUMBER_FIELD -> addNumberField((value as Double).toInt())
-        }
     }
 }

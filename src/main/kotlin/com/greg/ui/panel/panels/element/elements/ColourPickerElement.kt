@@ -9,17 +9,6 @@ class ColourPickerElement(default: Color?) : ColorPicker(), Element {
 
     override var links: MutableList<(value : Any?) -> Unit> = mutableListOf()
 
-    override fun refresh(value: Any?) {
-        if(value != null)
-            this.value = value as Color
-    }
-
-    override fun link(action: (value: Any?) -> Unit) {
-        if(action !is (value: Color?) -> Unit)
-            throw UnsupportedOperationException()
-        this.links.add(action)
-    }
-
     init {
         if(default != null)
             value = default
@@ -30,5 +19,10 @@ class ColourPickerElement(default: Color?) : ColorPicker(), Element {
             for(action in links)
                 action(value)
         }
+    }
+
+    override fun refresh(value: Any?) {
+        if(value != null)
+            this.value = value as Color
     }
 }

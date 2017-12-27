@@ -1,27 +1,27 @@
 package com.greg.ui.canvas.widget.builder.data
 
-import com.greg.ui.canvas.movement.StartPoint
-import com.greg.ui.canvas.widget.Widget
-import com.greg.ui.canvas.widget.type.types.WidgetRectangle
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
+import com.greg.ui.canvas.movement.StartPoint
+import com.greg.ui.canvas.widget.Widget
 import com.greg.ui.canvas.widget.builder.WidgetBuilder
+import com.greg.ui.canvas.widget.type.types.WidgetRectangle
 import javafx.scene.Node
 import javafx.scene.paint.Color
 
-abstract class WidgetData : WidgetFacade {
-
-    override fun getNode(): Node {
-        return this
-    }
+abstract class WidgetData (builder: WidgetBuilder) : WidgetFacade() {
 
     var components = mutableListOf<Widget>()
     var start: StartPoint? = null
 
-    constructor(builder: WidgetBuilder) {
+    init {
         //Add all the rest, default just rectangle
         for (component in builder.components)
             add(component)
+    }
+
+    override fun getNode(): Node {
+        return this
     }
 
     protected fun addToStart(component: Widget) {

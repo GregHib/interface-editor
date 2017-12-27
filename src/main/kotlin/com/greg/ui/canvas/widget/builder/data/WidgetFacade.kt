@@ -7,7 +7,7 @@ import javafx.scene.Group
 
 abstract class WidgetFacade : Group(), Widget {
 
-    override fun getClass(): WidgetFacade {
+    final override fun getClass(): WidgetFacade {
         return this
     }
 

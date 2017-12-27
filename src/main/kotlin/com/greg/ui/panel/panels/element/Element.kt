@@ -6,6 +6,8 @@ interface Element {
 
     fun refresh(value: Any?)
 
-    fun link(action: (value: Any?) -> Unit)
+    fun link(action: (value: Any?) -> Unit) {
+        this.links.add(action)
+    }
 
 }

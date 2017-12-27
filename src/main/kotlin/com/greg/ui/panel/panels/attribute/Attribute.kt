@@ -16,6 +16,7 @@ class Attribute(val title: String, private val name: String, val type: Attribute
     private val function: Boolean = name.endsWith("Property")
 
     fun init(facade: WidgetFacade) {
+        @Suppress("UNCHECKED_CAST")
         reflection = get(name, facade, function) as KCallable<Widget>
         reflection.isAccessible = true
     }
