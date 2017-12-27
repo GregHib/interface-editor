@@ -47,6 +47,10 @@ class WidgetSelection(private val selectionGroup: SelectionGroup, private val ca
         selectionGroup.remove(widget)
     }
 
+    fun contains(widget: Widget): Boolean {
+        return selectionGroup.getGroup().contains(widget)
+    }
+
     fun toggle(widget: Widget) {
         selectionGroup.toggle(widget)
     }
@@ -77,5 +81,12 @@ class WidgetSelection(private val selectionGroup: SelectionGroup, private val ca
 
     fun clone() {
         interaction.clone()
+    }
+
+    fun selectAll() {
+        canvasPane.children.forEach { node ->
+            if (node is Widget && !contains(node))
+                add(node)
+        }
     }
 }

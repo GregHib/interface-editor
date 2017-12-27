@@ -62,6 +62,9 @@ class SelectionController(override var canvas: WidgetCanvas) : PaneController {
 
         if (event.isControlDown) {
             when (event.code) {
+                KeyCode.A -> {
+                    selection.selectAll()
+                }
                 KeyCode.X -> {
                     selection.copy()
                     selection.delete()
