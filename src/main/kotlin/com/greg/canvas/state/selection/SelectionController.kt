@@ -14,8 +14,8 @@ import javafx.scene.shape.Shape
 
 class SelectionController(override var canvas: WidgetCanvas) : PaneController {
 
-    private var selection = WidgetSelection(canvas.selectionGroup, canvas.canvasPane)
     private var movement = MovementController(canvas.selectionGroup, canvas.canvasPane)
+    private var selection = WidgetSelection(canvas.selectionGroup, canvas.canvasPane)
     private var marquee = MarqueeController(canvas, canvas.canvasPane, selection)
 
     override fun handleMousePress(event: MouseEvent) {
