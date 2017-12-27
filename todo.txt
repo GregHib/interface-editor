@@ -3,16 +3,16 @@ https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 
 // Features
 //----------------------
-Make widget cloneable - control c + p
 Undo / redo actions, add, delete, change values
 Exit edit mode using esc key (undo changes too?)
 Send back one, bring forward one, send to back, bring to front (but not in front of edit mode components)
 Undo/redo links? - Not sure what I meant 20/12/17
+Locking/unlocking widgets (so they can't be interacted with, backgrounds etc.)
 
 
 // Tidy up
 //----------------------
-Arrow key movement extract to class and implement in edit controller
+Arrow key movement in edit controller
 Expand marquee out to it's own class with inheritance, so you can switch out marquee type/shape etc..
 
 
