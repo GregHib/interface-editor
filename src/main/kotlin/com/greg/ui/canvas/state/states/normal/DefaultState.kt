@@ -60,6 +60,9 @@ class DefaultState(override var canvas: Canvas) : CanvasState {
         if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
             movement.move(event)
 
+        if(event.code == KeyCode.SHIFT)
+            movement.clone()
+
         if (event.isControlDown) {
             when (event.code) {
                 KeyCode.A -> {
@@ -85,7 +88,6 @@ class DefaultState(override var canvas: Canvas) : CanvasState {
     }
 
     override fun handleKeyRelease(event: KeyEvent) {
-
         if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
             movement.reset(event.code)
         else if(event.code == KeyCode.DELETE)

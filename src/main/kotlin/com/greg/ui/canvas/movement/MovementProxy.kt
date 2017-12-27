@@ -58,7 +58,7 @@ class MovementProxy(private val pane: Pane, private val selection: Selection) {
         cloned = false
     }
 
-    private fun clone() {
+    fun clone() {
         if(!cloned) {
             selection.clone()
             cloned = true
