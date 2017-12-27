@@ -1,14 +1,16 @@
 package com.greg.ui.canvas.widget.type.types
 
+import com.greg.ui.actions.memento.MementoBuilder
+import com.greg.ui.actions.memento.mementoes.Memento
 import com.greg.ui.canvas.widget.Widget
 import com.greg.ui.canvas.widget.builder.WidgetBuilder
 import com.greg.ui.canvas.widget.builder.data.WidgetData
+import com.greg.ui.panel.Panel
+import com.greg.ui.panel.panels.PanelType
 import com.greg.ui.panel.panels.attribute.Attribute
 import com.greg.ui.panel.panels.attribute.AttributeType
 import com.greg.ui.panel.panels.attribute.column.Column
 import com.greg.ui.panel.panels.attribute.column.rows.RowBuilder
-import com.greg.ui.panel.Panel
-import com.greg.ui.panel.panels.PanelType
 import javafx.beans.value.ObservableValue
 
 
@@ -71,6 +73,7 @@ class WidgetGroup(builder: WidgetBuilder) : WidgetData(builder) {
         }
     }
 
+
     /**
      * Group creation
      * - Creates Column
@@ -101,5 +104,23 @@ class WidgetGroup(builder: WidgetBuilder) : WidgetData(builder) {
         }
 
         return group
+    }
+
+    fun getMemento(): Memento {
+        return MementoBuilder(this).build()
+    }
+
+    fun restore(memento: Memento) {
+        var index = 0
+        for (component in components.reversed()) {
+            PanelType.values()
+                    .mapNotNull { component.getAttributes(it) }
+                    .filter { it.isNotEmpty() }
+                    .flatMap { it.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.title })) }
+                    .forEach { attribute ->
+                        if(index < memento.values.size)
+                            attribute.setValue(component, attribute.type.convert(memento.values[index++].toString()))
+                    }
+        }
     }
 }

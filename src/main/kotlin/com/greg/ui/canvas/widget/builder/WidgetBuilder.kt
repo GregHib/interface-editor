@@ -6,7 +6,7 @@ import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import com.greg.ui.canvas.widget.type.types.WidgetRectangle
 import com.greg.ui.canvas.widget.type.types.WidgetText
 
-class WidgetBuilder(type: WidgetType? = WidgetType.WIDGET) {
+open class WidgetBuilder(type: WidgetType? = WidgetType.WIDGET) {
 
     val components = mutableListOf<WidgetFacade>()
 
@@ -17,7 +17,7 @@ class WidgetBuilder(type: WidgetType? = WidgetType.WIDGET) {
             addText()
     }
 
-    fun build(): WidgetGroup {
+    open fun build(): WidgetGroup {
         return WidgetGroup(this)
     }
 

@@ -91,7 +91,7 @@ class Selection(canvas: Canvas, private val pane: Pane) {
         group.getGroup().forEach { widget ->
             val success = pane.children.remove(widget)
             if (!success)
-                println("Error deleting widget")
+                error("Error deleting widget")
         }
         clear()
     }
