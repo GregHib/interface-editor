@@ -1,7 +1,6 @@
 package com.greg.canvas
 
-import com.greg.canvas.state.PaneController
-import com.greg.canvas.state.selection.SelectionController
+import com.greg.canvas.state.ControllerManager
 import com.greg.canvas.state.selection.SelectionGroup
 import com.greg.controller.AppController
 import javafx.scene.input.KeyEvent
@@ -11,13 +10,13 @@ import javafx.scene.layout.Pane
 class WidgetCanvas(private var appController: AppController) {
 
     var canvasPane: Pane = appController.widgetCanvas
-    var controller: PaneController = SelectionController(this)
     var selectionGroup = SelectionGroup(this)
+    var controller = ControllerManager(this)
 
     init {
         // Mouse events
         // ------------------------------------------------------------------------------
-        appController.widgetCanvas.addEventFilter<MouseEvent>(MouseEvent.ANY, { e -> handleMouseEvent(e) })
+        canvasPane.addEventFilter<MouseEvent>(MouseEvent.ANY, { e -> handleMouseEvent(e) })
     }
 
     private fun handleMouseEvent(e: MouseEvent) {

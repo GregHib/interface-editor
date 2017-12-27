@@ -7,7 +7,7 @@ import com.greg.canvas.state.edit.resize.ResizeController
 import com.greg.canvas.state.edit.resize.ResizeTab
 import com.greg.canvas.state.edit.resize.WidgetChangeInterface
 import com.greg.canvas.state.edit.resize.WidgetChangeListener
-import com.greg.canvas.state.selection.SelectionController
+import com.greg.canvas.state.selection.movement.MovementController
 import com.greg.canvas.widget.Widget
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
@@ -19,8 +19,9 @@ import javafx.scene.shape.Shape
 
 class EditController(override var canvas: WidgetCanvas, val widget: Widget) : PaneController, WidgetChangeInterface {
 
-    private val controller = ResizeController(canvas, widget)
+    private val resize = ResizeController(canvas, widget)
     private val listener = WidgetChangeListener(this)
+    private var movement = MovementController(canvas.selectionGroup, canvas.canvasPane)
 
     private var path: Shape? = null
 
@@ -28,7 +29,7 @@ class EditController(override var canvas: WidgetCanvas, val widget: Widget) : Pa
         refresh()
 
         //Add all tabs to canvas
-        controller.start(widget)
+        resize.start(widget)
 
         listener.link(widget)
     }
@@ -36,42 +37,42 @@ class EditController(override var canvas: WidgetCanvas, val widget: Widget) : Pa
     private fun close() {
         listener.unlink()
         canvas.canvasPane.children.remove(path)
-        controller.close()
-        canvas.controller = SelectionController(canvas)
+        resize.close()
+        canvas.controller.select()
     }
 
     override fun handleMousePress(event: MouseEvent) {
         when {
             event.target == path -> close()
             event.target is ResizeTab -> {
-                controller.press(event)
+                resize.press(event)
                 widget.drag = DragModel(widget.layoutX - event.x, widget.layoutY - event.y)
             }
             event.target is Rectangle -> {
-                setWidgetDrag(widget, event, canvas)
+                movement.startDrag(widget, event, canvas.canvasPane)
             }
         }
     }
 
     override fun handleMouseDrag(event: MouseEvent) {
-        if (controller.click != null && widget.drag != null) {
-            val target = controller.click?.target
+        if (resize.click != null && widget.drag != null) {
+            val target = resize.click?.target
             if (target is ResizeTab) {
                 val bounds = canvas.canvasPane.localToScene(canvas.canvasPane.layoutBounds)
                 //Get the directional info for the tab selected
-                val resizeDir = controller.getDirection(target)
+                val resizeDir = resize.getDirection(target)
 
                 //Resize all the N S E W values for the tab
                 for(direction in resizeDir.directions)
-                    controller.resize(direction, event, bounds)
+                    resize.resize(direction, event, bounds)
             }
         } else if (event.target is Rectangle) {//Dragging
-            moveInCanvas(widget, event)
+            movement.drag(event, widget)
         }
     }
 
     override fun handleMouseRelease(event: MouseEvent) {
-        controller.reset()
+        resize.reset()
         widget.drag = null
     }
 
@@ -82,11 +83,11 @@ class EditController(override var canvas: WidgetCanvas, val widget: Widget) : Pa
     }
 
     override fun handleKeyPress(event: KeyEvent) {
-        controller.shift = event.isShiftDown
+        resize.shift = event.isShiftDown
     }
 
     override fun handleKeyRelease(event: KeyEvent) {
-        controller.shift = event.isShiftDown
+        resize.shift = event.isShiftDown
     }
 
     override fun onChange() {

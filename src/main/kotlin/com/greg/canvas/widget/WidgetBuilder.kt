@@ -1,26 +1,18 @@
 package com.greg.canvas.widget
 
-import com.greg.canvas.WidgetCanvas
+import com.greg.canvas.widget.types.impl.WidgetRectangle
+import com.greg.canvas.widget.types.impl.WidgetText
+import com.greg.canvas.widget.types.WidgetType
 
-class WidgetBuilder {
-
-    val canvas: WidgetCanvas
-
-    constructor(canvas: WidgetCanvas) {
-        this.canvas = canvas
-    }
-
-    constructor(canvas: WidgetCanvas, typeName: String) {
-        this.canvas = canvas
-
-        if (typeName == WidgetText::class.simpleName)
-            addText()
-    }
+class WidgetBuilder(type: WidgetType? = WidgetType.WIDGET) {
 
     val components = mutableListOf<AttributeWidget>()
 
     init {
         addRectangle()
+
+        if(type == WidgetType.TEXT)
+            addText()
     }
 
     fun build(): Widget {

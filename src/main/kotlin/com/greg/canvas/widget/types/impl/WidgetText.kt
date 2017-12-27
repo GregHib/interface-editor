@@ -1,5 +1,6 @@
-package com.greg.canvas.widget
+package com.greg.canvas.widget.types.impl
 
+import com.greg.canvas.widget.AttributeWidget
 import com.greg.panels.attributes.AttributeType
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey

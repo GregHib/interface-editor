@@ -1,6 +1,7 @@
 package com.greg.canvas.widget
 
 import com.greg.canvas.DragModel
+import com.greg.canvas.widget.types.impl.WidgetRectangle
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import javafx.scene.Node
@@ -31,15 +32,15 @@ abstract class WidgetData: AttributeWidget {
     }
 
     fun setWidth(width: Double) {
-        getRectangle().getRectangle()?.width = width
+        getRectangle().getRectangle().width = width
     }
 
     fun setHeight(height: Double) {
-        getRectangle().getRectangle()?.height = height
+        getRectangle().getRectangle().height = height
     }
 
     fun setSelection(colour: Color?) {
-        getRectangle().getRectangle()?.stroke = colour
+        getRectangle().getRectangle().stroke = colour
     }
 
     fun getRectangle(): WidgetRectangle {

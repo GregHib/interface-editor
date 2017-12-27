@@ -2,7 +2,11 @@ package com.greg.controller
 
 import com.greg.App
 import com.greg.canvas.WidgetCanvas
-import com.greg.canvas.widget.*
+import com.greg.canvas.widget.AttributeWidget
+import com.greg.canvas.widget.Widget
+import com.greg.canvas.widget.WidgetBuilder
+import com.greg.canvas.widget.types.impl.WidgetRectangle
+import com.greg.canvas.widget.types.impl.WidgetText
 import com.greg.panels.attributes.parts.AttributesPanel
 import javafx.animation.PauseTransition
 import javafx.application.Platform
@@ -71,12 +75,12 @@ class AppController : Initializable {
 
     @FXML
     fun createRectangle() {
-        widgetCanvas.children.add(WidgetBuilder(canvas).build())
+        widgetCanvas.children.add(WidgetBuilder().build())
     }
 
     @FXML
     fun createText() {
-        val builder = WidgetBuilder(canvas)
+        val builder = WidgetBuilder()
         builder.addText()
         widgetCanvas.children.add(builder.build())
     }
