@@ -10,7 +10,7 @@ enum class WidgetType(private val simpleName: kotlin.String?) {
     TEXT(WidgetText::class.simpleName);
 
     companion object {
-        fun forString(string: String): WidgetType? {
+        fun forString(string: String?): WidgetType? {
             return values().firstOrNull { string == it.simpleName }
         }
     }

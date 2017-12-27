@@ -3,20 +3,25 @@ package com.greg.canvas.state.selection.movement
 import com.greg.Utils
 import com.greg.canvas.DragModel
 import com.greg.canvas.state.selection.SelectionGroup
+import com.greg.canvas.state.selection.WidgetSelection
 import com.greg.canvas.widget.Widget
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 
-class MovementController(private val selectionGroup: SelectionGroup, private val canvasPane: Pane) {
+class MovementController(private val selectionGroup: SelectionGroup, private val canvasPane: Pane, private val selection: WidgetSelection?) {
 
     private val mouse = MouseMovementController(this, selectionGroup)
     private val keyboard = KeyMovementController(this)
+    var cloned = false
 
     fun init(event: MouseEvent) {
         //If has items selected
         if (selectionGroup.size() > 0) {
+            if(event.isShiftDown)
+                clone()
+
             //Set info needed for drag just in case dragging occurs
             selectionGroup.getGroup().forEach { widget ->
                 //save the offset of the shapes position relative to the mouse click
@@ -26,10 +31,16 @@ class MovementController(private val selectionGroup: SelectionGroup, private val
     }
 
     fun drag(event: MouseEvent, widget: Widget?) {
+        if(event.isShiftDown)
+            clone()
+
         mouse.drag(event, widget)
     }
 
     fun move(event: KeyEvent) {
+        if(event.isShiftDown)
+            clone()
+
         keyboard.move(event)
     }
 
@@ -40,6 +51,17 @@ class MovementController(private val selectionGroup: SelectionGroup, private val
     fun move(x: Double, y: Double) {
         selectionGroup.getGroup().forEach { widget ->
             move(widget, x, y)
+        }
+    }
+
+    fun resetClone() {
+        cloned = false
+    }
+
+    private fun clone() {
+        if(selection != null && !cloned) {
+            selection.clone()
+            cloned = true
         }
     }
 

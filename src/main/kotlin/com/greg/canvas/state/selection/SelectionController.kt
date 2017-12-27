@@ -14,8 +14,8 @@ import javafx.scene.shape.Shape
 
 class SelectionController(override var canvas: WidgetCanvas) : PaneController {
 
-    private var movement = MovementController(canvas.selectionGroup, canvas.canvasPane)
     private var selection = WidgetSelection(canvas.selectionGroup, canvas.canvasPane)
+    private var movement = MovementController(canvas.selectionGroup, canvas.canvasPane, selection)
     private var marquee = MarqueeController(canvas, canvas.canvasPane, selection)
 
     override fun handleMousePress(event: MouseEvent) {
@@ -32,12 +32,13 @@ class SelectionController(override var canvas: WidgetCanvas) : PaneController {
     override fun handleMouseDrag(event: MouseEvent) {
         if (event.isPrimaryButtonDown) {
             //Transform marquee box or selected shapes to match mouse position
-            if(!marquee.handleSelecting(event))
+            if((movement.cloned && event.isShiftDown && event.target == null) || !marquee.handleSelecting(event))
                 movement.drag(event, getWidget(event.target))
         }
     }
 
     override fun handleMouseRelease(event: MouseEvent) {
+        movement.resetClone()
         marquee.select(event)
     }
 
@@ -62,14 +63,14 @@ class SelectionController(override var canvas: WidgetCanvas) : PaneController {
         if (event.isControlDown) {
             when (event.code) {
                 KeyCode.X -> {
-                    selection.copy(event)
+                    selection.copy()
                     selection.delete()
                 }
                 KeyCode.C -> {
-                    selection.copy(event)
+                    selection.copy()
                 }
                 KeyCode.V -> {
-                    selection.paste(event)
+                    selection.paste()
                 }
                 else -> {
                 }
@@ -81,11 +82,13 @@ class SelectionController(override var canvas: WidgetCanvas) : PaneController {
     }
 
     override fun handleKeyRelease(event: KeyEvent) {
+
         if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
             movement.reset(event.code)
-
-        if(event.code == KeyCode.DELETE)
+        else if(event.code == KeyCode.DELETE)
             selection.delete()
+        else if(!event.isShiftDown)
+            movement.resetClone()
 
         //Stops the key event here
         event.consume()

@@ -21,7 +21,7 @@ class EditController(override var canvas: WidgetCanvas, val widget: Widget) : Pa
 
     private val resize = ResizeController(canvas, widget)
     private val listener = WidgetChangeListener(this)
-    private var movement = MovementController(canvas.selectionGroup, canvas.canvasPane)
+    private var movement = MovementController(canvas.selectionGroup, canvas.canvasPane, null)
 
     private var path: Shape? = null
 
@@ -66,7 +66,7 @@ class EditController(override var canvas: WidgetCanvas, val widget: Widget) : Pa
                 for(direction in resizeDir.directions)
                     resize.resize(direction, event, bounds)
             }
-        } else if (event.target is Rectangle) {//Dragging
+        } else if (event.target is Rectangle) {
             movement.drag(event, widget)
         }
     }

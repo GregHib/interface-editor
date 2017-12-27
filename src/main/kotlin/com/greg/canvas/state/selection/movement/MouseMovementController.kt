@@ -7,11 +7,11 @@ import javafx.scene.input.MouseEvent
 class MouseMovementController(private val controller: MovementController, private val selectionGroup: SelectionGroup) {
 
     fun drag(event: MouseEvent, target: Widget?) {
-        if (target != null && selectionGroup.contains(target)) {
+        //if (target != null && selectionGroup.contains(target)) {
             selectionGroup.getGroup().forEach { widget ->
                 moveEvent(widget, event)
             }
-        }
+        //}
     }
 
     private fun moveEvent(widget: Widget, event: MouseEvent) {

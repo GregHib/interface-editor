@@ -1,5 +1,6 @@
 package com.greg.canvas.state.selection
 
+import com.greg.canvas.widget.Widget
 import com.greg.canvas.widget.WidgetBuilder
 import com.greg.canvas.widget.WidgetInterface
 import com.greg.canvas.widget.types.WidgetType
@@ -7,7 +8,6 @@ import com.greg.panels.attributes.Attribute
 import com.greg.panels.attributes.parts.pane.AttributePaneType
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
-import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Pane
 
 class InteractionController(private val selectionGroup: SelectionGroup, private val canvasPane: Pane) {
@@ -15,7 +15,7 @@ class InteractionController(private val selectionGroup: SelectionGroup, private 
         return WidgetType.forString(name) != null
     }
 
-    fun paste(event: KeyEvent) {
+    fun paste() {
         val clipboard = Clipboard.getSystemClipboard()
         val string = clipboard.string
 
@@ -76,12 +76,9 @@ class InteractionController(private val selectionGroup: SelectionGroup, private 
                 index++
             }
         }
-
-        //Stops the key event here
-        event.consume()
     }
 
-    fun copy(event: KeyEvent) {
+    fun copy() {
         val clipboard = Clipboard.getSystemClipboard()
 
         //Convert selected widget's into a string of attribute values
@@ -101,9 +98,39 @@ class InteractionController(private val selectionGroup: SelectionGroup, private 
         val content = ClipboardContent()
         content.putString(string.substring(0, string.length - 1))//Remove the extra line space
         clipboard.setContent(content)
+    }
 
-        //Stops the key event here
-        event.consume()
+    fun clone() {
+        val selected = mutableListOf<Widget>()
+        selected.addAll(selectionGroup.getGroup())
+
+        //Clear the current selection
+        selectionGroup.clear()
+
+        //Clone all selected widgets and attributes
+        selected.forEach { widget ->
+            val clone = WidgetBuilder(WidgetType.forString(widget.components.reversed().first()::class.simpleName)).build()
+            canvasPane.children.add(clone)
+            clone.toFront()
+            clone.drag = widget.drag
+            selectionGroup.add(clone)
+
+            for (component in widget.components.reversed()) {
+                clone.components
+                        .filter { component::class.simpleName == it::class.simpleName }
+                        .forEach { clonedComponent ->
+                            for (type in  AttributePaneType.values()) {
+                                val attributes = component.getAttributes(type)?.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.title }))
+                                val clonedAttributes = clonedComponent.getAttributes(type)?.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.title }))
+                                if(attributes != null && clonedAttributes != null) {
+                                    for ((index, attribute) in attributes.withIndex()) {
+                                        clonedAttributes[index].setValue(clonedComponent, attribute.getValue(component))
+                                    }
+                                }
+                            }
+                        }
+            }
+        }
     }
 
 }

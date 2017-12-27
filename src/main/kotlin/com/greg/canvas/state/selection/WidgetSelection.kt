@@ -1,7 +1,6 @@
 package com.greg.canvas.state.selection
 
 import com.greg.canvas.widget.Widget
-import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 
@@ -64,15 +63,19 @@ class WidgetSelection(private val selectionGroup: SelectionGroup, private val ca
      * Clipboard
      */
 
-    fun paste(event: KeyEvent) {
-        interaction.paste(event)
+    fun paste() {
+        interaction.paste()
     }
 
-    fun copy(event: KeyEvent) {
-        interaction.copy(event)
+    fun copy() {
+        interaction.copy()
     }
 
     private fun isMultiSelect(event: MouseEvent): Boolean {
         return event.isShiftDown || event.isControlDown
+    }
+
+    fun clone() {
+        interaction.clone()
     }
 }

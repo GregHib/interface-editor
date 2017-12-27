@@ -69,7 +69,7 @@ class MarqueeController(private var canvas: WidgetCanvas, private val canvasPane
     fun handleSelecting(event: MouseEvent): Boolean {
         //If marquee box isn't already on the screen and...
         //If clicking blank space or a unselected shape with a multi select key down
-        if (!marquee.selecting && (target !is Shape || (!canvas.selectionGroup.contains(widget as Widget) && isMultiSelect(event)))) {
+        if (!marquee.selecting && (target !is Shape || (!canvas.selectionGroup.contains(widget as Widget) && event.isControlDown))) {
             //Begin marquee selection box
             marquee.selecting = true
             addMarqueeBox(event)
@@ -89,10 +89,6 @@ class MarqueeController(private var canvas: WidgetCanvas, private val canvasPane
             selectContents(event)
 
         marquee.selecting = false
-    }
-
-    private fun isMultiSelect(event: MouseEvent): Boolean {//TODO duplicate
-        return event.isShiftDown || event.isControlDown
     }
 
     fun init(event: MouseEvent, widget: Widget?) {
