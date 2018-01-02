@@ -1,4 +1,4 @@
-package com.greg.ui.actions.memento.mementoes
+package com.greg.ui.canvas.widget.memento.mementoes
 
 open class TypeMemento(val type: String) : Memento() {
 

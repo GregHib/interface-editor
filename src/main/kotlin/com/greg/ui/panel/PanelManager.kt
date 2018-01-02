@@ -47,7 +47,7 @@ class PanelManager(private var controller: Controller) {
         if(panel.groups == null) {
             val box = VBox()
             panel.groups = widgets.first().getGroups(panel.type)
-            widgets.first().init(panel.groups!!)
+            widgets.first().init(panel.groups!!, controller.widgets)
             box.children.addAll(panel.groups!!)
             panel.getPane().children.addAll(box)
         }
@@ -55,6 +55,6 @@ class PanelManager(private var controller: Controller) {
         //Link all selected objects to the property groups
         if(panel.groups != null)
             for(widget in widgets)
-                widget.link(panel)
+                widget.link(panel, controller.widgets)
     }
 }

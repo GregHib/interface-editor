@@ -9,10 +9,11 @@ import com.greg.ui.canvas.widget.type.types.WidgetRectangle
 import javafx.scene.Node
 import javafx.scene.paint.Color
 
-abstract class WidgetData (builder: WidgetBuilder) : WidgetFacade() {
+abstract class WidgetData (builder: WidgetBuilder, id: Int) : WidgetFacade() {
 
     var components = mutableListOf<Widget>()
     var start: StartPoint? = null
+    var identifier: Int = id
 
     init {
         //Add all the rest, default just rectangle

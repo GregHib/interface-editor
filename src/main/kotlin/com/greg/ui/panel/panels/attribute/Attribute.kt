@@ -14,6 +14,7 @@ class Attribute(val title: String, private val name: String, val type: Attribute
 
     private lateinit var reflection: KCallable<Widget>
     private val function: Boolean = name.endsWith("Property")
+    var ignoreListener = false
 
     fun init(facade: WidgetFacade) {
         @Suppress("UNCHECKED_CAST")

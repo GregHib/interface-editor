@@ -1,4 +1,4 @@
-package com.greg.ui.actions.memento.mementoes
+package com.greg.ui.canvas.widget.memento.mementoes
 
 import com.greg.ui.canvas.widget.builder.data.WidgetData
 import com.greg.ui.panel.panels.PanelType

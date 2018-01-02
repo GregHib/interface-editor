@@ -4,16 +4,17 @@ import com.greg.ui.canvas.Canvas
 import com.greg.ui.canvas.state.states.CanvasState
 import com.greg.ui.canvas.state.states.edit.EditState
 import com.greg.ui.canvas.state.states.normal.DefaultState
+import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 
-class StateManager(private val canvas: Canvas) {
+class StateManager(private val canvas: Canvas, private val widgets: Widgets) {
 
-    private var controller: CanvasState = DefaultState(canvas)
+    private var controller: CanvasState = DefaultState(canvas, widgets)
 
     fun select() {
-        controller = DefaultState(canvas)
+        controller = DefaultState(canvas, widgets)
     }
 
     fun edit(widget: WidgetGroup?) {
@@ -47,6 +48,10 @@ class StateManager(private val canvas: Canvas) {
 
     fun handleKeyRelease(event: KeyEvent) {
         controller.handleKeyRelease(event)
+    }
+
+    fun isEdit(): Boolean {
+        return controller is EditState
     }
 
 }

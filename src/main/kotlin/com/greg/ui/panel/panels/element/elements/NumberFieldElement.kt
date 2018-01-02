@@ -30,8 +30,7 @@ class NumberFieldElement(private var default: Int?) : TextField(), Element {
 
     private fun handleKeyEvent(e: KeyEvent) {
         when(e.eventType) {
-            KeyEvent.KEY_PRESSED -> { handleKeyPress(e.code) }
-            KeyEvent.KEY_RELEASED -> { e.consume() }
+            KeyEvent.KEY_PRESSED -> handleKeyPress(e.code)
         }
     }
 
@@ -57,11 +56,12 @@ class NumberFieldElement(private var default: Int?) : TextField(), Element {
     }
 
     private fun accept(text: String?) {
-        if(text != null) {
+        if(text != null && beginValue != text) {
             val value = text.toIntOrNull()
             if(value != null)
-                for(action in links)
+                for (action in links)
                     action(value)
+            beginValue = text
         }
     }
 

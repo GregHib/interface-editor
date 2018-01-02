@@ -2,8 +2,10 @@ package com.greg.controller
 
 import com.greg.App
 import com.greg.ui.canvas.Canvas
+import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.widget.builder.WidgetBuilder
 import com.greg.ui.canvas.widget.builder.data.WidgetFacade
+import com.greg.ui.canvas.widget.type.WidgetType
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import com.greg.ui.canvas.widget.type.types.WidgetRectangle
 import com.greg.ui.canvas.widget.type.types.WidgetText
@@ -39,6 +41,8 @@ class Controller : Initializable {
 
     lateinit var attributes: PanelManager
 
+    lateinit var widgets: Widgets
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         val start = System.currentTimeMillis()
         preload(WidgetText::class)
@@ -46,6 +50,7 @@ class Controller : Initializable {
         preload(WidgetGroup::class)
         println("Preload complete in ${System.currentTimeMillis() - start}ms")
 
+        widgets = Widgets(this)
         canvas = Canvas(this)
         attributes = PanelManager(this)
     }
@@ -75,14 +80,12 @@ class Controller : Initializable {
 
     @FXML
     fun createRectangle() {
-        widgetCanvas.children.add(WidgetBuilder().build())
+        widgets.add(WidgetBuilder().build())
     }
 
     @FXML
     fun createText() {
-        val builder = WidgetBuilder()
-        builder.addText()
-        widgetCanvas.children.add(builder.build())
+        widgets.add(WidgetBuilder(WidgetType.TEXT).build())
     }
 
     @FXML

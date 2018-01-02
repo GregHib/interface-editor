@@ -57,7 +57,7 @@ class EditState(override var canvas: Canvas, val widget: WidgetGroup) : CanvasSt
         if (resize.click != null && widget.start != null) {
             val target = resize.click?.target
             if (target is ResizePoint) {
-                val bounds = canvas.pane.localToScene(canvas.pane.layoutBounds)
+                val bounds = canvas.layoutBounds()
                 //Get the directional info for the tab selected
                 val resizeDir = resize.getDirection(target)
 

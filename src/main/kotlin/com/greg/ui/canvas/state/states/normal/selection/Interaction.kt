@@ -1,15 +1,15 @@
 package com.greg.ui.canvas.state.states.normal.selection
 
-import com.greg.ui.actions.memento.MementoBuilder
+import com.greg.ui.canvas.widget.Widgets
+import com.greg.ui.canvas.widget.memento.MementoBuilder
 import com.greg.ui.canvas.selection.Selection
 import com.greg.ui.canvas.widget.builder.WidgetMementoBuilderAdapter
 import com.greg.ui.canvas.widget.type.WidgetType
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
-import javafx.scene.layout.Pane
 
-class Interaction(private val selection: Selection, private val pane: Pane) {
+class Interaction(private val selection: Selection, private val widgets: Widgets) {
 
     fun paste() {
         val clipboard = Clipboard.getSystemClipboard()
@@ -42,7 +42,7 @@ class Interaction(private val selection: Selection, private val pane: Pane) {
 
                 //Create widget of the corresponding type
                 val widget = WidgetMementoBuilderAdapter(memento).build()
-                pane.children.add(widget)
+                widgets.add(widget)
                 selection.add(widget)
             } else {
                 error("Error processing paste line: $line")
@@ -75,11 +75,12 @@ class Interaction(private val selection: Selection, private val pane: Pane) {
         //Clone all selected widgets and attributes
         selected.forEach { widget ->
             val clone = WidgetMementoBuilderAdapter(widget.getMemento()).build()
-            pane.children.add(clone)
+            widgets.add(clone)
             clone.toFront()
             clone.start = widget.start
             selection.add(clone)
         }
+
     }
 
     private fun isWidget(name: String): Boolean {

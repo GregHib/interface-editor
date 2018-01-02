@@ -1,8 +1,8 @@
-package com.greg.ui.actions.memento
+package com.greg.ui.canvas.widget.memento
 
-import com.greg.ui.actions.memento.mementoes.Memento
-import com.greg.ui.actions.memento.mementoes.TypeMemento
-import com.greg.ui.actions.memento.mementoes.WidgetMemento
+import com.greg.ui.canvas.widget.memento.mementoes.Memento
+import com.greg.ui.canvas.widget.memento.mementoes.TypeMemento
+import com.greg.ui.canvas.widget.memento.mementoes.WidgetMemento
 import com.greg.ui.canvas.widget.builder.data.WidgetData
 
 

@@ -1,10 +1,12 @@
 package com.greg.ui.canvas.widget.type.types
 
-import com.greg.ui.actions.memento.MementoBuilder
-import com.greg.ui.actions.memento.mementoes.Memento
+import com.greg.ui.action.change.ChangeType
 import com.greg.ui.canvas.widget.Widget
+import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.widget.builder.WidgetBuilder
 import com.greg.ui.canvas.widget.builder.data.WidgetData
+import com.greg.ui.canvas.widget.memento.MementoBuilder
+import com.greg.ui.canvas.widget.memento.mementoes.Memento
 import com.greg.ui.panel.Panel
 import com.greg.ui.panel.panels.PanelType
 import com.greg.ui.panel.panels.attribute.Attribute
@@ -14,7 +16,7 @@ import com.greg.ui.panel.panels.attribute.column.rows.RowBuilder
 import javafx.beans.value.ObservableValue
 
 
-class WidgetGroup(builder: WidgetBuilder) : WidgetData(builder) {
+class WidgetGroup(builder: WidgetBuilder, id: Int) : WidgetData(builder, id) {
 
     init {
         addToStart(this)
@@ -28,24 +30,31 @@ class WidgetGroup(builder: WidgetBuilder) : WidgetData(builder) {
      * - Adds change listener to widget attribute value change
      */
 
-    fun init(groups: List<Column>) {
+    fun init(groups: List<Column>, widgets: Widgets) {
         for (group in groups) {
             components
                     .filter { widget -> group.widgetClass == widget::class }
                     .forEach { widget ->
                             for (type in PanelType.values())
-                                initGroup(group, widget, type)
+                                initGroup(group, widget, type, widgets)
                     }
         }
     }
 
-    private fun initGroup(group: Column, widget: Widget, type: PanelType) {
+    private fun initGroup(group: Column, widget: Widget, type: PanelType, widgets: Widgets) {
         widget.getAttributes(type)?.forEachIndexed { index, attribute ->
             //If attribute is a property (All are?)
             if (attribute.isProperty()) {
                 val prop = attribute.getProperty(widget) as ObservableValue<*>
                 //Add listener so linked attribute is updated every time value is changed
-                prop.addListener { _, _, newValue -> group.rows[index].linkableList.last().refresh(newValue) }
+                prop.addListener { _, _, newValue ->
+                    if(!attribute.ignoreListener) {
+                        group.rows[index].elements.last().refresh(newValue)
+                        widgets.record(ChangeType.CHANGE, this)
+                    } else {
+                        attribute.ignoreListener = false
+                    }
+                }
             }
         }
     }
@@ -56,20 +65,33 @@ class WidgetGroup(builder: WidgetBuilder) : WidgetData(builder) {
      * - Links panel attribute to change correct widget
      */
 
-    fun link(panel: Panel) {
+    fun link(panel: Panel, widgets: Widgets) {
         for (group in panel.groups!!) {
             components
                     .filter { widget -> group.widgetClass == widget::class }
-                    .forEach { widget -> linkGroup(group, widget, panel.type) }
+                    .forEach { widget -> linkGroup(group, widget, panel.type, widgets) }
         }
     }
 
-    private fun linkGroup(group: Column, widget: Widget, type: PanelType) {
+    private fun linkGroup(group: Column, widget: Widget, type: PanelType, widgets: Widgets) {
         widget.getAttributes(type)?.forEachIndexed { index, attribute ->
             //Add this widget to the list of outputs for the property row
             val row = group.rows[index]
-            //First as currently only supports 1 linkable
-            row.linkableList.first().link({ value -> attribute.setValue(widget, value) })
+            //First as currently only supports the first linkable element
+            row.elements.first().link({ value ->
+                if(attribute.type.convert(attribute.getValue(widget).toString()) != value) {
+                    //Start must happen before value change to capture original value
+                    widgets.start(this)
+                    //Ignore must be set before as setValue fires the listener
+                    attribute.ignoreListener = true
+                    //Change the attributes value
+                    attribute.setValue(widget, value)
+                    //Record value change
+                    widgets.record(ChangeType.CHANGE, this)
+                    //Finish action
+                    widgets.finish()
+                }
+            })
         }
     }
 

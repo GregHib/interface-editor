@@ -1,14 +1,14 @@
 package com.greg.ui.canvas.selection
 
+import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.Canvas
 import com.greg.ui.canvas.state.states.normal.selection.Interaction
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.Pane
 
-class Selection(canvas: Canvas, private val pane: Pane) {
+class Selection(canvas: Canvas, private val widgets: Widgets) {
     private var group = SelectionGroup(canvas)
-    private val interaction = Interaction(this, pane)
+    private val interaction = Interaction(this, widgets)
 
     fun init(event: MouseEvent, widget: WidgetGroup?) {
         //If clicked something other than a widget
@@ -81,7 +81,7 @@ class Selection(canvas: Canvas, private val pane: Pane) {
     }
 
     fun selectAll() {
-        pane.children.forEach { node ->
+        widgets.getAll().forEach { node ->
             if (node is WidgetGroup && !contains(node))
                 add(node)
         }
@@ -89,7 +89,7 @@ class Selection(canvas: Canvas, private val pane: Pane) {
 
     fun deleteAll() {
         group.getGroup().forEach { widget ->
-            val success = pane.children.remove(widget)
+            val success = widgets.remove(widget)
             if (!success)
                 error("Error deleting widget")
         }

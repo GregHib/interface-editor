@@ -26,7 +26,7 @@ class TextFieldElement(private var default: String?) : TextField(), Element {
 
     private fun handleKeyEvent(e: KeyEvent) {
         when(e.eventType) {
-            KeyEvent.KEY_PRESSED -> { handleKeyPress(e.code) }
+            KeyEvent.KEY_PRESSED -> handleKeyPress(e.code)
         }
     }
 
@@ -55,6 +55,7 @@ class TextFieldElement(private var default: String?) : TextField(), Element {
         for(action in links) {
             action(text)
         }
+        beginText = text
     }
 
     private fun cancel() {
@@ -63,9 +64,5 @@ class TextFieldElement(private var default: String?) : TextField(), Element {
 
     private fun resetToDefault() {
         text = default
-    }
-
-    override fun link(action: (value: Any?) -> Unit) {
-        this.links.add(action)
     }
 }

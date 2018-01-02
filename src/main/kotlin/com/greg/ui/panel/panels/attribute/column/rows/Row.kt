@@ -11,7 +11,7 @@ import javafx.scene.layout.HBox
 
 class Row(builder: RowBuilder) : HBox() {
 
-    var linkableList = mutableListOf<Element>()
+    var elements = mutableListOf<Element>()
 
     init {
         prefWidth = 280.0
@@ -40,6 +40,6 @@ class Row(builder: RowBuilder) : HBox() {
             throw IllegalArgumentException("Invalid element added to attribute row")
         else
             children.add(element)
-        linkableList.add(element)
+        elements.add(element)
     }
 }

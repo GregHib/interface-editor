@@ -38,9 +38,6 @@ class MovementProxy(private val pane: Pane, private val selection: Selection) {
     }
 
     fun move(event: KeyEvent) {
-        if(event.isShiftDown)
-            clone()
-
         keyboard.move(event)
     }
 

@@ -1,8 +1,9 @@
 package com.greg.ui.canvas
 
 import com.greg.controller.Controller
-import com.greg.ui.canvas.state.StateManager
 import com.greg.ui.canvas.selection.Selection
+import com.greg.ui.canvas.state.StateManager
+import javafx.geometry.Bounds
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
@@ -10,8 +11,8 @@ import javafx.scene.layout.Pane
 class Canvas(private var controller: Controller) {
 
     var pane: Pane = controller.widgetCanvas
-    var selection = Selection(this, pane)
-    var manager = StateManager(this)
+    var selection = Selection(this, controller.widgets)
+    var manager = StateManager(this, controller.widgets)
 
     init {
         // Mouse events
@@ -38,5 +39,9 @@ class Canvas(private var controller: Controller) {
 
     fun refreshSelection() {
         controller.attributes.reload()
+    }
+
+    fun layoutBounds(): Bounds {
+        return pane.localToScene(pane.layoutBounds)
     }
 }
