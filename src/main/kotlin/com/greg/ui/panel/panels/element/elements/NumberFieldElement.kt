@@ -13,10 +13,11 @@ import javafx.util.converter.IntegerStringConverter
 class NumberFieldElement(private var default: Int?) : TextField(), Element {
 
     override var links: MutableList<(value: Any?) -> Unit> = mutableListOf()
+    private var beginValue = default.toString()
 
     init {
         textFormatter = TextFormatter(IntegerStringConverter())
-        this.text = default.toString()
+        text = beginValue
 
         // Key press
         // ---------------------------------------------------------------
@@ -30,6 +31,7 @@ class NumberFieldElement(private var default: Int?) : TextField(), Element {
     private fun handleKeyEvent(e: KeyEvent) {
         when(e.eventType) {
             KeyEvent.KEY_PRESSED -> { handleKeyPress(e.code) }
+            KeyEvent.KEY_RELEASED -> { e.consume() }
         }
     }
 
@@ -46,11 +48,12 @@ class NumberFieldElement(private var default: Int?) : TextField(), Element {
                 cancel()
             else
                 accept(text)
-        }
+        } else
+            beginValue = text
     }
 
     override fun refresh(value: Any?) {
-        this.text = (value as Double).toInt().toString()
+        text = (value as Double).toInt().toString()
     }
 
     private fun accept(text: String?) {
@@ -63,6 +66,10 @@ class NumberFieldElement(private var default: Int?) : TextField(), Element {
     }
 
     private fun cancel() {
+        text = beginValue
+    }
+
+    private fun resetToDefault() {
         text = default.toString()
     }
 }

@@ -10,9 +10,10 @@ import javafx.scene.input.KeyEvent
 class TextFieldElement(private var default: String?) : TextField(), Element {
 
     override var links: MutableList<(value: Any?) -> Unit> = mutableListOf()
+    private var beginText = default
 
     init {
-        text = default
+        text = beginText
 
         // Key press
         // ---------------------------------------------------------------
@@ -42,7 +43,8 @@ class TextFieldElement(private var default: String?) : TextField(), Element {
                 cancel()
             else
                 accept(text)
-        }
+        } else
+            beginText = text
     }
 
     override fun refresh(value: Any?) {
@@ -56,6 +58,10 @@ class TextFieldElement(private var default: String?) : TextField(), Element {
     }
 
     private fun cancel() {
+        text = beginText
+    }
+
+    private fun resetToDefault() {
         text = default
     }
 
