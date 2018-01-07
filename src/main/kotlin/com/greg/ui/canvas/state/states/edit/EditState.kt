@@ -43,6 +43,9 @@ class EditState(override var canvas: Canvas, private val widgets: Widgets, val w
     }
 
     override fun handleMousePress(event: MouseEvent) {
+        if(event.target != path) {
+            widgets.start(widget)
+        }
         when {
             event.target == path -> close()
             event.target is ResizePoint -> {
@@ -74,6 +77,7 @@ class EditState(override var canvas: Canvas, private val widgets: Widgets, val w
 
     override fun handleMouseRelease(event: MouseEvent) {
         resize.reset()
+        widgets.finish()
         widget.start = null
     }
 
