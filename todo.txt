@@ -4,10 +4,9 @@ https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 // Features
 //----------------------
 Enter button to exit edit mode + esc?
-Undo / redo for edit state
 Exit edit mode using esc key (undo changes too?)
-Send back one, bring forward one, send to back, bring to front (but not in front of edit mode components)
-Undo/redo links? - Not sure what I meant 20/12/17
+Selecting + actions on hierarchy for multiple widgets at once
+Widgets within widgets; recursive for hierarchy + memento's; cutting/pasting etc..
 Locking/unlocking widgets (so they can't be interacted with, backgrounds etc.)
 
 
@@ -26,3 +25,4 @@ Also widget change listener has room for optimisations as it refresh's multiple 
 Advanced arrow key movement system, ideally without a game-loop see : https://stackoverflow.com/questions/21331519/how-to-get-smooth-animation-with-keypress-event-in-javaf
 Undoing and redoing changing an attribute for multiple widgets in one action rather than splitting into individual actions
 Change layout to use mvc?
+Custom names for hierarchy items (have name as a WidgetGroup property?) When saving will need a separate *.names file

@@ -13,7 +13,8 @@ abstract class WidgetData(builder: WidgetBuilder, id: Int) : WidgetFacade() {
 
     var components = mutableListOf<Widget>()
     var start: StartPoint? = null
-    var identifier: Int = id
+    val identifier: Int = id
+    val name: String = builder.components.last()::class.simpleName.toString()
 
     init {
         //Add all the rest, default just rectangle

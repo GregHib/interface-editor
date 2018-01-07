@@ -16,9 +16,8 @@ abstract class WidgetSet {
     }
 
     fun clear() {
-        while (!group.isEmpty()) {
+        while (!group.isEmpty())
             remove(group.iterator().next())
-        }
     }
 
     fun size(): Int {

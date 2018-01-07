@@ -9,7 +9,6 @@ import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import com.greg.ui.canvas.widget.type.types.WidgetRectangle
 import com.greg.ui.canvas.widget.type.types.WidgetText
 import com.greg.ui.hierarchy.HierarchyManager
-import com.greg.ui.hierarchy.Person
 import com.greg.ui.panel.PanelManager
 import javafx.animation.PauseTransition
 import javafx.concurrent.Task
@@ -31,7 +30,7 @@ class ControllerView : View() {
 
     val widgetCanvas: Pane by fxid()
     private val progressIndicator: ProgressIndicator by fxid()
-    val hierarchyTree: TreeView<Person> by fxid()
+    val hierarchyTree: TreeView<String> by fxid()
     private val right: StackPane by fxid()
 
     var canvas: Canvas
@@ -68,7 +67,7 @@ class ControllerView : View() {
     }
 
     fun handleKeyPress(event: KeyEvent) {
-        hierarchy.persons.add(Person("Steve", "Marketing"))
+        hierarchyTree.refresh()
         canvas.handleKeyPress(event)
     }
 
@@ -85,11 +84,15 @@ class ControllerView : View() {
     }
 
     fun createRectangle() {
-        widgets.add(WidgetBuilder().build())
+        val widget = WidgetBuilder().build()
+        widgets.add(widget)
+        hierarchy.add(widget)
     }
 
     fun createText() {
-        widgets.add(WidgetBuilder(WidgetType.TEXT).build())
+        val widget = WidgetBuilder(WidgetType.TEXT).build()
+        widgets.add(widget)
+        hierarchy.add(widget)
     }
 
     fun createSprite() {
