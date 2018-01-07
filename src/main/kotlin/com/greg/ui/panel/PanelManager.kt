@@ -1,12 +1,12 @@
 package com.greg.ui.panel
 
-import com.greg.controller.Controller
+import com.greg.controller.ControllerView
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import com.greg.ui.panel.panels.PanelType
 import com.greg.ui.panel.panels.attribute.column.Column
 import javafx.scene.layout.VBox
 
-class PanelManager(private var controller: Controller) {
+class PanelManager(private var controller: ControllerView) {
 
     private var properties = Panel("Properties", PanelType.PROPERTIES)
     private var layout = Panel("Layout", PanelType.LAYOUT)

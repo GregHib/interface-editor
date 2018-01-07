@@ -1,31 +1,15 @@
 package com.greg
 
+import com.greg.controller.ControllerView
 import javafx.application.Application
-import javafx.fxml.FXMLLoader
-import javafx.scene.Parent
-import javafx.scene.Scene
-import javafx.scene.canvas.Canvas
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.Pane
-import javafx.scene.layout.VBox
-import javafx.scene.paint.Color
-import javafx.stage.Stage
-import javafx.stage.StageStyle
+import tornadofx.App
 
+class AppLauncher : App(ControllerView::class)
 
-class App : Application() {
+fun main(args: Array<String>) {
+    Application.launch(AppLauncher::class.java, *args)
 
-    override fun start(stage: Stage) {
-        mainStage = stage
-        val root = FXMLLoader.load<Parent>(javaClass.getResource("/main.fxml"))
-        stage.title = "Better interface editor"
-        stage.scene = Scene(root)
-        stage.initStyle(StageStyle.UNDECORATED)
-        stage.show()
-
-//        drawLayered()
-    }
-
+    /*
     private fun drawLayered() {
         val sharpCanvas = createCanvasGrid(600.0, 300.0, 16, Color.GRAY)
         val sharpCanvas2 = createCanvasGrid(600.0, 300.0, 32, Color.BLACK)
@@ -64,14 +48,5 @@ class App : Application() {
         }
         return canvas
     }
-
-    companion object {
-
-        lateinit var mainStage : Stage
-
-        @JvmStatic
-        fun main(args : Array<String>) {
-            launch(App::class.java)
-        }
-    }
+     */
 }

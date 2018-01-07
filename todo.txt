@@ -3,6 +3,7 @@ https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 
 // Features
 //----------------------
+Enter button to exit edit mode + esc?
 Undo / redo for edit state
 Exit edit mode using esc key (undo changes too?)
 Send back one, bring forward one, send to back, bring to front (but not in front of edit mode components)

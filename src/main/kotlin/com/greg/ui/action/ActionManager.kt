@@ -1,6 +1,6 @@
 package com.greg.ui.action
 
-import com.greg.controller.Controller
+import com.greg.controller.ControllerView
 import com.greg.ui.action.change.Change
 import com.greg.ui.action.change.ChangeType
 import com.greg.ui.action.containers.ActionList
@@ -9,7 +9,7 @@ import com.greg.ui.canvas.widget.builder.WidgetMementoBuilderAdapter
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.scene.layout.Pane
 
-class ActionManager(private val pane: Pane, private val controller: Controller) {
+class ActionManager(private val pane: Pane, private val controller: ControllerView) {
 
     private val actions = Actions()
     private val redo = ActionList()

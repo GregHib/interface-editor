@@ -1,6 +1,5 @@
 package com.greg.controller
 
-import com.greg.App
 import com.greg.ui.canvas.Canvas
 import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.widget.builder.WidgetBuilder
@@ -9,41 +8,45 @@ import com.greg.ui.canvas.widget.type.WidgetType
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import com.greg.ui.canvas.widget.type.types.WidgetRectangle
 import com.greg.ui.canvas.widget.type.types.WidgetText
+import com.greg.ui.hierarchy.HierarchyManager
 import com.greg.ui.panel.PanelManager
 import javafx.animation.PauseTransition
-import javafx.application.Platform
 import javafx.concurrent.Task
-import javafx.fxml.FXML
-import javafx.fxml.Initializable
 import javafx.scene.control.Accordion
 import javafx.scene.control.ProgressIndicator
+import javafx.scene.control.TreeView
 import javafx.scene.input.KeyEvent
+import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
 import javafx.util.Duration
-import java.net.URL
-import java.util.*
+import tornadofx.View
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 
-class Controller : Initializable {
 
-    @FXML
-    lateinit var attributesPanel: Accordion
 
-    @FXML
-    lateinit var widgetCanvas: Pane
+class ControllerView : View() {
+    override val root : BorderPane by fxml("/main.fxml")
 
-    @FXML
-    lateinit var progressIndicator: ProgressIndicator
+    val attributesPanel: Accordion by fxid()
+    val widgetCanvas: Pane by fxid()
+    val progressIndicator: ProgressIndicator by fxid()
+    val hierarchyTree: TreeView<String> by fxid()
 
-    lateinit var canvas: Canvas
+    var canvas: Canvas
 
-    lateinit var attributes: PanelManager
+    var attributes: PanelManager
 
-    lateinit var widgets: Widgets
+    var widgets: Widgets
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    var hierarchy: HierarchyManager
+
+    init {
+        title = "Greg's Interface Editor"
+        primaryStage.isResizable = false
+        primaryStage.sizeToScene()
+
         val start = System.currentTimeMillis()
         preload(WidgetText::class)
         preload(WidgetRectangle::class)
@@ -53,6 +56,8 @@ class Controller : Initializable {
         widgets = Widgets(this)
         canvas = Canvas(this)
         attributes = PanelManager(this)
+        hierarchy = HierarchyManager(this)
+        primaryStage.isResizable = false
     }
 
     private fun preload(kClass: KClass<out WidgetFacade>) {
@@ -60,47 +65,42 @@ class Controller : Initializable {
         kClass.memberProperties
     }
 
-    @FXML
     fun handleKeyPress(event: KeyEvent) {
         canvas.handleKeyPress(event)
     }
 
-    @FXML
     fun handleKeyRelease(event: KeyEvent) {
         canvas.handleKeyRelease(event)
     }
 
-    @FXML
     fun createWidget() {
+
     }
 
-    @FXML
     fun createContainer() {
+
     }
 
-    @FXML
     fun createRectangle() {
         widgets.add(WidgetBuilder().build())
     }
 
-    @FXML
     fun createText() {
         widgets.add(WidgetBuilder(WidgetType.TEXT).build())
     }
 
-    @FXML
     fun createSprite() {
+
     }
 
-    @FXML
     fun createModel() {
+
     }
 
-    @FXML
     fun createTooltip() {
+
     }
 
-    @FXML
     fun loadCache() {
 
         createTask(object : Task<Boolean>() {
@@ -115,6 +115,7 @@ class Controller : Initializable {
             }
 
         })
+
     }
 
     private fun createTask(task: Task<*>) {
@@ -148,15 +149,5 @@ class Controller : Initializable {
             pause.play()
 
         }
-    }
-
-    @FXML
-    fun minimizeProgram() {
-        App.mainStage.isIconified = true
-    }
-
-    @FXML
-    fun closeProgram() {
-        Platform.exit()
     }
 }

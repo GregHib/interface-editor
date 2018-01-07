@@ -1,13 +1,13 @@
 package com.greg.ui.canvas.widget
 
-import com.greg.controller.Controller
+import com.greg.controller.ControllerView
 import com.greg.ui.action.ActionManager
 import com.greg.ui.action.change.ChangeType
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.collections.ObservableList
 import javafx.scene.Node
 
-class Widgets(controller: Controller) {
+class Widgets(controller: ControllerView) {
     private val pane = controller.widgetCanvas
     private val manager = ActionManager(pane, controller)
     private var counter = 0
