@@ -88,6 +88,7 @@ class WidgetGroup(builder: WidgetBuilder, id: Int) : WidgetData(builder, id) {
                     attribute.setValue(widget, value)
                     //Record value change
                     widgets.record(ChangeType.CHANGE, this)
+
                     //Finish action
                     widgets.finish()
                 }

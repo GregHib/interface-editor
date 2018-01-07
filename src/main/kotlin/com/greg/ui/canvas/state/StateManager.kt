@@ -19,7 +19,7 @@ class StateManager(private val canvas: Canvas, private val widgets: Widgets) {
 
     fun edit(widget: WidgetGroup?) {
         if (widget != null)
-            controller = EditState(canvas, widget)
+            controller = EditState(canvas, widgets, widget)
     }
 
     fun handleMousePress(event: MouseEvent) {

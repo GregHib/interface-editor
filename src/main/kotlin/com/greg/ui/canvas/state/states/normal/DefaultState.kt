@@ -69,6 +69,18 @@ class DefaultState(override var canvas: Canvas, private val widgets: Widgets) : 
         if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
             movement.move(event)
 
+        //Stops the key event here
+        event.consume()
+    }
+
+    override fun handleKeyRelease(event: KeyEvent) {
+        if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
+            movement.reset(event.code)
+        else if(event.code == KeyCode.DELETE)
+            selection.deleteAll()
+        else if(!event.isShiftDown)
+            movement.resetClone()
+
         if (event.isControlDown) {
             when (event.code) {
                 KeyCode.A -> {
@@ -94,18 +106,6 @@ class DefaultState(override var canvas: Canvas, private val widgets: Widgets) : 
                 }
             }
         }
-
-        //Stops the key event here
-        event.consume()
-    }
-
-    override fun handleKeyRelease(event: KeyEvent) {
-        if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
-            movement.reset(event.code)
-        else if(event.code == KeyCode.DELETE)
-            selection.deleteAll()
-        else if(!event.isShiftDown)
-            movement.resetClone()
 
         widgets.finish()
 

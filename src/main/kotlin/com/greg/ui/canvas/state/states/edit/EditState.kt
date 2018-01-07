@@ -7,7 +7,9 @@ import com.greg.ui.canvas.state.states.edit.resize.box.ResizeBox
 import com.greg.ui.canvas.state.states.edit.resize.box.points.ResizePoint
 import com.greg.ui.canvas.state.states.edit.resize.observer.AttributeObserver
 import com.greg.ui.canvas.state.states.edit.resize.observer.WidgetObserver
+import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
+import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
@@ -16,7 +18,7 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.shape.Shape
 
 
-class EditState(override var canvas: Canvas, val widget: WidgetGroup) : CanvasState, WidgetObserver {
+class EditState(override var canvas: Canvas, private val widgets: Widgets, val widget: WidgetGroup) : CanvasState, WidgetObserver {
 
     private val resize = ResizeBox(widget, canvas.pane)
     private val observer = AttributeObserver(this)
@@ -87,6 +89,23 @@ class EditState(override var canvas: Canvas, val widget: WidgetGroup) : CanvasSt
 
     override fun handleKeyRelease(event: KeyEvent) {
         resize.shift = event.isShiftDown
+
+        if (event.isControlDown) {
+            when (event.code) {
+                KeyCode.Z -> {
+                    if(event.isShiftDown)
+                        widgets.redo()
+                    else
+                        widgets.undo()
+                    close()
+                }
+                else -> {
+                }
+            }
+        }
+
+        //Stops the key event here
+        event.consume()
     }
 
     override fun onChange() {
