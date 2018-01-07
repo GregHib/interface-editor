@@ -3,22 +3,18 @@ package com.greg.ui.panel
 import com.greg.ui.panel.panels.PanelType
 import com.greg.ui.panel.panels.attribute.column.Column
 import javafx.geometry.Insets
-import javafx.scene.control.TitledPane
 import javafx.scene.layout.AnchorPane
+import tornadofx.View
+import tornadofx.anchorpane
+import tornadofx.stackpane
 
-class Panel(title: String, var type: PanelType) : TitledPane() {
+class Panel(var type: PanelType) : View() {
+
+    lateinit var content: AnchorPane
+    override val root = stackpane {
+        padding = Insets(0.0)
+        content = anchorpane()
+    }
 
     var groups: List<Column>? = null
-
-    fun getPane(): AnchorPane {
-        return content as AnchorPane
-    }
-
-    init {
-        text = title
-        maxWidth = 280.0
-        val pane = AnchorPane()
-        pane.padding = Insets(0.0, 0.0, 0.0, 0.0)
-        content = pane
-    }
 }

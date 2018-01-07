@@ -5,36 +5,46 @@ import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import com.greg.ui.panel.panels.PanelType
 import com.greg.ui.panel.panels.attribute.column.Column
 import javafx.scene.layout.VBox
+import tornadofx.*
 
-class PanelManager(private var controller: ControllerView) {
+class PanelManager(private var controller: ControllerView) : View() {
 
-    private var properties = Panel("Properties", PanelType.PROPERTIES)
-    private var layout = Panel("Layout", PanelType.LAYOUT)
+    private val panels = mutableListOf<Panel>()
 
     init {
-        controller.attributesPanel.panes.add(properties)
-        controller.attributesPanel.panes.add(layout)
-        controller.attributesPanel.expandedPane = properties
+        panels.add(Panel(PanelType.PROPERTIES))
+        panels.add(Panel(PanelType.LAYOUT))
+        reload()
+    }
+
+    override val root = scrollpane(fitToWidth = true) {
+        squeezebox {
+            for (panel in panels)
+                fold(panel.type.name.toLowerCase().capitalize(), expanded = true) {
+                    isAnimated = false
+                    add(panel)
+                }
+        }
     }
 
     fun reload() {
-        controller.attributesPanel.panes
-                .filterIsInstance<Panel>()
-                .forEach { pane -> reload(pane, controller.canvas.selection.get()) }
+        panels.forEach { pane ->
+            reload(pane, controller.canvas.selection.get())
+        }
     }
 
     private fun reload(panel: Panel, widgets: MutableSet<WidgetGroup>) {
-        panel.getPane().children.clear()
+        panel.content.clear()
 
         panel.groups = null
 
         when {
-            widgets.size == 0 -> panel.getPane().children.add(Column("No Selection", null))
+            widgets.size == 0 -> panel.content.add(Column("No Selection", null, false))
             widgets.size == 1 -> loadProperties(panel, widgets)
             else -> {
                 val type = widgets.first().javaClass
                 //Display only if all selected are of the same type
-                if(widgets.stream().allMatch({ e -> e.javaClass == type }))
+                if (widgets.stream().allMatch({ e -> e.javaClass == type }))
                     loadProperties(panel, widgets)
             }
         }
@@ -44,17 +54,18 @@ class PanelManager(private var controller: ControllerView) {
 
         //Load the property groups of the first object
         //First object will always be correct as selection is either 1 or of all the same type
-        if(panel.groups == null) {
+        if (panel.groups == null) {
             val box = VBox()
             panel.groups = widgets.first().getGroups(panel.type)
             widgets.first().init(panel.groups!!, controller.widgets)
-            box.children.addAll(panel.groups!!)
-            panel.getPane().children.addAll(box)
+            for(node in panel.groups!!)
+                box.children.add(node.root)
+            panel.content.add(box)
         }
 
         //Link all selected objects to the property groups
-        if(panel.groups != null)
-            for(widget in widgets)
+        if (panel.groups != null)
+            for (widget in widgets)
                 widget.link(panel, controller.widgets)
     }
 }

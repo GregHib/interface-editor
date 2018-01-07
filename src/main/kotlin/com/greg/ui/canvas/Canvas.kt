@@ -38,7 +38,7 @@ class Canvas(private var controller: ControllerView) {
     }
 
     fun refreshSelection() {
-        controller.attributes.reload()
+        controller.panels.reload()
     }
 
     fun layoutBounds(): Bounds {

@@ -9,15 +9,16 @@ import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import com.greg.ui.canvas.widget.type.types.WidgetRectangle
 import com.greg.ui.canvas.widget.type.types.WidgetText
 import com.greg.ui.hierarchy.HierarchyManager
+import com.greg.ui.hierarchy.Person
 import com.greg.ui.panel.PanelManager
 import javafx.animation.PauseTransition
 import javafx.concurrent.Task
-import javafx.scene.control.Accordion
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
+import javafx.scene.layout.StackPane
 import javafx.util.Duration
 import tornadofx.View
 import kotlin.reflect.KClass
@@ -25,18 +26,17 @@ import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 
 
-
 class ControllerView : View() {
-    override val root : BorderPane by fxml("/main.fxml")
+    override val root: BorderPane by fxml("/main.fxml")
 
-    val attributesPanel: Accordion by fxid()
     val widgetCanvas: Pane by fxid()
-    val progressIndicator: ProgressIndicator by fxid()
-    val hierarchyTree: TreeView<String> by fxid()
+    private val progressIndicator: ProgressIndicator by fxid()
+    val hierarchyTree: TreeView<Person> by fxid()
+    private val right: StackPane by fxid()
 
     var canvas: Canvas
 
-    var attributes: PanelManager
+    var panels: PanelManager
 
     var widgets: Widgets
 
@@ -55,9 +55,11 @@ class ControllerView : View() {
 
         widgets = Widgets(this)
         canvas = Canvas(this)
-        attributes = PanelManager(this)
+        panels = PanelManager(this)
         hierarchy = HierarchyManager(this)
-        primaryStage.isResizable = false
+
+
+        right.add(panels)
     }
 
     private fun preload(kClass: KClass<out WidgetFacade>) {
@@ -66,6 +68,7 @@ class ControllerView : View() {
     }
 
     fun handleKeyPress(event: KeyEvent) {
+        hierarchy.persons.add(Person("Steve", "Marketing"))
         canvas.handleKeyPress(event)
     }
 

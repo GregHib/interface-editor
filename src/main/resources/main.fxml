@@ -28,7 +28,7 @@
        </VBox>
    </top>
    <center>
-       <VBox BorderPane.alignment="CENTER">
+       <VBox maxWidth="765.0" BorderPane.alignment="CENTER">
           <children>
               <VBox>
                  <children>
@@ -83,14 +83,6 @@
        </StackPane>
    </left>
    <right>
-       <StackPane prefHeight="543.0" prefWidth="280.0" BorderPane.alignment="CENTER">
-          <children>
-              <VBox maxWidth="280.0" prefHeight="543.0" prefWidth="280.0">
-                 <children>
-                     <Accordion fx:id="attributesPanel" maxWidth="280.0" />
-                 </children>
-              </VBox>
-          </children>
-       </StackPane>
+       <StackPane fx:id="right" maxWidth="-Infinity" prefHeight="543.0" prefWidth="280.0" BorderPane.alignment="CENTER" />
    </right>
 </BorderPane>
