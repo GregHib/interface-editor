@@ -1,5 +1,7 @@
 package com.greg.ui.canvas.state.states.edit
 
+import com.greg.settings.Settings
+import com.greg.settings.SettingsKey
 import com.greg.ui.canvas.Canvas
 import com.greg.ui.canvas.movement.MovementProxy
 import com.greg.ui.canvas.state.states.CanvasState
@@ -93,6 +95,11 @@ class EditState(override var canvas: Canvas, private val widgets: Widgets, val w
 
     override fun handleKeyRelease(event: KeyEvent) {
         resize.shift = event.isShiftDown
+
+        when(event.code.ordinal) {
+            Settings.getInt(SettingsKey.ACCEPT_KEY_CODE) -> { close() }
+            Settings.getInt(SettingsKey.CANCEL_KEY_CODE) -> { close() }//TODO possibly get memento on edit start and clear all actions after if canceled?
+        }
 
         if (event.isControlDown) {
             when (event.code) {
