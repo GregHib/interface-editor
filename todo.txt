@@ -3,7 +3,7 @@ https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 
 // Features
 //----------------------
-Enter button to exit edit mode + esc?
+Shift dragging movement doesn't undo correctly
 Exit edit mode using esc key (undo changes too?)
 Selecting + actions on hierarchy for multiple widgets at once
 Widgets within widgets; recursive for hierarchy + memento's; cutting/pasting etc..

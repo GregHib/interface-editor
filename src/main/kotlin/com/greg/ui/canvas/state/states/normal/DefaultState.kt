@@ -17,27 +17,27 @@ class DefaultState(override var canvas: Canvas, private val widgets: Widgets) : 
 
     private var selection = canvas.selection
     private var movement = MovementProxy(canvas.pane, selection)
-    private var marquee = MarqueeFacade(canvas.pane)
+    private var marquee = MarqueeFacade(widgets, canvas.pane)
 
     override fun handleMousePress(event: MouseEvent) {
-
         //Get the parent widget (can be null)
         val widget = getWidget(event.target)
 
-        widgets.start(widget)
-
-        marquee.init(event, widget)
-
         selection.init(event, widget)
 
-        movement.init(event)
+        //Start movement (and actions)
+        if (movement.init(event))
+            widgets.start(widget)
+        else //If shift cloned start action with cloned widget
+            widgets.start(movement.getClone(event))
 
+        marquee.init(event, widget)
     }
 
     override fun handleMouseDrag(event: MouseEvent) {
         if (event.isPrimaryButtonDown) {
             //Transform marquee box or selected shapes to match mouse position
-            if((movement.cloned && event.isShiftDown && event.target == null) || !marquee.handle(event, selection))
+            if ((movement.cloned && event.isShiftDown && event.target == null) || !marquee.handle(event, selection))
                 movement.drag(event)
         }
     }
@@ -51,7 +51,7 @@ class DefaultState(override var canvas: Canvas, private val widgets: Widgets) : 
 
     override fun handleDoubleClick(event: MouseEvent) {
         val widget = getWidget(event.target)
-        if(widget != null) {
+        if (widget != null) {
             selection.clear()
             widget.toFront()
             selection.add(widget)
@@ -64,7 +64,8 @@ class DefaultState(override var canvas: Canvas, private val widgets: Widgets) : 
     }
 
     override fun handleKeyPress(event: KeyEvent) {
-        widgets.start()
+        if (event.code != KeyCode.SHIFT)
+            widgets.start()
 
         if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
             movement.move(event)
@@ -76,9 +77,9 @@ class DefaultState(override var canvas: Canvas, private val widgets: Widgets) : 
     override fun handleKeyRelease(event: KeyEvent) {
         if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
             movement.reset(event.code)
-        else if(event.code == KeyCode.DELETE)
+        else if (event.code == KeyCode.DELETE)
             selection.deleteAll()
-        else if(!event.isShiftDown)
+        else if (!event.isShiftDown)
             movement.resetClone()
 
         if (event.isControlDown) {
@@ -97,7 +98,7 @@ class DefaultState(override var canvas: Canvas, private val widgets: Widgets) : 
                     selection.paste()
                 }
                 KeyCode.Z -> {
-                    if(event.isShiftDown)
+                    if (event.isShiftDown)
                         widgets.redo()
                     else
                         widgets.undo()
@@ -107,11 +108,13 @@ class DefaultState(override var canvas: Canvas, private val widgets: Widgets) : 
             }
         }
 
-        widgets.finish()
+        if (event.code != KeyCode.SHIFT)
+            widgets.finish()
 
         //Stops the key event here
         event.consume()
     }
+
     /**
      * Convenience functions
      */

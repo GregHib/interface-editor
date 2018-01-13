@@ -22,7 +22,6 @@ class ColourPickerElement(default: Color?) : ColorPicker(), Element {
     }
 
     override fun refresh(value: Any?) {
-        if(value != null)
-            this.value = value as Color
+        this.value = value as Color
     }
 }

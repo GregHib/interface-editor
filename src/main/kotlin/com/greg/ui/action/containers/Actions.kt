@@ -8,18 +8,25 @@ class Actions : ActionList() {
     private var action: Action? = null
 
     fun start() {
-        if (action == null) {
+        if (!started())
             action = Action()
-        }
+    }
+
+    fun started(): Boolean {
+        return action != null
+    }
+
+    fun hasActions(): Boolean {
+        //Greater than 1 because a starting "change" is always added
+        return started() && action!!.size() > 1
     }
 
     fun finish(): Boolean {
-        //Greater than 1 because a starting "change" is always added
-        var hasActions = action != null && action!!.size() > 1
-        if (hasActions)
+        var actions = hasActions()
+        if (actions)
             add(action!!)
         action = null
-        return hasActions
+        return actions
     }
 
     fun record(change: Change) {

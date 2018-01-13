@@ -9,7 +9,7 @@ import javafx.scene.Node
 
 class Widgets(controller: ControllerView) {
     private val pane = controller.widgetCanvas
-    private val manager = ActionManager(pane, controller)
+    private val manager = ActionManager(this, controller)
     private var counter = 0
 
     fun start(widget: WidgetGroup? = null) {
@@ -40,6 +40,19 @@ class Widgets(controller: ControllerView) {
 
     fun getAll(): ObservableList<Node> {
         return pane.children
+    }
+
+    inline fun forWidgets(action: (WidgetGroup) -> Unit) {
+        getAll()
+                .filterIsInstance<WidgetGroup>()
+                .forEach { action(it) }
+    }
+
+    inline fun forWidgetsReversed(action: (WidgetGroup) -> Unit) {
+        getAll()
+                .filterIsInstance<WidgetGroup>()
+                .reversed()
+                .forEach { action(it) }
     }
 
     fun undo() {

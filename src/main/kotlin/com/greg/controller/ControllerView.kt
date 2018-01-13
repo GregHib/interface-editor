@@ -1,5 +1,6 @@
 package com.greg.controller
 
+import com.greg.settings.Settings
 import com.greg.ui.canvas.Canvas
 import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.widget.builder.WidgetBuilder
@@ -26,7 +27,7 @@ import kotlin.reflect.full.memberProperties
 
 
 class ControllerView : View() {
-    override val root: BorderPane by fxml("/main.fxml")
+    override val root : BorderPane by fxml("/main.fxml")
 
     val widgetCanvas: Pane by fxid()
     private val progressIndicator: ProgressIndicator by fxid()
@@ -45,6 +46,8 @@ class ControllerView : View() {
         title = "Greg's Interface Editor"
         primaryStage.isResizable = false
         primaryStage.sizeToScene()
+
+        Settings.clear()
 
         val start = System.currentTimeMillis()
         preload(WidgetText::class)

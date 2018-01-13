@@ -52,7 +52,7 @@ class NumberFieldElement(private var default: Int?) : TextField(), Element {
     }
 
     override fun refresh(value: Any?) {
-        text = (value as Double).toInt().toString()
+        text = value.toString()
     }
 
     private fun accept(text: String?) {

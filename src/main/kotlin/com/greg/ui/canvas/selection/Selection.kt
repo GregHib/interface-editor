@@ -1,8 +1,8 @@
 package com.greg.ui.canvas.selection
 
-import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.Canvas
 import com.greg.ui.canvas.state.states.normal.selection.Interaction
+import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.scene.input.MouseEvent
 
@@ -81,9 +81,9 @@ class Selection(canvas: Canvas, private val widgets: Widgets) {
     }
 
     fun selectAll() {
-        widgets.getAll().forEach { node ->
-            if (node is WidgetGroup && !contains(node))
-                add(node)
+        widgets.forWidgets { widget ->
+            if (!contains(widget))
+                add(widget)
         }
     }
 

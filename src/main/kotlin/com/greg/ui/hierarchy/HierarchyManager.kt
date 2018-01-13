@@ -75,14 +75,13 @@ class HierarchyManager(private val controller: ControllerView) {
         tree.selectionModel.clearSelection()
 
         //Add all widgets and check if selected
-        for (widget in controller.widgets.getAll().reversed()) {
-            if(widget is WidgetGroup) {
-                val item = TreeItem("${widget.identifier} - ${widget.name}")
-                tree.root.children.add(item)
-                if (controller.canvas.selection.get().contains(widget))
-                    tree.selectionModel.select(item)
-            }
+        controller.widgets.forWidgetsReversed { widget ->
+            val item = TreeItem("${widget.identifier} - ${widget.name}")
+            tree.root.children.add(item)
+            if (controller.canvas.selection.get().contains(widget))
+                tree.selectionModel.select(item)
         }
+
         ignoreListener = false
     }
 }

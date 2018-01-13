@@ -8,9 +8,9 @@ import javafx.scene.Node
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.StrokeType
 
-class WidgetRectangle(x: Double = Settings.getDouble(SettingsKey.DEFAULT_POSITION_X), y: Double = Settings.getDouble(SettingsKey.DEFAULT_POSITION_Y), width: Double = Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_WIDTH), height: Double = Settings.getDouble(SettingsKey.DEFAULT_RECTANGLE_HEIGHT)) : WidgetFacade() {
+class WidgetRectangle(x: Int = Settings.getInt(SettingsKey.DEFAULT_POSITION_X), y: Int = Settings.getInt(SettingsKey.DEFAULT_POSITION_Y), width: Int = Settings.getInt(SettingsKey.DEFAULT_RECTANGLE_WIDTH), height: Int = Settings.getInt(SettingsKey.DEFAULT_RECTANGLE_HEIGHT)) : WidgetFacade() {
 
-    private val rectangle: Rectangle = Rectangle(x, y, width, height)
+    private val rectangle: Rectangle = Rectangle(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
 
     init {
         rectangle.stroke = Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR)

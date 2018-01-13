@@ -7,11 +7,11 @@ enum class AttributeType {
     COLOUR_PICKER,
     NUMBER_FIELD;
 
-    fun convert(value: String): Any {
+    fun convert(value: Any?): Any {
         return when (this) {
-            TEXT_FIELD -> value
-            COLOUR_PICKER -> Color.valueOf(value)
-            NUMBER_FIELD -> value.toDouble().toInt()
+            TEXT_FIELD -> value.toString()
+            COLOUR_PICKER -> Color.valueOf(value.toString())
+            NUMBER_FIELD -> value.toString().toDouble().toInt()
         }
     }
 }

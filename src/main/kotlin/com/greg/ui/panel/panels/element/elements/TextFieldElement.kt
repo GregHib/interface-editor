@@ -48,7 +48,7 @@ class TextFieldElement(private var default: String?) : TextField(), Element {
     }
 
     override fun refresh(value: Any?) {
-        this.text = value as String
+        this.text = value.toString()
     }
 
     private fun accept(text: String?) {

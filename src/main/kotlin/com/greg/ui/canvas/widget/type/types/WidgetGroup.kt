@@ -79,7 +79,7 @@ class WidgetGroup(builder: WidgetBuilder, id: Int) : WidgetData(builder, id) {
             val row = group.rows[index]
             //First as currently only supports the first linkable element
             row.elements.first().link({ value ->
-                if(attribute.type.convert(attribute.getValue(widget).toString()) != value) {
+                if(attribute.type.convert(attribute.getValue(widget)) != value) {
                     //Start must happen before value change to capture original value
                     widgets.start(this)
                     //Ignore must be set before as setValue fires the listener
@@ -142,7 +142,7 @@ class WidgetGroup(builder: WidgetBuilder, id: Int) : WidgetData(builder, id) {
                     .flatMap { it.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.title })) }
                     .forEach { attribute ->
                         if(index < memento.values.size)
-                            attribute.setValue(component, attribute.type.convert(memento.values[index++].toString()))
+                            attribute.setValue(component, attribute.type.convert(memento.values[index++]))
                     }
         }
     }

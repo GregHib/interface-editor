@@ -1,9 +1,9 @@
 package com.greg.ui.canvas.state.states.normal.selection
 
-import com.greg.ui.canvas.widget.Widgets
-import com.greg.ui.canvas.widget.memento.MementoBuilder
 import com.greg.ui.canvas.selection.Selection
+import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.widget.builder.WidgetMementoBuilderAdapter
+import com.greg.ui.canvas.widget.memento.MementoBuilder
 import com.greg.ui.canvas.widget.type.WidgetType
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.scene.input.Clipboard
@@ -80,7 +80,6 @@ class Interaction(private val selection: Selection, private val widgets: Widgets
             clone.start = widget.start
             selection.add(clone)
         }
-
     }
 
     private fun isWidget(name: String): Boolean {

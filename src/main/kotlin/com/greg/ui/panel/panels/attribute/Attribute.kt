@@ -15,6 +15,7 @@ class Attribute(val title: String, private val name: String, val type: Attribute
     private lateinit var reflection: KCallable<Widget>
     private val function: Boolean = name.endsWith("Property")
     var ignoreListener = false
+    private var value: Any? = null
 
     fun init(facade: WidgetFacade) {
         @Suppress("UNCHECKED_CAST")
@@ -29,12 +30,23 @@ class Attribute(val title: String, private val name: String, val type: Attribute
             facade.getNode()::class.memberProperties.first { it.name == name }
     }
 
-    fun getValue(widget: Widget): Any {
-        return if(function) (reflection.call(widget.getNode()) as WritableValue<*>).value else (reflection as KProperty).getter.call(widget.getNode())
-    }
-
     fun isProperty(): Boolean {
         return function
+    }
+
+    fun getValue(widget: Widget): Any {
+        val refresh = getRefresh(widget)
+        if(value != refresh)
+            value = refresh
+        return value?: refresh
+    }
+
+    fun getRefresh(widget: Widget): Any {
+        return type.convert(getReflection(widget))
+    }
+
+    private fun getReflection(widget: Widget): Any {
+        return if(function) (reflection.call(widget.getNode()) as WritableValue<*>).value else (reflection as KProperty).getter.call(widget.getNode())
     }
 
     fun getProperty(widget: Widget): Any {
@@ -42,10 +54,13 @@ class Attribute(val title: String, private val name: String, val type: Attribute
     }
 
     fun setValue(widget: Widget, value: Any?) {
-        if(function) {
-            (reflection.call(widget.getNode()) as WritableValue<*>).value = value
-        } else {
-            (reflection as KMutableProperty).setter.call(widget.getNode(), value)
+        if(value != null && this.value != value) {
+            if (function) {
+                (reflection.call(widget.getNode()) as WritableValue<*>).value = value
+            } else {
+                (reflection as KMutableProperty).setter.call(widget.getNode(), value)
+            }
+            this.value = value
         }
     }
 

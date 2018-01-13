@@ -16,11 +16,14 @@ class MovementProxy(private val pane: Pane, private val selection: Selection) {
     private val keyboard = KeyMovement(this)
     var cloned = false
 
-    fun init(event: MouseEvent) {
+    fun init(event: MouseEvent): Boolean {
+        var cloned = false
         //If has items selected
         if (selection.size() > 0) {
-            if(event.isShiftDown)
+            if(event.isShiftDown) {
                 clone()
+                cloned = true
+            }
 
             //Set info needed for drag just in case dragging occurs
             selection.get().forEach { widget ->
@@ -28,12 +31,10 @@ class MovementProxy(private val pane: Pane, private val selection: Selection) {
                 start(widget, event, pane)
             }
         }
+        return !cloned
     }
 
     fun drag(event: MouseEvent) {
-        if(event.isShiftDown)
-            clone()
-
         mouse.drag(event)
     }
 
@@ -92,5 +93,9 @@ class MovementProxy(private val pane: Pane, private val selection: Selection) {
 
     fun start(widget: WidgetGroup, x: Double, y: Double) {
         widget.start = StartPoint(x, y)
+    }
+
+    fun getClone(event: MouseEvent): WidgetGroup? {
+        return selection.get().firstOrNull { it.boundsInParent.intersects(event.x, event.y, 1.0, 1.0) }
     }
 }

@@ -7,6 +7,10 @@ class Settings {
     companion object {
         private val preferences = Preferences.userNodeForPackage(Settings::class.java)
 
+        fun clear() {
+            preferences.clear()
+        }
+
         fun contains(setting: SettingsKey): Boolean {
             return preferences.get(setting.key, setting.default as String) != setting.default
         }

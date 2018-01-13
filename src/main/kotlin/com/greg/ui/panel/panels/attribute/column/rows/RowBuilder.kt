@@ -21,7 +21,7 @@ class RowBuilder(title: String? = null) {
         when (type) {
             AttributeType.TEXT_FIELD -> addTextField(value.toString())
             AttributeType.COLOUR_PICKER -> addColourPicker(value as Color)
-            AttributeType.NUMBER_FIELD -> addNumberField((value as Double).toInt())
+            AttributeType.NUMBER_FIELD -> addNumberField(value as Int)
         }
     }
 

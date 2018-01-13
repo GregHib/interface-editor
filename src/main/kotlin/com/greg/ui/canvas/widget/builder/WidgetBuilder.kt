@@ -28,7 +28,8 @@ open class WidgetBuilder(type: WidgetType? = WidgetType.WIDGET) {
     }
 
     private fun addRectangle() {
-        components.add(WidgetRectangle())
+        val rect = WidgetRectangle()
+        components.add(rect)
     }
 
     fun addText() {
