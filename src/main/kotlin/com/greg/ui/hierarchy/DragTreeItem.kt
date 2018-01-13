@@ -1,6 +1,8 @@
 package com.greg.ui.hierarchy
 
 import com.greg.controller.ControllerView
+import com.greg.ui.action.change.ChangeType
+import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.event.EventHandler
 import javafx.event.EventTarget
 import javafx.scene.control.TreeView
@@ -81,8 +83,10 @@ class DragTreeItem(private val tree: TreeView<String>, controller: ControllerVie
 
                 if (db.hasString()) {
                     val all = controller.widgets.getAll()
-                    for(i in tree.selectionModel.selectedIndices)
+                    for(i in tree.selectionModel.selectedIndices) {
                         all.move(all[all.size - i], all.size - index)
+                        controller.widgets.manager.record(ChangeType.ORDER, (all[all.size - i] as WidgetGroup).identifier, listOf(all.size - i, all.size - index))
+                    }
 
                     controller.hierarchy.reload()
 

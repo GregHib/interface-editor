@@ -9,7 +9,7 @@ import javafx.scene.Node
 
 class Widgets(controller: ControllerView) {
     private val pane = controller.widgetCanvas
-    private val manager = ActionManager(this, controller)
+    val manager = ActionManager(this, controller)
     private var counter = 0
 
     fun start(widget: WidgetGroup? = null) {

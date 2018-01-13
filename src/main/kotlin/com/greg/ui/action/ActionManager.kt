@@ -9,6 +9,7 @@ import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.widget.builder.WidgetMementoBuilderAdapter
 import com.greg.ui.canvas.widget.memento.mementoes.Memento
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
+import tornadofx.move
 
 class ActionManager(private val widgets: Widgets, private val controller: ControllerView) {
 
@@ -34,9 +35,9 @@ class ActionManager(private val widgets: Widgets, private val controller: Contro
         record(type, widget.identifier, widget.getMemento())
     }
 
-    fun record(type: ChangeType, identifier: Int, memento: Memento) {
+    fun record(type: ChangeType, identifier: Int, value: Any) {
         if (!ignore) {
-            val change = Change(type, identifier, memento)
+            val change = Change(type, identifier, value)
             actions.record(change)
         }
     }
@@ -52,6 +53,7 @@ class ActionManager(private val widgets: Widgets, private val controller: Contro
             actions.remove(last)
             redo.add(last)
             cached = null
+            controller.canvas.refreshSelection()
         }
     }
 
@@ -66,21 +68,35 @@ class ActionManager(private val widgets: Widgets, private val controller: Contro
             redo.remove(last)
             actions.add(last)
             cached = null
+            controller.canvas.refreshSelection()
         }
     }
 
     private fun applyChange(change: Change, undo: Boolean) : Boolean {
-        return if(undo)
-            applyChange(change, change.type == ChangeType.REMOVE, change.type == ChangeType.ADD)
-        else
-            applyChange(change, change.type == ChangeType.ADD, change.type == ChangeType.REMOVE)
+        when(change.type) {
+            ChangeType.ADD, ChangeType.REMOVE, ChangeType.CHANGE -> {
+                return if(undo)
+                    applyChange(change, change.type == ChangeType.REMOVE, change.type == ChangeType.ADD)
+                else
+                    applyChange(change, change.type == ChangeType.ADD, change.type == ChangeType.REMOVE)
+            }
+            ChangeType.ORDER -> {
+                val list = change.value as List<Int>
+                if(undo)
+                    controller.widgets.getAll().move(controller.widgets.getAll()[list[1]], list[0])
+                else
+                    controller.widgets.getAll().move(controller.widgets.getAll()[list[0]], list[1])
+                return false
+            }
+        }
     }
 
     private fun applyChange(change: Change, add: Boolean, remove: Boolean): Boolean {
+        val memento: Memento = change.value as Memento
         if (add) {
-            val widget = WidgetMementoBuilderAdapter(change.memento).build(change.id)
+            val widget = WidgetMementoBuilderAdapter(memento).build(change.id)
             widgets.getAll().add(widget)
-            widget.restore(change.memento)
+            widget.restore(memento)
         } else {
             if(cached == null || cached?.identifier != change.id) {
                 for (node in widgets.getAll()) {
@@ -98,7 +114,7 @@ class ActionManager(private val widgets: Widgets, private val controller: Contro
                     controller.canvas.selection.remove(cached!!)
                     return widgets.getAll().remove(cached)
                 } else
-                    cached?.restore(change.memento)
+                    cached?.restore(memento)
             }
         }
         return false

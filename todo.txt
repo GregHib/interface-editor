@@ -3,7 +3,8 @@ https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 
 // Features
 //----------------------
-Shift dragging movement doesn't undo correctly
+Undo doesn't change hierarchy correctly
+Undoing depth changes
 Exit edit mode using esc key (undo changes too?)
 Selecting + actions on hierarchy for multiple widgets at once
 Widgets within widgets; recursive for hierarchy + memento's; cutting/pasting etc..
