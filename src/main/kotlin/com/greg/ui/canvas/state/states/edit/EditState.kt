@@ -22,6 +22,7 @@ import javafx.scene.shape.Shape
 
 class EditState(override var canvas: Canvas, private val widgets: Widgets, val widget: WidgetGroup) : CanvasState, WidgetObserver {
 
+    private val start = widget.getMemento()
     private val resize = ResizeBox(widget, canvas.pane)
     private val observer = AttributeObserver(this)
     private var movement = MovementProxy(canvas.pane, canvas.selection)
@@ -98,7 +99,10 @@ class EditState(override var canvas: Canvas, private val widgets: Widgets, val w
 
         when(event.code.ordinal) {
             Settings.getInt(SettingsKey.ACCEPT_KEY_CODE) -> { close() }
-            Settings.getInt(SettingsKey.CANCEL_KEY_CODE) -> { close() }//TODO possibly get memento on edit start and clear all actions after if canceled?
+            Settings.getInt(SettingsKey.CANCEL_KEY_CODE) -> {
+                widget.restore(start)
+                close()
+            }
         }
 
         if (event.isControlDown) {
