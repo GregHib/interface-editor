@@ -14,6 +14,7 @@ abstract class WidgetData(builder: WidgetBuilder, id: Int) : WidgetFacade() {
     var components = mutableListOf<Widget>()
     var start: StartPoint? = null
     val identifier: Int = id
+    var locked: Boolean = false
     val name: String = builder.components.last()::class.simpleName.toString()
 
     init {

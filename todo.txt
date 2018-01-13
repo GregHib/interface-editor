@@ -3,7 +3,8 @@ https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 
 // Features
 //----------------------
-Exit edit mode using esc key (undo changes too?)
+Finish off widget locking & re-implement DragTreeItem.kt stuff such as reordering
+Editable widget names
 Selecting + actions on hierarchy for multiple widgets at once
 Widgets within widgets; recursive for hierarchy + memento's; cutting/pasting etc..
 Locking/unlocking widgets (so they can't be interacted with, backgrounds etc.)

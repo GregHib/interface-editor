@@ -33,7 +33,8 @@ class Selection(canvas: Canvas, private val widgets: Widgets) {
     }
 
     fun add(widget: WidgetGroup) {
-        group.add(widget)
+        if(!widget.locked)
+            group.add(widget)
     }
 
     fun remove(widget: WidgetGroup) {

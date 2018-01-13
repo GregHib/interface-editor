@@ -7,7 +7,7 @@ import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.collections.ObservableList
 import javafx.scene.Node
 
-class Widgets(controller: ControllerView) {
+class Widgets(val controller: ControllerView) {
     private val pane = controller.widgetCanvas
     val manager = ActionManager(this, controller)
     private var counter = 0
@@ -30,11 +30,13 @@ class Widgets(controller: ControllerView) {
 
     fun add(widget: WidgetGroup): Boolean {
         recordSingle(ChangeType.ADD, widget)
+        controller.hierarchy.add(widget)
         return getAll().add(widget)
     }
 
     fun remove(widget: WidgetGroup): Boolean {
         recordSingle(ChangeType.REMOVE, widget)
+        controller.hierarchy.remove(widget)
         return getAll().remove(widget)
     }
 

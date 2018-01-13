@@ -89,13 +89,11 @@ class ControllerView : View() {
     fun createRectangle() {
         val widget = WidgetBuilder().build()
         widgets.add(widget)
-        hierarchy.add(widget)
     }
 
     fun createText() {
         val widget = WidgetBuilder(WidgetType.TEXT).build()
         widgets.add(widget)
-        hierarchy.add(widget)
     }
 
     fun createSprite() {
