@@ -1,13 +1,13 @@
 package com.greg.ui.panel
 
-import com.greg.controller.ControllerView
+import com.greg.controller.OldController
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import com.greg.ui.panel.panels.PanelType
 import com.greg.ui.panel.panels.attribute.column.Column
 import javafx.scene.layout.VBox
 import tornadofx.*
 
-class PanelManager(controller: ControllerView) : View() {
+class PanelManager(controller: OldController) : View() {
 
     private val panels = mutableListOf<Panel>()
     private val widgets = controller.widgets

@@ -1,6 +1,6 @@
 package com.greg.ui.hierarchy
 
-import com.greg.controller.ControllerView
+import com.greg.controller.OldController
 import com.greg.ui.action.change.ChangeType
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.event.EventHandler
@@ -14,7 +14,7 @@ import javafx.scene.text.Text
 import javafx.util.converter.DefaultStringConverter
 import tornadofx.move
 
-class DragTreeItem(private val tree: TreeView<String>, controller: ControllerView) : TextFieldTreeCell<String?>(DefaultStringConverter()) {
+class DragTreeItem(private val tree: TreeView<String>, controller: OldController) : TextFieldTreeCell<String?>(DefaultStringConverter()) {
 
     override fun startEdit() {
         //Can't edit root

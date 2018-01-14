@@ -1,15 +1,15 @@
 package com.greg.ui.canvas.widget
 
-import com.greg.controller.ControllerView
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
 import com.greg.ui.action.change.ChangeType
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.collections.ObservableList
 import javafx.scene.Node
+import tornadofx.Controller
 
-class Widgets(private val controller: ControllerView) {
-    private val pane = controller.widgetCanvas
+class Widgets(private val controller: com.greg.controller.OldController): Controller() {
+    private val pane = controller.canvasView.pane
     private var counter = 0
 
     fun start(widget: WidgetGroup? = null) {
@@ -39,7 +39,7 @@ class Widgets(private val controller: ControllerView) {
         widget.selectedProperty().addListener { _, oldValue, newValue ->
             if(oldValue != newValue) {
                 widget.setSelection(Settings.getColour(if(newValue) SettingsKey.SELECTION_STROKE_COLOUR else SettingsKey.DEFAULT_STROKE_COLOUR))
-                controller.canvas.refreshSelection()
+//                controller.canvas.refreshSelection()
             }
         }
 

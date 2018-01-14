@@ -1,25 +1,19 @@
-package com.greg.ui.action
+package com.greg.controller.controller
 
+import com.greg.controller.model.Widget
+import com.greg.controller.model.WidgetMementoBuilderAdapter
 import com.greg.ui.action.change.Change
 import com.greg.ui.action.change.ChangeType
 import com.greg.ui.action.containers.ActionList
 import com.greg.ui.action.containers.Actions
-import com.greg.ui.canvas.Canvas
-import com.greg.ui.canvas.widget.Widgets
-import com.greg.ui.canvas.widget.builder.WidgetMementoBuilderAdapter
-import com.greg.ui.canvas.widget.memento.mementoes.Memento
-import com.greg.ui.canvas.widget.type.types.WidgetGroup
-import tornadofx.Controller
-import tornadofx.move
 
-class ActionManager(private val widgets: Widgets, private val canvas: Canvas): Controller() {
-
+class ActionController(val widgets: WidgetsController) {
     private val actions = Actions()
     private val redo = ActionList()
-    private var cached: WidgetGroup? = null
+    private var cached: Widget? = null
     private var ignore = false
 
-    fun start(widget: WidgetGroup? = null) {
+    fun start(widget: Widget?) {
         actions.start()
         //Must remove ignore before first record
         ignore = false
@@ -32,7 +26,12 @@ class ActionManager(private val widgets: Widgets, private val canvas: Canvas): C
             redo.clear()
     }
 
-    fun record(type: ChangeType, widget: WidgetGroup) {
+    fun record(type: ChangeType, widget: Widget) {
+        val memento = widget.getMemento()
+        val line = memento.values.toString()
+        val name = line.substring(0, line.lastIndexOf("]"))
+        val data = name.substring(name.indexOf("[") + 1, name.length)
+        println(MementoBuilder.convert(memento.type.toString(), data.split(", ").toMutableList()))
         record(type, widget.identifier, widget.getMemento())
     }
 
@@ -41,6 +40,18 @@ class ActionManager(private val widgets: Widgets, private val canvas: Canvas): C
             val change = Change(type, identifier, value)
             actions.record(change)
         }
+    }
+
+    fun add(widget: Widget) {
+
+    }
+
+    fun remove(widget: Widget) {
+
+    }
+
+    fun order() {
+
     }
 
     @Suppress("LoopToCallChain")
@@ -54,7 +65,7 @@ class ActionManager(private val widgets: Widgets, private val canvas: Canvas): C
             actions.remove(last)
             redo.add(last)
             cached = null
-            canvas.refreshSelection()
+//            canvas.refreshSelection()
         }
     }
 
@@ -69,7 +80,7 @@ class ActionManager(private val widgets: Widgets, private val canvas: Canvas): C
             redo.remove(last)
             actions.add(last)
             cached = null
-            canvas.refreshSelection()
+//            canvas.refreshSelection()
         }
     }
 
@@ -84,10 +95,10 @@ class ActionManager(private val widgets: Widgets, private val canvas: Canvas): C
             ChangeType.ORDER -> {
                 if(change.value is List<*>) {
                     val list = change.value as List<Int>
-                    if (undo)
-                        widgets.getAll().move(widgets.getAll()[list[1]], list[0])
-                    else
-                        widgets.getAll().move(widgets.getAll()[list[0]], list[1])
+//                    if (undo)
+//                        widgets.getAll().move(widgets.getAll()[list[1]], list[0])
+//                    else
+//                        widgets.getAll().move(widgets.getAll()[list[0]], list[1])
                 }
                 return false
             }
@@ -103,7 +114,7 @@ class ActionManager(private val widgets: Widgets, private val canvas: Canvas): C
         } else {
             if(cached == null || cached?.identifier != change.id) {
                 for (node in widgets.getAll()) {
-                    if (node is WidgetGroup) {
+                    if (node is Widget) {
                         if (node.identifier == change.id) {
                             cached = node
                             break
@@ -124,9 +135,29 @@ class ActionManager(private val widgets: Widgets, private val canvas: Canvas): C
         return false
     }
 
-    fun addSingle(add: ChangeType, widget: WidgetGroup) {
+    /*fun addSingle(add: ChangeType, widget: WidgetGroup) {
         start(widget)
         record(add, widget)
         finish()
+    }*/
+
+    fun cut() {
+
+    }
+
+    fun copy() {
+
+    }
+
+    fun paste() {
+
+    }
+
+    fun clone() {
+
+    }
+
+    fun delete() {
+
     }
 }

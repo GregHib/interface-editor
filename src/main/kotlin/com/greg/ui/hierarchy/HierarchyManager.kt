@@ -1,6 +1,6 @@
 package com.greg.ui.hierarchy
 
-import com.greg.controller.ControllerView
+import com.greg.controller.OldController
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.scene.control.SelectionMode
 import javafx.scene.control.TreeCell
@@ -11,8 +11,8 @@ import tornadofx.action
 import tornadofx.contextmenu
 import tornadofx.item
 
-class HierarchyManager(controller: ControllerView) {
-    private val tree = controller.hierarchyTree
+class HierarchyManager(controller: OldController) {
+    private val tree = controller.hierarchyView.hierarchyTree
     private val widgets = controller.widgets
     private val canvas = controller.canvas
     var ignoreRefresh = false

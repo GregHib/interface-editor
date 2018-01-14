@@ -1,6 +1,5 @@
 package com.greg.ui.canvas
 
-import com.greg.controller.ControllerView
 import com.greg.ui.canvas.selection.Selection
 import com.greg.ui.canvas.state.StateManager
 import javafx.application.Platform
@@ -8,29 +7,23 @@ import javafx.geometry.Bounds
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
+import tornadofx.Controller
 import java.util.*
 import kotlin.concurrent.timerTask
 
-class Canvas(private val controller: ControllerView) {
-
-    var pane: Pane = controller.widgetCanvas
+class Canvas(private val controller: com.greg.controller.OldController) : Controller() {
+    var pane: Pane = controller.canvasView.pane
     private val panels = controller.panels
     private val hierarchy = controller.hierarchy
     var selection = Selection(controller.widgets)
     var manager = StateManager(this, controller.widgets)
 
-    init {
-        // Mouse events
-        // ------------------------------------------------------------------------------
-        pane.addEventFilter<MouseEvent>(MouseEvent.ANY, { e -> handleMouseEvent(e) })
-    }
-
-    private fun handleMouseEvent(e: MouseEvent) {
-        when (e.eventType) {
-            MouseEvent.MOUSE_PRESSED -> manager.handleMousePress(e)
-            MouseEvent.MOUSE_DRAGGED -> manager.handleMouseDrag(e)
-            MouseEvent.MOUSE_RELEASED -> manager.handleMouseRelease(e)
-            MouseEvent.MOUSE_CLICKED -> if (e.clickCount == 2) manager.handleDoubleClick(e) else manager.handleMouseClick(e)
+    fun handleMouseEvent(event: MouseEvent) {
+        when (event.eventType) {
+            MouseEvent.MOUSE_PRESSED -> manager.handleMousePress(event)
+            MouseEvent.MOUSE_DRAGGED -> manager.handleMouseDrag(event)
+            MouseEvent.MOUSE_RELEASED -> manager.handleMouseRelease(event)
+            MouseEvent.MOUSE_CLICKED -> if (event.clickCount == 2) manager.handleDoubleClick(event) else manager.handleMouseClick(event)
         }
     }
 

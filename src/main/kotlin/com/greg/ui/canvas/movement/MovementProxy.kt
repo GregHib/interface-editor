@@ -92,7 +92,7 @@ class MovementProxy(private val pane: Pane, private val selection: Selection) {
     }
 
     fun start(widget: WidgetGroup, x: Double, y: Double) {
-        widget.start = StartPoint(x, y)
+        widget.start = StartPoint(x.toInt(), y.toInt())
     }
 
     fun getClone(event: MouseEvent): WidgetGroup? {

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="root" prefWidth="750.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <ToolBar prefHeight="30.0" prefWidth="1165.0">
+            <items>
+                <HBox prefWidth="1150.0">
+                    <children>
+                        <Button fx:id="loadCacheBtn" mnemonicParsing="false" onAction="#loadCache" text="Load"/>
+                        <Pane prefWidth="10.0" HBox.hgrow="ALWAYS"/>
+                        <ProgressIndicator fx:id="progressIndicator" prefHeight="19.0" prefWidth="52.0" visible="false">
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                        </ProgressIndicator>
+                    </children>
+                </HBox>
+            </items>
+        </ToolBar>
+    </children>
+</VBox>

@@ -37,7 +37,7 @@ abstract class WidgetData(builder: WidgetBuilder, id: Int) : WidgetFacade() {
     fun setSelected(value: Boolean) { selectedProperty().set(if(value && isLocked()) false else value) }
     fun selectedProperty(): BooleanProperty {
         if(selected == null)
-            selected = SimpleBooleanProperty(this, "selected", false)
+            selected = SimpleBooleanProperty(this, "hasSelection", false)
 
         return selected!!
     }

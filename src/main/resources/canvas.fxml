@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="root" maxWidth="765.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox>
+            <children>
+                <Pane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="503.0" prefWidth="765.0" style="-fx-background-color: #000000;" VBox.vgrow="NEVER">
+                    <VBox.margin>
+                        <Insets />
+                    </VBox.margin>
+                </Pane>
+            </children>
+        </VBox>
+        <ToolBar prefHeight="40.0" prefWidth="200.0">
+            <items>
+                <Button fx:id="widget" alignment="CENTER" mnemonicParsing="false" onAction="#createWidget" text="Widget" />
+                <Button fx:id="container" alignment="CENTER" mnemonicParsing="false" onAction="#createContainer" text="Container" />
+                <Button fx:id="rectangle" alignment="CENTER" mnemonicParsing="false" onAction="#createRectangle" text="Rectangle" />
+                <Button fx:id="text" alignment="CENTER" mnemonicParsing="false" onAction="#createText" text="Text" />
+                <Button fx:id="sprite" alignment="CENTER" mnemonicParsing="false" onAction="#createSprite" text="Sprite" />
+                <Button fx:id="model" alignment="CENTER" mnemonicParsing="false" onAction="#createModel" text="Model" />
+                <Button fx:id="tooltip" alignment="CENTER" mnemonicParsing="false" onAction="#createTooltip" text="Tooltip" />
+            </items>
+        </ToolBar>
+    </children>
+</VBox>

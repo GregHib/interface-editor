@@ -3,6 +3,7 @@ https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 
 // Features
 //----------------------
+Finish converting to mvc
 Make sure you can't double click to edit or use arrow keys on a locked widget
 Finish off widget locking & re-implement DragTreeItem.kt stuff such as reordering
 Editable widget names

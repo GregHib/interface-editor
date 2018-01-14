@@ -1,10 +1,10 @@
 package com.greg
 
-import com.greg.controller.ControllerView
+import com.greg.controller.view.ViewController
 import javafx.application.Application
 import tornadofx.App
 
-class AppLauncher : App(ControllerView::class)
+class AppLauncher : App(ViewController::class)
 
 fun main(args: Array<String>) {
     Application.launch(AppLauncher::class.java, *args)
