@@ -43,7 +43,7 @@ class Interaction(private val selection: Selection, private val widgets: Widgets
                 //Create widget of the corresponding type
                 val widget = WidgetMementoBuilderAdapter(memento).build()
                 widgets.add(widget)
-                selection.add(widget)
+                widget.setSelected(true)
             } else {
                 error("Error processing paste line: $line")
             }
@@ -55,7 +55,7 @@ class Interaction(private val selection: Selection, private val widgets: Widgets
 
         //Convert selected widget's into a string of attribute values
         var string = ""
-        selection.get().forEach { widget ->
+        selection.forSelected { widget ->
             string += "${widget.getMemento()}\n"
         }
 
@@ -78,7 +78,7 @@ class Interaction(private val selection: Selection, private val widgets: Widgets
             widgets.add(clone)
             clone.toFront()
             clone.start = widget.start
-            selection.add(clone)
+            clone.setSelected(true)
         }
     }
 

@@ -1,22 +1,20 @@
 package com.greg.ui.canvas.selection
 
-import com.greg.ui.canvas.Canvas
 import com.greg.ui.canvas.state.states.normal.selection.Interaction
 import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.scene.input.MouseEvent
 
-class Selection(canvas: Canvas, private val widgets: Widgets) {
-    private var group = SelectionGroup(canvas)
+class Selection(val widgets: Widgets) {
     private val interaction = Interaction(this, widgets)
 
-    fun init(event: MouseEvent, widget: WidgetGroup?) {
+    fun start(event: MouseEvent, widget: WidgetGroup?) {
         //If clicked something other than a widget
         var selected = widget == null
 
         if (widget != null && !selected) {
             //or clicked a shape which isn't selected
-            selected = !group.contains(widget)
+            selected = !contains(widget)
         }
 
         //Clear current selection
@@ -28,41 +26,36 @@ class Selection(canvas: Canvas, private val widgets: Widgets) {
             handle(widget, event)
     }
 
-    fun clear() {
-        group.clear()
+    inline fun forSelected(action: (WidgetGroup) -> Unit) {
+        widgets.getAll()
+                .filterIsInstance<WidgetGroup>()
+                .filter { it.isSelected() }
+                .forEach { action(it) }
     }
 
-    fun add(widget: WidgetGroup) {
-        if(!widget.locked)
-            group.add(widget)
-    }
-
-    fun remove(widget: WidgetGroup) {
-        group.remove(widget)
-    }
-
-    fun get(): MutableSet<WidgetGroup> {
-        return group.getGroup()
+    fun get(): List<WidgetGroup> {
+        return widgets.getAll()
+                .filterIsInstance<WidgetGroup>()
+                .filter { it.isSelected() }
     }
 
     fun size(): Int {
-        return group.size()
+        return get().size
     }
 
     fun contains(widget: WidgetGroup): Boolean {
-        return group.getGroup().contains(widget)
+        return widgets.getAll()
+                .filterIsInstance<WidgetGroup>()
+                .filter { it.isSelected() }
+                .contains(widget)
     }
 
     fun handle(widget: WidgetGroup, event: MouseEvent) {
         if (event.isControlDown) {
-            toggle(widget)
+            widget.setSelected(!widget.isSelected())
         } else {
-            add(widget)
+            widget.setSelected(true)
         }
-    }
-
-    private fun toggle(widget: WidgetGroup) {
-        group.toggle(widget)
     }
 
     /**
@@ -81,18 +74,22 @@ class Selection(canvas: Canvas, private val widgets: Widgets) {
         interaction.clone()
     }
 
+    fun clear() {
+        forSelected { widget ->
+            widget.setSelected(false)
+        }
+    }
+
     fun selectAll() {
         widgets.forWidgets { widget ->
-            if (!contains(widget))
-                add(widget)
+            if(!widget.isSelected())
+                widget.setSelected(true)
         }
     }
 
     fun deleteAll() {
-        group.getGroup().forEach { widget ->
-            val success = widgets.remove(widget)
-            if (!success)
-                error("Error deleting widget")
+        forSelected { widget ->
+            widgets.remove(widget)
         }
         clear()
     }

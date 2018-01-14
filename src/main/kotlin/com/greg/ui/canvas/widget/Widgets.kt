@@ -1,20 +1,20 @@
 package com.greg.ui.canvas.widget
 
 import com.greg.controller.ControllerView
-import com.greg.ui.action.ActionManager
+import com.greg.settings.Settings
+import com.greg.settings.SettingsKey
 import com.greg.ui.action.change.ChangeType
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
 import javafx.collections.ObservableList
 import javafx.scene.Node
 
-class Widgets(val controller: ControllerView) {
+class Widgets(private val controller: ControllerView) {
     private val pane = controller.widgetCanvas
-    val manager = ActionManager(this, controller)
     private var counter = 0
 
     fun start(widget: WidgetGroup? = null) {
         if(counter == 0)
-            manager.start(widget)
+            controller.manager.start(widget)
 
         counter++
     }
@@ -25,19 +25,32 @@ class Widgets(val controller: ControllerView) {
             counter--
 
         if(counter == 0 && !was)
-            manager.finish()
+            controller.manager.finish()
     }
 
-    fun add(widget: WidgetGroup): Boolean {
+    fun add(widget: WidgetGroup) {
         recordSingle(ChangeType.ADD, widget)
+
+        widget.lockedProperty().addListener { _, _, newValue ->
+            if(newValue)
+                widget.setSelected(false)
+        }
+
+        widget.selectedProperty().addListener { _, oldValue, newValue ->
+            if(oldValue != newValue) {
+                widget.setSelection(Settings.getColour(if(newValue) SettingsKey.SELECTION_STROKE_COLOUR else SettingsKey.DEFAULT_STROKE_COLOUR))
+                controller.canvas.refreshSelection()
+            }
+        }
+
         controller.hierarchy.add(widget)
-        return getAll().add(widget)
+        getAll().add(widget)
     }
 
-    fun remove(widget: WidgetGroup): Boolean {
+    fun remove(widget: WidgetGroup) {
         recordSingle(ChangeType.REMOVE, widget)
         controller.hierarchy.remove(widget)
-        return getAll().remove(widget)
+        getAll().remove(widget)
     }
 
     fun getAll(): ObservableList<Node> {
@@ -58,18 +71,18 @@ class Widgets(val controller: ControllerView) {
     }
 
     fun undo() {
-        manager.undo()
+        controller.manager.undo()
     }
 
     fun redo() {
-        manager.redo()
+        controller.manager.redo()
     }
 
     fun record(type: ChangeType, widget: WidgetGroup) {
-        manager.record(type, widget)
+        controller.manager.record(type, widget)
     }
 
     private fun recordSingle(type: ChangeType, widget: WidgetGroup) {
-        manager.addSingle(type, widget)
+        controller.manager.addSingle(type, widget)
     }
 }

@@ -11,8 +11,10 @@ import tornadofx.action
 import tornadofx.contextmenu
 import tornadofx.item
 
-class HierarchyManager(private val controller: ControllerView) {
+class HierarchyManager(controller: ControllerView) {
     private val tree = controller.hierarchyTree
+    private val widgets = controller.widgets
+    private val canvas = controller.canvas
     var ignoreRefresh = false
     var ignoreListener = false
 
@@ -38,7 +40,7 @@ class HierarchyManager(private val controller: ControllerView) {
         //Stick with single selection for now
         tree.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
-        tree.cellFactory = Callback<TreeView<String>, TreeCell<String>> { CustomTreeCell(tree, controller) }
+        tree.cellFactory = Callback<TreeView<String>, TreeCell<String>> { CustomTreeCell() }
         tree.root.isExpanded = true
         tree.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             if(ignoreListener)
@@ -47,13 +49,10 @@ class HierarchyManager(private val controller: ControllerView) {
             ignoreRefresh = true
 
             //Reload canvas selections
-            controller.canvas.selection.clear()
+            canvas.selection.clear()
             if (newValue != null)
-                for (widget in controller.widgets.getAll())
-                    for (child in tree.selectionModel.selectedItems) {
-                        if (widget is WidgetGroup && child is CustomTreeItem && child.widget.identifier == widget.identifier && !child.widget.locked)
-                            controller.canvas.selection.add(widget)
-                    }
+                for (child in tree.selectionModel.selectedItems)
+                    (child as? CustomTreeItem)?.widget?.setSelected(true)
 
             ignoreRefresh = false
         }
@@ -64,14 +63,14 @@ class HierarchyManager(private val controller: ControllerView) {
                     setOnAction { tree.edit(tree.selectionModel.selectedItem) }
                 }
                 item("Cut").action {
-                    controller.canvas.selection.copy()
-                    controller.canvas.selection.deleteAll()
+                    canvas.selection.copy()
+                    canvas.selection.deleteAll()
                 }
                 item("Copy").action {
-                    controller.canvas.selection.copy()
+                    canvas.selection.copy()
                 }
                 item("Delete").action {
-                    controller.canvas.selection.deleteAll()
+                    canvas.selection.deleteAll()
                 }
             }
         }
@@ -87,8 +86,8 @@ class HierarchyManager(private val controller: ControllerView) {
         tree.selectionModel.clearSelection()
 
         //Select all items that are selected on canvas
-        controller.widgets.forWidgetsReversed { widget ->
-            if (controller.canvas.selection.get().contains(widget)) {
+        widgets.forWidgetsReversed { widget ->
+            if (canvas.selection.contains(widget)) {
                forItems items@ {
                     if(it.widget.identifier == widget.identifier) {
                         tree.selectionModel.select(it)

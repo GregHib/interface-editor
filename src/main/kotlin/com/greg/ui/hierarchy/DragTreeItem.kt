@@ -85,7 +85,7 @@ class DragTreeItem(private val tree: TreeView<String>, controller: ControllerVie
                     val all = controller.widgets.getAll()
                     for(i in tree.selectionModel.selectedIndices) {
                         all.move(all[all.size - i], all.size - index)
-                        controller.widgets.manager.record(ChangeType.ORDER, (all[all.size - i] as WidgetGroup).identifier, listOf(all.size - i, all.size - index))
+                        controller.manager.record(ChangeType.ORDER, (all[all.size - i] as WidgetGroup).identifier, listOf(all.size - i, all.size - index))
                     }
 
                     controller.hierarchy.reload()

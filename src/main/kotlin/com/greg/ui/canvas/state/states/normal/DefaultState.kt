@@ -23,7 +23,7 @@ class DefaultState(override var canvas: Canvas, private val widgets: Widgets) : 
         //Get the parent widget (can be null)
         val widget = getWidget(event.target)
 
-        selection.init(event, widget)
+        selection.start(event, widget)
 
         //Start movement (and actions)
         if (movement.init(event))
@@ -51,10 +51,10 @@ class DefaultState(override var canvas: Canvas, private val widgets: Widgets) : 
 
     override fun handleDoubleClick(event: MouseEvent) {
         val widget = getWidget(event.target)
-        if (widget != null && !widget.locked) {
+        if (widget != null && !widget.isLocked()) {
             selection.clear()
             widget.toFront()
-            selection.add(widget)
+            widget.setSelected(true)
             canvas.manager.edit(widget)
         }
     }

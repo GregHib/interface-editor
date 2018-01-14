@@ -1,6 +1,7 @@
 package com.greg.controller
 
 import com.greg.settings.Settings
+import com.greg.ui.action.ActionManager
 import com.greg.ui.canvas.Canvas
 import com.greg.ui.canvas.widget.Widgets
 import com.greg.ui.canvas.widget.builder.WidgetBuilder
@@ -40,6 +41,8 @@ class ControllerView : View() {
 
     var widgets: Widgets
 
+    var manager: ActionManager
+
     var hierarchy: HierarchyManager
 
     init {
@@ -57,6 +60,7 @@ class ControllerView : View() {
 
         widgets = Widgets(this)
         canvas = Canvas(this)
+        manager = ActionManager(widgets, canvas)
         panels = PanelManager(this)
         hierarchy = HierarchyManager(this)
 

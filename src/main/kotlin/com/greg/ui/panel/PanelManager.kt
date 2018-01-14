@@ -7,9 +7,11 @@ import com.greg.ui.panel.panels.attribute.column.Column
 import javafx.scene.layout.VBox
 import tornadofx.*
 
-class PanelManager(private var controller: ControllerView) : View() {
+class PanelManager(controller: ControllerView) : View() {
 
     private val panels = mutableListOf<Panel>()
+    private val widgets = controller.widgets
+    private val canvas = controller.canvas
 
     init {
         panels.add(Panel(PanelType.PROPERTIES))
@@ -29,17 +31,17 @@ class PanelManager(private var controller: ControllerView) : View() {
 
     fun reload() {
         panels.forEach { pane ->
-            reload(pane, controller.canvas.selection.get())
+            reload(pane, canvas.selection.get())
         }
     }
 
-    private fun reload(panel: Panel, widgets: MutableSet<WidgetGroup>) {
+    private fun reload(panel: Panel, widgets: List<WidgetGroup>) {
         panel.content.clear()
 
         panel.groups = null
 
         when {
-            widgets.size == 0 -> panel.content.add(Column("No Selection", null, false))
+            widgets.isEmpty() -> panel.content.add(Column("No Selection", null, false))
             widgets.size == 1 -> loadProperties(panel, widgets)
             else -> {
                 val type = widgets.first().javaClass
@@ -50,14 +52,14 @@ class PanelManager(private var controller: ControllerView) : View() {
         }
     }
 
-    private fun loadProperties(panel: Panel, widgets: MutableSet<WidgetGroup>) {
+    private fun loadProperties(panel: Panel, widgets: List<WidgetGroup>) {
 
         //Load the property groups of the first object
         //First object will always be correct as selection is either 1 or of all the same type
         if (panel.groups == null) {
             val box = VBox()
             panel.groups = widgets.first().getGroups(panel.type)
-            widgets.first().init(panel.groups!!, controller.widgets)
+            widgets.first().init(panel.groups!!, this.widgets)
             for(node in panel.groups!!)
                 box.children.add(node.root)
             panel.content.add(box)
@@ -66,6 +68,6 @@ class PanelManager(private var controller: ControllerView) : View() {
         //Link all selected objects to the property groups
         if (panel.groups != null)
             for (widget in widgets)
-                widget.link(panel, controller.widgets)
+                widget.link(panel, this.widgets)
     }
 }

@@ -8,7 +8,7 @@ import javafx.scene.input.MouseEvent
 class MouseMovement(private val movement: MovementProxy, private val selection: Selection) {
 
     fun drag(event: MouseEvent) {
-        selection.get().forEach { widget ->
+        selection.forSelected { widget ->
             moveEvent(widget, event)
         }
     }

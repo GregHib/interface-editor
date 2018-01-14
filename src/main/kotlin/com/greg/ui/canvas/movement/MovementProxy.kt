@@ -26,7 +26,7 @@ class MovementProxy(private val pane: Pane, private val selection: Selection) {
             }
 
             //Set info needed for drag just in case dragging occurs
-            selection.get().forEach { widget ->
+            selection.forSelected { widget ->
                 //save the offset of the shapes position relative to the mouse click
                 start(widget, event, pane)
             }
@@ -47,9 +47,8 @@ class MovementProxy(private val pane: Pane, private val selection: Selection) {
     }
 
     fun move(x: Double, y: Double) {
-        selection.get().forEach { widget ->
-            if(!widget.locked)
-                move(widget, x, y)
+        selection.forSelected { widget ->
+            move(widget, x, y)
         }
     }
 
