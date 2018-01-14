@@ -51,7 +51,7 @@ class DefaultState(override var canvas: Canvas, private val widgets: Widgets) : 
 
     override fun handleDoubleClick(event: MouseEvent) {
         val widget = getWidget(event.target)
-        if (widget != null) {
+        if (widget != null && !widget.locked) {
             selection.clear()
             widget.toFront()
             selection.add(widget)

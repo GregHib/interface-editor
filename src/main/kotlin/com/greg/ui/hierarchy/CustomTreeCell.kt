@@ -38,6 +38,7 @@ class CustomTreeCell(private val tree: TreeView<String>, controller: ControllerV
                 val label = Label(treeItem.value)
                 checkBox.action {
                     item.widget.locked = checkBox.isSelected
+                    item.widget.selected = false
                 }
 
                 cellBox.children.addAll(label, SpaceElement(), checkBox)

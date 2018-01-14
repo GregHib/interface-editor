@@ -48,7 +48,8 @@ class MovementProxy(private val pane: Pane, private val selection: Selection) {
 
     fun move(x: Double, y: Double) {
         selection.get().forEach { widget ->
-            move(widget, x, y)
+            if(!widget.locked)
+                move(widget, x, y)
         }
     }
 
