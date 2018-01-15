@@ -6,7 +6,7 @@ import javafx.geometry.VPos
 import javafx.scene.text.Text
 import tornadofx.add
 
-class TextShape(id: Int, x: Int, y: Int, width: Int, height: Int) : WidgetShape(id, x, y, width, height) {
+class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height) {
     val label = Text(Settings.get(SettingsKey.DEFAULT_TEXT_MESSAGE))
 
     init {

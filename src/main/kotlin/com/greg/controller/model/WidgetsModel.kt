@@ -3,7 +3,7 @@ package com.greg.controller.model
 import com.greg.controller.view.WidgetShape
 
 class WidgetsModel {
-    val widgets = mutableListOf<Widget>()
+    protected val widgets = mutableListOf<Widget>()
 
     fun add(widget: Widget) {
         widgets.add(widget)
@@ -24,6 +24,10 @@ class WidgetsModel {
                 return widget
         }
         return null
+    }
+
+    fun get(): MutableList<Widget> {
+        return widgets
     }
 
     fun size(): Int {

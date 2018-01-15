@@ -1,12 +1,37 @@
 package com.greg.controller.view
 
+import com.greg.controller.controller.WidgetsController
 import com.greg.controller.controller.input.KeyboardController
+import com.greg.ui.panel.Panel
+import com.greg.ui.panel.panels.PanelType
 import javafx.scene.input.KeyEvent
-import javafx.scene.layout.StackPane
-import tornadofx.View
+import tornadofx.*
 
 class PanelView : View(), KeyboardController {
-    override val root : StackPane by fxml("/panels.fxml")
+    val widgets: WidgetsController by inject()
+    val panels = widgets.panels
+
+    init {
+        panels.view = this
+        panels.addPanel(Panel(PanelType.PROPERTIES))
+        panels.addPanel(Panel(PanelType.LAYOUT))
+        panels.reload()
+    }
+
+    override val root = stackpane {
+        prefWidth = 280.0
+        prefHeight = 543.0
+        scrollpane(fitToWidth = true) {
+            squeezebox {
+                panels.get().forEach { panel ->
+                    fold(panel.type.name.toLowerCase().capitalize(), expanded = true) {
+                        isAnimated = false
+                        add(panel)
+                    }
+                }
+            }
+        }
+    }
 
     override fun handleKeyPress(event: KeyEvent) {
     }

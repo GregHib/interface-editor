@@ -19,16 +19,15 @@ class MovementController(val widgets: WidgetsController, val pane: Pane) {
 
     fun clone() {
         if (!cloned) {
-            widgets.clone()
+            widgets.clone(pane)
             cloned = true
         }
     }
 
     fun start(event: MouseEvent, pane: Pane) {
-        widgets.forSelected { widget ->
-            if (widget.isSelected())
-                start(widget, event, pane)
-        }
+        pane.children
+                .filterIsInstance<WidgetShape>()
+                .forEach { start(it, event, pane) }
     }
 
     fun getClone(event: MouseEvent): WidgetShape? {
@@ -37,17 +36,11 @@ class MovementController(val widgets: WidgetsController, val pane: Pane) {
                 .firstOrNull { it.boundsInParent.intersects(event.x, event.y, 1.0, 1.0) }
     }
 
-    fun start(widget: Widget, event: MouseEvent, pane: Pane) {
-        val shape = widgets.getShape(event.target)
-        if(shape is WidgetShape) {
+    fun start(shape: WidgetShape, event: MouseEvent, pane: Pane) {
+        val widget = widgets.getWidget(shape)
+        if (widget != null && widget.isSelected()) {
             val offsetX = pane.localToScene(shape.boundsInParent).minX - event.sceneX
             val offsetY = pane.localToScene(shape.boundsInParent).minY - event.sceneY
-            println("$offsetX $offsetY")
-            println("$shape ${pane.localToScene(shape.boundsInParent).minX} ${pane.localToScene(shape.boundsInParent).minY} ${event.sceneX} ${event.sceneY}")
-            println("${pane.localToParent(shape.boundsInParent).minX} ${pane.localToParent(shape.boundsInParent).minY}")
-            println("${pane.localToScreen(shape.boundsInParent).minX} ${pane.localToScreen(shape.boundsInParent).minY}")
-            println("${pane.localToParent(shape.boundsInLocal).minX} ${pane.localToParent(shape.boundsInLocal).minY}")
-            println("${pane.localToScreen(shape.boundsInLocal).minX} ${pane.localToScreen(shape.boundsInLocal).minY}")
             widget.start = StartPoint(offsetX.toInt(), offsetY.toInt())
         }
     }
@@ -75,10 +68,10 @@ class MovementController(val widgets: WidgetsController, val pane: Pane) {
     }
 
     fun reset(code: KeyCode) {
-        if(code == KeyCode.RIGHT || code == KeyCode.LEFT)
+        if (code == KeyCode.RIGHT || code == KeyCode.LEFT)
             horizontal = 0.0
 
-        if(code == KeyCode.UP || code == KeyCode.DOWN)
+        if (code == KeyCode.UP || code == KeyCode.DOWN)
             vertical = 0.0
     }
 
@@ -117,8 +110,8 @@ class MovementController(val widgets: WidgetsController, val pane: Pane) {
         val height = widget.getHeight()
 
         //Constrain position to within the container
-        val x = Utils.constrain(targetX - bounds.minX, bounds.width - width)
-        val y = Utils.constrain(targetY - bounds.minY, bounds.height - height)
+        val x = Utils.constrain(targetX, bounds.width - width)
+        val y = Utils.constrain(targetY, bounds.height - height)
 
         //Move
         widget.setX(x.toInt())

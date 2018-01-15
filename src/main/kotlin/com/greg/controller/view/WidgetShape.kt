@@ -2,22 +2,37 @@ package com.greg.controller.view
 
 import com.greg.settings.Settings
 import com.greg.settings.SettingsKey
+import javafx.animation.Interpolator
+import javafx.animation.KeyFrame
+import javafx.animation.KeyValue
+import javafx.animation.Timeline
 import javafx.scene.Group
+import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.StrokeType
+import javafx.util.Duration
 import tornadofx.add
 
-open class WidgetShape(val identifier: Int, x: Int, y: Int, width: Int, height: Int) : Group() {
-    val rectangle = Rectangle(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+
+open class WidgetShape(val identifier: Int, width: Int, height: Int) : Group() {
+    val outline = Rectangle(0.0, 0.0, width.toDouble(), height.toDouble())
 
     init {
-        add(rectangle)
+        add(outline)
+        if(Settings.getBoolean(SettingsKey.SELECTION_STROKE_ANIMATE)) {
+            outline.strokeDashArray.setAll(4.0, 8.0)
+            val maxOffset = outline.strokeDashArray.stream().reduce(0.0, { a, b -> a + b })
+            val line = Timeline(KeyFrame(Duration.ZERO, KeyValue(outline.strokeDashOffsetProperty(), 0, Interpolator.LINEAR)), KeyFrame(Duration.seconds(Settings.getDouble(SettingsKey.SELECTION_STROKE_ANIMATION_DURATION)), KeyValue(outline.strokeDashOffsetProperty(), maxOffset, Interpolator.LINEAR)))
+            line.cycleCount = Timeline.INDEFINITE
+            line.play()
+        }
 
-        rectangle.stroke = Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR)
-        rectangle.strokeType = StrokeType.INSIDE
+        outline.stroke = Settings.getColour(SettingsKey.DEFAULT_STROKE_COLOUR)
+        outline.fill = Color.TRANSPARENT
+        outline.strokeType = StrokeType.INSIDE
 
-        layoutXProperty().bind(rectangle.xProperty())
-        layoutYProperty().bind(rectangle.yProperty())
+        layoutXProperty().bind(outline.xProperty())
+        layoutYProperty().bind(outline.yProperty())
     }
 
 }

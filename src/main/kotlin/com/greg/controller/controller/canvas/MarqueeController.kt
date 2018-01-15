@@ -50,10 +50,8 @@ class MarqueeController(private val widgets: WidgetsController, private val pane
         if (pane.children.contains(marquee))
             pane.children.remove(marquee)
 
-        val bounds = pane.localToScene(pane.layoutBounds)
-
         //create a marquee box
-        marquee.add(event.x - bounds.minX, event.y - bounds.minY)
+        marquee.add(event.x, event.y)
 
         //add to the widgetCanvas
         pane.children.add(marquee)
@@ -66,7 +64,7 @@ class MarqueeController(private val widgets: WidgetsController, private val pane
         val bounds = pane.localToScene(pane.layoutBounds)
 
         //draw at that position capping to canvas borders
-        marquee.draw(Utils.constrain(event.x - bounds.minX, bounds.width), Utils.constrain(event.y - bounds.minY, bounds.height))
+        marquee.draw(Utils.constrain(event.x, bounds.width), Utils.constrain(event.y, bounds.height))
 
         event.consume()
     }
@@ -88,9 +86,6 @@ class MarqueeController(private val widgets: WidgetsController, private val pane
                         it.setSelected(true)
                     }
                 }
-
-        //Refresh
-        widgets.requestRefresh()
 
         //Reset marquee
         marquee.reset()

@@ -26,7 +26,7 @@ class ViewController : View() {
 
         root.setOnKeyPressed { event -> handleKeyPress(event) }
         root.setOnKeyReleased { event -> handleKeyRelease(event) }
-        root.addEventFilter<MouseEvent>(MouseEvent.ANY, { e -> handleMouseEvent(e) })
+        canvasView.root.addEventFilter<MouseEvent>(MouseEvent.ANY, { e -> handleMouseEvent(e) })
     }
 
     // Keyboard events

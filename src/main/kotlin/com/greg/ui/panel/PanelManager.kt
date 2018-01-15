@@ -38,7 +38,7 @@ class PanelManager(controller: OldController) : View() {
     private fun reload(panel: Panel, widgets: List<WidgetGroup>) {
         panel.content.clear()
 
-        panel.groups = null
+        panel.columns = null
 
         when {
             widgets.isEmpty() -> panel.content.add(Column("No Selection", null, false))
@@ -56,17 +56,17 @@ class PanelManager(controller: OldController) : View() {
 
         //Load the property groups of the first object
         //First object will always be correct as selection is either 1 or of all the same type
-        if (panel.groups == null) {
+        if (panel.columns == null) {
             val box = VBox()
-            panel.groups = widgets.first().getGroups(panel.type)
-            widgets.first().init(panel.groups!!, this.widgets)
-            for(node in panel.groups!!)
+            panel.columns = widgets.first().getGroups(panel.type)
+            widgets.first().init(panel.columns!!, this.widgets)
+            for(node in panel.columns!!)
                 box.children.add(node.root)
             panel.content.add(box)
         }
 
         //Link all selected objects to the property groups
-        if (panel.groups != null)
+        if (panel.columns != null)
             for (widget in widgets)
                 widget.link(panel, this.widgets)
     }

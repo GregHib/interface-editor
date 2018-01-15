@@ -16,6 +16,7 @@ open class WidgetBuilder(val type: WidgetType = WidgetType.WIDGET) {
         val identifier = if(id != -1) id else getId()
         return when(type) {
             WidgetType.TEXT -> WidgetText(this, identifier)
+            WidgetType.RECTANGLE -> WidgetRectangle(this, identifier)
             else -> {
                 Widget(this, identifier)
             }

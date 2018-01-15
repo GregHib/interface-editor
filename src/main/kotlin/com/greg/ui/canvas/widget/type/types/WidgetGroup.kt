@@ -66,7 +66,7 @@ class WidgetGroup(builder: WidgetBuilder, id: Int) : WidgetData(builder, id) {
      */
 
     fun link(panel: Panel, widgets: Widgets) {
-        for (group in panel.groups!!) {
+        for (group in panel.columns!!) {
             components
                     .filter { widget -> group.widgetClass == widget::class }
                     .forEach { widget -> linkGroup(group, widget, panel.type, widgets) }

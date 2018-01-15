@@ -19,7 +19,7 @@ abstract class WidgetData(builder: WidgetBuilder, id: Int) : WidgetFacade() {
     val name: String = builder.components.last()::class.simpleName.toString()
 
     init {
-        //Add all the rest, default just rectangle
+        //Add all the rest, default just outline
         for (component in builder.components)
             add(component)
     }

@@ -2,39 +2,31 @@ package com.greg.ui.hierarchy
 
 import com.greg.controller.OldController
 import com.greg.ui.canvas.widget.type.types.WidgetGroup
-import javafx.scene.control.SelectionMode
-import javafx.scene.control.TreeCell
-import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeView
-import javafx.util.Callback
-import tornadofx.action
-import tornadofx.contextmenu
-import tornadofx.item
 
 class HierarchyManager(controller: OldController) {
-    private val tree = controller.hierarchyView.hierarchyTree
+    /*private val tree = controller.hierarchyView.hierarchyTree
     private val widgets = controller.widgets
     private val canvas = controller.canvas
     var ignoreRefresh = false
-    var ignoreListener = false
+    var ignoreListener = false*/
 
     fun add(widget: WidgetGroup) {
-        tree.root.children.add(CustomTreeItem(widget))
+//        tree.root.children.add(CustomTreeItem(widget))
     }
 
     fun remove(widget: WidgetGroup) {
-        var found = 0
+        /*var found = 0
         for((index, child) in tree.root.children.withIndex()) {
             if(child is CustomTreeItem && child.widget.identifier == widget.identifier) {
                 found = index
                 break
             }
         }
-        tree.root.children.removeAt(found)
+        tree.root.children.removeAt(found)*/
     }
 
     init {
-        tree.root = TreeItem("Canvas")
+        /*tree.root = TreeItem("Canvas")
         //Custom name edit not currently supported
         tree.isEditable = true
         //Stick with single selection for now
@@ -73,11 +65,11 @@ class HierarchyManager(controller: OldController) {
                     canvas.selection.deleteAll()
                 }
             }
-        }
+        }*/
     }
 
     fun reload() {
-        if(ignoreRefresh)
+        /*if(ignoreRefresh)
             return
 
         ignoreListener = true
@@ -97,12 +89,12 @@ class HierarchyManager(controller: OldController) {
             }
         }
 
-        ignoreListener = false
+        ignoreListener = false*/
     }
 
     private inline fun forItems(action: (CustomTreeItem) -> Unit) {
-        tree.root.children
+        /*tree.root.children
                 .filterIsInstance<CustomTreeItem>()
-                .forEach { action(it) }
+                .forEach { action(it) }*/
     }
 }
