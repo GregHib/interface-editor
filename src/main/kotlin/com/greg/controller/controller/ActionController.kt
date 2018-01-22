@@ -8,8 +8,6 @@ import com.greg.ui.action.change.Change
 import com.greg.ui.action.change.ChangeType
 import com.greg.ui.action.containers.ActionList
 import com.greg.ui.action.containers.Actions
-import javafx.scene.layout.Pane
-import tornadofx.move
 
 class ActionController(val widgets: WidgetsController) {
     private val actions = Actions()
@@ -50,12 +48,12 @@ class ActionController(val widgets: WidgetsController) {
     }
 
     @Suppress("LoopToCallChain")
-    fun undo(pane: Pane) {
+    fun undo() {
         if (actions.isNotEmpty()) {
             ignore = true
             val last = actions.last()
             for (change in last.getChanges().reversed())
-                if (applyChange(change, true, pane))
+                if (applyChange(change, true))
                     break
             actions.remove(last)
             redo.add(last)
@@ -65,12 +63,12 @@ class ActionController(val widgets: WidgetsController) {
     }
 
     @Suppress("LoopToCallChain")
-    fun redo(pane: Pane) {
+    fun redo() {
         if (redo.isNotEmpty()) {
             ignore = true
             val last = redo.last()
             for (change in last.getChanges())
-                if (applyChange(change, false, pane))
+                if (applyChange(change, false))
                     break
             redo.remove(last)
             actions.add(last)
@@ -79,33 +77,33 @@ class ActionController(val widgets: WidgetsController) {
         }
     }
 
-    private fun applyChange(change: Change, undo: Boolean, pane: Pane): Boolean {
+    private fun applyChange(change: Change, undo: Boolean): Boolean {
         when (change.type) {
             ChangeType.ADD, ChangeType.REMOVE, ChangeType.CHANGE -> {
                 return if (undo)
-                    applyChange(change, change.type == ChangeType.REMOVE, change.type == ChangeType.ADD, pane)
+                    applyChange(change, change.type == ChangeType.REMOVE, change.type == ChangeType.ADD)
                 else
-                    applyChange(change, change.type == ChangeType.ADD, change.type == ChangeType.REMOVE, pane)
+                    applyChange(change, change.type == ChangeType.ADD, change.type == ChangeType.REMOVE)
             }
             ChangeType.ORDER -> {
                 if (change.value is List<*>) {
                     val list = change.value as List<Int>
-                    if (undo)
-                        pane.children.move(pane.children[list[1]], list[0])
-                    else
-                        pane.children.move(pane.children[list[0]], list[1])
+//                    if (undo)
+//                        pane.children.move(pane.children[list[1]], list[0])
+//                    else
+//                        pane.children.move(pane.children[list[0]], list[1])
                 }
                 return false
             }
         }
     }
 
-    private fun applyChange(change: Change, add: Boolean, remove: Boolean, pane: Pane): Boolean {
+    private fun applyChange(change: Change, add: Boolean, remove: Boolean): Boolean {
         val memento = change.value as Memento
         if (add) {
             val widget = WidgetMementoBuilderAdapter(memento).build(change.id)
             val shape = WidgetShapeBuilder(widget).build()
-            widgets.display(widget, shape, pane)
+            widgets.display(widget, shape)
         } else {
             if (cached == null || cached?.identifier != change.id) {
                 for (node in widgets.getAll()) {
@@ -119,7 +117,7 @@ class ActionController(val widgets: WidgetsController) {
             if (cached != null) {
                 if (remove) {
                     cached!!.setSelected(false)
-                    widgets.destroy(cached!!, pane)
+                    widgets.destroy(cached!!)
                     return true
                 } else
                     cached?.restore(memento)
@@ -140,11 +138,11 @@ class ActionController(val widgets: WidgetsController) {
         interaction.copy()
     }
 
-    fun paste(pane: Pane) {
-        interaction.paste(pane)
+    fun paste() {
+        interaction.paste()
     }
 
-    fun clone(pane: Pane) {
-        interaction.clone(pane)
+    fun clone() {
+        interaction.clone()
     }
 }

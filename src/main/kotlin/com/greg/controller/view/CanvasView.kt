@@ -19,6 +19,9 @@ class CanvasView : View(), MouseController, KeyboardController {
     val widgets: WidgetsController by inject()
     private val manager = StateManager(this)
 
+    init {
+        widgets.pane = pane
+    }
 
     fun edit(widget: Widget) {
         manager.edit(widget)
@@ -51,7 +54,7 @@ class CanvasView : View(), MouseController, KeyboardController {
         val widget = WidgetBuilder(type).build()
         val shape = WidgetShapeBuilder(widget).build()
 
-        widgets.display(widget, shape, pane)
+        widgets.display(widget, shape)
     }
 
     override fun handleKeyPress(event: KeyEvent) {

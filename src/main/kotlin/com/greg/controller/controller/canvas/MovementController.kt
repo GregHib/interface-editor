@@ -19,7 +19,7 @@ class MovementController(val widgets: WidgetsController, val pane: Pane) {
 
     fun clone() {
         if (!cloned) {
-            widgets.clone(pane)
+            widgets.clone()
             cloned = true
         }
     }

@@ -78,7 +78,7 @@ class DefaultState(canvas: CanvasView) : CanvasState(canvas) {
         if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
             movement.reset(event.code)
         else if (event.code == KeyCode.DELETE)
-            widgets.deleteSelection(pane)
+            widgets.deleteSelection()
         else if (!event.isShiftDown)
             movement.resetClone()
 
@@ -88,19 +88,19 @@ class DefaultState(canvas: CanvasView) : CanvasState(canvas) {
                     widgets.selectAll()
                 }
                 KeyCode.X -> {
-                    widgets.cut(pane)
+                    widgets.cut()
                 }
                 KeyCode.C -> {
                     widgets.copy()
                 }
                 KeyCode.V -> {
-                    widgets.paste(pane)
+                    widgets.paste()
                 }
                 KeyCode.Z -> {
                     if (event.isShiftDown)
-                        widgets.redo(pane)
+                        widgets.redo()
                     else
-                        widgets.undo(pane)
+                        widgets.undo()
                 }
                 else -> {
                 }

@@ -17,13 +17,15 @@ import javafx.event.EventTarget
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Shape
 import tornadofx.Controller
+import tornadofx.DefaultScope
 
 class WidgetsController : Controller() {
     val widgets = WidgetsModel()
+    lateinit var pane: Pane
+    private val hierarchy: HierarchyController by inject(DefaultScope)
     private val action = ActionController(this)
-    val panels = PanelController(this)
 
-    private val hierarchy: HierarchyController by inject()
+    val panels = PanelController(this)
 
     val refresh = RefreshManager(panels, hierarchy)
 
@@ -96,8 +98,8 @@ class WidgetsController : Controller() {
         }
     }
 
-    fun clone(pane: Pane) {
-        action.clone(pane)
+    fun clone() {
+        action.clone()
     }
 
     private var counter = 0
@@ -118,12 +120,12 @@ class WidgetsController : Controller() {
             action.finish()
     }
 
-    fun cut(pane: Pane) {
+    fun cut() {
         action.copy()
-        deleteSelection(pane)
+        deleteSelection()
     }
 
-    fun deleteSelection(pane: Pane) {
+    fun deleteSelection() {
         val selection = mutableListOf<Widget>()
         widgets.forEach { widget ->
             if (widget.isSelected())
@@ -131,20 +133,20 @@ class WidgetsController : Controller() {
         }
 
         selection.forEach { widget ->
-            destroy(widget, pane)
+            destroy(widget)
         }
     }
 
-    fun redo(pane: Pane) {
-        action.redo(pane)
+    fun redo() {
+        action.redo()
     }
 
-    fun undo(pane: Pane) {
-        action.undo(pane)
+    fun undo() {
+        action.undo()
     }
 
-    fun paste(pane: Pane) {
-        action.paste(pane)
+    fun paste() {
+        action.paste()
     }
 
     fun copy() {
@@ -155,7 +157,7 @@ class WidgetsController : Controller() {
         refresh.request()
     }
 
-    fun display(widget: Widget, shape: WidgetShape, pane: Pane) {
+    fun display(widget: Widget, shape: WidgetShape) {
         //Selection
         widget.selectedProperty().addListener { _, oldValue, newValue ->
             if (oldValue != newValue) {
@@ -190,7 +192,7 @@ class WidgetsController : Controller() {
         pane.children.add(shape)
     }
 
-    fun destroy(widget: Widget, pane: Pane) {
+    fun destroy(widget: Widget) {
         remove(widget)
         for (shape in pane.children) {
             if (shape is WidgetShape && shape.identifier == widget.identifier) {

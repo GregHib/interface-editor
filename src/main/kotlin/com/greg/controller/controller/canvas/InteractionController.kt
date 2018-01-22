@@ -8,10 +8,9 @@ import com.greg.controller.view.WidgetShapeBuilder
 import com.greg.ui.canvas.widget.type.WidgetType
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
-import javafx.scene.layout.Pane
 
 class InteractionController(val widgets: WidgetsController) {
-    fun paste(pane: Pane) {
+    fun paste() {
         val clipboard = Clipboard.getSystemClipboard()
         val string = clipboard.string
 
@@ -45,7 +44,7 @@ class InteractionController(val widgets: WidgetsController) {
                 //Create widget of the corresponding type
                 val widget = WidgetMementoBuilderAdapter(memento).build()
                 val shape = WidgetShapeBuilder(widget).build()
-                widgets.display(widget, shape, pane)
+                widgets.display(widget, shape)
                 widget.setSelected(true)
             } else {
                 error("Error processing paste line: $line")
@@ -68,7 +67,7 @@ class InteractionController(val widgets: WidgetsController) {
         clipboard.setContent(content)
     }
 
-    fun clone(pane: Pane) {
+    fun clone() {
         val selected = mutableListOf<Widget>()
         selected.addAll(widgets.getAll())
 
@@ -76,7 +75,7 @@ class InteractionController(val widgets: WidgetsController) {
             if(widget.isSelected()) {
                 val clone = WidgetMementoBuilderAdapter(widget.getMemento()).build()
                 val shape = WidgetShapeBuilder(clone).build()
-                widgets.display(clone, shape, pane)
+                widgets.display(clone, shape)
                 shape.toFront()
                 clone.start = widget.start
                 clone.setSelected(true)
