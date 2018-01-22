@@ -2,7 +2,7 @@ group 'interface-editor'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.2.0'
+    ext.kotlin_version = '1.2.20'
 
     repositories {
         mavenCentral()
@@ -21,9 +21,9 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version",
-            "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version",
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version",
             "no.tornado:tornadofx:1.7.14"
+            "no.tornado:tornadofx-controlsfx:0.1"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
