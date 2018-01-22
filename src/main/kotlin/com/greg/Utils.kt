@@ -1,4 +1,4 @@
-package src.com.greg
+package com.greg
 
 import kotlin.math.round
 

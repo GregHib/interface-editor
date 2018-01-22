@@ -1,7 +1,7 @@
-package src.com.greg.model.widgets.memento
+package com.greg.model.widgets.memento
 
+import com.greg.model.widgets.WidgetType
 import javafx.beans.property.Property
-import src.com.greg.model.widgets.WidgetType
 
 data class Memento(val type: WidgetType, val values: MutableList<MementoValue> = mutableListOf()) {
     override fun toString(): String {

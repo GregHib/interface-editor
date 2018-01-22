@@ -1,15 +1,15 @@
-package src.com.greg.model.widgets
+package com.greg.model.widgets
 
-import com.sun.scenario.Settings
+import com.greg.controller.canvas.DragContext
+import com.greg.model.Properties
+import com.greg.model.StartPoint
+import com.greg.model.widgets.memento.Memento
+import com.greg.model.widgets.memento.MementoBuilder
+import com.greg.settings.Settings
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleIntegerProperty
-import src.com.greg.model.Properties
-import src.com.greg.controller.canvas.DragContext
-import src.com.greg.model.StartPoint
-import src.com.greg.model.widgets.memento.Memento
-import src.com.greg.model.widgets.memento.MementoBuilder
 
 open class Widget(builder: WidgetBuilder, id: Int) {
 
@@ -92,15 +92,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
     fun xProperty(): IntegerProperty {
         if (x == null)
-            x = SimpleIntegerProperty(this, "x", 0)//Settings.getInt(SettingsKey.DEFAULT_RECTANGLE_WIDTH))
-
-        /*if (x == null)
-            x = SimpleIntegerProperty(this, "x", Settings.getInt(SettingsKey.DEFAULT_POSITION_X),
-                    { value ->
-                        val limit = Settings.getInt(SettingsKey.WIDGET_CANVAS_WIDTH) - getWidth()
-                        return@LimitedIntegerProperty if (value > limit) limit else value
-                    }
-            )*/
+            x = SimpleIntegerProperty(this, "x", Settings.getInt(Settings.DEFAULT_POSITION_X))
 
         return x!!
     }
@@ -115,13 +107,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
     fun yProperty(): IntegerProperty {
         if (y == null)
-            y = SimpleIntegerProperty(this, "y", 0)
-        /*if (y == null)
-            y = LimitedIntegerProperty(this, "y", Settings.getInt(SettingsKey.DEFAULT_POSITION_Y),
-                    { value ->
-                        val limit = Settings.getInt(SettingsKey.WIDGET_CANVAS_HEIGHT) - getHeight()
-                        return@LimitedIntegerProperty if (value > limit) limit else value
-                    })*/
+            y = SimpleIntegerProperty(this, "y", Settings.getInt(Settings.DEFAULT_POSITION_Y))
 
         return y!!
     }
@@ -136,7 +122,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
     fun widthProperty(): IntegerProperty {
         if (width == null)
-            width = SimpleIntegerProperty(this, "width", 50)//Settings.getInt(SettingsKey.DEFAULT_RECTANGLE_WIDTH))
+            width = SimpleIntegerProperty(this, "width", Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH))
 
         return width!!
     }
@@ -151,7 +137,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
     fun heightProperty(): IntegerProperty {
         if (height == null)
-            height = SimpleIntegerProperty(this, "height", 50)//Settings.getInt(SettingsKey.DEFAULT_RECTANGLE_HEIGHT))
+            height = SimpleIntegerProperty(this, "height", Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT))
 
         return height!!
     }

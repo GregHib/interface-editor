@@ -1,8 +1,8 @@
-package src.com.greg.view.widgets
+package com.greg.view.widgets
 
+import com.greg.view.WidgetShape
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.StrokeType
-import src.com.greg.view.WidgetShape
 import tornadofx.add
 
 class RectangleShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height) {

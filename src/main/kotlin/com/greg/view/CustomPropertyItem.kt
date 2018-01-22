@@ -1,4 +1,4 @@
-package src.com.greg.view
+package com.greg.view
 
 import javafx.beans.value.ObservableValue
 import javafx.scene.paint.Color

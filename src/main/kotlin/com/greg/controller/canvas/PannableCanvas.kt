@@ -1,8 +1,7 @@
-package src.com.greg.controller.canvas
+package com.greg.controller.canvas
 
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 
 /**
@@ -28,15 +27,6 @@ class PannableCanvas : Pane() {
         // add scale transform
         scaleXProperty().bind(myScale)
         scaleYProperty().bind(myScale)
-
-        // logging
-        addEventFilter(MouseEvent.MOUSE_PRESSED) { event ->
-            println(
-                    "canvas event: " + (((event.sceneX - boundsInParent.minX) / scale).toString() + ", scale: " + scale)
-            )
-            println("canvas bounds: " + boundsInParent)
-        }
-
     }
 
     /**

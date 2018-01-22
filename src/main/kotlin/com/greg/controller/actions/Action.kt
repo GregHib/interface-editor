@@ -1,4 +1,4 @@
-package src.com.greg.controller.actions
+package com.greg.controller.actions
 
 class Action(change: Change? = null) {
     private val changes = mutableListOf<Change>()

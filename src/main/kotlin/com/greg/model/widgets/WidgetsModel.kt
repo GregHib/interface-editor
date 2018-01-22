@@ -1,7 +1,7 @@
-package src.com.greg.model.widgets
+package com.greg.model.widgets
 
 import javafx.collections.ObservableList
-import src.com.greg.view.WidgetShape
+import com.greg.view.WidgetShape
 import tornadofx.observable
 
 open class WidgetsModel {

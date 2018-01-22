@@ -1,13 +1,12 @@
-package src.com.greg.controller
+package com.greg.controller
 
+import com.greg.controller.widgets.WidgetMementoBuilderAdapter
+import com.greg.controller.widgets.WidgetsController
+import com.greg.model.widgets.Widget
+import com.greg.model.widgets.WidgetType
+import com.greg.model.widgets.memento.Memento
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
-import src.com.greg.controller.widgets.WidgetMementoBuilderAdapter
-import src.com.greg.controller.widgets.WidgetShapeBuilder
-import src.com.greg.controller.widgets.WidgetsController
-import src.com.greg.model.widgets.Widget
-import src.com.greg.model.widgets.WidgetType
-import src.com.greg.model.widgets.memento.Memento
 
 class InteractionController(val widgets: WidgetsController) {
     fun paste() {

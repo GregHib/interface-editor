@@ -1,18 +1,18 @@
-package src.com.greg.controller.widgets
+package com.greg.controller.widgets
 
+import com.greg.controller.ActionController
+import com.greg.controller.ChangeType
+import com.greg.model.widgets.Widget
+import com.greg.model.widgets.WidgetRectangle
+import com.greg.model.widgets.WidgetText
+import com.greg.model.widgets.WidgetsModel
+import com.greg.settings.Settings
+import com.greg.view.WidgetShape
+import com.greg.view.widgets.RectangleShape
+import com.greg.view.widgets.TextShape
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
-import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
-import src.com.greg.controller.ActionController
-import src.com.greg.controller.ChangeType
-import src.com.greg.model.widgets.Widget
-import src.com.greg.model.widgets.WidgetRectangle
-import src.com.greg.model.widgets.WidgetText
-import src.com.greg.model.widgets.WidgetsModel
-import src.com.greg.view.WidgetShape
-import src.com.greg.view.widgets.RectangleShape
-import src.com.greg.view.widgets.TextShape
 import tornadofx.Controller
 
 class WidgetsController : Controller() {
@@ -151,7 +151,7 @@ class WidgetsController : Controller() {
     }
 
     fun requestRefresh() {
-        println("Refresh")
+//        println("Refresh")
 //        refresh.request()
     }
 
@@ -167,7 +167,7 @@ class WidgetsController : Controller() {
         widget.selectedProperty().addListener { _, oldValue, newValue ->
             if (oldValue != newValue) {
                 shape.outline.toFront()
-                shape.outline.stroke = if (newValue) Color.RED else Color.WHITE
+                shape.outline.stroke = Settings.getColour(if (newValue) Settings.SELECTION_STROKE_COLOUR else Settings.DEFAULT_STROKE_COLOUR)
                 requestRefresh()
             }
         }

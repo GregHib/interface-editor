@@ -1,4 +1,4 @@
-package src.com.greg.controller.actions
+package com.greg.controller.actions
 
 open class ActionList {
 

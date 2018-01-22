@@ -1,4 +1,4 @@
-package src.com.greg.model.widgets
+package com.greg.model.widgets
 
 enum class WidgetType(val type: String?) {
     WIDGET(Widget::class.simpleName),

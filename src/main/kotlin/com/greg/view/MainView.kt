@@ -1,7 +1,9 @@
-package src.com.greg.view
+package com.greg.view
 
-import tornadofx.*
 import javafx.scene.shape.Rectangle
+import com.greg.view.LeftPane
+import com.greg.view.RightPane
+import tornadofx.*
 import tornadofx.controlsfx.content
 import tornadofx.controlsfx.notificationPane
 

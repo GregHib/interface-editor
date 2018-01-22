@@ -1,19 +1,14 @@
-package src.com.greg.controller
+package com.greg.controller
 
+import com.greg.Utils
+import com.greg.controller.canvas.PannableCanvas
+import com.greg.controller.widgets.WidgetsController
+import com.greg.model.widgets.Widget
 import javafx.event.EventTarget
 import javafx.geometry.BoundingBox
-import javafx.geometry.Bounds
-import javafx.scene.Group
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Shape
-import src.com.greg.Utils
-import src.com.greg.controller.canvas.PannableCanvas
-import src.com.greg.controller.widgets.WidgetsController
-import src.com.greg.model.widgets.Widget
-import src.com.greg.view.WidgetShape
-import src.com.greg.view.widgets.TextShape
-import tornadofx.compareTo
 
 class MarqueeController(private val widgets: WidgetsController, private var canvas: PannableCanvas) {
     private var marquee = Marquee()
@@ -88,13 +83,10 @@ class MarqueeController(private val widgets: WidgetsController, private var canv
 
         widgets.getAll()
                 .filter {widget ->
-                    println(canvas.boundsInParent)
-                    println("${widget.getX()} ${widget.getY()} ${widget.getWidth()} ${widget.getHeight()}")
                     val widgetBounds = BoundingBox(canvas.boundsInParent.minX + widget.getX().toDouble(), canvas.boundsInParent.minY + widget.getY().toDouble(), widget.getWidth().toDouble(), widget.getHeight().toDouble())
                     marquee.boundsInParent.intersects(widgetBounds)
                 }
                 .forEach { widget ->
-                    println("Select")
                     if (event.isControlDown)
                         widget.setSelected(!widget.isSelected())
                     else

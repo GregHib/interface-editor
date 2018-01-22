@@ -1,5 +1,6 @@
-package src.com.greg.controller.canvas
+package com.greg.controller.canvas
 
+import com.greg.controller.canvas.PannableCanvas
 import javafx.event.EventHandler
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent

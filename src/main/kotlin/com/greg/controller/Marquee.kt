@@ -1,4 +1,4 @@
-package src.com.greg.controller
+package com.greg.controller
 
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle

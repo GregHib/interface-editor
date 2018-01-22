@@ -1,4 +1,4 @@
-package src.com.greg.controller
+package com.greg.controller
 
 enum class ChangeType {
     ADD,

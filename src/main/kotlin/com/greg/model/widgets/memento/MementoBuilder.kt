@@ -1,8 +1,8 @@
-package src.com.greg.model.widgets.memento
+package com.greg.model.widgets.memento
 
-import src.com.greg.model.widgets.Widget
-import src.com.greg.model.widgets.WidgetRectangle
-import src.com.greg.model.widgets.WidgetText
+import com.greg.model.widgets.Widget
+import com.greg.model.widgets.WidgetRectangle
+import com.greg.model.widgets.WidgetText
 
 class MementoBuilder(val widget: Widget) {
     fun build(): Memento {

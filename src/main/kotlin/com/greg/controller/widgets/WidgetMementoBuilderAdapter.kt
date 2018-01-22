@@ -1,8 +1,8 @@
-package src.com.greg.controller.widgets
+package com.greg.controller.widgets
 
-import src.com.greg.model.widgets.Widget
-import src.com.greg.model.widgets.WidgetBuilder
-import src.com.greg.model.widgets.memento.Memento
+import com.greg.model.widgets.Widget
+import com.greg.model.widgets.WidgetBuilder
+import com.greg.model.widgets.memento.Memento
 
 class WidgetMementoBuilderAdapter(val memento: Memento) : WidgetBuilder(memento.type) {
     override fun build(id: Int): Widget {

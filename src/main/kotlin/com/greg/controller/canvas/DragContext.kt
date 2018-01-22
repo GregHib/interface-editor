@@ -1,4 +1,4 @@
-package src.com.greg.controller.canvas
+package com.greg.controller.canvas
 
 /**
  * Mouse drag context used for scene and nodes.

@@ -1,13 +1,12 @@
-package src.com.greg.controller
+package com.greg.controller
 
-import src.com.greg.controller.actions.ActionList
-import src.com.greg.controller.actions.Actions
-import src.com.greg.controller.actions.Change
-import src.com.greg.controller.widgets.WidgetMementoBuilderAdapter
-import src.com.greg.controller.widgets.WidgetShapeBuilder
-import src.com.greg.controller.widgets.WidgetsController
-import src.com.greg.model.widgets.Widget
-import src.com.greg.model.widgets.memento.Memento
+import com.greg.controller.actions.ActionList
+import com.greg.controller.actions.Actions
+import com.greg.controller.actions.Change
+import com.greg.controller.widgets.WidgetMementoBuilderAdapter
+import com.greg.controller.widgets.WidgetsController
+import com.greg.model.widgets.Widget
+import com.greg.model.widgets.memento.Memento
 
 class ActionController(val widgets: WidgetsController) {
     private val actions = Actions()

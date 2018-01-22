@@ -1,4 +1,4 @@
-package src.com.greg.model.widgets.memento
+package com.greg.model.widgets.memento
 
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.ObjectProperty

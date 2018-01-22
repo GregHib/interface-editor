@@ -1,19 +1,19 @@
-package src.com.greg.view
+package com.greg.view
 
+import com.greg.controller.MarqueeController
+import com.greg.controller.SelectionController
+import com.greg.controller.canvas.NodeGestures
+import com.greg.controller.canvas.PannableCanvas
+import com.greg.controller.canvas.SceneGestures
+import com.greg.controller.widgets.WidgetShapeBuilder
+import com.greg.controller.widgets.WidgetsController
+import com.greg.model.widgets.WidgetBuilder
+import com.greg.model.widgets.WidgetType
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
 import javafx.scene.shape.Rectangle
-import src.com.greg.controller.MarqueeController
-import src.com.greg.controller.SelectionController
-import src.com.greg.controller.canvas.NodeGestures
-import src.com.greg.controller.canvas.PannableCanvas
-import src.com.greg.controller.canvas.SceneGestures
-import src.com.greg.controller.widgets.WidgetShapeBuilder
-import src.com.greg.controller.widgets.WidgetsController
-import src.com.greg.model.widgets.WidgetBuilder
-import src.com.greg.model.widgets.WidgetType
 import tornadofx.*
 
 class CanvasView : View() {
@@ -24,6 +24,10 @@ class CanvasView : View() {
     private var marquee = MarqueeController(widgets, canvas)
     private val selection = SelectionController(widgets)
     private val sceneGestures = SceneGestures(canvas)
+
+    private var spaceHeld = false
+    private var horizontal = 0
+    private var vertical = 0
 
     init {
         widgets.getAll().onChange {
@@ -136,20 +140,49 @@ class CanvasView : View() {
         })
 
     }
-    var spaceHeld = false
 
     private fun handleKeyEvents(it: KeyEvent) {
         when (it.eventType) {
             KeyEvent.KEY_PRESSED -> {
                 if (it.code == KeyCode.SPACE)
                     spaceHeld = true
+                else
+                    move(it)
             }
             KeyEvent.KEY_RELEASED -> {
                 if (it.code == KeyCode.SPACE)
                     spaceHeld = false
+                else
+                    reset(it.code)
             }
         }
 
+    }
+
+    private fun move(event: KeyEvent) {
+        when {
+            event.code == KeyCode.RIGHT -> horizontal = 1
+            event.code == KeyCode.LEFT -> horizontal = -1
+            event.code == KeyCode.UP -> vertical = -1
+            event.code == KeyCode.DOWN -> vertical = 1
+        }
+
+        move(if (event.isShiftDown) horizontal * 10 else horizontal, if (event.isShiftDown) vertical * 10 else vertical)
+    }
+
+    private fun move(x: Int, y: Int) {
+        widgets.forSelected { widget ->
+            widget.setX(widget.getX() + x)
+            widget.setY(widget.getY() + y)
+        }
+    }
+
+    private fun reset(code: KeyCode) {
+        if (code == KeyCode.RIGHT || code == KeyCode.LEFT)
+            horizontal = 0
+
+        if (code == KeyCode.UP || code == KeyCode.DOWN)
+            vertical = 0
     }
 
     private fun createAndDisplay(type: WidgetType) {
