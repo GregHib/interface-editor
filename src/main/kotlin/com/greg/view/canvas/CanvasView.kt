@@ -160,6 +160,8 @@ class CanvasView : View() {
 
                 widget.setX(dropX.toInt())
                 widget.setY(dropY.toInt())
+
+                widget.setSelected(true)
             }
 
             event.isDropCompleted = true
@@ -174,13 +176,14 @@ class CanvasView : View() {
     }
 
     private fun handleKeyEvents(event: KeyEvent) {
-        when (event.eventType) {
-            KeyEvent.KEY_PRESSED -> handleKeyPress(event)
-            KeyEvent.KEY_RELEASED -> handleKeyRelease(event)
-        }
+        if (root.isFocused) {
+            when (event.eventType) {
+                KeyEvent.KEY_PRESSED -> handleKeyPress(event)
+                KeyEvent.KEY_RELEASED -> handleKeyRelease(event)
+            }
 
-        if(root.isFocused)
             event.consume()
+        }
     }
 
     private fun handleKeyPress(event: KeyEvent) {
@@ -211,8 +214,8 @@ class CanvasView : View() {
             reset(event.code)
         else if (event.code == KeyCode.DELETE)
             widgets.deleteSelection()
-//        else if (!event.isShiftDown)
-//            movement.resetClone()
+        else if (!event.isShiftDown)
+            cloned = false
 
         if (event.isControlDown) {
             when (event.code) {

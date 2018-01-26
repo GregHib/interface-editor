@@ -37,6 +37,15 @@ class RightPane : Fragment() {
 
                         if (field is TextField) {
                             Bindings.bindBidirectional(field.textProperty(), param.objectProperty as Property<Int>?, IntegerStringConverter())
+                            field.focusedProperty().addListener { _, _, newValue ->
+                                if(newValue)
+                                    widgets.start()
+                                else
+                                    widgets.finish()
+                            }
+                            field.setOnAction {
+                                widgets.finish()
+                            }
                         }
 
                         editor
@@ -45,14 +54,26 @@ class RightPane : Fragment() {
                         val editor = Editors.createColorEditor(param)
                         val field = editor.editor
 
-                        (field as? ColorPicker)?.valueProperty()?.bindBidirectional(param.objectProperty as Property<Color>?)
+                        if(field is ColorPicker)
+                            field.valueProperty().bindBidirectional(param.objectProperty as Property<Color>?)
                         editor
                     }
                     else -> {
                         val editor = Editors.createTextEditor(param)
                         val field = editor.editor
 
-                        (field as? TextField)?.textProperty()?.bindBidirectional(param.objectProperty as Property<String>?)
+                        if(field is TextField) {
+                            field.textProperty().bindBidirectional(param.objectProperty as Property<String>?)
+                            field.focusedProperty().addListener { _, _, newValue ->
+                                if(newValue)
+                                    widgets.start()
+                                else
+                                    widgets.finish()
+                            }
+                            field.setOnAction {
+                                widgets.finish()
+                            }
+                        }
                         editor
                     }
                 }
@@ -81,7 +102,7 @@ class RightPane : Fragment() {
                             if (propertyItem.objectProperty.name != "X" && propertyItem.objectProperty.name != "Y")
                                 propertyItem.objectProperty.addListener { _, _, newValue ->
                                     it.list
-                                            .filter { it != first }
+                                            .filter { it != first && it.type == first.type }
                                             .forEach { widget ->
                                                 widget.properties.get().filter { it.panel }[index].property.value = newValue
                                             }

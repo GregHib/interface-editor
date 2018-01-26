@@ -175,24 +175,40 @@ class WidgetsController : Controller() {
             }
         }
 
+        //Binds
+
         //Position
         widget.xProperty().bindBidirectional(shape.translateXProperty())
         widget.yProperty().bindBidirectional(shape.translateYProperty())
-        widget.xProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
-        widget.yProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
-
         //Appearance
         shape.outline.widthProperty().bind(widget.widthProperty())
         shape.outline.heightProperty().bind(widget.heightProperty())
 
+
+        //Listener
+        widget.xProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
+        widget.yProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
+        widget.widthProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
+        widget.heightProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
+        widget.lockedProperty().addListener { _, _, _ -> recordSingle(ChangeType.CHANGE, widget) }
+
         if(widget is WidgetRectangle && shape is RectangleShape) {
             shape.rectangle.fillProperty().bind(widget.fillProperty())
             shape.rectangle.strokeProperty().bind(widget.strokeProperty())
+
+            //Records
+            shape.rectangle.fillProperty().addListener { _, _, _ -> recordSingle(ChangeType.CHANGE, widget) }
+            shape.rectangle.strokeProperty().addListener { _, _, _ -> recordSingle(ChangeType.CHANGE, widget) }
         } else if(widget is WidgetText && shape is TextShape) {
+            //Binds
             shape.label.textProperty().bind(widget.text)
             //Both are needed for colour
             shape.label.strokeProperty().bind(widget.colour)
             shape.label.fillProperty().bind(widget.colour)
+
+            //Records
+            shape.label.textProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
+            shape.label.strokeProperty().addListener { _, _, _ -> recordSingle(ChangeType.CHANGE, widget) }
         }
     }
 

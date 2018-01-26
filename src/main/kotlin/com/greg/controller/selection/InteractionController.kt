@@ -77,10 +77,10 @@ class InteractionController(val widgets: WidgetsController) {
                 val memento = widget.getMemento()
                 val clone = WidgetBuilder(memento.type).build()
                 widgets.add(clone)
+                widget.setSelected(false)
                 clone.restore(memento)
                 if(!clone.isSelected())
                     clone.setSelected(true)
-                widget.setSelected(false)
             }
         }
     }

@@ -47,6 +47,7 @@ class ActionController(val widgets: WidgetsController) {
     @Suppress("LoopToCallChain")
     fun undo() {
         if (actions.isNotEmpty()) {
+            widgets.clearSelection()
             ignore = true
             val last = actions.last()
             for (change in last.getChanges().reversed())
@@ -55,13 +56,13 @@ class ActionController(val widgets: WidgetsController) {
             actions.remove(last)
             redo.add(last)
             cached = null
-            widgets.requestRefresh()
         }
     }
 
     @Suppress("LoopToCallChain")
     fun redo() {
         if (redo.isNotEmpty()) {
+            widgets.clearSelection()
             ignore = true
             val last = redo.last()
             for (change in last.getChanges())
@@ -70,7 +71,6 @@ class ActionController(val widgets: WidgetsController) {
             redo.remove(last)
             actions.add(last)
             cached = null
-            widgets.requestRefresh()
         }
     }
 

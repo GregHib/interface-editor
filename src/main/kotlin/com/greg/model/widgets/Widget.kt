@@ -105,7 +105,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
     fun yProperty(): IntegerProperty {
         if (y == null)
-            y = SimpleIntegerProperty(this, "y", Settings.getInt(Settings.DEFAULT_POSITION_Y))
+            y = SimpleIntegerProperty(this, "y", 100)
 
         return y!!
     }
@@ -145,7 +145,10 @@ open class Widget(builder: WidgetBuilder, id: Int) {
     }
 
     fun restore(memento: Memento) {
-        for ((index, value) in properties.get().withIndex())
+        for ((index, value) in properties.get().withIndex()) {
+            if(value.property == selectedProperty())
+                continue
             value.property.value = memento.values[index].convert(value.property)
+        }
     }
 }
