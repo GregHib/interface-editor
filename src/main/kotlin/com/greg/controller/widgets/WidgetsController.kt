@@ -125,14 +125,10 @@ class WidgetsController : Controller() {
     }
 
     fun deleteSelection() {
-        val selection = mutableListOf<Widget>()
-        widgets.forEach { widget ->
-            if (widget.isSelected())
-                selection.add(widget)
-        }
-
-        selection.forEach { widget ->
-            remove(widget)
+        val iterator = getSelection().iterator()
+        while(iterator.hasNext()) {
+            remove(iterator.next())
+            iterator.remove()
         }
     }
 
@@ -194,7 +190,9 @@ class WidgetsController : Controller() {
             shape.rectangle.strokeProperty().bind(widget.strokeProperty())
         } else if(widget is WidgetText && shape is TextShape) {
             shape.label.textProperty().bind(widget.text)
+            //Both are needed for colour
             shape.label.strokeProperty().bind(widget.colour)
+            shape.label.fillProperty().bind(widget.colour)
         }
     }
 

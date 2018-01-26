@@ -1,8 +1,8 @@
 package com.greg.controller.selection
 
-import com.greg.controller.widgets.WidgetMementoBuilderAdapter
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.Widget
+import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.memento.Memento
 import javafx.scene.input.Clipboard
@@ -41,9 +41,11 @@ class InteractionController(val widgets: WidgetsController) {
                 memento.addAll(list)
 
                 //Create widget of the corresponding type
-                val widget = WidgetMementoBuilderAdapter(memento).build()
+                val widget = WidgetBuilder(memento.type).build()
                 widgets.add(widget)
-                widget.setSelected(true)
+                widget.restore(memento)
+                if(!widget.isSelected())
+                    widget.setSelected(true)
             } else {
                 error("Error processing paste line: $line")
             }
@@ -66,14 +68,18 @@ class InteractionController(val widgets: WidgetsController) {
     }
 
     fun clone() {
+        //TODO can be done better with iteration not a new list
         val selected = mutableListOf<Widget>()
         selected.addAll(widgets.getAll())
 
         selected.forEach { widget ->
             if(widget.isSelected()) {
-                val clone = WidgetMementoBuilderAdapter(widget.getMemento()).build()
+                val memento = widget.getMemento()
+                val clone = WidgetBuilder(memento.type).build()
                 widgets.add(clone)
-                clone.setSelected(true)
+                clone.restore(memento)
+                if(!clone.isSelected())
+                    clone.setSelected(true)
                 widget.setSelected(false)
             }
         }

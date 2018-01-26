@@ -1,8 +1,5 @@
 package com.greg.model.widgets
 
-import com.greg.model.widgets.WidgetRectangle
-import com.greg.model.widgets.WidgetType
-
 open class WidgetBuilder(val type: WidgetType = WidgetType.WIDGET) {
 
     companion object {

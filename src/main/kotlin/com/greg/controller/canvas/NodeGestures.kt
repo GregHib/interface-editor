@@ -23,8 +23,10 @@ class NodeGestures(val widgets: WidgetsController, private var canvas: PannableC
 
             val node = pane.children.firstOrNull { it is WidgetShape && it.identifier == widget.identifier }
 
-            widget.dragContext.translateAnchorX = node?.translateX!!.toInt()
-            widget.dragContext.translateAnchorY = node?.translateY!!.toInt()
+            if(node != null) {
+                widget.dragContext.translateAnchorX = node.translateX.toInt()
+                widget.dragContext.translateAnchorY = node.translateY.toInt()
+            }
         }
 
         event.consume()

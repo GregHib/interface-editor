@@ -12,7 +12,6 @@ open class WidgetsList {
     }
 
     fun remove(widget: Widget) {
-        println("Remove")
         widgets.remove(widget)
     }
 

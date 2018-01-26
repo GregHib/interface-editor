@@ -3,7 +3,11 @@ https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 
 // Features
 //----------------------
-Finish converting to mvc - view for hierarchy listeners for
+Catch up:
+Actions + undoing
+Copy, paste, cut, delete, select all key
+
+
 Remove the requirement for Pane in cut/paste/clone, globalise it or handle differently?
 Finish off widget locking & re-implement DragTreeItem.kt stuff such as reordering
 Editable widget names

@@ -29,6 +29,7 @@ class CanvasView : View() {
     private val selection = SelectionController(widgets)
     private val sceneGestures = SceneGestures(canvas)
 
+    private var cloned = false
     private var spaceHeld = false
     private var horizontal = 0
     private var vertical = 0
@@ -81,18 +82,22 @@ class CanvasView : View() {
             if (!spaceHeld)
                 selection.start(event)
 
-            val cloned = event.isShiftDown && widgets.hasSelection()
-//            if(cloned)
-//                movement.clone()
+            val clone = event.isShiftDown && widgets.hasSelection()
+            if (clone) {
+                if (!cloned) {
+                    widgets.clone()
+                    cloned = true
+                }
+            }
 
             //Start movement (and actions)
 //            movement.start(event, pane)
 
             //If shift cloned start action with cloned widget
-//            if(cloned)
-//                widgets.start(widgets.getWidget(movement.getClone(event)))
-//            else
-//                widgets.start(widgets.getWidget(event.target))
+            if (clone)
+                widgets.start(widgets.getWidget(getClone(event)))
+            else
+                widgets.start(widgets.getWidget(event.target))
 
             if (spaceHeld)
                 cursor = Cursor.CLOSED_HAND
@@ -112,6 +117,7 @@ class CanvasView : View() {
         })
 
         addEventFilter(MouseEvent.MOUSE_RELEASED, { event ->
+            cloned = false
             marquee.select(event)
 
             if (spaceHeld)
@@ -122,7 +128,7 @@ class CanvasView : View() {
 
         addEventFilter(MouseEvent.MOUSE_CLICKED, { event ->
             if (event.clickCount == 2) {
-                //            movement.resetClone()
+                cloned = false
                 marquee.select(event)
 
                 widgets.finish()
@@ -149,8 +155,8 @@ class CanvasView : View() {
                 val scaleOffsetY = canvas.boundsInLocal.minY * canvas.scaleY
                 val canvasY = canvas.boundsInParent.minY - scaleOffsetY
 
-                val dropX = (event.x - canvasX)/canvas.scaleX
-                val dropY = (event.y - canvasY)/canvas.scaleY
+                val dropX = (event.x - canvasX) / canvas.scaleX
+                val dropY = (event.y - canvasY) / canvas.scaleY
 
                 widget.setX(dropX.toInt())
                 widget.setY(dropY.toInt())
@@ -162,27 +168,79 @@ class CanvasView : View() {
         }
     }
 
-    private fun handleKeyEvents(it: KeyEvent) {
-        when (it.eventType) {
-            KeyEvent.KEY_PRESSED -> {
-                if (it.code == KeyCode.SPACE) {
-                    spaceHeld = true
-                    if (root.cursor != Cursor.OPEN_HAND && root.cursor != Cursor.CLOSED_HAND) {
-                        root.cursor = Cursor.OPEN_HAND
-                        marquee.remove(root)
-                    }
-                } else
-                    move(it)
+    private fun getClone(event: MouseEvent): WidgetShape? {
+        return canvas.children.filterIsInstance<WidgetShape>()
+                .firstOrNull { it.boundsInParent.intersects(event.x, event.y, 1.0, 1.0) }
+    }
+
+    private fun handleKeyEvents(event: KeyEvent) {
+        when (event.eventType) {
+            KeyEvent.KEY_PRESSED -> handleKeyPress(event)
+            KeyEvent.KEY_RELEASED -> handleKeyRelease(event)
+        }
+
+        if(root.isFocused)
+            event.consume()
+    }
+
+    private fun handleKeyPress(event: KeyEvent) {
+        if (event.code == KeyCode.SPACE) {
+            spaceHeld = true
+            if (root.cursor != Cursor.OPEN_HAND && root.cursor != Cursor.CLOSED_HAND) {
+                root.cursor = Cursor.OPEN_HAND
+                marquee.remove(root)
             }
-            KeyEvent.KEY_RELEASED -> {
-                if (it.code == KeyCode.SPACE) {
-                    spaceHeld = false
-                    root.cursor = Cursor.DEFAULT
-                } else
-                    reset(it.code)
+            return
+        }
+
+        if (event.code != KeyCode.SHIFT)
+            widgets.start()
+
+        if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
+            move(event)
+    }
+
+    private fun handleKeyRelease(event: KeyEvent) {
+        if (event.code == KeyCode.SPACE) {
+            spaceHeld = false
+            root.cursor = Cursor.DEFAULT
+            return
+        }
+
+        if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
+            reset(event.code)
+        else if (event.code == KeyCode.DELETE)
+            widgets.deleteSelection()
+//        else if (!event.isShiftDown)
+//            movement.resetClone()
+
+        if (event.isControlDown) {
+            when (event.code) {
+                KeyCode.A -> {
+                    widgets.selectAll()
+                }
+                KeyCode.X -> {
+                    widgets.cut()
+                }
+                KeyCode.C -> {
+                    widgets.copy()
+                }
+                KeyCode.V -> {
+                    widgets.paste()
+                }
+                KeyCode.Z -> {
+                    if (event.isShiftDown)
+                        widgets.redo()
+                    else
+                        widgets.undo()
+                }
+                else -> {
+                }
             }
         }
 
+        if (event.code != KeyCode.SHIFT)
+            widgets.finish()
     }
 
     private fun move(event: KeyEvent) {

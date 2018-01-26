@@ -12,8 +12,6 @@ class WidgetMementoBuilderAdapter(val memento: Memento) : WidgetBuilder(memento.
     }
 
     fun build(): Widget {
-        val widget = super.build(-1)
-        widget.restore(memento)
-        return widget
+        return super.build(-1)
     }
 }
