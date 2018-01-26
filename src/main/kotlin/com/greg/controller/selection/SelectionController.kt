@@ -1,7 +1,7 @@
-package com.greg.controller
+package com.greg.controller.selection
 
-import javafx.scene.input.MouseEvent
 import com.greg.controller.widgets.WidgetsController
+import javafx.scene.input.MouseEvent
 
 class SelectionController(val widgets: WidgetsController) {
 

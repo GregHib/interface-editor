@@ -1,20 +1,27 @@
-package com.greg.view
+package com.greg.view.canvas
 
-import com.greg.controller.MarqueeController
-import com.greg.controller.SelectionController
 import com.greg.controller.canvas.NodeGestures
 import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.canvas.SceneGestures
+import com.greg.controller.selection.MarqueeController
+import com.greg.controller.selection.SelectionController
 import com.greg.controller.widgets.WidgetShapeBuilder
 import com.greg.controller.widgets.WidgetsController
+import com.greg.model.widgets.Widget
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
+import com.greg.view.WidgetShape
+import javafx.collections.ListChangeListener
+import javafx.scene.Cursor
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
 import javafx.scene.shape.Rectangle
-import tornadofx.*
+import tornadofx.View
+import tornadofx.group
+import tornadofx.pane
+import tornadofx.removeFromParent
 
 class CanvasView : View() {
 
@@ -28,27 +35,6 @@ class CanvasView : View() {
     private var spaceHeld = false
     private var horizontal = 0
     private var vertical = 0
-
-    init {
-        widgets.getAll().onChange {
-            it.next()
-            if (it.wasAdded()) {
-                it.addedSubList.forEach { widget ->
-                    val shape = WidgetShapeBuilder(widget).build()
-                    shape.addEventFilter(MouseEvent.MOUSE_PRESSED, nodeGestures.onMousePressedEventHandler)
-                    shape.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeGestures.onMouseDraggedEventHandler)
-                    widgets.connect(widget, shape)
-                    canvas.children.add(shape)
-                }
-            } else if (it.wasRemoved()) {
-                it.removed.forEach { widget ->
-                    canvas.children.filterIsInstance<WidgetShape>()
-                            .filter { it.identifier == widget.identifier }
-                            .forEach { it.removeFromParent() }
-                }
-            }
-        }
-    }
 
     override val root = pane {
         val rectangle = Rectangle()
@@ -64,9 +50,9 @@ class CanvasView : View() {
             canvas.layoutY = 100.0
 
             // create sample nodes which can be dragged
-            createAndDisplay(WidgetType.TEXT)
+//            createAndDisplay(WidgetType.TEXT)
 
-            createAndDisplay(WidgetType.TEXT)
+//            createAndDisplay(WidgetType.TEXT)
             /*val grid = group {
                 for(i in 0..canvas.prefWidth.toInt()/50) {
                     rectangle(i * 50, 0.0, 1.0, canvas.prefHeight) {
@@ -95,7 +81,7 @@ class CanvasView : View() {
         primaryStage.addEventFilter(KeyEvent.ANY, { handleKeyEvents(it) })
 
         addEventFilter(MouseEvent.MOUSE_PRESSED, { event ->
-            if(!spaceHeld)
+            if (!spaceHeld)
                 selection.start(event)
 
             val cloned = event.isShiftDown && widgets.hasSelection()
@@ -111,20 +97,28 @@ class CanvasView : View() {
 //            else
 //                widgets.start(widgets.getWidget(event.target))
 
-            if(!spaceHeld)
+            if (spaceHeld)
+                cursor = Cursor.CLOSED_HAND
+            else
                 marquee.init(event)
+
         })
 
         addEventFilter(MouseEvent.MOUSE_DRAGGED, { event ->
             if (event.isPrimaryButtonDown) {
                 //Transform marquee box to match mouse position
-                if(!spaceHeld)
+                if (!spaceHeld)
                     marquee.handle(event)
+                else
+                    cursor = Cursor.CLOSED_HAND
             }
         })
 
         addEventFilter(MouseEvent.MOUSE_RELEASED, { event ->
             marquee.select(event)
+
+            if (spaceHeld)
+                cursor = Cursor.OPEN_HAND
 
             widgets.finish()
         })
@@ -144,15 +138,20 @@ class CanvasView : View() {
     private fun handleKeyEvents(it: KeyEvent) {
         when (it.eventType) {
             KeyEvent.KEY_PRESSED -> {
-                if (it.code == KeyCode.SPACE)
+                if (it.code == KeyCode.SPACE) {
                     spaceHeld = true
-                else
+                    if (root.cursor != Cursor.OPEN_HAND && root.cursor != Cursor.CLOSED_HAND) {
+                        root.cursor = Cursor.OPEN_HAND
+                        marquee.remove(root)
+                    }
+                } else
                     move(it)
             }
             KeyEvent.KEY_RELEASED -> {
-                if (it.code == KeyCode.SPACE)
+                if (it.code == KeyCode.SPACE) {
                     spaceHeld = false
-                else
+                    root.cursor = Cursor.DEFAULT
+                } else
                     reset(it.code)
             }
         }
@@ -185,8 +184,26 @@ class CanvasView : View() {
             vertical = 0
     }
 
-    private fun createAndDisplay(type: WidgetType) {
+    fun createAndDisplay(type: WidgetType) {
         val widget = WidgetBuilder(type).build()
         widgets.add(widget)
+    }
+
+    fun refresh(it: ListChangeListener.Change<out Widget>) {
+        if (it.wasAdded()) {
+            it.addedSubList.forEach { widget ->
+                val shape = WidgetShapeBuilder(widget).build()
+                shape.addEventFilter(MouseEvent.MOUSE_PRESSED, nodeGestures.onMousePressedEventHandler)
+                shape.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeGestures.onMouseDraggedEventHandler)
+                widgets.connect(widget, shape)
+                canvas.children.add(shape)
+            }
+        } else if (it.wasRemoved()) {
+            it.removed.forEach { widget ->
+                canvas.children.filterIsInstance<WidgetShape>()
+                        .filter { it.identifier == widget.identifier }
+                        .forEach { it.removeFromParent() }
+            }
+        }
     }
 }

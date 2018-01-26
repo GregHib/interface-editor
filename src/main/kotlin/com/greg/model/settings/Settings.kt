@@ -1,4 +1,4 @@
-package com.greg.settings
+package com.greg.model.settings
 
 import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color

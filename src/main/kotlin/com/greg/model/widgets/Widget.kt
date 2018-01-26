@@ -2,10 +2,9 @@ package com.greg.model.widgets
 
 import com.greg.controller.canvas.DragContext
 import com.greg.model.Properties
-import com.greg.model.StartPoint
+import com.greg.model.settings.Settings
 import com.greg.model.widgets.memento.Memento
 import com.greg.model.widgets.memento.MementoBuilder
-import com.greg.settings.Settings
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleBooleanProperty
@@ -17,9 +16,8 @@ open class Widget(builder: WidgetBuilder, id: Int) {
     val identifier = id
     val name: String = type::class.simpleName.toString()
     val dragContext = DragContext()
-    var start = StartPoint(0, 0)
 
-    protected val properties = Properties()
+    val properties = Properties()
 
     private var x: IntegerProperty? = null
     private var y: IntegerProperty? = null
@@ -35,9 +33,9 @@ open class Widget(builder: WidgetBuilder, id: Int) {
         properties.add(yProperty(), "Layout")
         properties.add(widthProperty(), "Layout")
         properties.add(heightProperty(), "Layout")
-        properties.add(lockedProperty())
-        properties.add(selectedProperty())
-        properties.add(hiddenProperty())
+        properties.add(lockedProperty(), false)
+        properties.add(selectedProperty(), false)
+        properties.add(hiddenProperty(), false)
     }
 
     fun setLocked(value: Boolean) {

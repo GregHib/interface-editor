@@ -1,8 +1,9 @@
 package com.greg.view
 
+import com.greg.controller.widgets.WidgetsController
+import com.greg.model.widgets.WidgetType
+import com.greg.view.canvas.CanvasView
 import javafx.scene.shape.Rectangle
-import com.greg.view.LeftPane
-import com.greg.view.RightPane
 import tornadofx.*
 import tornadofx.controlsfx.content
 import tornadofx.controlsfx.notificationPane
@@ -10,8 +11,20 @@ import tornadofx.controlsfx.notificationPane
 
 class MainView : View() {
 
+    val widgets: WidgetsController by inject()
+
     val canvas = CanvasView()
     val rightPane = RightPane()
+    val leftPane = LeftPane()
+
+    init {
+        widgets.getAll().onChange {
+            it.next()
+
+            canvas.refresh(it)
+        }
+        canvas.createAndDisplay(WidgetType.TEXT)
+    }
 
     override val root = borderpane {
         primaryStage.minWidth = 600.0
@@ -19,15 +32,12 @@ class MainView : View() {
         primaryStage.width = 1280.0
         primaryStage.height = 768.0
 
-        setOnMouseClicked {
-            rightPane.onSelection.invoke("Clicked")
-        }
         prefWidth = 1280.0
         prefHeight = 768.0
         top = menubar {
             menu("File")
         }
-        left = LeftPane().root
+        left = leftPane.root
         right = rightPane.root
         center = pane {
             val rectangle = Rectangle()

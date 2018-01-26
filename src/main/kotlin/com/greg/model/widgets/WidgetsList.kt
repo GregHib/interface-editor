@@ -1,10 +1,10 @@
 package com.greg.model.widgets
 
-import javafx.collections.ObservableList
 import com.greg.view.WidgetShape
+import javafx.collections.ObservableList
 import tornadofx.observable
 
-open class WidgetsModel {
+open class WidgetsList {
     val widgets = mutableListOf<Widget>().observable()
 
     fun add(widget: Widget) {

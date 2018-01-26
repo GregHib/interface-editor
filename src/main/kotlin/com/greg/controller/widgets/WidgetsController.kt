@@ -1,12 +1,12 @@
 package com.greg.controller.widgets
 
-import com.greg.controller.ActionController
-import com.greg.controller.ChangeType
+import com.greg.controller.actions.ActionController
+import com.greg.controller.actions.ChangeType
+import com.greg.model.settings.Settings
 import com.greg.model.widgets.Widget
 import com.greg.model.widgets.WidgetRectangle
 import com.greg.model.widgets.WidgetText
-import com.greg.model.widgets.WidgetsModel
-import com.greg.settings.Settings
+import com.greg.model.widgets.WidgetsList
 import com.greg.view.WidgetShape
 import com.greg.view.widgets.RectangleShape
 import com.greg.view.widgets.TextShape
@@ -14,10 +14,12 @@ import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.scene.shape.Shape
 import tornadofx.Controller
+import tornadofx.observable
 
 class WidgetsController : Controller() {
     companion object {
-        val widgets = WidgetsModel()
+        val widgets = WidgetsList()
+        val selection = mutableListOf<Widget>().observable()
     }
 //    private val hierarchy: HierarchyController by inject(DefaultScope)
     private val action = ActionController(this)
@@ -46,8 +48,8 @@ class WidgetsController : Controller() {
         return widgets.get()
     }
 
-    fun getSelection(): List<Widget> {
-        return widgets.get().filter { it.isSelected() }
+    fun getSelection(): ObservableList<Widget> {
+        return selection
     }
 
     fun hasSelection(): Boolean {
@@ -169,6 +171,11 @@ class WidgetsController : Controller() {
                 shape.outline.toFront()
                 shape.outline.stroke = Settings.getColour(if (newValue) Settings.SELECTION_STROKE_COLOUR else Settings.DEFAULT_STROKE_COLOUR)
                 requestRefresh()
+
+                if(newValue)
+                    selection.add(widget)
+                else
+                    selection.remove(widget)
             }
         }
 

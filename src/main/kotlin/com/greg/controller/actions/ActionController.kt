@@ -1,8 +1,6 @@
-package com.greg.controller
+package com.greg.controller.actions
 
-import com.greg.controller.actions.ActionList
-import com.greg.controller.actions.Actions
-import com.greg.controller.actions.Change
+import com.greg.controller.selection.InteractionController
 import com.greg.controller.widgets.WidgetMementoBuilderAdapter
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.Widget

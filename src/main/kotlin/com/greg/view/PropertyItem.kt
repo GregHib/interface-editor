@@ -1,19 +1,16 @@
 package com.greg.view
 
 import javafx.beans.property.Property
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
 import org.controlsfx.control.PropertySheet
 import java.util.*
 
-class PropertyItem : PropertySheet.Item {
-    private val propertyName: String
-    private val propertyCategory: String
-    private val propertyValue: Property<*>
+class PropertyItem(private val propertyName: String, private val propertyCategory: String, private val propertyValue: Property<*>) : PropertySheet.Item {
 
-    constructor(propertyName: String, propertyCategory: String, propertyValue: Property<*>) {
-        this.propertyName = propertyName
-        this.propertyCategory = propertyCategory
-        this.propertyValue = propertyValue
+    val objectProperty = SimpleObjectProperty(this, propertyName, propertyValue.value)
+    init {
+        objectProperty.bindBidirectional(propertyValue as Property<Any>?)
     }
 
     override fun getName(): String {
@@ -33,11 +30,11 @@ class PropertyItem : PropertySheet.Item {
     }
 
     override fun getType(): Class<*> {
-        return propertyValue.value::class.java
+        return objectProperty.value::class.java
     }
 
     override fun getValue(): Any {
-        return propertyValue.value
+        return objectProperty.get()
     }
 
     override fun getObservableValue(): Optional<ObservableValue<out Any>> {

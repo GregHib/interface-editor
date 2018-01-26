@@ -1,6 +1,6 @@
 package com.greg.model.widgets
 
-import com.greg.settings.Settings
+import com.greg.model.settings.Settings
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.paint.Color

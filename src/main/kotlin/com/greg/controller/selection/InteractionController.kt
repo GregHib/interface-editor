@@ -1,4 +1,4 @@
-package com.greg.controller
+package com.greg.controller.selection
 
 import com.greg.controller.widgets.WidgetMementoBuilderAdapter
 import com.greg.controller.widgets.WidgetsController
@@ -73,7 +73,6 @@ class InteractionController(val widgets: WidgetsController) {
             if(widget.isSelected()) {
                 val clone = WidgetMementoBuilderAdapter(widget.getMemento()).build()
                 widgets.add(clone)
-                clone.start = widget.start
                 clone.setSelected(true)
                 widget.setSelected(false)
             }

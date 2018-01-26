@@ -3,7 +3,6 @@ package com.greg.view
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.geometry.Orientation
-import javafx.scene.Parent
 import javafx.scene.control.CheckBoxTreeItem
 import javafx.scene.control.SelectionMode
 import javafx.scene.control.TabPane
@@ -23,7 +22,7 @@ class LeftPane : View() {
 
     private var checkTreeView: CheckTreeView<String>? = null
 
-    private val treeItem_Jonathan = CheckBoxTreeItem("Widget")
+    val treeItem_Jonathan = CheckBoxTreeItem("Widget")
     private val treeItem_Eugene = CheckBoxTreeItem("Text Widget")
     private val treeItem_Henry = CheckBoxTreeItem("Rectangle Widget")
     private val treeItem_Samir = CheckBoxTreeItem("Rectangle Widget")

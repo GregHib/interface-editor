@@ -1,6 +1,6 @@
 package com.greg.view.widgets
 
-import com.greg.settings.Settings
+import com.greg.model.settings.Settings
 import javafx.geometry.VPos
 import javafx.scene.text.Text
 import com.greg.view.WidgetShape
