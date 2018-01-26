@@ -13,10 +13,7 @@ import com.greg.model.widgets.WidgetType
 import com.greg.view.WidgetShape
 import javafx.collections.ListChangeListener
 import javafx.scene.Cursor
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
-import javafx.scene.input.ScrollEvent
+import javafx.scene.input.*
 import javafx.scene.shape.Rectangle
 import tornadofx.View
 import tornadofx.group
@@ -133,6 +130,36 @@ class CanvasView : View() {
                 requestFocus()
         })
 
+        setOnDragOver { event ->
+            if (event.dragboard.hasString())
+                event.acceptTransferModes(TransferMode.MOVE)
+
+
+            event.consume()
+        }
+
+        setOnDragDropped { event ->
+            val type = WidgetType.forString(event.dragboard.string)
+            if (type != null) {
+                val widget = createAndDisplay(type)
+
+                val scaleOffsetX = canvas.boundsInLocal.minX * canvas.scaleX
+                val canvasX = canvas.boundsInParent.minX - scaleOffsetX
+
+                val scaleOffsetY = canvas.boundsInLocal.minY * canvas.scaleY
+                val canvasY = canvas.boundsInParent.minY - scaleOffsetY
+
+                val dropX = (event.x - canvasX)/canvas.scaleX
+                val dropY = (event.y - canvasY)/canvas.scaleY
+
+                widget.setX(dropX.toInt())
+                widget.setY(dropY.toInt())
+            }
+
+            event.isDropCompleted = true
+
+            event.consume()
+        }
     }
 
     private fun handleKeyEvents(it: KeyEvent) {
@@ -184,9 +211,10 @@ class CanvasView : View() {
             vertical = 0
     }
 
-    fun createAndDisplay(type: WidgetType) {
+    fun createAndDisplay(type: WidgetType): Widget {
         val widget = WidgetBuilder(type).build()
         widgets.add(widget)
+        return widget
     }
 
     fun refresh(it: ListChangeListener.Change<out Widget>) {

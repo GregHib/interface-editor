@@ -14,7 +14,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
     val type: WidgetType = builder.type
     val identifier = id
-    val name: String = type::class.simpleName.toString()
+    val name: String = type.name.toLowerCase().capitalize()
     val dragContext = DragContext()
 
     val properties = Properties()

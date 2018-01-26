@@ -1,10 +1,10 @@
 package com.greg.controller.canvas
 
+import com.greg.controller.widgets.WidgetsController
+import com.greg.view.WidgetShape
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Shape
-import com.greg.controller.widgets.WidgetsController
-import com.greg.view.WidgetShape
 
 /**
  * Listeners for making the nodes draggable via left mouse button. Considers if parent is zoomed.
@@ -48,12 +48,14 @@ class NodeGestures(val widgets: WidgetsController, private var canvas: PannableC
         event.consume()
     }
 
-    private fun getCanvas(source: Any): Any? {
-        if (source is WidgetShape) {
-            if (source.parent is PannableCanvas)
-                return source.parent as PannableCanvas
-        } else if (source is PannableCanvas)
-            return source
-        return null
+    companion object {
+        fun getCanvas(source: Any): Any? {
+            if (source is WidgetShape) {
+                if (source.parent is PannableCanvas)
+                    return source.parent as PannableCanvas
+            } else if (source is PannableCanvas)
+                return source
+            return null
+        }
     }
 }

@@ -1,47 +1,103 @@
 package com.greg.view
 
+import com.greg.controller.widgets.WidgetsController
+import com.greg.model.widgets.WidgetType
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
+import javafx.geometry.Insets
 import javafx.geometry.Orientation
 import javafx.scene.control.CheckBoxTreeItem
 import javafx.scene.control.SelectionMode
 import javafx.scene.control.TabPane
 import javafx.scene.control.TreeItem
+import javafx.scene.input.ClipboardContent
+import javafx.scene.input.TransferMode
 import javafx.scene.paint.Color
+import javafx.scene.shape.StrokeType
 import javafx.util.Callback
 import org.controlsfx.control.CheckTreeView
 import org.controlsfx.control.GridView
 import org.controlsfx.control.cell.ColorGridCell
-import tornadofx.View
-import tornadofx.splitpane
-import tornadofx.tab
-import tornadofx.tabpane
+import tornadofx.*
 import java.util.*
+
+
 
 class LeftPane : View() {
 
+    private val widgets: WidgetsController by inject()
     private var checkTreeView: CheckTreeView<String>? = null
+    private val rootTreeItem = CheckBoxTreeItem("Root")
 
-    val treeItem_Jonathan = CheckBoxTreeItem("Widget")
-    private val treeItem_Eugene = CheckBoxTreeItem("Text Widget")
-    private val treeItem_Henry = CheckBoxTreeItem("Rectangle Widget")
-    private val treeItem_Samir = CheckBoxTreeItem("Rectangle Widget")
+    init {
+        widgets.getAll().addListener(ListChangeListener {
+            it.next()
+            //Get items changed
+            val list = if (it.wasAdded()) it.addedSubList else it.removed
+
+            list?.forEach { widget ->
+                if(it.wasAdded()) {
+                    val item = CustomTreeItem(widget.name, widget.identifier)
+                    rootTreeItem.children.add(item)
+                    item.selectedProperty().bindBidirectional(widget.selectedProperty())
+                } else if(it.wasRemoved()) {
+                    //TODO test
+                    rootTreeItem.children.removeAll(
+                            rootTreeItem.children
+                            .filterIsInstance<CustomTreeItem>()
+                            .filter { it.identifier == widget.identifier }
+                    )
+                }
+            }
+        })
+    }
 
     override val root = splitpane(Orientation.VERTICAL) {
         minWidth = 290.0
+        prefWidth = 290.0
         tabpane {
             tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
             tab("Components") {
-                val list = FXCollections.observableArrayList<Color>()
+                val types = WidgetType.values().toList()
 
-                val colorGrid = GridView(list)
+                tilepane {
+                    hgap = 10.0
+                    vgap = 10.0
 
-                colorGrid.cellFactory = Callback { ColorGridCell() }
-                val r = Random(System.currentTimeMillis())
-                for (i in 0..8) {
-                    list.add(Color(r.nextDouble(), r.nextDouble(), r.nextDouble(), 1.0))
+                    for(type in types) {
+                        vbox {
+                            padding = Insets(10.0, 0.0, 0.0, 0.0)
+                            val image = resources.image("${type.name.toLowerCase()}.png")
+                            stackpane {
+                                rectangle {
+                                    width = 46.0
+                                    height = 46.0
+                                    fill = Color.TRANSPARENT
+                                    strokeWidth = 3.0
+                                    stroke = Color.GRAY
+                                    arcWidth = 10.0
+                                    arcHeight = 10.0
+                                    strokeType = StrokeType.INSIDE
+                                }
+                                imageview(image)
+                            }
+
+                            stackpane {
+                                text(type.name.toLowerCase().capitalize())
+                            }
+
+                            setOnDragDetected { event ->
+                                val db = startDragAndDrop(TransferMode.MOVE)
+                                db.dragView = image
+                                val cc = ClipboardContent()
+                                cc.putString(type.name)
+                                db.setContent(cc)
+
+                                event.consume()
+                            }
+                        }
+                    }
                 }
-                add(colorGrid)
             }
             tab("Sprites") {
                 disableDelete()
@@ -60,37 +116,15 @@ class LeftPane : View() {
         tabpane {
             tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
             tab("Hierarchy") {
-                val root = CheckBoxTreeItem("Root")
-                root.isExpanded = true
-                root.children.addAll(
-                        treeItem_Jonathan,
-                        treeItem_Eugene,
-                        treeItem_Henry,
-                        treeItem_Samir)
 
-                // lets check Eugene to make sure that it shows up in the tree
-                treeItem_Eugene.isSelected = true
+                rootTreeItem.isExpanded = true
 
-                val treeview = CheckTreeView(root)
-                treeview.selectionModel.selectionMode = SelectionMode.MULTIPLE
-//                treeview.selectionModel.selectedItems.addListener(ListChangeListener<TreeItem<String>> { c -> updateText(selectedItemsLabel, c.list) })
+                val tree = CheckTreeView(rootTreeItem)
+                tree.selectionModel.selectionMode = SelectionMode.MULTIPLE
+                tree.selectionModel.selectedItems.addListener(ListChangeListener<TreeItem<String>> { c -> println(c.list) })
 
-                treeview.checkModel.checkedItems.addListener(ListChangeListener<TreeItem<String>> { change ->
-                    //                    updateText(checkedItemsLabel, change.list)
-
-                    while (change.next()) {
-                        println("============================================")
-                        println("Change: " + change)
-                        println("Added sublist " + change.addedSubList)
-                        println("Removed sublist " + change.removed)
-                        println("List " + change.list)
-                        println("Added " + change.wasAdded() + " Permutated " + change.wasPermutated() + " Removed " + change.wasRemoved() + " Replaced "
-                                + change.wasReplaced() + " Updated " + change.wasUpdated())
-                        println("============================================")
-                    }
-                })
-                checkTreeView = treeview
-                add(treeview)
+                checkTreeView = tree
+                add(tree)
             }
         }
     }

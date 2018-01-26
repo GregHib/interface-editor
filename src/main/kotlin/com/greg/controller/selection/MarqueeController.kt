@@ -78,7 +78,7 @@ class MarqueeController(private val widgets: WidgetsController, private var canv
      * @param event
      */
     private fun selectContents(event: MouseEvent) {
-        //Add everything in box to selection
+        //Add everything in marquee to selection
         widgets.getAll()
                 .filter {widget ->
                     val canvasX = canvas.boundsInParent.minX

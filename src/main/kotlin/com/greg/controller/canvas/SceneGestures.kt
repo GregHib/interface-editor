@@ -1,6 +1,5 @@
 package com.greg.controller.canvas
 
-import com.greg.controller.canvas.PannableCanvas
 import javafx.event.EventHandler
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -26,7 +25,7 @@ internal class SceneGestures(private var canvas: PannableCanvas) {
         sceneDragContext.translateAnchorX = canvas.translateX.toInt()
         sceneDragContext.translateAnchorY = canvas.translateY.toInt()
 
-//        event.consume()
+        event.consume()
     }
 
     // right mouse button => panning
@@ -60,8 +59,8 @@ internal class SceneGestures(private var canvas: PannableCanvas) {
 
         val f = scale / oldScale - 1
 
-        var dx = event.x - (canvas.boundsInParent.width / 2 + canvas.boundsInParent.minX)
-        var dy = event.y - (canvas.boundsInParent.height / 2 + canvas.boundsInParent.minY)
+        val dx = event.x - (canvas.boundsInParent.width / 2 + canvas.boundsInParent.minX)
+        val dy = event.y - (canvas.boundsInParent.height / 2 + canvas.boundsInParent.minY)
 
         canvas.scale = scale
         canvas.setPivot(f * dx, f * dy)
