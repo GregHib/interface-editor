@@ -7,9 +7,9 @@ import com.greg.model.widgets.Widget
 import com.greg.model.widgets.WidgetRectangle
 import com.greg.model.widgets.WidgetText
 import com.greg.model.widgets.WidgetsList
-import com.greg.view.WidgetShape
-import com.greg.view.widgets.RectangleShape
-import com.greg.view.widgets.TextShape
+import com.greg.view.canvas.widgets.WidgetShape
+import com.greg.view.canvas.widgets.RectangleShape
+import com.greg.view.canvas.widgets.TextShape
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.scene.shape.Shape

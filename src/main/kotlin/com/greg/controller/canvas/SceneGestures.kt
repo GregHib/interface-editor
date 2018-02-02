@@ -22,8 +22,8 @@ internal class SceneGestures(private var canvas: PannableCanvas) {
         sceneDragContext.mouseAnchorX = event.sceneX.toInt()
         sceneDragContext.mouseAnchorY = event.sceneY.toInt()
 
-        sceneDragContext.translateAnchorX = canvas.translateX.toInt()
-        sceneDragContext.translateAnchorY = canvas.translateY.toInt()
+        sceneDragContext.anchorX = canvas.translateX.toInt()
+        sceneDragContext.anchorY = canvas.translateY.toInt()
 
         event.consume()
     }
@@ -33,8 +33,8 @@ internal class SceneGestures(private var canvas: PannableCanvas) {
         if (!spacePressed)
             return@EventHandler
 
-        canvas.translateX = (sceneDragContext.translateAnchorX + event.sceneX - sceneDragContext.mouseAnchorX).toInt().toDouble()
-        canvas.translateY = (sceneDragContext.translateAnchorY + event.sceneY - sceneDragContext.mouseAnchorY).toInt().toDouble()
+        canvas.translateX = (sceneDragContext.anchorX + event.sceneX - sceneDragContext.mouseAnchorX).toInt().toDouble()
+        canvas.translateY = (sceneDragContext.anchorY + event.sceneY - sceneDragContext.mouseAnchorY).toInt().toDouble()
 
         event.consume()
     }

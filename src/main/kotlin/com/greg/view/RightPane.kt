@@ -54,8 +54,7 @@ class RightPane : Fragment() {
                         val editor = Editors.createColorEditor(param)
                         val field = editor.editor
 
-                        if(field is ColorPicker)
-                            field.valueProperty().bindBidirectional(param.objectProperty as Property<Color>?)
+                        (field as? ColorPicker)?.valueProperty()?.bindBidirectional(param.objectProperty as Property<Color>?)
                         editor
                     }
                     else -> {

@@ -1,6 +1,5 @@
 package com.greg.controller.selection
 
-import com.greg.Utils
 import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.Widget
@@ -68,7 +67,7 @@ class MarqueeController(private val widgets: WidgetsController, private var canv
         val bounds = pane.localToScene(pane.layoutBounds)
 
         //draw at that position capping to canvas borders
-        marquee.draw(Utils.constrain(event.x, bounds.width), Utils.constrain(event.y, bounds.height))
+        marquee.draw(Math.min(event.x, bounds.width), Math.min(event.y, bounds.height))
 
         event.consume()
     }

@@ -1,6 +1,5 @@
-package com.greg.view.widgets
+package com.greg.view.canvas.widgets
 
-import com.greg.view.WidgetShape
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.StrokeType
 import tornadofx.add

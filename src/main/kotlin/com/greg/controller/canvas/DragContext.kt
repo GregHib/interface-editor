@@ -8,7 +8,7 @@ class DragContext {
     var mouseAnchorX: Int = 0
     var mouseAnchorY: Int = 0
 
-    var translateAnchorX: Int = 0
-    var translateAnchorY: Int = 0
+    var anchorX: Int = 0
+    var anchorY: Int = 0
 
 }

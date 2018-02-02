@@ -1,19 +1,18 @@
 Component naming
 https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 
+
 // Features
 //----------------------
 Catch up:
-Actions + undoing
-Copy, paste, cut, delete, select all key
-
-
-Remove the requirement for Pane in cut/paste/clone, globalise it or handle differently?
+Double click to resize a widget
+Redorder by depth using hierarchy
+Sprite loader
+Locking/Show/hide
 Finish off widget locking & re-implement DragTreeItem.kt stuff such as reordering
 Editable widget names
 Selecting + actions on hierarchy for multiple widgets at once
 Widgets within widgets; recursive for hierarchy + memento's; cutting/pasting etc..
-Locking/unlocking widgets (so they can't be interacted with, backgrounds etc.)
 Hold shift to lock movement on one axis?
 
 

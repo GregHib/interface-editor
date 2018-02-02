@@ -20,7 +20,6 @@ class MainView : View() {
     init {
         widgets.getAll().onChange {
             it.next()
-
             canvas.refresh(it)
         }
         canvas.createAndDisplay(WidgetType.TEXT)

@@ -2,6 +2,7 @@ package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.WidgetType
+import com.greg.view.hierarchy.HierarchyItem
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.geometry.Insets
@@ -37,14 +38,13 @@ class LeftPane : View() {
 
             list?.forEach { widget ->
                 if(it.wasAdded()) {
-                    val item = CustomTreeItem(widget.name, widget.identifier)
+                    val item = HierarchyItem(widget.name, widget.identifier)
                     rootTreeItem.children.add(item)
                     item.selectedProperty().bindBidirectional(widget.selectedProperty())
                 } else if(it.wasRemoved()) {
-                    //TODO test
                     rootTreeItem.children.removeAll(
                             rootTreeItem.children
-                            .filterIsInstance<CustomTreeItem>()
+                            .filterIsInstance<HierarchyItem>()
                             .filter { it.identifier == widget.identifier }
                     )
                 }

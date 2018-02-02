@@ -1,4 +1,4 @@
-package com.greg.view
+package com.greg.view.canvas.widgets
 
 import com.greg.model.settings.Settings
 import javafx.animation.Interpolator
@@ -17,6 +17,7 @@ open class WidgetShape(val identifier: Int, width: Int, height: Int) : Group() {
 
     init {
         add(outline)
+
         if(Settings.getBoolean(Settings.SELECTION_STROKE_ANIMATE)) {
             outline.strokeDashArray.setAll(4.0, 8.0)
             val maxOffset = outline.strokeDashArray.stream().reduce(0.0, { a, b -> a + b })

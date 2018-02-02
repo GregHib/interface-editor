@@ -2,9 +2,9 @@ package com.greg.controller.widgets
 
 import com.greg.model.widgets.Widget
 import com.greg.model.widgets.WidgetType
-import com.greg.view.widgets.RectangleShape
-import com.greg.view.widgets.TextShape
-import com.greg.view.WidgetShape
+import com.greg.view.canvas.widgets.RectangleShape
+import com.greg.view.canvas.widgets.TextShape
+import com.greg.view.canvas.widgets.WidgetShape
 
 class WidgetShapeBuilder(val widget: Widget) {
     fun build(): WidgetShape {

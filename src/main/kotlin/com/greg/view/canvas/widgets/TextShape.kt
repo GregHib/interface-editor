@@ -1,9 +1,8 @@
-package com.greg.view.widgets
+package com.greg.view.canvas.widgets
 
 import com.greg.model.settings.Settings
 import javafx.geometry.VPos
 import javafx.scene.text.Text
-import com.greg.view.WidgetShape
 import tornadofx.add
 
 class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height) {
