@@ -11,8 +11,10 @@ import com.greg.model.widgets.WidgetType
 import com.greg.view.canvas.states.DefaultState
 import com.greg.view.canvas.states.EditState
 import com.greg.view.canvas.widgets.WidgetShape
+import com.greg.view.hierarchy.HierarchyItem
 import javafx.collections.ListChangeListener
 import javafx.scene.Cursor
+import javafx.scene.control.TreeItem
 import javafx.scene.input.*
 import javafx.scene.shape.Rectangle
 import tornadofx.View
@@ -115,6 +117,8 @@ class CanvasView : View() {
                 widget.setX(dropX.toInt())
                 widget.setY(dropY.toInt())
 
+                widgets.clearSelection()
+
                 widget.setSelected(true)
             }
 
@@ -198,6 +202,20 @@ class CanvasView : View() {
                         .filter { it.identifier == widget.identifier }
                         .forEach { it.removeFromParent() }
             }
+        }
+    }
+
+    val hierarchyListener:ListChangeListener<TreeItem<String>> = ListChangeListener {
+        it.next()
+        if(it.wasAdded()) {
+            //TODO probably a more efficient way of doing this
+            it.list
+                    .filterIsInstance<HierarchyItem>()
+                    .forEach { item ->
+                        canvas.children.filterIsInstance<WidgetShape>()
+                                .filter { it.identifier == item.identifier }
+                                .forEach { it.toFront() }
+                    }
         }
     }
 

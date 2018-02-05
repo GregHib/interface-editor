@@ -5,7 +5,6 @@ https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 // Features
 //----------------------
 Catch up:
-Double click to resize a widget
 Redorder by depth using hierarchy
 Sprite loader
 Locking/Show/hide

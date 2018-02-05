@@ -2,15 +2,13 @@ package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.WidgetType
+import com.greg.view.hierarchy.DragTreeCell
 import com.greg.view.hierarchy.HierarchyItem
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
-import javafx.scene.control.CheckBoxTreeItem
-import javafx.scene.control.SelectionMode
-import javafx.scene.control.TabPane
-import javafx.scene.control.TreeItem
+import javafx.scene.control.*
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
 import javafx.scene.paint.Color
@@ -28,7 +26,7 @@ class LeftPane : View() {
 
     private val widgets: WidgetsController by inject()
     private var checkTreeView: CheckTreeView<String>? = null
-    private val rootTreeItem = CheckBoxTreeItem("Root")
+    val rootTreeItem = CheckBoxTreeItem("Root")
 
     init {
         widgets.getAll().addListener(ListChangeListener {
@@ -38,7 +36,7 @@ class LeftPane : View() {
 
             list?.forEach { widget ->
                 if(it.wasAdded()) {
-                    val item = HierarchyItem(widget.name, widget.identifier)
+                    val item = HierarchyItem(widget.name, widget.identifier, widget)
                     rootTreeItem.children.add(item)
                     item.selectedProperty().bindBidirectional(widget.selectedProperty())
                 } else if(it.wasRemoved()) {
@@ -121,7 +119,9 @@ class LeftPane : View() {
 
                 val tree = CheckTreeView(rootTreeItem)
                 tree.selectionModel.selectionMode = SelectionMode.MULTIPLE
-                tree.selectionModel.selectedItems.addListener(ListChangeListener<TreeItem<String>> { c -> println(c.list) })
+                tree.cellFactory = Callback<TreeView<String>, TreeCell<String>> {
+                    DragTreeCell(tree, rootTreeItem)
+                }
 
                 checkTreeView = tree
                 add(tree)

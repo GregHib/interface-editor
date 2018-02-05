@@ -7,9 +7,9 @@ import com.greg.model.widgets.Widget
 import com.greg.model.widgets.WidgetRectangle
 import com.greg.model.widgets.WidgetText
 import com.greg.model.widgets.WidgetsList
-import com.greg.view.canvas.widgets.WidgetShape
 import com.greg.view.canvas.widgets.RectangleShape
 import com.greg.view.canvas.widgets.TextShape
+import com.greg.view.canvas.widgets.WidgetShape
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.scene.shape.Shape
@@ -22,7 +22,7 @@ class WidgetsController : Controller() {
         val selection = mutableListOf<Widget>().observable()
     }
 //    private val hierarchy: HierarchyController by inject(DefaultScope)
-    private val action = ActionController(this)
+    val action = ActionController(this)
 
 //    val panels = PanelController(this)
 
@@ -148,11 +148,6 @@ class WidgetsController : Controller() {
         action.copy()
     }
 
-    fun requestRefresh() {
-//        println("Refresh")
-//        refresh.request()
-    }
-
     fun record(type: ChangeType, widget: Widget) {
         action.record(type, widget)
     }
@@ -166,7 +161,6 @@ class WidgetsController : Controller() {
             if (oldValue != newValue) {
                 shape.outline.toFront()
                 shape.outline.stroke = Settings.getColour(if (newValue) Settings.SELECTION_STROKE_COLOUR else Settings.DEFAULT_STROKE_COLOUR)
-                requestRefresh()
 
                 if(newValue)
                     selection.add(widget)
