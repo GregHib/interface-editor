@@ -44,6 +44,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
     fun isLocked(): Boolean {
         return lockedProperty().get()
     }
+
     fun lockedProperty(): BooleanProperty {
         if (locked == null)
             locked = SimpleBooleanProperty(this, "locked", false)

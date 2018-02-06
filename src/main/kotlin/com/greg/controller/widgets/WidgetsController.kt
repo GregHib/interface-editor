@@ -185,6 +185,10 @@ class WidgetsController : Controller() {
         widget.widthProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
         widget.heightProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
         widget.lockedProperty().addListener { _, _, _ -> recordSingle(ChangeType.CHANGE, widget) }
+        widget.hiddenProperty().addListener { _, _, newValue ->
+            shape.isVisible = !newValue
+            recordSingle(ChangeType.CHANGE, widget)
+        }
 
         if(widget is WidgetRectangle && shape is RectangleShape) {
             shape.rectangle.fillProperty().bind(widget.fillProperty())

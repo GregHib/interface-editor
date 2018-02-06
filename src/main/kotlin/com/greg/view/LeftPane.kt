@@ -120,7 +120,7 @@ class LeftPane : View() {
                 val tree = CheckTreeView(rootTreeItem)
                 tree.selectionModel.selectionMode = SelectionMode.MULTIPLE
                 tree.cellFactory = Callback<TreeView<String>, TreeCell<String>> {
-                    DragTreeCell(tree, rootTreeItem)
+                    DragTreeCell()
                 }
 
                 checkTreeView = tree

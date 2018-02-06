@@ -4,13 +4,9 @@ https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 
 // Features
 //----------------------
-Catch up:
-Redorder by depth using hierarchy
 Sprite loader
-Locking/Show/hide
-Finish off widget locking & re-implement DragTreeItem.kt stuff such as reordering
+Hierarchy delete multiple (when focused ofc)
 Editable widget names
-Selecting + actions on hierarchy for multiple widgets at once
 Widgets within widgets; recursive for hierarchy + memento's; cutting/pasting etc..
 Hold shift to lock movement on one axis?
 
