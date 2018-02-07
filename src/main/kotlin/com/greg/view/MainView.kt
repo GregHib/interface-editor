@@ -3,6 +3,7 @@ package com.greg.view
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.WidgetType
 import com.greg.view.canvas.CanvasView
+import javafx.scene.input.KeyEvent
 import javafx.scene.shape.Rectangle
 import tornadofx.*
 import tornadofx.controlsfx.content
@@ -11,13 +12,17 @@ import tornadofx.controlsfx.notificationPane
 
 class MainView : View() {
 
-    val widgets: WidgetsController by inject()
+    private val widgets: WidgetsController by inject()
 
-    val canvas = CanvasView()
-    val rightPane = RightPane()
-    val leftPane = LeftPane()
+    private val canvas = CanvasView()
+    private val rightPane = RightPane()
+    private val leftPane = LeftPane()
 
     init {
+        primaryStage.addEventFilter(KeyEvent.ANY, {
+            canvas.handleKeyEvents(it)
+            leftPane.handleKeyEvents(it)
+        })
         widgets.getAll().onChange {
             it.next()
             canvas.refresh(it)

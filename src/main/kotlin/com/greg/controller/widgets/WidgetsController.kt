@@ -132,6 +132,17 @@ class WidgetsController : Controller() {
         }
     }
 
+    fun delete(identifier: Int) {
+        val iterator = getAll().iterator()
+        while(iterator.hasNext()) {
+            val next = iterator.next()
+            if(next.identifier == identifier) {
+                remove(next)
+                return
+            }
+        }
+    }
+
     fun redo() {
         action.redo()
     }

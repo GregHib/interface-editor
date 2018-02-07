@@ -8,6 +8,7 @@ import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.Widget
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
+import com.greg.view.KeyInterface
 import com.greg.view.canvas.states.DefaultState
 import com.greg.view.canvas.states.EditState
 import com.greg.view.canvas.widgets.WidgetShape
@@ -22,7 +23,7 @@ import tornadofx.group
 import tornadofx.pane
 import tornadofx.removeFromParent
 
-class CanvasView : View() {
+class CanvasView : View(), KeyInterface {
 
     companion object {
         var spaceHeld = false
@@ -86,7 +87,6 @@ class CanvasView : View() {
             primaryStage.addEventFilter(KeyEvent.KEY_RELEASED, sceneGestures.onKeyReleasedEventHandler)
         }
 
-        primaryStage.addEventFilter(KeyEvent.ANY, { handleKeyEvents(it) })
         addEventFilter(MouseEvent.ANY, { handleMouseEvents(it)})
 
         /**
@@ -146,7 +146,7 @@ class CanvasView : View() {
      * Keyboard event handlers
      */
 
-    private fun handleKeyEvents(event: KeyEvent) {
+    override fun handleKeyEvents(event: KeyEvent) {
         if (root.isFocused) {
             when (event.eventType) {
                 KeyEvent.KEY_PRESSED -> handleKeyPress(event)

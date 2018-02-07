@@ -10,6 +10,8 @@ import javafx.geometry.Insets
 import javafx.geometry.Orientation
 import javafx.scene.control.*
 import javafx.scene.input.ClipboardContent
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.TransferMode
 import javafx.scene.paint.Color
 import javafx.scene.shape.StrokeType
@@ -21,12 +23,11 @@ import tornadofx.*
 import java.util.*
 
 
-
-class LeftPane : View() {
+class LeftPane : View(), KeyInterface {
 
     private val widgets: WidgetsController by inject()
-    private var checkTreeView: CheckTreeView<String>? = null
     val rootTreeItem = CheckBoxTreeItem("Root")
+    private val tree = CheckTreeView(rootTreeItem)
 
     init {
         widgets.getAll().addListener(ListChangeListener {
@@ -35,15 +36,15 @@ class LeftPane : View() {
             val list = if (it.wasAdded()) it.addedSubList else it.removed
 
             list?.forEach { widget ->
-                if(it.wasAdded()) {
+                if (it.wasAdded()) {
                     val item = HierarchyItem(widget.name, widget.identifier, widget)
                     rootTreeItem.children.add(item)
                     item.selectedProperty().bindBidirectional(widget.selectedProperty())
-                } else if(it.wasRemoved()) {
+                } else if (it.wasRemoved()) {
                     rootTreeItem.children.removeAll(
                             rootTreeItem.children
-                            .filterIsInstance<HierarchyItem>()
-                            .filter { it.identifier == widget.identifier }
+                                    .filterIsInstance<HierarchyItem>()
+                                    .filter { it.identifier == widget.identifier }
                     )
                 }
             }
@@ -62,7 +63,7 @@ class LeftPane : View() {
                     hgap = 10.0
                     vgap = 10.0
 
-                    for(type in types) {
+                    for (type in types) {
                         vbox {
                             padding = Insets(10.0, 0.0, 0.0, 0.0)
                             val image = resources.image("${type.name.toLowerCase()}.png")
@@ -117,15 +118,32 @@ class LeftPane : View() {
 
                 rootTreeItem.isExpanded = true
 
-                val tree = CheckTreeView(rootTreeItem)
                 tree.selectionModel.selectionMode = SelectionMode.MULTIPLE
                 tree.cellFactory = Callback<TreeView<String>, TreeCell<String>> {
                     DragTreeCell()
                 }
 
-                checkTreeView = tree
                 add(tree)
             }
+        }
+    }
+
+
+    override fun handleKeyEvents(event: KeyEvent) {
+        if(tree.isFocused) {
+            when (event.eventType) {
+                KeyEvent.KEY_RELEASED -> {
+                    if (event.code == KeyCode.DELETE) {
+                        val iterator = tree.selectionModel.selectedItems.filterIsInstance<HierarchyItem>().iterator()
+                        while(iterator.hasNext()) {
+                            val next = iterator.next()
+                            widgets.delete(next.identifier)
+                        }
+                    }
+                }
+            }
+
+            event.consume()
         }
     }
 }
