@@ -27,6 +27,8 @@ enum class Settings(var default: Any) {
     DEFAULT_WIDGET_RESIZE_TAB_WIDTH(8.0),
     DEFAULT_WIDGET_RESIZE_TAB_HEIGHT(8.0),
     DISABLE_LOCK_ON_UNHIDDEN(false),
+    DEFAULT_SPRITE_ID(0),
+    SPRITE_BACKGROUND_COLOUR(0xff00ff),
     ;
 
     val key: String = this.name

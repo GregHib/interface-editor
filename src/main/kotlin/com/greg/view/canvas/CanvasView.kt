@@ -5,9 +5,9 @@ import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.canvas.SceneGestures
 import com.greg.controller.widgets.WidgetShapeBuilder
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.widgets.Widget
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
+import com.greg.model.widgets.type.Widget
 import com.greg.view.KeyInterface
 import com.greg.view.canvas.states.DefaultState
 import com.greg.view.canvas.states.EditState

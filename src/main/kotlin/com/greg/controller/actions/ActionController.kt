@@ -3,7 +3,7 @@ package com.greg.controller.actions
 import com.greg.controller.selection.InteractionController
 import com.greg.controller.widgets.WidgetMementoBuilderAdapter
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.widgets.Widget
+import com.greg.model.widgets.type.Widget
 import com.greg.model.widgets.memento.Memento
 
 class ActionController(val widgets: WidgetsController) {

@@ -1,10 +1,13 @@
-package com.greg.model.widgets
+package com.greg.model.widgets.type
 
 import com.greg.controller.canvas.DragContext
-import com.greg.model.Properties
 import com.greg.model.settings.Settings
+import com.greg.model.widgets.WidgetBuilder
+import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.memento.Memento
 import com.greg.model.widgets.memento.MementoBuilder
+import com.greg.model.widgets.properties.CustomIntegerProperty
+import com.greg.model.widgets.properties.Properties
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleBooleanProperty
@@ -121,7 +124,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
     fun widthProperty(): IntegerProperty {
         if (width == null)
-            width = SimpleIntegerProperty(this, "width", Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH))
+            width = CustomIntegerProperty(this, "width", Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH), { value, newValue -> return@CustomIntegerProperty if (!type.resizable) value else newValue })
 
         return width!!
     }
@@ -136,7 +139,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
     fun heightProperty(): IntegerProperty {
         if (height == null)
-            height = SimpleIntegerProperty(this, "height", Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT))
+            height = CustomIntegerProperty(this, "height", Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT), { value, newValue -> return@CustomIntegerProperty if (!type.resizable) value else newValue })
 
         return height!!
     }

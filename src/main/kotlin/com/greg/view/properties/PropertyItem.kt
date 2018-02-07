@@ -1,4 +1,4 @@
-package com.greg.view
+package com.greg.view.properties
 
 import javafx.beans.property.Property
 import javafx.beans.property.SimpleObjectProperty

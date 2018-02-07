@@ -1,4 +1,4 @@
-package com.greg.model
+package com.greg.model.widgets.properties
 
 import javafx.beans.property.Property
 

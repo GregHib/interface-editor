@@ -1,7 +1,8 @@
 package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.widgets.Widget
+import com.greg.model.widgets.type.Widget
+import com.greg.view.properties.PropertyItem
 import javafx.beans.binding.Bindings
 import javafx.beans.property.Property
 import javafx.collections.ListChangeListener

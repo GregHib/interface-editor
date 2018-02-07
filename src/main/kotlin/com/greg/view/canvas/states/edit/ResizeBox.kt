@@ -2,7 +2,7 @@ package com.greg.view.canvas.states.edit
 
 import com.greg.controller.canvas.PannableCanvas
 import com.greg.model.settings.Settings
-import com.greg.model.widgets.Widget
+import com.greg.model.widgets.type.Widget
 import com.greg.view.canvas.widgets.WidgetShape
 import javafx.scene.input.MouseEvent
 

@@ -1,7 +1,7 @@
 package com.greg.controller.selection
 
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.widgets.Widget
+import com.greg.model.widgets.type.Widget
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.memento.Memento

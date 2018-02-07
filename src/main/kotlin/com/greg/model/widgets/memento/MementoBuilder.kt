@@ -1,6 +1,6 @@
 package com.greg.model.widgets.memento
 
-import com.greg.model.widgets.Widget
+import com.greg.model.widgets.type.Widget
 
 class MementoBuilder(val widget: Widget) {
     fun build(): Memento {

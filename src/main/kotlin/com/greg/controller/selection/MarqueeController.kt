@@ -2,7 +2,7 @@ package com.greg.controller.selection
 
 import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.widgets.Widget
+import com.greg.model.widgets.type.Widget
 import javafx.event.EventTarget
 import javafx.geometry.BoundingBox
 import javafx.scene.input.MouseEvent

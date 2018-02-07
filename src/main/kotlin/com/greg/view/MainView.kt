@@ -29,6 +29,8 @@ class MainView : View() {
         }
         canvas.createAndDisplay(WidgetType.TEXT)
         leftPane.hierarchy.rootTreeItem.children.addListener(canvas.hierarchyListener)
+
+        leftPane.controller.importBinary()
     }
 
     override val root = borderpane {
@@ -40,7 +42,11 @@ class MainView : View() {
         prefWidth = 1280.0
         prefHeight = 768.0
         top = menubar {
-            menu("File")
+            menu("File") {
+                menu("Load") {
+                    item("Sprites.dat").action { leftPane.loadImages() }
+                }
+            }
         }
         left = leftPane.root
         right = rightPane.root

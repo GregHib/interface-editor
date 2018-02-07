@@ -3,7 +3,7 @@ package com.greg.view.canvas.states
 import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.settings.Settings
-import com.greg.model.widgets.Widget
+import com.greg.model.widgets.type.Widget
 import com.greg.view.canvas.states.edit.ResizeBox
 import com.greg.view.canvas.states.edit.ResizePoint
 import com.greg.view.canvas.CanvasState

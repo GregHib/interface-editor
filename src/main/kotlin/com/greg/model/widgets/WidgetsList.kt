@@ -1,5 +1,6 @@
 package com.greg.model.widgets
 
+import com.greg.model.widgets.type.Widget
 import com.greg.view.canvas.widgets.WidgetShape
 import javafx.collections.ObservableList
 import tornadofx.observable

@@ -1,6 +1,6 @@
 package com.greg.controller.widgets
 
-import com.greg.model.widgets.Widget
+import com.greg.model.widgets.type.Widget
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.memento.Memento
 

@@ -3,11 +3,13 @@ package com.greg.controller.widgets
 import com.greg.controller.actions.ActionController
 import com.greg.controller.actions.ChangeType
 import com.greg.model.settings.Settings
-import com.greg.model.widgets.Widget
-import com.greg.model.widgets.WidgetRectangle
-import com.greg.model.widgets.WidgetText
 import com.greg.model.widgets.WidgetsList
+import com.greg.model.widgets.type.Widget
+import com.greg.model.widgets.type.WidgetRectangle
+import com.greg.model.widgets.type.WidgetSprite
+import com.greg.model.widgets.type.WidgetText
 import com.greg.view.canvas.widgets.RectangleShape
+import com.greg.view.canvas.widgets.SpriteShape
 import com.greg.view.canvas.widgets.TextShape
 import com.greg.view.canvas.widgets.WidgetShape
 import javafx.collections.ObservableList
@@ -15,6 +17,8 @@ import javafx.event.EventTarget
 import javafx.scene.shape.Shape
 import tornadofx.Controller
 import tornadofx.observable
+
+
 
 class WidgetsController : Controller() {
     companion object {
@@ -186,8 +190,8 @@ class WidgetsController : Controller() {
         widget.xProperty().bindBidirectional(shape.translateXProperty())
         widget.yProperty().bindBidirectional(shape.translateYProperty())
         //Appearance
-        shape.outline.widthProperty().bind(widget.widthProperty())
-        shape.outline.heightProperty().bind(widget.heightProperty())
+        shape.outline.widthProperty().bindBidirectional(widget.widthProperty())
+        shape.outline.heightProperty().bindBidirectional(widget.heightProperty())
 
 
         //Listener
@@ -218,6 +222,8 @@ class WidgetsController : Controller() {
             //Records
             shape.label.textProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
             shape.label.strokeProperty().addListener { _, _, _ -> recordSingle(ChangeType.CHANGE, widget) }
+        } else if(widget is WidgetSprite && shape is SpriteShape) {
+            shape.spriteProperty().bind(widget.spriteProperty())
         }
     }
 

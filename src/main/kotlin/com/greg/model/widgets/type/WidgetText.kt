@@ -1,6 +1,7 @@
-package com.greg.model.widgets
+package com.greg.model.widgets.type
 
 import com.greg.model.settings.Settings
+import com.greg.model.widgets.WidgetBuilder
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 
