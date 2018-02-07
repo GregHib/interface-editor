@@ -28,7 +28,7 @@ class MainView : View() {
             canvas.refresh(it)
         }
         canvas.createAndDisplay(WidgetType.TEXT)
-        leftPane.rootTreeItem.children.addListener(canvas.hierarchyListener)
+        leftPane.hierarchy.rootTreeItem.children.addListener(canvas.hierarchyListener)
     }
 
     override val root = borderpane {

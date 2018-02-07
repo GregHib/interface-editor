@@ -5,7 +5,6 @@ https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 // Features
 //----------------------
 Sprite loader
-Hierarchy delete multiple (when focused ofc)
 Editable widget names
 Widgets within widgets; recursive for hierarchy + memento's; cutting/pasting etc..
 Hold shift to lock movement on one axis?
