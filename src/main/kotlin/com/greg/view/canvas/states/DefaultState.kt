@@ -71,7 +71,7 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
     override fun handleDoubleClick(event: MouseEvent) {
         val widget = widgets.getWidget(event.target)
         val shape = widgets.getShape(event.target)
-        if (widget != null && shape != null)
+        if (widget != null && shape != null && widget.type.resizable)
             view.editState(widget, shape)
 
         cloned = false
