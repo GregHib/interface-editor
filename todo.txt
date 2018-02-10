@@ -1,10 +1,21 @@
 Component naming
 https://gyazo.com/407615643f5a46f34ee82f60252ec86e
+//https://touchgfx.zendesk.com/hc/article_attachments/115001954569/add_new_screen.png
 
+// Thoughts
+//----------------------
+Save types: 317 regular (cache sprites), 317 adapted (external sprite handling)... other revisions
+How to detect revision of cache attempted to be loaded? Xaves
 
 // Features
 //----------------------
-Sprite loader
+Improve sprite support (will need support for 667 and osrs in the future so make sure the current external/internal sprite systems are children of the same parent)
+Improve how properties are handled, support for disabling set ones depending on type, hidden (not on panel), capped values (instead of how currently handled, make a custom ObjectProperty wrapper which contains both properties?), and categories (ofc) - make a PropertyFactory
+Array of colours to replace with transparency in settings
+Replace sprite colours in the image in sprite tabs
+Support/improve support for transparency colour palette (see money pouch glow sprites)
+Key press to navigate sprites lists
+Move sprites list to right panel?
 Editable widget names
 Widgets within widgets; recursive for hierarchy + memento's; cutting/pasting etc..
 Hold shift to lock movement on one axis?
@@ -12,6 +23,7 @@ Hold shift to lock movement on one axis?
 
 // Tidy up
 //----------------------
+Sprite naming; cache sprites, external sprites, internal sprites - consistency.
 Arrow key movement in edit controller
 Expand marquee out to it's own class with inheritance, so you can switch out marquee type/shape etc..
 

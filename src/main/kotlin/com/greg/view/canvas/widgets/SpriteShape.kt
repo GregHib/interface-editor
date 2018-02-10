@@ -9,27 +9,29 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.image.WritableImage
 import tornadofx.add
-import java.io.ByteArrayInputStream
-import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 
-class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height) {
+open class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height) {
+
     var sprite: SimpleIntegerProperty? = null
-
     private val image = ImageView()
 
     init {
         add(image)
-        loadSprite(getSprite())
-        spriteProperty().addListener { _, _, newValue ->
-            if(newValue.toInt() < SpriteController.observableList.size) {
-                loadSprite(newValue.toInt())
-            }
+        loadSprite()
+        spriteProperty().addListener { _, _, _ ->
+            loadSprite()
         }
     }
 
-    private fun loadSprite(id: Int) {
-        val sprite = SpriteController.observableList[id]
-        val bufferedImage = ImageIO.read(ByteArrayInputStream(sprite.data))
+    open fun loadSprite() {
+        if(getSprite() >= 0 && getSprite() < SpriteController.filteredExternal.size) {
+            val container = SpriteController.filteredExternal[getSprite()]
+            displayImage(container.sprite.toBufferedImage())
+        }
+    }
+
+    fun displayImage(bufferedImage: BufferedImage) {
         image.fitWidth = bufferedImage.width.toDouble()
         image.fitHeight = bufferedImage.height.toDouble()
         image.isPreserveRatio = true

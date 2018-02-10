@@ -4,7 +4,8 @@ import com.greg.controller.widgets.WidgetsController
 import com.greg.view.hierarchy.HierarchyItem
 import com.greg.view.hierarchy.HierarchyView
 import com.greg.view.sprites.SpriteController
-import com.greg.view.sprites.SpriteView
+import com.greg.view.sprites.external.ExternalSpriteView
+import com.greg.view.sprites.internal.InternalSpriteView
 import javafx.collections.ListChangeListener
 import javafx.geometry.Orientation
 import javafx.scene.control.TabPane
@@ -18,7 +19,8 @@ import tornadofx.tabpane
 class LeftPane : View(), KeyInterface {
 
     val hierarchy = HierarchyView()
-    private val sprites = SpriteView()
+    private val externalSprites = ExternalSpriteView()
+    private val sprites = InternalSpriteView()
 
     private lateinit var tabPane: TabPane
     private val components = ComponentView()
@@ -63,6 +65,9 @@ class LeftPane : View(), KeyInterface {
                 add(components)
             }
             tab("Sprites") {
+                add(externalSprites)
+            }
+            tab("Cache sprites") {
                 add(sprites)
             }
         }

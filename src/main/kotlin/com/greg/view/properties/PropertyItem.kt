@@ -6,9 +6,11 @@ import javafx.beans.value.ObservableValue
 import org.controlsfx.control.PropertySheet
 import java.util.*
 
-class PropertyItem(private val propertyName: String, private val propertyCategory: String, private val propertyValue: Property<*>) : PropertySheet.Item {
+open class PropertyItem(private val propertyName: String, private val propertyCategory: String, private val propertyValue: Property<*>) : PropertySheet.Item {
 
-    val objectProperty = SimpleObjectProperty(this, propertyName, propertyValue.value)
+    val objectProperty = SimpleObjectProperty(this, propertyName, propertyValue.value)//TODO bean is incorrect but prevents leaking
+    var disabled: Boolean = false
+
     init {
         objectProperty.bindBidirectional(propertyValue as Property<Any>?)
     }

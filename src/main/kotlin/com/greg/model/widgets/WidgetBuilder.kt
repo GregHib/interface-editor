@@ -1,9 +1,6 @@
 package com.greg.model.widgets
 
-import com.greg.model.widgets.type.Widget
-import com.greg.model.widgets.type.WidgetRectangle
-import com.greg.model.widgets.type.WidgetSprite
-import com.greg.model.widgets.type.WidgetText
+import com.greg.model.widgets.type.*
 
 open class WidgetBuilder(val type: WidgetType = WidgetType.WIDGET) {
 
@@ -21,6 +18,7 @@ open class WidgetBuilder(val type: WidgetType = WidgetType.WIDGET) {
             WidgetType.TEXT -> WidgetText(this, identifier)
             WidgetType.RECTANGLE -> WidgetRectangle(this, identifier)
             WidgetType.SPRITE -> WidgetSprite(this, identifier)
+            WidgetType.CACHE_SPRITE -> WidgetCacheSprite(this, identifier)
             else -> {
                 Widget(this, identifier)
             }

@@ -1,15 +1,13 @@
 package com.greg.model.widgets
 
-import com.greg.model.widgets.type.Widget
-import com.greg.model.widgets.type.WidgetRectangle
-import com.greg.model.widgets.type.WidgetSprite
-import com.greg.model.widgets.type.WidgetText
+import com.greg.model.widgets.type.*
 
-enum class WidgetType(val type: String?, val resizable: Boolean) {
-    WIDGET(Widget::class.simpleName, true),
-    RECTANGLE(WidgetRectangle::class.simpleName, true),
-    TEXT(WidgetText::class.simpleName, true),
+enum class WidgetType(val type: String?, val resizable: Boolean = true, val hidden: Boolean = false) {
+    WIDGET(Widget::class.simpleName),
+    RECTANGLE(WidgetRectangle::class.simpleName),
+    TEXT(WidgetText::class.simpleName),
     SPRITE(WidgetSprite::class.simpleName, false),
+    CACHE_SPRITE(WidgetCacheSprite::class.simpleName, false),
     ;
 
     companion object {

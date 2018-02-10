@@ -6,12 +6,8 @@ import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.memento.Memento
 import com.greg.model.widgets.memento.MementoBuilder
-import com.greg.model.widgets.properties.CustomIntegerProperty
 import com.greg.model.widgets.properties.Properties
-import javafx.beans.property.BooleanProperty
-import javafx.beans.property.IntegerProperty
-import javafx.beans.property.SimpleBooleanProperty
-import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.*
 
 open class Widget(builder: WidgetBuilder, id: Int) {
 
@@ -26,19 +22,35 @@ open class Widget(builder: WidgetBuilder, id: Int) {
     private var y: IntegerProperty? = null
     private var width: IntegerProperty? = null
     private var height: IntegerProperty? = null
+    private var widthBounds: ObjectProperty<IntRange>? = null
+    private var heightBounds: ObjectProperty<IntRange>? = null
 
     private var locked: BooleanProperty? = null
     private var selected: BooleanProperty? = null
     private var hidden: BooleanProperty? = null
 
     init {
-        properties.add(xProperty(), "Layout")
-        properties.add(yProperty(), "Layout")
-        properties.add(widthProperty(), "Layout")
-        properties.add(heightProperty(), "Layout")
-        properties.add(lockedProperty(), false)
-        properties.add(selectedProperty(), false)
-        properties.add(hiddenProperty(), false)
+        properties.add(xProperty(), category = "Layout")
+        properties.add(yProperty(), category = "Layout")
+        properties.addCapped(widthProperty(), widthBoundsProperty(), true, "Layout")
+        properties.addCapped(heightProperty(), heightBoundsProperty(), true, "Layout")
+        properties.addPanel(lockedProperty(), false)
+        properties.addPanel(selectedProperty(), false)
+        properties.addPanel(hiddenProperty(), false)
+    }
+
+    fun widthBoundsProperty(): ObjectProperty<IntRange> {
+        if(widthBounds == null)
+            widthBounds = SimpleObjectProperty(this, "widthBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_WIDTH), Settings.getInt(Settings.WIDGET_CANVAS_WIDTH)))
+
+        return widthBounds!!
+    }
+
+    fun heightBoundsProperty(): ObjectProperty<IntRange> {
+        if(heightBounds == null)
+            heightBounds = SimpleObjectProperty(this, "heightBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_HEIGHT), Settings.getInt(Settings.WIDGET_CANVAS_HEIGHT)))
+
+        return heightBounds!!
     }
 
     fun setLocked(value: Boolean) {
@@ -124,8 +136,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
     fun widthProperty(): IntegerProperty {
         if (width == null)
-            width = CustomIntegerProperty(this, "width", Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH), { value, newValue -> return@CustomIntegerProperty if (!type.resizable) value else newValue })
-
+            width = SimpleIntegerProperty(this, "width", Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH))
         return width!!
     }
 
@@ -139,8 +150,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
     fun heightProperty(): IntegerProperty {
         if (height == null)
-            height = CustomIntegerProperty(this, "height", Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT), { value, newValue -> return@CustomIntegerProperty if (!type.resizable) value else newValue })
-
+            height = SimpleIntegerProperty(this, "height", Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT))
         return height!!
     }
 

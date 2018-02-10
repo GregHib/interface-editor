@@ -1,16 +1,25 @@
 package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
+import com.greg.model.widgets.properties.CappedPropertyValues
+import com.greg.model.widgets.properties.PanelPropertyValues
+import com.greg.model.widgets.properties.ResizedPropertyValues
 import com.greg.model.widgets.type.Widget
+import com.greg.view.properties.CappedPropertyItem
+import com.greg.view.properties.NumberSpinner
 import com.greg.view.properties.PropertyItem
-import javafx.beans.binding.Bindings
+import com.greg.view.sprites.SpriteController
 import javafx.beans.property.Property
 import javafx.collections.ListChangeListener
+import javafx.event.ActionEvent
 import javafx.scene.control.ColorPicker
+import javafx.scene.control.ComboBox
 import javafx.scene.control.TextField
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
+import javafx.scene.input.ScrollEvent
 import javafx.scene.paint.Color
 import javafx.util.Callback
-import javafx.util.converter.IntegerStringConverter
 import org.controlsfx.control.PropertySheet
 import org.controlsfx.control.PropertySheet.Item
 import org.controlsfx.property.editor.Editors
@@ -18,13 +27,16 @@ import org.controlsfx.property.editor.PropertyEditor
 import tornadofx.Fragment
 import tornadofx.drawer
 import tornadofx.vbox
+import java.util.regex.Pattern
 
 
 @Suppress("UNCHECKED_CAST")
 class RightPane : Fragment() {
 
     val widgets: WidgetsController by inject()
+    val sprites: SpriteController by inject()
     private val sheet = PropertySheet()
+    private val pattern = Pattern.compile("^(-?[0-9]+)")
 
     init {
         sheet.minWidth = 284.0
@@ -33,48 +45,74 @@ class RightPane : Fragment() {
                 when {
                     param.value is Boolean -> Editors.createCheckEditor(param)
                     param.value is Int -> {
-                        val editor = Editors.createNumericEditor(param)
-                        val field = editor.editor
+                        val editor = NumberSpinner(param)
+                        val spinner = editor.editor
+                        spinner.isDisable = param.disabled
+                        spinner.valueFactory.valueProperty().bindBidirectional(param.objectProperty as Property<Int>?)
 
-                        if (field is TextField) {
-                            Bindings.bindBidirectional(field.textProperty(), param.objectProperty as Property<Int>?, IntegerStringConverter())
-                            field.focusedProperty().addListener { _, _, newValue ->
-                                if(newValue)
-                                    widgets.start()
-                                else
-                                    widgets.finish()
-                            }
-                            field.setOnAction {
-                                widgets.finish()
+                        spinner.editor.textProperty().addListener { _, oldValue, newValue ->
+                            if (oldValue != newValue) {
+                                val matcher = pattern.matcher(newValue)
+                                spinner.editor.text = if (matcher.matches()) matcher.group(1) else oldValue
                             }
                         }
+
+                        spinner.focusedProperty().addListener { _, _, newValue ->
+                            spinner.editor.fireEvent(ActionEvent())
+
+                            if (newValue)
+                                widgets.start()
+                            else
+                                widgets.finish()
+                        }
+
+                        spinner.editor.addEventFilter(ScrollEvent.SCROLL, {
+                            if (spinner.editor.isFocused) {
+                                spinner.valueFactory.increment((it.deltaY / 40).toInt())
+                            }
+                        })
+
+                        //Can't override setOnAction
+                        spinner.addEventHandler(KeyEvent.KEY_PRESSED, {
+                            if (spinner.editor.isFocused && it.code == KeyCode.ENTER) {
+                                widgets.finish()
+                                it.consume()
+                            }
+                        })
 
                         editor
                     }
                     param.value is Color -> {
                         val editor = Editors.createColorEditor(param)
                         val field = editor.editor
-
                         (field as? ColorPicker)?.valueProperty()?.bindBidirectional(param.objectProperty as Property<Color>?)
                         editor
                     }
                     else -> {
-                        val editor = Editors.createTextEditor(param)
-                        val field = editor.editor
+                        if (param.name == "Archive") {
+                            val editor = Editors.createChoiceEditor(param, sprites.getInternalArchiveNames())
+                            val field = editor.editor
+                            val box = field as? ComboBox<String>
+                            box?.valueProperty()?.bindBidirectional(param.objectProperty as Property<String>?)
+                            editor
+                        } else {
+                            val editor = Editors.createTextEditor(param)
+                            val field = editor.editor
 
-                        if(field is TextField) {
-                            field.textProperty().bindBidirectional(param.objectProperty as Property<String>?)
-                            field.focusedProperty().addListener { _, _, newValue ->
-                                if(newValue)
-                                    widgets.start()
-                                else
+                            if (field is TextField) {
+                                field.textProperty().bindBidirectional(param.objectProperty as Property<String>?)
+                                field.focusedProperty().addListener { _, _, newValue ->
+                                    if (newValue)
+                                        widgets.start()
+                                    else
+                                        widgets.finish()
+                                }
+                                field.setOnAction {
                                     widgets.finish()
+                                }
                             }
-                            field.setOnAction {
-                                widgets.finish()
-                            }
+                            editor
                         }
-                        editor
                     }
                 }
             } else {
@@ -93,8 +131,16 @@ class RightPane : Fragment() {
                 //Add properties for first item only
                 val first = list.first()
                 first.properties.get()
-                        .filter { it.panel }
-                        .forEach { property -> sheet.items.add(PropertyItem(property.property.name.capitalize(), property.category, property.property)) }
+                        .filter { !(it is PanelPropertyValues && !it.panel) }
+                        .forEach { property ->
+                            val item = if (property is CappedPropertyValues)
+                                CappedPropertyItem(property.property.name.capitalize(), property.category, property.property, property.range)
+                            else
+                                PropertyItem(property.property.name.capitalize(), property.category, property.property)
+                            if(property is ResizedPropertyValues)
+                                item.disabled = property.resize
+                            sheet.items.add(item)
+                        }
 
                 sheet.items
                         .filterIsInstance<PropertyItem>()
@@ -104,7 +150,9 @@ class RightPane : Fragment() {
                                     it.list
                                             .filter { it != first && it.type == first.type }
                                             .forEach { widget ->
-                                                widget.properties.get().filter { it.panel }[index].property.value = newValue
+                                                widget.properties.get().filter {
+                                                    !(it is PanelPropertyValues && !it.panel)
+                                                }[index].property.value = newValue
                                             }
                                 }
                         }

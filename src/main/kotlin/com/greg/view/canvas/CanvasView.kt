@@ -8,6 +8,8 @@ import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.type.Widget
+import com.greg.model.widgets.type.WidgetCacheSprite
+import com.greg.model.widgets.type.WidgetSprite
 import com.greg.view.KeyInterface
 import com.greg.view.canvas.states.DefaultState
 import com.greg.view.canvas.states.EditState
@@ -101,7 +103,9 @@ class CanvasView : View(), KeyInterface {
         }
 
         setOnDragDropped { event ->
-            val type = WidgetType.forString(event.dragboard.string)
+            val string = event.dragboard.string
+            val data = if(string.contains(":")) string.split(":") else arrayListOf(string)
+            val type = WidgetType.forString(data[0])
             if (type != null) {
                 val widget = createAndDisplay(type)
 
@@ -117,12 +121,23 @@ class CanvasView : View(), KeyInterface {
                 widget.setX(dropX.toInt())
                 widget.setY(dropY.toInt())
 
+                if(data.size >= 2) {
+                    (widget as? WidgetSprite)?.setSprite(Integer.valueOf(data[1]))
+
+                    if(widget is WidgetCacheSprite) {
+                        widget.setSprite(Integer.valueOf(data[1]))
+                        widget.setArchive(data[2])
+                    }
+                }
+
                 widgets.clearSelection()
 
                 widget.setSelected(true)
             }
 
             event.isDropCompleted = true
+
+            this.requestFocus()
 
             event.consume()
         }

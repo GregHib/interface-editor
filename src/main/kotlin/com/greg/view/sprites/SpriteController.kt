@@ -2,19 +2,25 @@ package com.greg.view.sprites
 
 import com.greg.controller.utils.BSPUtils
 import com.greg.controller.utils.Dialogue
-import com.greg.model.Sprite
+import com.greg.view.sprites.external.ExternalSprite
+import io.nshusa.rsam.FileStore
+import io.nshusa.rsam.IndexedFileSystem
+import io.nshusa.rsam.binary.Archive
+import io.nshusa.rsam.binary.sprite.ImageArchive
+import io.nshusa.rsam.util.HashUtils
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.collections.transformation.FilteredList
 import javafx.concurrent.Task
 import javafx.scene.image.Image
-import org.apache.commons.imaging.Imaging
 import tornadofx.Controller
 import java.io.File
+import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.Files
+import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import kotlin.experimental.and
 
@@ -23,11 +29,22 @@ class SpriteController : Controller() {
     companion object {
         val placeholderIcon = Image(javaClass.getResourceAsStream("placeholder.png"))
 
-        val observableList: ObservableList<Sprite> = FXCollections.observableArrayList()
-        var filteredList = FilteredList(observableList, { _ -> true })
+        private val observableExternal: ObservableList<ExternalSprite> = FXCollections.observableArrayList()
+        var filteredExternal = FilteredList(observableExternal, { _ -> true })
+
+        private val observableInternal: ObservableList<ImageArchive> = FXCollections.observableArrayList()
+        var filteredInternal = FilteredList(observableInternal, { _ -> true })
+
+        fun getArchive(archive: String): ImageArchive? {
+            return filteredInternal.firstOrNull { it.hash == HashUtils.nameToHash(archive) }
+        }
     }
 
-
+    fun getInternalArchiveNames(): List<String> {
+        return filteredInternal
+                .mapNotNull { getName(it.hash) }
+                .map { it.substring(0, it.length - 4) }
+    }
 
     fun importBinary() {
 //        val chooser = FileChooser()
@@ -38,7 +55,7 @@ class SpriteController : Controller() {
         importBinary(selectedFile)
     }
 
-    fun importBinary(selectedFile: File) {
+    private fun importBinary(selectedFile: File) {
 
         if (selectedFile.length() < 3) {
             return
@@ -87,18 +104,17 @@ class SpriteController : Controller() {
                         val imageData = ByteArray(length)
 
                         if (length == 0) {
-                            Platform.runLater({ observableList.add(Sprite(i, imageData, "png")) })
+                            Platform.runLater({ observableExternal.add(ExternalSprite(i, imageData)) })
                         } else {
 
                             dataBuf.get(imageData)
 
-                            val info = Imaging.getImageInfo(imageData)
-
-                            val sprite = Sprite(i, imageData, info.format.name)
-                            sprite.drawOffsetX = offsetX
-                            sprite.drawOffsetY = offsetY
-
-                            Platform.runLater({ observableList.add(sprite) })
+                            Platform.runLater({
+                                val container = ExternalSprite(i, imageData)
+                                container.sprite.offsetX = offsetX
+                                container.sprite.offsetY = offsetY
+                                observableExternal.add(container)
+                            })
                         }
 
                     } catch (ex: Exception) {
@@ -113,5 +129,38 @@ class SpriteController : Controller() {
         }
 
         Thread(task).start()
+    }
+
+    fun start() {
+        importBinary()
+        importCache(IndexedFileSystem.init(Paths.get("./cache/")))
+    }
+
+    fun importCache(fs: IndexedFileSystem) {
+        val task: Task<Boolean> = object : Task<Boolean>() {
+
+            override fun call(): Boolean {
+
+                val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
+
+                val mediaArchive = Archive.decode(store.readFile(Archive.MEDIA_ARCHIVE))
+
+                mediaArchive.entries.mapTo(observableInternal) { ImageArchive.decode(mediaArchive, it.hash) }
+
+                return true
+            }
+        }
+        Thread(task).start()
+    }
+
+    fun getName(hash: Int): String? {
+        val inputStream: InputStream = javaClass.getResourceAsStream("4.txt")
+        val lineList = mutableListOf<String>()
+        inputStream.bufferedReader().useLines { lines -> lines.forEach { lineList.add(it) } }
+        lineList.forEach {
+            if (HashUtils.nameToHash(it) == hash)
+                return it
+        }
+        return null
     }
 }

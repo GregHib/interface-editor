@@ -1,10 +1,7 @@
 package com.greg.view.hierarchy
 
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.Sprite
 import com.greg.view.KeyInterface
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent

@@ -2,12 +2,16 @@ package com.greg.model.widgets.type
 
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
+import com.greg.view.sprites.SpriteController
 import javafx.beans.property.IntegerProperty
+import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleObjectProperty
 
-class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
+open class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
 
-    private var sprite: SimpleIntegerProperty? = null
+    private var cap: ObjectProperty<IntRange>? = null
+    private var sprite: IntegerProperty? = null
 
     fun getSprite(): Int {
         return spriteProperty().get()
@@ -24,7 +28,19 @@ class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
         return sprite!!
     }
 
+
+    fun setCap(range: IntRange) {
+        capProperty().set(range)
+    }
+
+    fun capProperty(): ObjectProperty<IntRange> {
+        if (cap == null)
+            cap = SimpleObjectProperty(this, "cap", IntRange(0, SpriteController.filteredExternal.size))
+
+        return cap!!
+    }
+
     init {
-        properties.add(spriteProperty())
+        properties.addCapped(spriteProperty(), capProperty())
     }
 }

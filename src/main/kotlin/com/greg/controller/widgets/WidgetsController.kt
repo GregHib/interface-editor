@@ -4,14 +4,9 @@ import com.greg.controller.actions.ActionController
 import com.greg.controller.actions.ChangeType
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetsList
-import com.greg.model.widgets.type.Widget
-import com.greg.model.widgets.type.WidgetRectangle
-import com.greg.model.widgets.type.WidgetSprite
-import com.greg.model.widgets.type.WidgetText
-import com.greg.view.canvas.widgets.RectangleShape
-import com.greg.view.canvas.widgets.SpriteShape
-import com.greg.view.canvas.widgets.TextShape
-import com.greg.view.canvas.widgets.WidgetShape
+import com.greg.model.widgets.type.*
+import com.greg.view.canvas.widgets.*
+import com.greg.view.sprites.SpriteController
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.scene.shape.Shape
@@ -224,6 +219,25 @@ class WidgetsController : Controller() {
             shape.label.strokeProperty().addListener { _, _, _ -> recordSingle(ChangeType.CHANGE, widget) }
         } else if(widget is WidgetSprite && shape is SpriteShape) {
             shape.spriteProperty().bind(widget.spriteProperty())
+
+
+            if(widget is WidgetCacheSprite && shape is CacheSpriteShape) {
+                shape.archiveProperty().bind(widget.archiveProperty())
+
+                //Every time widget archive is changed
+                shape.archiveProperty().addListener { _, _, newValue ->
+                    //Get the number of sprites in archive
+                    val archive = SpriteController.getArchive("$newValue.dat")//TODO the gnome hash isn't .dat? are all .dat?
+                    var size = archive?.sprites?.size ?: 1
+                    size -= 1
+
+                    //Limit the sprite index to archive size
+                    widget.setCap(IntRange(0, size))
+
+                    //If already on an index which is greater than archive index; reduce, otherwise set the same (refresh)
+                    widget.setSprite(if(widget.getSprite() >= size) size else widget.getSprite())
+                }
+            }
         }
     }
 
