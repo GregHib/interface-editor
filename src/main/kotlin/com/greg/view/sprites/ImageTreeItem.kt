@@ -1,4 +1,4 @@
-package com.greg.view.sprites.internal
+package com.greg.view.sprites
 
 import javafx.scene.control.TreeItem
 import javafx.scene.image.Image

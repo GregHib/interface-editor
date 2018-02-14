@@ -6,7 +6,7 @@ import com.greg.view.sprites.external.ExternalSprite
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.IndexedFileSystem
 import io.nshusa.rsam.binary.Archive
-import io.nshusa.rsam.binary.sprite.ImageArchive
+import io.nshusa.rsam.binary.sprite.Sprite
 import io.nshusa.rsam.util.HashUtils
 import javafx.application.Platform
 import javafx.collections.FXCollections
@@ -15,6 +15,7 @@ import javafx.collections.transformation.FilteredList
 import javafx.concurrent.Task
 import javafx.scene.image.Image
 import tornadofx.Controller
+import tornadofx.observable
 import java.io.File
 import java.io.InputStream
 import java.nio.ByteBuffer
@@ -32,7 +33,7 @@ class SpriteController : Controller() {
         private val observableExternal: ObservableList<ExternalSprite> = FXCollections.observableArrayList()
         var filteredExternal = FilteredList(observableExternal, { _ -> true })
 
-        private val observableInternal: ObservableList<ImageArchive> = FXCollections.observableArrayList()
+        private var observableInternal: ObservableList<ImageArchive> = FXCollections.observableArrayList()
         var filteredInternal = FilteredList(observableInternal, { _ -> true })
 
         fun getArchive(archive: String): ImageArchive? {
@@ -42,7 +43,7 @@ class SpriteController : Controller() {
 
     fun getInternalArchiveNames(): List<String> {
         return filteredInternal
-                .mapNotNull { getName(it.hash) }
+                .map { it -> getName(it.hash) }
                 .map { it.substring(0, it.length - 4) }
     }
 
@@ -133,27 +134,53 @@ class SpriteController : Controller() {
 
     fun start() {
         importBinary()
-        importCache(IndexedFileSystem.init(Paths.get("./cache/")))
+        val fs = IndexedFileSystem.init(Paths.get("./cache/"))
+        fs.load()
+        importCache(fs)
     }
 
     fun importCache(fs: IndexedFileSystem) {
         val task: Task<Boolean> = object : Task<Boolean>() {
 
             override fun call(): Boolean {
+                try {
+                    val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
 
-                val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
+                    val mediaArchive = Archive.decode(store.readFile(Archive.MEDIA_ARCHIVE))
 
-                val mediaArchive = Archive.decode(store.readFile(Archive.MEDIA_ARCHIVE))
+                    for(entry in mediaArchive.entries) {
+                        val sprites = mutableListOf<Sprite>()
+                        var index = 0
+                        while (true) {
+                            try {
+                                val sprite = Sprite.decode(mediaArchive, entry.hash, index)
+                                sprites.add(sprite)
+                                index++
+                            } catch (ex: Exception) {
+                                break
+                            }
+                        }
 
-                mediaArchive.entries.mapTo(observableInternal) { ImageArchive.decode(mediaArchive, it.hash) }
+                        if(sprites.size > 0)
+                            observableInternal.add(ImageArchive(entry.hash, sprites))
 
+//                        println(String.format("There are %d sprites in archive %s", index, entry.hash))
+                    }
+
+                    val sortedList = observableInternal.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { getName(it.hash) }))
+                    observableInternal.clear()
+                    observableInternal.addAll(sortedList)
+
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                }
                 return true
             }
         }
         Thread(task).start()
     }
 
-    fun getName(hash: Int): String? {
+    fun getName(hash: Int): String {
         val inputStream: InputStream = javaClass.getResourceAsStream("4.txt")
         val lineList = mutableListOf<String>()
         inputStream.bufferedReader().useLines { lines -> lines.forEach { lineList.add(it) } }
@@ -161,6 +188,6 @@ class SpriteController : Controller() {
             if (HashUtils.nameToHash(it) == hash)
                 return it
         }
-        return null
+        return hash.toString()
     }
 }

@@ -1,6 +1,8 @@
 package com.greg.view.sprites.internal
 
 import com.greg.model.widgets.WidgetType
+import com.greg.view.sprites.ImageTreeCell
+import com.greg.view.sprites.ImageTreeItem
 import com.greg.view.sprites.SpriteController
 import javafx.collections.ListChangeListener
 import javafx.embed.swing.SwingFXUtils
@@ -11,6 +13,7 @@ import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
 import javafx.util.Callback
 import tornadofx.View
+import tornadofx.removeFromParent
 import tornadofx.treeview
 
 class InternalSpriteView : View() {
@@ -42,13 +45,25 @@ class InternalSpriteView : View() {
             if (it.wasAdded()) {
                 for (archive in it.addedSubList) {
                     val decoded = controller.getName(archive.hash)
-                    val name = decoded?.substring(0, decoded.length - 4) ?: archive.hash.toString()
+                    val name = decoded.substring(0, decoded.length - 4)
                     val archiveItem = TreeItem(name)
                     //Add names
                     archive.sprites
                             .mapIndexed { index, sprite -> ImageTreeItem("$index", SwingFXUtils.toFXImage(sprite.toBufferedImage(), null)) }
                             .forEach { archiveItem.children.add(it) }
                     rootTreeItem.children.add(archiveItem)
+                }
+            } else if(it.wasRemoved()) {
+                //Find and remove
+                for (archive in it.removed) {
+                    val decoded = controller.getName(archive.hash)
+                    val name = decoded.substring(0, decoded.length - 4)
+                    for(child in rootTreeItem.children) {
+                        if(name == child.value) {
+                            rootTreeItem.children.remove(child)
+                            break
+                        }
+                    }
                 }
             }
         })
