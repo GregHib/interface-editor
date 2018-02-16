@@ -21,12 +21,12 @@ public class JavaTest {
 
                 int sprites = 0;
 
-                while(true) {
+                spriteLoop : while(true) {
                     try {
                         Sprite sprite = Sprite.decode(archive, entry.getHash(), sprites);
                         sprites++;
                     } catch (Exception ex) {
-                        break;
+                        break spriteLoop;
                     }
                 }
 

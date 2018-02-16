@@ -35,7 +35,7 @@ open class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
 
     fun capProperty(): ObjectProperty<IntRange> {
         if (cap == null)
-            cap = SimpleObjectProperty(this, "cap", IntRange(0, SpriteController.filteredExternal.size))
+            cap = SimpleObjectProperty(this, "cap", IntRange(0, SpriteController.observableExternal[0].sprites.size))
 
         return cap!!
     }

@@ -75,3 +75,4 @@ titlescroll.dat
 letter.dat
 button_brown_big.dat
 overlay_duel.dat
+all.dat

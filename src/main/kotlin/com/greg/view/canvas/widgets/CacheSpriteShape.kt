@@ -25,8 +25,10 @@ class CacheSpriteShape(id: Int, width: Int, height: Int) : SpriteShape(id, width
         if (archive != null) {
             if (getSprite() >= 0 && getSprite() < archive.sprites.size) {
                 val sprite = archive.sprites[getSprite()]
-                val bufferedImage = sprite.toBufferedImage()
-                displayImage(bufferedImage)
+                if(sprite != null) {
+                    val bufferedImage = sprite.toBufferedImage()
+                    displayImage(bufferedImage)
+                }
             }
         }
     }

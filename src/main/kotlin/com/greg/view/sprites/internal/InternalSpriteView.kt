@@ -1,65 +1,35 @@
 package com.greg.view.sprites.internal
 
 import com.greg.model.widgets.WidgetType
-import com.greg.view.sprites.ImageTreeCell
-import com.greg.view.sprites.ImageTreeItem
+import com.greg.view.sprites.tree.ImageTreeItem
 import com.greg.view.sprites.SpriteController
+import com.greg.view.sprites.SpriteDisplay
 import javafx.collections.ListChangeListener
-import javafx.embed.swing.SwingFXUtils
-import javafx.scene.control.TreeCell
 import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeView
-import javafx.scene.input.ClipboardContent
-import javafx.scene.input.TransferMode
-import javafx.util.Callback
-import tornadofx.View
-import tornadofx.removeFromParent
-import tornadofx.treeview
 
-class InternalSpriteView : View() {
+class InternalSpriteView : SpriteDisplay("Archive", WidgetType.CACHE_SPRITE, { target: ImageTreeItem -> "${target.value}:${target.parent.value}"}) {
+
     private val controller: SpriteController by inject()
-    private val rootTreeItem = TreeItem("Media")
-
-    override val root = treeview(rootTreeItem) {
-        cellFactory = Callback<TreeView<String>, TreeCell<String>> {
-            ImageTreeCell()
-        }
-        setOnDragDetected { event ->
-
-            val target = this.selectionModel.selectedItem
-            if(target is ImageTreeItem) {
-                val db = startDragAndDrop(TransferMode.MOVE)
-                db.dragView = target.image
-                val cc = ClipboardContent()
-                cc.putString("${WidgetType.CACHE_SPRITE.name}:${target.value}:${target.parent.value}")
-                db.setContent(cc)
-            }
-
-            event.consume()
-        }
-    }
 
     init {
         SpriteController.filteredInternal.addListener(ListChangeListener {
             it.next()
             if (it.wasAdded()) {
                 for (archive in it.addedSubList) {
-                    val decoded = controller.getName(archive.hash)
-                    val name = decoded.substring(0, decoded.length - 4)
+                    val name = controller.getName(archive.hash)
                     val archiveItem = TreeItem(name)
-                    //Add names
+
                     archive.sprites
-                            .mapIndexed { index, sprite -> ImageTreeItem("$index", SwingFXUtils.toFXImage(sprite.toBufferedImage(), null)) }
+                            .mapIndexed { index, sprite -> ImageTreeItem("$index", sprite) }
                             .forEach { archiveItem.children.add(it) }
                     rootTreeItem.children.add(archiveItem)
                 }
-            } else if(it.wasRemoved()) {
+            } else if (it.wasRemoved()) {
                 //Find and remove
                 for (archive in it.removed) {
-                    val decoded = controller.getName(archive.hash)
-                    val name = decoded.substring(0, decoded.length - 4)
-                    for(child in rootTreeItem.children) {
-                        if(name == child.value) {
+                    val name = controller.getName(archive.hash)
+                    for (child in rootTreeItem.children) {
+                        if (name == child.value) {
                             rootTreeItem.children.remove(child)
                             break
                         }

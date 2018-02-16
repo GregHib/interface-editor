@@ -2,7 +2,9 @@ package com.greg.view.sprites
 
 import com.greg.controller.utils.BSPUtils
 import com.greg.controller.utils.Dialogue
-import com.greg.view.sprites.external.ExternalSprite
+import com.greg.model.settings.Settings
+import com.greg.view.sprites.external.SpriteLoader
+import com.greg.view.sprites.tree.ImageArchive
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.IndexedFileSystem
 import io.nshusa.rsam.binary.Archive
@@ -15,7 +17,6 @@ import javafx.collections.transformation.FilteredList
 import javafx.concurrent.Task
 import javafx.scene.image.Image
 import tornadofx.Controller
-import tornadofx.observable
 import java.io.File
 import java.io.InputStream
 import java.nio.ByteBuffer
@@ -28,10 +29,9 @@ import kotlin.experimental.and
 class SpriteController : Controller() {
 
     companion object {
-        val placeholderIcon = Image(javaClass.getResourceAsStream("placeholder.png"))
+        val placeholderIcon = Image(SpriteController::class.java.getResourceAsStream("./placeholder.png"))
 
-        private val observableExternal: ObservableList<ExternalSprite> = FXCollections.observableArrayList()
-        var filteredExternal = FilteredList(observableExternal, { _ -> true })
+        var observableExternal: ObservableList<ImageArchive> = FXCollections.observableArrayList()
 
         private var observableInternal: ObservableList<ImageArchive> = FXCollections.observableArrayList()
         var filteredInternal = FilteredList(observableInternal, { _ -> true })
@@ -44,23 +44,22 @@ class SpriteController : Controller() {
     fun getInternalArchiveNames(): List<String> {
         return filteredInternal
                 .map { it -> getName(it.hash) }
-                .map { it.substring(0, it.length - 4) }
     }
 
     fun importBinary() {
+        //Choose main file sprites location
 //        val chooser = FileChooser()
 //        chooser.initialDirectory = Paths.get(System.getProperty("user.home")).toFile()
 //        chooser.extensionFilters.add(FileChooser.ExtensionFilter("main_file_sprites.dat", "*.dat"))
 //        val selectedFile = chooser.showOpenDialog(primaryStage) ?: return
-        val selectedFile = File("C:\\Users\\Greg\\.fury\\cache\\main_file_sprites.dat")
+        val selectedFile = File("./cache/main_file_sprites.dat")
         importBinary(selectedFile)
     }
 
     private fun importBinary(selectedFile: File) {
 
-        if (selectedFile.length() < 3) {
+        if (selectedFile.length() < 3)
             return
-        }
 
         val prefix = BSPUtils.getFilePrefix(selectedFile)
 
@@ -93,6 +92,7 @@ class SpriteController : Controller() {
 
                 val entries = metaBuf.capacity() / 10
 
+                val list = mutableListOf<SpriteLoader?>()
                 for (i in 0 until entries) {
                     try {
                         val dataOffset = ((metaBuf.get().toInt() and 0xFF) shl 16) + ((metaBuf.get().toInt() and 0xFF) shl 8) + (metaBuf.get().toInt() and 0xFF)
@@ -105,25 +105,27 @@ class SpriteController : Controller() {
                         val imageData = ByteArray(length)
 
                         if (length == 0) {
-                            Platform.runLater({ observableExternal.add(ExternalSprite(i, imageData)) })
+                            list.add(null)
                         } else {
-
                             dataBuf.get(imageData)
 
-                            Platform.runLater({
-                                val container = ExternalSprite(i, imageData)
-                                container.sprite.offsetX = offsetX
-                                container.sprite.offsetY = offsetY
-                                observableExternal.add(container)
-                            })
+                            list.add(SpriteLoader(imageData, offsetX, offsetY))
                         }
-
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                         Platform.runLater({ Dialogue.showWarning("Detected corrupt file or invalid format.").showAndWait() })
-                        return false
                     }
 
+                }
+
+                //Convert to sprites after all data has been loaded to prevent threading issues
+                Platform.runLater {
+                    val sprites = mutableListOf<Sprite?>()
+                    list.forEach {
+                        sprites.add(it?.load())
+                    }
+
+                    observableExternal.add(ImageArchive(HashUtils.nameToHash("all.dat"), sprites))
                 }
                 return true
             }
@@ -133,7 +135,10 @@ class SpriteController : Controller() {
     }
 
     fun start() {
+        //Quick start method for developing
         importBinary()
+
+        //Load cache file store
         val fs = IndexedFileSystem.init(Paths.get("./cache/"))
         fs.load()
         importCache(fs)
@@ -148,28 +153,32 @@ class SpriteController : Controller() {
 
                     val mediaArchive = Archive.decode(store.readFile(Archive.MEDIA_ARCHIVE))
 
-                    for(entry in mediaArchive.entries) {
-                        val sprites = mutableListOf<Sprite>()
+                    //Load all sprites for each entry into an array
+                    for (entry in mediaArchive.entries) {
+                        val sprites = mutableListOf<Sprite?>()
                         var index = 0
-                        while (true) {
+                        spriteLoop@ while (true) {
                             try {
                                 val sprite = Sprite.decode(mediaArchive, entry.hash, index)
                                 sprites.add(sprite)
                                 index++
                             } catch (ex: Exception) {
-                                break
+                                break@spriteLoop
                             }
                         }
 
-                        if(sprites.size > 0)
+                        if (sprites.size > 0)
                             observableInternal.add(ImageArchive(entry.hash, sprites))
 
-//                        println(String.format("There are %d sprites in archive %s", index, entry.hash))
+                        println("There are $index sprites in archive $entry.hash")
                     }
 
-                    val sortedList = observableInternal.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { getName(it.hash) }))
-                    observableInternal.clear()
-                    observableInternal.addAll(sortedList)
+                    //Sort archives alphabetically
+                    if(Settings.getBoolean(Settings.SORT_CACHE_SPRITES)) {
+                        val sortedList = observableInternal.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { getName(it.hash) }))
+                        observableInternal.clear()
+                        observableInternal.addAll(sortedList)
+                    }
 
                 } catch (e: Throwable) {
                     e.printStackTrace()
@@ -181,13 +190,17 @@ class SpriteController : Controller() {
     }
 
     fun getName(hash: Int): String {
+        //Get known hashes
         val inputStream: InputStream = javaClass.getResourceAsStream("4.txt")
         val lineList = mutableListOf<String>()
         inputStream.bufferedReader().useLines { lines -> lines.forEach { lineList.add(it) } }
+
+        //If match return (without the .dat)
         lineList.forEach {
             if (HashUtils.nameToHash(it) == hash)
-                return it
+                return it.substring(0, it.length - 4)
         }
+        //Otherwise just return the hash id
         return hash.toString()
     }
 }

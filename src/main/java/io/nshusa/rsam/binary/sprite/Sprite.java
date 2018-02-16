@@ -5,8 +5,10 @@ import io.nshusa.rsam.graphics.render.Raster;
 import io.nshusa.rsam.util.ByteBufferUtils;
 import io.nshusa.rsam.util.HashUtils;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -218,9 +220,7 @@ public final class Sprite {
     }
 
     public BufferedImage toBufferedImage() {
-
         BufferedImage image = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB);
-
         final int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
         System.arraycopy(this.pixels, 0, pixels, 0, this.pixels.length);

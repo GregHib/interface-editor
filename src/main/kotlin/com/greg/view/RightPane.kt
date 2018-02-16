@@ -137,7 +137,7 @@ class RightPane : Fragment() {
                                 CappedPropertyItem(property.property.name.capitalize(), property.category, property.property, property.range)
                             else
                                 PropertyItem(property.property.name.capitalize(), property.category, property.property)
-                            if(property is ResizedPropertyValues)
+                            if (property is ResizedPropertyValues)
                                 item.disabled = property.resize
                             sheet.items.add(item)
                         }
@@ -160,15 +160,16 @@ class RightPane : Fragment() {
         })
     }
 
-    override val root = drawer {
-        item("Properties", expanded = true) {
-            vbox {
-                add(sheet)
+    override val root =
+            drawer {
+                item("Properties", expanded = true) {
+                    vbox {
+                        add(sheet)
+                    }
+                }
+                item("CS2 Editor") {
+                }
             }
-        }
-        item("CS2 Editor") {
-        }
-    }
 
     val onSelection: (String) -> Unit = {
         sheet.items.clear()

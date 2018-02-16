@@ -25,9 +25,10 @@ open class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width
     }
 
     open fun loadSprite() {
-        if(getSprite() >= 0 && getSprite() < SpriteController.filteredExternal.size) {
-            val container = SpriteController.filteredExternal[getSprite()]
-            displayImage(container.sprite.toBufferedImage())
+        if(getSprite() >= 0 && getSprite() < SpriteController.observableExternal[0].sprites.size) {
+            val sprite = SpriteController.observableExternal[0].sprites[getSprite()]
+            if(sprite != null)
+                displayImage(sprite.toBufferedImage())
         }
     }
 

@@ -29,6 +29,8 @@ enum class Settings(var default: Any) {
     DISABLE_LOCK_ON_UNHIDDEN(false),
     DEFAULT_SPRITE_ID(0),
     DEFAULT_SPRITE_ARCHIVE_NAME(""),
+    SORT_CACHE_SPRITES(true),
+
     SPRITE_BACKGROUND_COLOUR(0xff00ff),
     ;
 
