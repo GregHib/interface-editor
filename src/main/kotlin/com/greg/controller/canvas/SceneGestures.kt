@@ -47,6 +47,7 @@ internal class SceneGestures(private var canvas: PannableCanvas) {
     val onScrollEventHandler: EventHandler<ScrollEvent> = EventHandler { event ->
         val delta = 1.2
 
+
         var scale = canvas.scale
         val oldScale = scale
 
