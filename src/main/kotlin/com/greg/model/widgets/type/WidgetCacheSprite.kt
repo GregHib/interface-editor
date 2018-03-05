@@ -2,12 +2,11 @@ package com.greg.model.widgets.type
 
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
+import com.greg.model.widgets.properties.extended.StringProperty
 
 class WidgetCacheSprite(builder: WidgetBuilder, id: Int) : WidgetSprite(builder, id) {
 
-    private var archive: SimpleStringProperty? = null
+    private var archive: StringProperty? = null
 
     fun getArchive(): String {
         return archiveProperty().get()
@@ -19,7 +18,7 @@ class WidgetCacheSprite(builder: WidgetBuilder, id: Int) : WidgetSprite(builder,
 
     fun archiveProperty(): StringProperty {
         if (archive == null)
-            archive = SimpleStringProperty(this, "archive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
+            archive = StringProperty(this, "archive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
 
         return archive!!
     }

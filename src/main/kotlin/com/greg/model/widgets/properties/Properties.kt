@@ -1,7 +1,7 @@
 package com.greg.model.widgets.properties
 
+import com.greg.model.widgets.properties.extended.ToggleProperty
 import javafx.beans.property.ObjectProperty
-import javafx.beans.property.Property
 
 class Properties {
     private val properties = mutableListOf<PropertyValues>()
@@ -10,23 +10,21 @@ class Properties {
         return properties
     }
 
-    fun get(property: Property<*>): PropertyValues? {
+    fun get(property: ToggleProperty): PropertyValues? {
         return properties.firstOrNull { it.property == property }
     }
 
-    fun add(property: Property<*>, category: String = "Properties") {
+    fun add(property: ToggleProperty, category: String = "Properties") {
         properties.add(PropertyValues(property, category))
     }
 
-    fun addPanel(property: Property<*>, panel: Boolean, category: String = "Properties") {
+    fun addPanel(property: ToggleProperty, panel: Boolean, category: String = "Properties") {
         properties.add(PanelPropertyValues(property, category, panel))
     }
 
-    fun addEditable(property: Property<*>, resize: Boolean, category: String = "Properties") {
-        properties.add(ResizedPropertyValues(property, category, resize))
-    }
-
-    fun addCapped(property: Property<*>, range: ObjectProperty<IntRange>, resize: Boolean = false, category: String = "Properties") {
-        properties.add(CappedPropertyValues(property, category, resize, range))
+    fun addCapped(property: ToggleProperty, range: ObjectProperty<IntRange>, category: String = "Properties") : PropertyValues {
+        val values = CappedPropertyValues(property, category, range)
+        properties.add(values)
+        return values
     }
 }

@@ -1,6 +1,6 @@
 package com.greg.model.widgets.properties
 
+import com.greg.model.widgets.properties.extended.ToggleProperty
 import javafx.beans.property.ObjectProperty
-import javafx.beans.property.Property
 
-class CappedPropertyValues(property: Property<*>, category: String, resize: Boolean, val range: ObjectProperty<IntRange>) : ResizedPropertyValues(property, category, resize)
+class CappedPropertyValues(property: ToggleProperty, category: String, val range: ObjectProperty<IntRange>) : PropertyValues(property, category)

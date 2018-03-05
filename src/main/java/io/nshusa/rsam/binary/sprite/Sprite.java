@@ -5,15 +5,15 @@ import io.nshusa.rsam.graphics.render.Raster;
 import io.nshusa.rsam.util.ByteBufferUtils;
 import io.nshusa.rsam.util.HashUtils;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public final class Sprite {
 
+    private int id;
+    private int archiveHash;
     private int width;
     private int height;
     private int offsetX;
@@ -50,6 +50,8 @@ public final class Sprite {
         ByteBuffer metaBuf = archive.readFile("index.dat");
 
         Sprite sprite = new Sprite();
+        sprite.id = id;
+        sprite.archiveHash = hash;
 
         // position of the current image archive within the archive
         metaBuf.position(dataBuf.getShort() & 0xFFFF);
@@ -290,6 +292,14 @@ public final class Sprite {
 
     public void setFormat(int format) {
         this.format = format;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getArchive() {
+        return archiveHash;
     }
 
 }

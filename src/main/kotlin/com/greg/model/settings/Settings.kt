@@ -79,7 +79,7 @@ enum class Settings(var default: Any) {
             return preferences.getDouble(setting.key, setting.default as Double)
         }
 
-        fun getColour(setting: Settings): Color? {
+        fun getColour(setting: Settings): Color {
             val colour = get(setting)
             return Color.valueOf(colour)
         }
