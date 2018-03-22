@@ -1,5 +1,6 @@
 package com.greg.view.sprites
 
+import com.greg.controller.cache.CacheController
 import com.greg.controller.utils.BSPUtils
 import com.greg.controller.utils.Dialogue
 import com.greg.model.settings.Settings
@@ -22,7 +23,6 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.Files
-import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import kotlin.experimental.and
 
@@ -139,9 +139,7 @@ class SpriteController : Controller() {
         importBinary()
 
         //Load cache file store
-        val fs = IndexedFileSystem.init(Paths.get("./cache/"))
-        fs.load()
-        importCache(fs)
+        importCache(CacheController.fs!!)
     }
 
     fun importCache(fs: IndexedFileSystem) {

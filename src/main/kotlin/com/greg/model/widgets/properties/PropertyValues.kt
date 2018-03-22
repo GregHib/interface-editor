@@ -1,5 +1,5 @@
 package com.greg.model.widgets.properties
 
-import javafx.beans.property.Property
+import com.greg.model.widgets.properties.extended.ToggleProperty
 
-open class PropertyValues(val property: Property<*>, val category: String)
+open class PropertyValues(val property: ToggleProperty, val category: String)

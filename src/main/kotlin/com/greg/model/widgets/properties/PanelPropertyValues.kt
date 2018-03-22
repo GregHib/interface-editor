@@ -1,5 +1,5 @@
 package com.greg.model.widgets.properties
 
-import javafx.beans.property.Property
+import com.greg.model.widgets.properties.extended.ToggleProperty
 
-class PanelPropertyValues(property: Property<*>, category: String, val panel: Boolean) : PropertyValues(property, category)
+class PanelPropertyValues(property: ToggleProperty, category: String, val panel: Boolean) : PropertyValues(property, category)

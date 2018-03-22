@@ -1,15 +1,14 @@
 package com.greg.view.canvas.widgets
 
 import com.greg.model.settings.Settings
+import com.greg.model.widgets.properties.extended.StringProperty
 import com.greg.view.sprites.SpriteController
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
 import javafx.scene.image.ImageView
 import tornadofx.add
 
 class CacheSpriteShape(id: Int, width: Int, height: Int) : SpriteShape(id, width, height) {
 
-    var archive: SimpleStringProperty? = null
+    var archive: StringProperty? = null
     private val image = ImageView()
 
     init {
@@ -39,7 +38,7 @@ class CacheSpriteShape(id: Int, width: Int, height: Int) : SpriteShape(id, width
 
     fun archiveProperty(): StringProperty {
         if (archive == null)
-            archive = SimpleStringProperty(this, "archive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
+            archive = StringProperty(this, "archive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
 
         return archive!!
     }

@@ -9,12 +9,14 @@ How to detect revision of cache attempted to be loaded? Xaves
 
 // Features
 //----------------------
+Fix unable to select widgets (just text?) until group selected them
 Fixed mac drag image offset different from windows
 Fix sprite sizes when dropped (e.g internal sprite 0)
 Fix hash named dragged sprites invisible (.value mismatch?)
 Support for when there are no sprites (cache/external not loaded yet)
 No canvas/features, for when no cache loaded.
 Canvas background
+Improve sprite support (will need support for 667 and osrs in the future so make sure the current external/internal sprite systems are children of the same parent)
 Improve how properties are handled, support for disabling set ones depending on type, hidden (not on panel), capped values (instead of how currently handled, make a custom ObjectProperty wrapper which contains both properties?), and categories (ofc) - make a PropertyFactory
 Array of colours to replace with transparency in settings
 Replace sprite colours in the image in sprite tabs

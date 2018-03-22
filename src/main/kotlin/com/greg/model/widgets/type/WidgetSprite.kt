@@ -2,16 +2,14 @@ package com.greg.model.widgets.type
 
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
+import com.greg.model.widgets.properties.extended.IntProperty
+import com.greg.model.widgets.properties.extended.ObjProperty
 import com.greg.view.sprites.SpriteController
-import javafx.beans.property.IntegerProperty
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleIntegerProperty
-import javafx.beans.property.SimpleObjectProperty
 
 open class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
 
-    private var cap: ObjectProperty<IntRange>? = null
-    private var sprite: IntegerProperty? = null
+    private var cap: ObjProperty<IntRange>? = null
+    private var sprite: IntProperty? = null
 
     fun getSprite(): Int {
         return spriteProperty().get()
@@ -21,9 +19,9 @@ open class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
         spriteProperty().set(value)
     }
 
-    fun spriteProperty(): IntegerProperty {
+    fun spriteProperty(): IntProperty {
         if (sprite == null)
-            sprite = SimpleIntegerProperty(this, "sprite", Settings.getInt(Settings.DEFAULT_SPRITE_ID))
+            sprite = IntProperty(this, "sprite", Settings.getInt(Settings.DEFAULT_SPRITE_ID))
 
         return sprite!!
     }
@@ -33,14 +31,16 @@ open class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
         capProperty().set(range)
     }
 
-    fun capProperty(): ObjectProperty<IntRange> {
+    fun capProperty(): ObjProperty<IntRange> {
         if (cap == null)
-            cap = SimpleObjectProperty(this, "cap", IntRange(0, SpriteController.observableExternal[0].sprites.size))
+            cap = ObjProperty(this, "cap", IntRange(0, SpriteController.observableExternal[0].sprites.size))
 
         return cap!!
     }
 
     init {
         properties.addCapped(spriteProperty(), capProperty())
+        widthToggle.property.setDisabled(true)
+        heightToggle.property.setDisabled(true)
     }
 }

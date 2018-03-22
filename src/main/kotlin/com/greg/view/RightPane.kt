@@ -3,18 +3,18 @@ package com.greg.view
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.properties.CappedPropertyValues
 import com.greg.model.widgets.properties.PanelPropertyValues
-import com.greg.model.widgets.properties.ResizedPropertyValues
 import com.greg.model.widgets.type.Widget
 import com.greg.view.properties.CappedPropertyItem
 import com.greg.view.properties.NumberSpinner
 import com.greg.view.properties.PropertyItem
+import com.greg.view.properties.TextAreaProperty
 import com.greg.view.sprites.SpriteController
 import javafx.beans.property.Property
 import javafx.collections.ListChangeListener
 import javafx.event.ActionEvent
 import javafx.scene.control.ColorPicker
 import javafx.scene.control.ComboBox
-import javafx.scene.control.TextField
+import javafx.scene.control.TextArea
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.ScrollEvent
@@ -96,10 +96,10 @@ class RightPane : Fragment() {
                             box?.valueProperty()?.bindBidirectional(param.objectProperty as Property<String>?)
                             editor
                         } else {
-                            val editor = Editors.createTextEditor(param)
+                            val editor = TextAreaProperty(param)//Editors.createTextEditor(param)
                             val field = editor.editor
 
-                            if (field is TextField) {
+                            if (field is TextArea) {
                                 field.textProperty().bindBidirectional(param.objectProperty as Property<String>?)
                                 field.focusedProperty().addListener { _, _, newValue ->
                                     if (newValue)
@@ -107,9 +107,9 @@ class RightPane : Fragment() {
                                     else
                                         widgets.finish()
                                 }
-                                field.setOnAction {
+                                /*field.setOnAction {
                                     widgets.finish()
-                                }
+                                }*/
                             }
                             editor
                         }
@@ -134,11 +134,12 @@ class RightPane : Fragment() {
                         .filter { !(it is PanelPropertyValues && !it.panel) }
                         .forEach { property ->
                             val item = if (property is CappedPropertyValues)
-                                CappedPropertyItem(property.property.name.capitalize(), property.category, property.property, property.range)
+                                CappedPropertyItem((property.property as Property<*>).name.capitalize(), property.category, property.property, property.range)
                             else
-                                PropertyItem(property.property.name.capitalize(), property.category, property.property)
-                            if (property is ResizedPropertyValues)
-                                item.disabled = property.resize
+                                PropertyItem((property.property as Property<*>).name.capitalize(), property.category, property.property)
+
+                            item.disabled = property.property.isDisabled()
+
                             sheet.items.add(item)
                         }
 
@@ -150,9 +151,9 @@ class RightPane : Fragment() {
                                     it.list
                                             .filter { it != first && it.type == first.type }
                                             .forEach { widget ->
-                                                widget.properties.get().filter {
+                                                (widget.properties.get().filter {
                                                     !(it is PanelPropertyValues && !it.panel)
-                                                }[index].property.value = newValue
+                                                }[index].property as Property<*>).value = newValue
                                             }
                                 }
                         }
