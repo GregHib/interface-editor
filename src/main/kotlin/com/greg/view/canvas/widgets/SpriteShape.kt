@@ -1,5 +1,6 @@
 package com.greg.view.canvas.widgets
 
+import com.greg.controller.widgets.WidgetsController
 import com.greg.model.settings.Settings
 import com.greg.view.sprites.SpriteController
 import javafx.beans.property.IntegerProperty
