@@ -1,13 +1,10 @@
 package com.greg.view
 
-import com.greg.controller.cache.CacheController
-import com.greg.model.cache.widgets.WidgetsList
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.WidgetType
 import com.greg.view.canvas.CanvasView
 import javafx.scene.input.KeyEvent
 import javafx.scene.shape.Rectangle
-import javafx.stage.StageStyle
 import tornadofx.*
 import tornadofx.controlsfx.content
 import tornadofx.controlsfx.notificationPane
@@ -16,14 +13,12 @@ import tornadofx.controlsfx.notificationPane
 class MainView : View() {
 
     private val widgets: WidgetsController by inject()
-    private val cache: CacheController by inject()
 
     private val canvas = CanvasView()
     private val rightPane = RightPane()
     private val leftPane = LeftPane()
 
     init {
-        cache.init("./cache/")
 
         primaryStage.addEventFilter(KeyEvent.ANY, {
             canvas.handleKeyEvents(it)
@@ -51,11 +46,6 @@ class MainView : View() {
             menu("File") {
                 menu("Load") {
                     item("Sprites.dat").action { leftPane.loadImages() }
-                }
-            }
-            menu("Load") {
-                item("test").action {
-                    WidgetsList().openModal(stageStyle = StageStyle.UTILITY)
                 }
             }
         }

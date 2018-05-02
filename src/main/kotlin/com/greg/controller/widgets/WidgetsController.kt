@@ -3,15 +3,12 @@ package com.greg.controller.widgets
 import com.greg.controller.actions.ActionController
 import com.greg.controller.actions.ChangeType
 import com.greg.model.settings.Settings
-import com.greg.model.widgets.WidgetBuilder
-import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.WidgetsList
 import com.greg.model.widgets.type.*
 import com.greg.view.canvas.widgets.*
 import com.greg.view.sprites.SpriteController
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
-import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 import tornadofx.Controller
 import tornadofx.observable
@@ -241,71 +238,4 @@ class WidgetsController : Controller() {
             }
         }
     }
-
-    fun open(selected: io.nshusa.rsam.binary.Widget, controller: SpriteController) {
-        if (selected.group == io.nshusa.rsam.binary.Widget.TYPE_CONTAINER) {
-            if (selected.children == null || selected.children.isEmpty())
-                return
-
-            val parent = selected
-
-            for (childIndex in 0 until selected.children.size) {
-
-                val child = io.nshusa.rsam.binary.Widget.lookup(selected.children[childIndex]) ?: continue
-
-                val childImage = child.toBufferedImage() ?: continue
-
-                if (childImage.width <= 0 || childImage.height <= 0)
-                    continue
-
-                when(child.group) {
-                    io.nshusa.rsam.binary.Widget.TYPE_SPRITE -> {
-                        if(child.defaultSprite != null) {
-                            val widget = WidgetBuilder(WidgetType.CACHE_SPRITE).build(child.id) as WidgetCacheSprite
-                            widget.setArchive(controller.getName(child.defaultSprite.archive))
-                            widget.setWidth(child.width)
-                            widget.setHeight(child.height)
-                            widget.setSprite(child.defaultSprite.id)
-
-                            widgets.add(widget)
-                            widget.setX(parent.childX[childIndex] + child.defaultSprite.offsetX)
-                            widget.setY(parent.childY[childIndex] + child.defaultSprite.offsetY)
-                        }
-                    }
-                    io.nshusa.rsam.binary.Widget.TYPE_TEXT -> {
-                        val widget = WidgetBuilder(WidgetType.TEXT).build(child.id) as WidgetText
-                        widget.setWidth(child.width)
-                        widget.setHeight(child.height)
-                        widget.setText(child.defaultText.replace("\\n", "\n"))
-                        val red = child.defaultColour shr 16 and 0xFF
-                        val green = child.defaultColour shr 8 and 0xFF
-                        val blue = child.defaultColour and 0xFF
-                        widget.setColour(Color.rgb(red, green, blue))
-                        widgets.add(widget)
-
-                        widget.setX(parent.childX[childIndex])
-                        widget.setY(parent.childY[childIndex])
-                    }
-                    io.nshusa.rsam.binary.Widget.TYPE_RECTANGLE -> {
-                        val widget = WidgetBuilder(WidgetType.RECTANGLE).build(child.id) as WidgetRectangle
-                        widget.setWidth(child.width)
-                        widget.setHeight(child.height)
-                        val red = child.defaultColour shr 16 and 0xFF
-                        val green = child.defaultColour shr 8 and 0xFF
-                        val blue = child.defaultColour and 0xFF
-                        widget.setFill(Color.rgb(red, green, blue))
-                        widgets.add(widget)
-
-                        widget.setX(parent.childX[childIndex])
-                        widget.setY(parent.childY[childIndex])
-                    }
-                    else -> {
-                        println("Child: ${child.id} ${child.group}")
-                    }
-                }
-                //parent.childX[childIndex].toDouble(), parent.childY[childIndex].toDouble()
-            }
-        }
-    }
-
 }

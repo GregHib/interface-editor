@@ -1,14 +1,9 @@
 package com.greg.view.sprites
 
-import com.greg.controller.cache.CacheController
 import com.greg.controller.utils.BSPUtils
 import com.greg.controller.utils.Dialogue
-import com.greg.model.settings.Settings
 import com.greg.view.sprites.external.SpriteLoader
 import com.greg.view.sprites.tree.ImageArchive
-import io.nshusa.rsam.FileStore
-import io.nshusa.rsam.IndexedFileSystem
-import io.nshusa.rsam.binary.Archive
 import io.nshusa.rsam.binary.sprite.Sprite
 import io.nshusa.rsam.util.HashUtils
 import javafx.application.Platform
@@ -27,8 +22,8 @@ import java.nio.file.StandardOpenOption
 import kotlin.experimental.and
 
 class SpriteController : Controller() {
-
     companion object {
+
         val placeholderIcon = Image(SpriteController::class.java.getResourceAsStream("./placeholder.png"))
 
         var observableExternal: ObservableList<ImageArchive> = FXCollections.observableArrayList()
@@ -137,54 +132,6 @@ class SpriteController : Controller() {
     fun start() {
         //Quick start method for developing
         importBinary()
-
-        //Load cache file store
-        importCache(CacheController.fs!!)
-    }
-
-    fun importCache(fs: IndexedFileSystem) {
-        val task: Task<Boolean> = object : Task<Boolean>() {
-
-            override fun call(): Boolean {
-                try {
-                    val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
-
-                    val mediaArchive = Archive.decode(store.readFile(Archive.MEDIA_ARCHIVE))
-
-                    //Load all sprites for each entry into an array
-                    for (entry in mediaArchive.entries) {
-                        val sprites = mutableListOf<Sprite?>()
-                        var index = 0
-                        spriteLoop@ while (true) {
-                            try {
-                                val sprite = Sprite.decode(mediaArchive, entry.hash, index)
-                                sprites.add(sprite)
-                                index++
-                            } catch (ex: Exception) {
-                                break@spriteLoop
-                            }
-                        }
-
-                        if (sprites.size > 0)
-                            observableInternal.add(ImageArchive(entry.hash, sprites))
-
-                        println("There are $index sprites in archive $entry.hash")
-                    }
-
-                    //Sort archives alphabetically
-                    if(Settings.getBoolean(Settings.SORT_CACHE_SPRITES)) {
-                        val sortedList = observableInternal.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { getName(it.hash) }))
-                        observableInternal.clear()
-                        observableInternal.addAll(sortedList)
-                    }
-
-                } catch (e: Throwable) {
-                    e.printStackTrace()
-                }
-                return true
-            }
-        }
-        Thread(task).start()
     }
 
     fun getName(hash: Int): String {
