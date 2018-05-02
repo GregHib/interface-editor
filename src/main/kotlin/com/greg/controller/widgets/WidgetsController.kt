@@ -9,6 +9,7 @@ import com.greg.view.canvas.widgets.*
 import com.greg.view.sprites.SpriteController
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
+import javafx.scene.Node
 import javafx.scene.shape.Shape
 import tornadofx.Controller
 import tornadofx.observable
@@ -59,12 +60,8 @@ class WidgetsController : Controller() {
     }
 
     fun getWidget(target: EventTarget?): Widget? {
-        if (target is Shape) {
-            val parent = target.parent
-            if (parent is WidgetShape)
-                return widgets.get(parent)
-        }
-        return null
+        val shape = getShape(target) ?: return null
+        return widgets.get(shape)
     }
 
 
@@ -74,9 +71,14 @@ class WidgetsController : Controller() {
 
     fun getShape(target: EventTarget?): WidgetShape? {
         if (target is Shape) {
-            val parent = target.parent
+            var parent = target.parent
             if (parent is WidgetShape)
                 return parent
+            else if(parent is Node) {
+                parent = parent.parent
+                if(parent is WidgetShape)
+                    return parent
+            }
         }
         return null
     }

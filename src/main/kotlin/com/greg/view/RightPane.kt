@@ -40,6 +40,7 @@ class RightPane : Fragment() {
 
     init {
         sheet.minWidth = 284.0
+        sheet.prefWidth = 284.0
         sheet.propertyEditorFactory = Callback<Item, PropertyEditor<*>> { param ->
             if (param is PropertyItem) {
                 when {
