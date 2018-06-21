@@ -10,7 +10,7 @@ import tornadofx.controlsfx.content
 import tornadofx.controlsfx.notificationPane
 
 
-class MainView : View() {
+class MainView : View("Greg's Interface Editor") {
 
     private val widgets: WidgetsController by inject()
 
@@ -19,7 +19,6 @@ class MainView : View() {
     private val leftPane = LeftPane()
 
     init {
-
         primaryStage.addEventFilter(KeyEvent.ANY, {
             canvas.handleKeyEvents(it)
             leftPane.handleKeyEvents(it)
