@@ -24,7 +24,7 @@ import kotlin.experimental.and
 class SpriteController : Controller() {
     companion object {
 
-        val placeholderIcon = Image(SpriteController::class.java.getResourceAsStream("./placeholder.png"))
+        val placeholderIcon = Image(SpriteController::class.java.getResourceAsStream("placeholder.png"))
 
         var observableExternal: ObservableList<ImageArchive> = FXCollections.observableArrayList()
 

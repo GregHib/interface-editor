@@ -64,7 +64,6 @@ class WidgetsController : Controller() {
         return widgets.get(shape)
     }
 
-
     fun getWidget(target: WidgetShape): Widget? {
         return widgets.get(target)
     }
