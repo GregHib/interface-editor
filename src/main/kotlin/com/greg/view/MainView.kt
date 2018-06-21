@@ -1,7 +1,6 @@
 package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.widgets.WidgetType
 import com.greg.view.canvas.CanvasView
 import javafx.scene.input.KeyEvent
 import javafx.scene.shape.Rectangle
@@ -27,7 +26,6 @@ class MainView : View("Greg's Interface Editor") {
             it.next()
             canvas.refresh(it)
         }
-        canvas.createAndDisplay(WidgetType.TEXT)
         leftPane.hierarchy.rootTreeItem.children.addListener(canvas.hierarchyListener)
 
         leftPane.controller.start()
