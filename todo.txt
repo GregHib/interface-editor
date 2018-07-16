@@ -9,7 +9,6 @@ How to detect revision of cache attempted to be loaded? Xaves
 
 // Features
 //----------------------
-Fix unable to select widgets (just text?) until group selected them
 Fixed mac drag image offset different from windows
 Fix sprite sizes when dropped (e.g internal sprite 0)
 Fix hash named dragged sprites invisible (.value mismatch?)

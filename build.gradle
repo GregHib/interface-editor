@@ -24,7 +24,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile group: 'com.google.guava', name: 'guava', version: '23.6-jre'
-    compile group: 'no.tornado', name: 'tornadofx', version: '1.7.14'
+    compile group: 'no.tornado', name: 'tornadofx', version: '1.7.15'
     compile group: 'no.tornado', name: 'tornadofx-controlsfx', version: '0.1'
     compile group: 'org.apache.commons', name: 'commons-imaging', version: '1.0-R1534292'
     compile group: 'org.apache.commons', name: 'commons-compress', version: '1.15'
