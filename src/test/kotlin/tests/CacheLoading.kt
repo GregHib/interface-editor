@@ -14,7 +14,7 @@ class CacheLoading {
     fun initCache() {
         val path = Paths.get("./cache/")
         val fs = IndexedFileSystem.init(path)
-        Assert.assertEquals("Error caused while initialising cache at $path", fs.root, path)
+        Assert.assertEquals("Error caused while initialising cache at $path", fs.getRoot(), path)
     }
 
     @Test
@@ -36,7 +36,7 @@ class CacheLoading {
         IndexedFileSystem.init(Paths.get("./cache/")).use { fs ->
             fs.load()
             val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
-            Archive.decode(store.readFile(Archive.MEDIA_ARCHIVE))
+            Archive.decode(store!!.readFile(Archive.MEDIA_ARCHIVE)!!)
         }
     }
 
@@ -45,7 +45,7 @@ class CacheLoading {
         IndexedFileSystem.init(Paths.get("./cache/")).use { fs ->
             fs.load()
             val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
-            val archive = Archive.decode(store.readFile(Archive.MEDIA_ARCHIVE))
+            val archive = Archive.decode(store!!.readFile(Archive.MEDIA_ARCHIVE)!!)
             archive.readFile("index.dat")
         }
     }
@@ -55,12 +55,12 @@ class CacheLoading {
         IndexedFileSystem.init(Paths.get("./cache/")).use { fs ->
             fs.load()
             val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
-            val archive = Archive.decode(store.readFile(Archive.MEDIA_ARCHIVE))
+            val archive = Archive.decode(store!!.readFile(Archive.MEDIA_ARCHIVE)!!)
             val index = archive.readFile("index.dat")
 
 
             var total = 0
-            for (entry in archive.entries) {
+            for (entry in archive.getEntries()) {
 
 
                 var sprites = 0

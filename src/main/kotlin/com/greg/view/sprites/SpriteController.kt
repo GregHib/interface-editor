@@ -29,7 +29,7 @@ class SpriteController : Controller() {
         var observableExternal: ObservableList<ImageArchive> = FXCollections.observableArrayList()
 
         private var observableInternal: ObservableList<ImageArchive> = FXCollections.observableArrayList()
-        var filteredInternal = FilteredList(observableInternal, { _ -> true })
+        var filteredInternal = FilteredList(observableInternal) { _ -> true }
 
         fun getArchive(archive: String): ImageArchive? {
             return filteredInternal.firstOrNull { it.hash == HashUtils.nameToHash(archive) }
@@ -74,7 +74,7 @@ class SpriteController : Controller() {
                     dat.read(signature)
 
                     if (signature[0].toChar() != 'b' && signature[1].toChar() != 's' && signature[2].toChar() != 'p') {
-                        Platform.runLater({ Dialogue.showWarning("Detected invalid file format.").showAndWait() })
+                        Platform.runLater { Dialogue.showWarning("Detected invalid file format.").showAndWait() }
                         return false
                     }
 
@@ -108,7 +108,7 @@ class SpriteController : Controller() {
                         }
                     } catch (ex: Exception) {
                         ex.printStackTrace()
-                        Platform.runLater({ Dialogue.showWarning("Detected corrupt file or invalid format.").showAndWait() })
+                        Platform.runLater { Dialogue.showWarning("Detected corrupt file or invalid format.").showAndWait() }
                     }
 
                 }
