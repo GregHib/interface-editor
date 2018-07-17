@@ -136,7 +136,7 @@ class Widget {
         private const val OPTION_RESET_SETTING = 5
         private const val OPTION_CONTINUE = 6
 
-        private const val TYPE_CONTAINER = 0
+        const val TYPE_CONTAINER = 0
         private const val TYPE_MODEL_LIST = 1
         private const val TYPE_INVENTORY = 2
         private const val TYPE_RECTANGLE = 3

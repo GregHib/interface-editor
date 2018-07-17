@@ -1,15 +1,10 @@
 
-import com.greg.model.widgets.type.Widget
 import java.io.IOException
-import io.nshusa.rsam.FileStore
-import io.nshusa.rsam.binary.Archive
-import java.nio.file.Paths
-import io.nshusa.rsam.IndexedFileSystem
 
 object WidgetTest {
     fun run() {
         try {
-            /*IndexedFileSystem.init(Paths.get("./cache/")).use { fs ->
+            /*IndexedFileSystem(Paths.get("./cache/")).use { fs ->
                 val archiveStore = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
 
                 val widgetArchive = Archive.decode(archiveStore.readFile(Archive.INTERFACE_ARCHIVE))

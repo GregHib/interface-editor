@@ -1,57 +1,37 @@
 package io.nshusa.rsam
 
+import com.greg.model.cache.CachePath
 import java.io.Closeable
 import java.io.IOException
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.file.Files
-import java.nio.file.Path
 import java.util.*
 
-class IndexedFileSystem private constructor(private var root: Path?) : Closeable {
+open class IndexedFileSystem(val path: CachePath) : Closeable {
 
     private val fileStores = arrayOfNulls<FileStore>(255)
 
     var isLoaded: Boolean = false
         private set
 
-    val storeCount: Int
-        get() {
-            var count = 0
-            for (i in 0..254) {
-                val indexPath = root!!.resolve("main_file_cache.idx$i")
-                if (Files.exists(indexPath)) {
-                    count++
-                }
-            }
-
-            return count
-        }
+    val storeCount = path.indices?.size ?: 0
 
     fun load(): Boolean {
-        try {
-            if (!Files.exists(root)) {
-                Files.createDirectory(root)
-            }
-
-            val dataPath = root!!.resolve("main_file_cache.dat")
-
-            if (!Files.exists(dataPath)) {
-                return false
-            }
-
-            for (i in 0..254) {
-                val indexPath = root!!.resolve("main_file_cache.idx$i")
-                if (Files.exists(indexPath)) {
-                    fileStores[i] = FileStore(i, RandomAccessFile(dataPath.toFile(), "rw").channel, RandomAccessFile(indexPath.toFile(), "rw").channel)
-                }
-            }
-            isLoaded = true
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        if(!path.isValid())
             return false
+
+        if(!path.isInterfaceFile()) {
+            val data = path.data ?: return false
+
+            val indices = path.indices ?: return false
+
+            indices.forEachIndexed { index, file ->
+                fileStores[index] = FileStore(index, RandomAccessFile(data, "rw").channel, RandomAccessFile(file, "rw").channel)//TODO does it need a new RAF instance every time?
+            }
         }
 
+        isLoaded = true
         return true
     }
 
@@ -65,18 +45,11 @@ class IndexedFileSystem private constructor(private var root: Path?) : Closeable
             return false
         }
 
-        val dataPath = root!!.resolve("main_file_cache.dat")
+        val data = path.data ?: return false
 
-        if (!Files.exists(dataPath)) {
-            Files.createFile(dataPath)
-        }
+        val indices = path.indices ?: return false
 
-        val path = root!!.resolve("main_file_cache.idx$storeId")
-
-        if (!Files.exists(path)) {
-            Files.createFile(path)
-        }
-        fileStores[storeId] = FileStore(storeId + 1, RandomAccessFile(dataPath.toFile(), "rw").channel, RandomAccessFile(path.toFile(), "rw").channel)
+        fileStores[storeId] = FileStore(storeId + 1, RandomAccessFile(data, "rw").channel, RandomAccessFile(indices[storeId], "rw").channel)
         return true
     }
 
@@ -88,7 +61,9 @@ class IndexedFileSystem private constructor(private var root: Path?) : Closeable
         reset()
 
         try {
-            Files.deleteIfExists(root!!.resolve("main_file_cache.idx$storeId"))
+            val indices = path.indices ?: return false
+
+            Files.deleteIfExists(indices[storeId].toPath())
             return true
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -103,13 +78,12 @@ class IndexedFileSystem private constructor(private var root: Path?) : Closeable
                 return false
             }
 
-            val files = root!!.toFile().listFiles() ?: return false
-
             val map = LinkedHashMap<Int, MutableList<ByteBuffer>>()
 
-            for (store in 0..254) {
+            val files = path.getFiles()
 
-                val fileStore = getStore(store) ?: continue
+            files.forEachIndexed { store, _ ->
+                val fileStore = getStore(store)
 
                 map[fileStore.storeId] = ArrayList()
 
@@ -119,16 +93,17 @@ class IndexedFileSystem private constructor(private var root: Path?) : Closeable
                     val data = map[store]
                     data!!.add(buffer)
                 }
-
             }
 
             reset()
 
-            Files.deleteIfExists(root!!.resolve("main_file_cache.dat"))
+            val data = path.data ?: return false
 
-            for (i in fileStores.indices) {
-                Files.deleteIfExists(root!!.resolve("main_file.cache.idx$i"))
-            }
+            val indices = path.indices ?: return false
+
+            Files.deleteIfExists(data.toPath())
+
+            indices.forEach { Files.deleteIfExists(it.toPath()) }
 
             load()
 
@@ -136,10 +111,8 @@ class IndexedFileSystem private constructor(private var root: Path?) : Closeable
 
                 val fileStore = getStore(fileStoreId)
 
-                for (file in 0 until value.size) {
-                    val data = value[file]
-                    fileStore!!.writeFile(file, if (data == null) ByteArray(0) else data.array())
-                }
+                for (file in 0 until value.size)
+                    fileStore.writeFile(file, value[file].array())
 
             }
         } catch (ex: Exception) {
@@ -150,26 +123,16 @@ class IndexedFileSystem private constructor(private var root: Path?) : Closeable
         return true
     }
 
-    fun getStore(storeId: Int): FileStore? {
+    fun getStore(storeId: Int): FileStore {
         if (storeId < 0 || storeId >= fileStores.size) {
-            throw IllegalArgumentException(String.format("storeId=%d out of range=[0, 254]", storeId))
+            throw IllegalArgumentException("storeId=$storeId out of range=[0, 254]")
         }
 
-        return fileStores[storeId]
+        return fileStores[storeId]!!
     }
 
-    fun readFile(storeId: Int, fileId: Int): ByteBuffer? {
-        val store = getStore(storeId)
-        return store!!.readFile(fileId)
-    }
-
-    fun getRoot(): Path? {
-        return root
-    }
-
-    internal fun setRoot(root: Path) {
-        reset()
-        this.root = root
+    open fun readFile(storeId: Int, fileId: Int): ByteBuffer? {
+        return getStore(storeId).readFile(fileId)
     }
 
     fun reset() {
@@ -193,12 +156,4 @@ class IndexedFileSystem private constructor(private var root: Path?) : Closeable
             fileStore.close()
         }
     }
-
-    companion object {
-
-        fun init(root: Path): IndexedFileSystem {
-            return IndexedFileSystem(root)
-        }
-    }
-
 }

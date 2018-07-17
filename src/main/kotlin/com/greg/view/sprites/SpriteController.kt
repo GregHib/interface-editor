@@ -2,6 +2,7 @@ package com.greg.view.sprites
 
 import com.greg.controller.utils.BSPUtils
 import com.greg.controller.utils.Dialogue
+import com.greg.model.cache.CachePath
 import com.greg.view.sprites.external.SpriteLoader
 import com.greg.view.sprites.tree.ImageArchive
 import io.nshusa.rsam.FileStore
@@ -21,7 +22,6 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.Files
-import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import kotlin.experimental.and
 
@@ -46,10 +46,9 @@ class SpriteController : Controller() {
     }
 
     private fun importInternal() {
-        IndexedFileSystem.init(Paths.get("./cache/")).use { fs ->
+        IndexedFileSystem(CachePath(File("./cache/"))).use { fs ->
             fs.load()
-            val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
-            val archive = Archive.decode(store!!.readFile(Archive.MEDIA_ARCHIVE)!!)
+            val archive = Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE)!!)
             val index = archive.readFile("index.dat")
 
 

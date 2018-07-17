@@ -1,24 +1,26 @@
 package tests
 
+import com.greg.model.cache.CachePath
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.IndexedFileSystem
 import io.nshusa.rsam.binary.Archive
 import io.nshusa.rsam.binary.Font
 import io.nshusa.rsam.binary.Widget
 import javafx.scene.control.TreeItem
+import org.junit.Assert
 import org.junit.Test
-import java.nio.file.Paths
+import java.io.File
 
 class CacheInterfaceLoadingTest {
 
-    private val path = Paths.get("./cache/")
+    private val path = CachePath(File("./cache/"))
 
     @Test
     fun loadFonts() {
-        IndexedFileSystem.init(path).use { fs ->
+        IndexedFileSystem(path).use { fs ->
             fs.load()
-            val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
-            val archive = Archive.decode(store!!.readFile(Archive.TITLE_ARCHIVE)!!)
+            val file = fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.TITLE_ARCHIVE)
+            val archive = Archive.decode(file!!)
 
             val smallFont = Font.decode(archive, "p11_full", false)
             val frameFont = Font.decode(archive, "p12_full", false)
@@ -31,15 +33,14 @@ class CacheInterfaceLoadingTest {
 
     @Test
     fun loadInterface() {
-        IndexedFileSystem.init(path).use {
+        IndexedFileSystem(path).use {
             it.load()
 
-            val archiveStore = it.getStore(FileStore.ARCHIVE_FILE_STORE)
-            val widgetArchive = Archive.decode(archiveStore!!.readFile(Archive.INTERFACE_ARCHIVE)!!)
+            val file = it.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)
+            val widgetArchive = Archive.decode(file!!)
 
             Widget.decode(widgetArchive, null, null)
 
-            println(Widget.count())
             for (widget in 0 until Widget.count()) {
 
                 val container = Widget.lookup(widget) ?: continue
@@ -62,6 +63,7 @@ class CacheInterfaceLoadingTest {
 
 //                Platform.runLater {treeTableView.root.children.add(treeItem)}
             }
+            Assert.assertTrue(Widget.count() > 0)
 
         }
     }

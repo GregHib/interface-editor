@@ -1,31 +1,35 @@
 package tests
 
+import com.greg.model.cache.CachePath
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.IndexedFileSystem
 import io.nshusa.rsam.binary.Archive
 import org.junit.Assert
 import org.junit.Test
-import java.nio.file.Paths
+import java.io.File
 
 class CacheLoadingTest {
 
-    private val path = Paths.get("./cache/")
+    private val path = CachePath(File("./cache/"))
 
     @Test
     fun initCache() {
-        val fs = IndexedFileSystem.init(path)
-        Assert.assertEquals("Error caused while initialising cache at $path", fs.getRoot(), path)
+        IndexedFileSystem(path).use { fs ->
+            Assert.assertEquals("Error caused while initialising cache", fs.path, path)
+        }
     }
 
     @Test
     fun loadCache() {
-        val fs = IndexedFileSystem.init(path)
-        Assert.assertTrue("File system failed to load FileStores", fs.load())
+        IndexedFileSystem(path).use { fs ->
+            Assert.assertTrue("File system failed to load FileStores", fs.load())
+            fs.getStore(FileStore.ARCHIVE_FILE_STORE)
+        }
     }
 
     @Test
     fun loadStore() {
-        IndexedFileSystem.init(path).use { fs ->
+        IndexedFileSystem(path).use { fs ->
             fs.load()
             fs.getStore(FileStore.ARCHIVE_FILE_STORE)
         }
@@ -33,28 +37,25 @@ class CacheLoadingTest {
 
     @Test
     fun mediaArchive() {
-        IndexedFileSystem.init(path).use { fs ->
+        IndexedFileSystem(path).use { fs ->
             fs.load()
-            val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
-            Archive.decode(store!!.readFile(Archive.MEDIA_ARCHIVE)!!)
+            Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE)!!)
         }
     }
 
     @Test
     fun interfaceArchive() {
-        IndexedFileSystem.init(path).use { fs ->
+        IndexedFileSystem(path).use { fs ->
             fs.load()
-            val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
-            Archive.decode(store!!.readFile(Archive.INTERFACE_ARCHIVE)!!)
+            Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)!!)
         }
     }
 
     @Test
     fun titleArchive() {
-        IndexedFileSystem.init(path).use { fs ->
+        IndexedFileSystem(path).use { fs ->
             fs.load()
-            val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
-            Archive.decode(store!!.readFile(Archive.TITLE_ARCHIVE)!!)
+            Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.TITLE_ARCHIVE)!!)
         }
     }
 

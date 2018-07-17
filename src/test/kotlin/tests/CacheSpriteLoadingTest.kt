@@ -1,6 +1,7 @@
 package tests
 
 import IntegrationTest
+import com.greg.model.cache.CachePath
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.IndexedFileSystem
 import io.nshusa.rsam.binary.Archive
@@ -8,29 +9,27 @@ import io.nshusa.rsam.binary.sprite.Sprite
 import org.junit.Assert
 import org.junit.Test
 import org.junit.experimental.categories.Category
-import java.nio.file.Paths
+import java.io.File
 
 @Category(IntegrationTest::class)
 class CacheSpriteLoadingTest {
 
-    private val path = Paths.get("./cache/")
+    private val path = CachePath(File("./cache/"))
 
     @Test
     fun loadIndex() {
-        IndexedFileSystem.init(path).use { fs ->
+        IndexedFileSystem(path).use { fs ->
             fs.load()
-            val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
-            val archive = Archive.decode(store!!.readFile(Archive.MEDIA_ARCHIVE)!!)
+            val archive = Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE)!!)
             archive.readFile("index.dat")
         }
     }
 
     @Test
     fun loadSprites(){
-        IndexedFileSystem.init(path).use { fs ->
+        IndexedFileSystem(path).use { fs ->
             fs.load()
-            val store = fs.getStore(FileStore.ARCHIVE_FILE_STORE)
-            val archive = Archive.decode(store!!.readFile(Archive.MEDIA_ARCHIVE)!!)
+            val archive = Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE)!!)
             val index = archive.readFile("index.dat")
 
 

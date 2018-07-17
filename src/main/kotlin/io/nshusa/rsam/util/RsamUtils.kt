@@ -1,18 +1,9 @@
 package io.nshusa.rsam.util
 
-import io.nshusa.rsam.FileStore
+import com.greg.model.cache.CachePath
 import io.nshusa.rsam.IndexedFileSystem
-
 import java.io.File
 import java.io.IOException
-import java.nio.ByteBuffer
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardOpenOption
-import java.nio.file.attribute.FileAttribute
-import java.nio.file.attribute.PosixFileAttributeView
-import java.nio.file.attribute.PosixFileAttributes
 
 object RsamUtils {
 
@@ -25,7 +16,7 @@ object RsamUtils {
     @Throws(IOException::class)
     @JvmStatic
     fun main(args: Array<String>) {
-        IndexedFileSystem.init(Paths.get("cache")).use { fs ->
+        IndexedFileSystem(CachePath(File("cache"))).use { fs ->
 
             val dir = File("./cache/defragmented/")
 
@@ -47,7 +38,7 @@ object RsamUtils {
                 }
             }
 
-            val nFs = IndexedFileSystem.init(dir.toPath())
+            val nFs = IndexedFileSystem(CachePath(dir))
 
             for (storeCount in 0 until fs.storeCount) {
 
