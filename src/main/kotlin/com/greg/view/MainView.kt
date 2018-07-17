@@ -18,14 +18,16 @@ class MainView : View("Greg's Interface Editor") {
     private val leftPane = LeftPane()
 
     init {
-        primaryStage.addEventFilter(KeyEvent.ANY, {
+        primaryStage.addEventFilter(KeyEvent.ANY) {
             canvas.handleKeyEvents(it)
             leftPane.handleKeyEvents(it)
-        })
+        }
+
         widgets.getAll().onChange {
             it.next()
             canvas.refresh(it)
         }
+
         leftPane.hierarchy.rootTreeItem.children.addListener(canvas.hierarchyListener)
 
         leftPane.controller.start()
