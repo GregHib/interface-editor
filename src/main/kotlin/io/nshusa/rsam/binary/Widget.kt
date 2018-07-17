@@ -125,20 +125,22 @@ class Widget {
     }
 
     companion object {
-        val OPTION_CLOSE = 3
-        val OPTION_CONTINUE = 6
         val OPTION_OK = 1
-        val OPTION_RESET_SETTING = 5
-        val OPTION_TOGGLE_SETTING = 4
         val OPTION_USABLE = 2
+        val OPTION_CLOSE = 3
+        val OPTION_TOGGLE_SETTING = 4
+        val OPTION_RESET_SETTING = 5
+        val OPTION_CONTINUE = 6
+
         val TYPE_CONTAINER = 0
-        val TYPE_INVENTORY = 2
-        val TYPE_ITEM_LIST = 7
-        val TYPE_MODEL = 6
         val TYPE_MODEL_LIST = 1
+        val TYPE_INVENTORY = 2
         val TYPE_RECTANGLE = 3
-        val TYPE_SPRITE = 5
         val TYPE_TEXT = 4
+        val TYPE_SPRITE = 5
+        val TYPE_MODEL = 6
+        val TYPE_ITEM_LIST = 7
+
         private var widgets: Array<Widget?>? = null
         private val spriteCache = HashMap<Long, Sprite>()
 
@@ -172,6 +174,7 @@ class Widget {
                     widget.alpha = buffer.get() and 255.toByte()
                     val hover = buffer.get() and 255.toByte()
                     widget.hoverId = if (hover != 0.toByte()) hover - 1 shl 8 or (buffer.get().toInt() and 255) else -1
+
                     val operators = buffer.get().toInt() and 255
                     var scripts: Int
                     if (operators > 0) {
@@ -182,7 +185,7 @@ class Widget {
                         while (scripts < operators) {
                             widget.scriptOperators[scripts] = buffer.get().toInt() and 255
                             widget.scriptDefaults[scripts] = buffer.short.toInt() and '\uffff'.toInt()
-                            ++scripts
+                            scripts++
                         }
                     }
 
@@ -200,11 +203,11 @@ class Widget {
                             for (instruction in 0 until index) {
                                 widget.scripts[font]!![instruction] = buffer.short.toInt() and '\uffff'.toInt()
                             }
-                            ++font
+                            font++
                         }
                     }
 
-                    if (widget.group == 0) {
+                    if (widget.group == TYPE_CONTAINER) {
                         widget.scrollLimit = buffer.short.toInt() and '\uffff'.toInt()
                         widget.hidden = buffer.get().toInt() and 255 == 1
                         font = buffer.short.toInt() and '\uffff'.toInt()
@@ -217,16 +220,16 @@ class Widget {
                             widget.children!![index] = buffer.short.toInt() and '\uffff'.toInt()
                             widget.childX[index] = buffer.short.toInt()
                             widget.childY[index] = buffer.short.toInt()
-                            ++index
+                            index++
                         }
                     }
 
-                    if (widget.group == 1) {
+                    if (widget.group == TYPE_MODEL_LIST) {
                         buffer.short
                         buffer.get()
                     }
 
-                    if (widget.group == 2) {
+                    if (widget.group == TYPE_INVENTORY) {
                         widget.inventoryIds = IntArray(widget.width * widget.height)
                         widget.inventoryAmounts = IntArray(widget.width * widget.height)
                         widget.swappableItems = buffer.get().toInt() and 255 == 1
@@ -251,7 +254,7 @@ class Widget {
                                     widget.sprites[font] = getSprite(graphics, name.substring(0, position), Integer.parseInt(name.substring(position + 1)))
                                 }
                             }
-                            ++font
+                            font++
                         }
 
                         widget.actions = arrayOfNulls(5)
@@ -262,15 +265,15 @@ class Widget {
                             if (widget.actions[font]!!.isEmpty()) {
                                 widget.actions[font] = null
                             }
-                            ++font
+                            font++
                         }
                     }
 
-                    if (widget.group == 3) {
+                    if (widget.group == TYPE_RECTANGLE) {
                         widget.filled = buffer.get().toInt() and 255 == 1
                     }
 
-                    if (widget.group == 4 || widget.group == 1) {
+                    if (widget.group == TYPE_TEXT || widget.group == TYPE_MODEL_LIST) {
                         widget.centeredText = buffer.get().toInt() and 255 == 1
                         font = buffer.get().toInt() and 255
                         if (fonts != null) {
@@ -280,96 +283,98 @@ class Widget {
                         widget.shadowedText = buffer.get().toInt() and 255 == 1
                     }
 
-                    if (widget.group == 4) {
+                    if (widget.group == TYPE_TEXT) {
                         widget.defaultText = ByteBufferUtils.getString(buffer)
                         widget.secondaryText = ByteBufferUtils.getString(buffer)
                     }
 
-                    if (widget.group == 1 || widget.group == 3 || widget.group == 4) {
+                    if (widget.group == TYPE_MODEL_LIST || widget.group == TYPE_RECTANGLE || widget.group == TYPE_TEXT) {
                         widget.defaultColour = buffer.int
                     }
 
-                    if (widget.group != 3 && widget.group != 4) {
-                        if (widget.group == 5) {
-                            var name = ByteBufferUtils.getString(buffer)
-                            if (graphics != null && name.isNotEmpty()) {
-                                index = name.lastIndexOf(",")
-                                widget.defaultSprite = getSprite(graphics, name.substring(0, index), Integer.parseInt(name.substring(index + 1)))
-                            }
-
-                            name = ByteBufferUtils.getString(buffer)
-                            if (graphics != null && name.isNotEmpty()) {
-                                index = name.lastIndexOf(",")
-                                widget.secondarySprite = getSprite(graphics, name.substring(0, index), Integer.parseInt(name.substring(index + 1)))
-                            }
-                        } else if (widget.group == 6) {
-                            font = buffer.get().toInt() and 255
-                            if (font != 0) {
-                                widget.defaultMediaType = 1
-                                widget.defaultMedia = (font - 1 shl 8) + buffer.get() and 255
-                            }
-
-                            font = buffer.get().toInt() and 255
-                            if (font != 0) {
-                                widget.secondaryMediaType = 1
-                                widget.secondaryMedia = (font - 1 shl 8) + buffer.get() and 255
-                            }
-
-                            font = buffer.get().toInt() and 255
-                            widget.defaultAnimationId = if (font != 0) (font - 1 shl 8) + buffer.get() and 255 else -1
-                            font = buffer.get().toInt() and 255
-                            widget.secondaryAnimationId = if (font != 0) (font - 1 shl 8) + buffer.get() and 255 else -1
-                            widget.spriteScale = buffer.short.toInt() and '\uffff'.toInt()
-                            widget.spritePitch = buffer.short.toInt() and '\uffff'.toInt()
-                            widget.spriteRoll = buffer.short.toInt() and '\uffff'.toInt()
-                        } else if (widget.group == 7) {
-                            widget.inventoryIds = IntArray(widget.width * widget.height)
-                            widget.inventoryAmounts = IntArray(widget.width * widget.height)
-                            widget.centeredText = buffer.get().toInt() and 255 == 1
-                            font = buffer.get().toInt() and 255
-                            if (fonts != null) {
-                                widget.font = fonts[font]
-                            }
-
-                            widget.shadowedText = buffer.get().toInt() and 255 == 1
-                            widget.defaultColour = buffer.int
-                            widget.spritePaddingX = buffer.short.toInt()
-                            widget.spritePaddingY = buffer.short.toInt()
-                            widget.hasActions = buffer.get().toInt() and 255 == 1
-                            widget.actions = arrayOfNulls(5)
-
-                            index = 0
-                            while (index < 5) {
-                                widget.actions[index] = ByteBufferUtils.getString(buffer)
-                                if (widget.actions[index]!!.isEmpty()) {
-                                    widget.actions[index] = null
-                                }
-                                ++index
-                            }
-                        }
-                    } else {
+                    if (widget.group == TYPE_RECTANGLE || widget.group == TYPE_TEXT) {
                         widget.secondaryColour = buffer.int
                         widget.defaultHoverColour = buffer.int
                         widget.secondaryHoverColour = buffer.int
                     }
 
-                    if (widget.optionType == 2 || widget.group == 2) {
+                    if (widget.group == TYPE_SPRITE) {
+                        var name = ByteBufferUtils.getString(buffer)
+                        if (graphics != null && name.isNotEmpty()) {
+                            index = name.lastIndexOf(",")
+                            widget.defaultSprite = getSprite(graphics, name.substring(0, index), Integer.parseInt(name.substring(index + 1)))
+                        }
+
+                        name = ByteBufferUtils.getString(buffer)
+                        if (graphics != null && name.isNotEmpty()) {
+                            index = name.lastIndexOf(",")
+                            widget.secondarySprite = getSprite(graphics, name.substring(0, index), Integer.parseInt(name.substring(index + 1)))
+                        }
+                    }
+
+                    if (widget.group == TYPE_MODEL) {
+                        font = buffer.get().toInt() and 255
+                        if (font != 0) {
+                            widget.defaultMediaType = 1
+                            widget.defaultMedia = (font - 1 shl 8) + buffer.get() and 255
+                        }
+
+                        font = buffer.get().toInt() and 255
+                        if (font != 0) {
+                            widget.secondaryMediaType = 1
+                            widget.secondaryMedia = (font - 1 shl 8) + buffer.get() and 255
+                        }
+
+                        font = buffer.get().toInt() and 255
+                        widget.defaultAnimationId = if (font != 0) (font - 1 shl 8) + buffer.get() and 255 else -1
+                        font = buffer.get().toInt() and 255
+                        widget.secondaryAnimationId = if (font != 0) (font - 1 shl 8) + buffer.get() and 255 else -1
+                        widget.spriteScale = buffer.short.toInt() and '\uffff'.toInt()
+                        widget.spritePitch = buffer.short.toInt() and '\uffff'.toInt()
+                        widget.spriteRoll = buffer.short.toInt() and '\uffff'.toInt()
+                    }
+
+                    if (widget.group == TYPE_ITEM_LIST) {
+                        widget.inventoryIds = IntArray(widget.width * widget.height)
+                        widget.inventoryAmounts = IntArray(widget.width * widget.height)
+                        widget.centeredText = buffer.get().toInt() and 255 == 1
+                        font = buffer.get().toInt() and 255
+                        if (fonts != null) {
+                            widget.font = fonts[font]
+                        }
+
+                        widget.shadowedText = buffer.get().toInt() and 255 == 1
+                        widget.defaultColour = buffer.int
+                        widget.spritePaddingX = buffer.short.toInt()
+                        widget.spritePaddingY = buffer.short.toInt()
+                        widget.hasActions = buffer.get().toInt() and 255 == 1
+                        widget.actions = arrayOfNulls(5)
+
+                        index = 0
+                        while (index < 5) {
+                            widget.actions[index] = ByteBufferUtils.getString(buffer)
+                            if (widget.actions[index]!!.isEmpty()) {
+                                widget.actions[index] = null
+                            }
+                            index++
+                        }
+                    }
+
+                    if (widget.optionType == OPTION_USABLE || widget.group == TYPE_INVENTORY) {
                         widget.optionCircumfix = ByteBufferUtils.getString(buffer)
                         widget.optionText = ByteBufferUtils.getString(buffer)
                         widget.optionAttributes = buffer.short.toInt() and '\uffff'.toInt()
                     }
-                } while (widget.optionType != 1 && widget.optionType != 4 && widget.optionType != 5 && widget.optionType != 6)
+
+                } while (widget.optionType != OPTION_OK && widget.optionType != OPTION_TOGGLE_SETTING && widget.optionType != OPTION_RESET_SETTING && widget.optionType != OPTION_CONTINUE)
 
                 widget.hover = ByteBufferUtils.getString(buffer)
                 if (widget.hover.isEmpty()) {
-                    if (widget.optionType == 1) {
-                        widget.hover = "Ok"
-                    } else if (widget.optionType == 4) {
-                        widget.hover = "Select"
-                    } else if (widget.optionType == 5) {
-                        widget.hover = "Select"
-                    } else if (widget.optionType == 6) {
-                        widget.hover = "Continue"
+                    when {
+                        widget.optionType == OPTION_OK -> widget.hover = "Ok"
+                        widget.optionType == OPTION_TOGGLE_SETTING -> widget.hover = "Select"
+                        widget.optionType == OPTION_RESET_SETTING -> widget.hover = "Select"
+                        widget.optionType == OPTION_CONTINUE -> widget.hover = "Continue"
                     }
                 }
             }
