@@ -1,8 +1,12 @@
 package io.nshusa.rsam.binary
 
 import io.nshusa.rsam.binary.sprite.Sprite
+import io.nshusa.rsam.graphics.render.Raster
 import io.nshusa.rsam.util.ByteBufferUtils
 import io.nshusa.rsam.util.HashUtils
+import io.nshusa.rsam.util.RenderUtils
+import java.awt.image.BufferedImage
+import java.awt.image.DataBufferInt
 import java.io.IOException
 import java.util.*
 import kotlin.experimental.and
@@ -85,7 +89,7 @@ class Widget {
         }
     }
 
-    /*fun toBufferedImage(): BufferedImage? {
+    fun toBufferedImage(): BufferedImage? {
         if (this.width > 0 && this.height > 0) {
             Raster.init(this.height, this.width, IntArray(this.width * this.height))
             Raster.reset()
@@ -109,7 +113,7 @@ class Widget {
         } else {
             return null
         }
-    }*/
+    }
 
     fun swapInventoryItems(first: Int, second: Int) {
         var tmp = this.inventoryIds[first]
@@ -125,21 +129,21 @@ class Widget {
     }
 
     companion object {
-        val OPTION_OK = 1
-        val OPTION_USABLE = 2
-        val OPTION_CLOSE = 3
-        val OPTION_TOGGLE_SETTING = 4
-        val OPTION_RESET_SETTING = 5
-        val OPTION_CONTINUE = 6
+        private const val OPTION_OK = 1
+        private const val OPTION_USABLE = 2
+        private const val OPTION_CLOSE = 3
+        private const val OPTION_TOGGLE_SETTING = 4
+        private const val OPTION_RESET_SETTING = 5
+        private const val OPTION_CONTINUE = 6
 
-        val TYPE_CONTAINER = 0
-        val TYPE_MODEL_LIST = 1
-        val TYPE_INVENTORY = 2
-        val TYPE_RECTANGLE = 3
-        val TYPE_TEXT = 4
-        val TYPE_SPRITE = 5
-        val TYPE_MODEL = 6
-        val TYPE_ITEM_LIST = 7
+        private const val TYPE_CONTAINER = 0
+        private const val TYPE_MODEL_LIST = 1
+        private const val TYPE_INVENTORY = 2
+        private const val TYPE_RECTANGLE = 3
+        private const val TYPE_TEXT = 4
+        private const val TYPE_SPRITE = 5
+        private const val TYPE_MODEL = 6
+        private const val TYPE_ITEM_LIST = 7
 
         private var widgets: Array<Widget?>? = null
         private val spriteCache = HashMap<Long, Sprite>()
