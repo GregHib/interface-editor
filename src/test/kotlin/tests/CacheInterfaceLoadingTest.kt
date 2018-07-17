@@ -9,18 +9,16 @@ import io.nshusa.rsam.binary.Widget
 import javafx.scene.control.TreeItem
 import org.junit.Assert
 import org.junit.Test
-import java.io.File
 
 class CacheInterfaceLoadingTest {
 
-    private val path = CachePath(File("./cache/"))
+    private val path = CachePath("./cache/")
 
     @Test
     fun loadFonts() {
         IndexedFileSystem(path).use { fs ->
             fs.load()
-            val file = fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.TITLE_ARCHIVE)
-            val archive = Archive.decode(file!!)
+            val archive = Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.TITLE_ARCHIVE))
 
             val smallFont = Font.decode(archive, "p11_full", false)
             val frameFont = Font.decode(archive, "p12_full", false)
@@ -36,8 +34,7 @@ class CacheInterfaceLoadingTest {
         IndexedFileSystem(path).use {
             it.load()
 
-            val file = it.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)
-            val widgetArchive = Archive.decode(file!!)
+            val widgetArchive = Archive.decode(it.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
 
             Widget.decode(widgetArchive, null, null)
 

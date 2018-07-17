@@ -1,74 +1,102 @@
 package com.greg.model.cache
 
+import com.greg.model.cache.formats.UnpackedFormat
 import java.io.File
+import java.nio.file.Path
 
 
-class CachePath(val file: File) {
+class CachePath {
+    private val path: File
+
+    constructor(path: File) {
+        this.path = path
+    }
+
+    constructor(path: String) : this(File(path))
+
+    constructor(path: Path) : this(path.toFile())
 
     /**
-     * Checks the path is a valid accessible interface file or cache
+     * Checks the path is a valid format
      */
     fun isValid() : Boolean {
-        return file.canRead() && (isInterfaceFile() || checkCacheFiles())
-    }
-
-
-    fun isInterfaceFile() : Boolean {
-        return file.isFile && file.nameWithoutExtension == "interface" && file.extension == "jag"//TODO replace 'interface' name with format check
-    }
-
-    var identifier = "main_file_cache"
-    var data: File? = null
-    var indices: List<File>? = null
-
-    /**
-     * Checks the path is a directory and contains the minimum files required for a valid cache
-     * Records the cache identifier & number of indices to local variables
-     */
-    private fun checkCacheFiles() : Boolean {
-        if(!file.isDirectory)
+        if(!path.exists())
             return false
 
         val files = getFiles()
 
-        //has first index file
-        val index = files.firstOrNull { it.extension == "idx0" } ?: return false
-
-        //cache identifier
-        identifier = index.nameWithoutExtension
-
-        //has cache data file
-        data = files.firstOrNull { it.nameWithoutExtension == identifier && it.extension == "dat" } ?: return false
-
-        //collect index files
-        indices = files.filter { it.nameWithoutExtension == identifier && it.extension.startsWith("idx") }.toList()
-
-        return true
+        return CacheTypes.values().any { it.type.format(path, files) }
     }
 
     /**
-     * Returns all file in path directory
+     * @return cache format type
+     */
+    fun getCacheType(): CacheTypes {
+        val files = getFiles()
+
+        return CacheTypes.values().first { it.type.format(path, files) }
+    }
+
+    /**
+     * @return the cache name identifier, default is "main_file_cache"
+     */
+    private fun getIdentifier(files: List<File>): String? {
+        val index = files.firstOrNull { it.extension == "idx0" } ?: return null
+
+        return index.nameWithoutExtension
+    }
+
+    /**
+     * @return main file cache .dat file
+     */
+    fun getDataFile(files: List<File>): File? {
+
+        val identifier = getIdentifier(files)
+
+        return files.firstOrNull { it.nameWithoutExtension == identifier && it.extension == "dat" }
+    }
+
+    /**
+     * @return list of all the cache index files
+     */
+    fun getIndices(files: List<File>): List<File> {
+
+        val identifier = getIdentifier(files)
+
+        return files.filter { it.nameWithoutExtension == identifier && it.extension.startsWith("idx") }.toList()
+    }
+
+    /**
+     * Checks directory for an unpacked archive file
+     */
+    fun getArchiveFile(files: List<File>, archive: Int): File? {
+        return files.firstOrNull { UnpackedFormat.isFile(it, UnpackedFormat.list[archive]) }
+    }
+
+    /**
+     * Returns all files in the directory
      * @return List of files
      */
     fun getFiles(): List<File> {
-        return file.listFiles().filter { it.isFile }
+        val directory = if(path.isFile) path.parentFile else path
+        return directory.listFiles().filter { it.isFile }
     }
+
+    /**
+     * Misc overrides
+     */
 
     override fun equals(other: Any?): Boolean {
         if(other is CachePath)
-            return file == other.file
+            return path == other.path
         return super.equals(other)
     }
 
     override fun toString(): String {
-        return file.toString()
+        return path.toString()
     }
 
     override fun hashCode(): Int {
-        var result = file.hashCode()
-        result = 31 * result + identifier.hashCode()
-        result = 31 * result + (data?.hashCode() ?: 0)
-        result = 31 * result + (indices?.hashCode() ?: 0)
-        return result
+        return path.hashCode()
     }
 }

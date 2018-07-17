@@ -2,13 +2,10 @@ package io.nshusa.rsam
 
 import io.nshusa.rsam.binary.Archive
 import io.nshusa.rsam.util.ByteBufferUtils
-
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.util.zip.CRC32
-import java.util.zip.Checksum
-import kotlin.experimental.and
 
 class FileStore(val storeId: Int, private val dataChannel: FileChannel, private val metaChannel: FileChannel) {
 

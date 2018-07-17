@@ -11,42 +11,33 @@ import java.util.*
 
 class CachePathTest {
 
-    val path = CachePath(File("./cache/"))
-    val file = CachePath(File("./cache/interface.jag"))
-    val invalid = CachePath(File("./cache/invalid.jag"))
-
-    @Test
-    fun isValid() {
-
-        IndexedFileSystem(path).use { fs ->
-            fs.load()
-        }
-    }
+    private val path = CachePath("./cache/")
+    private val file = CachePath("./cache/interface.jag")
+    private val invalidPath = CachePath("./cache/invalid/")
+    private val invalidFile = CachePath("./cache/invalid.jag")
 
     @Test
     fun cacheDirectory() {
         Assert.assertTrue(path.isValid())
-        Assert.assertFalse(path.isInterfaceFile())
+        Assert.assertTrue(path.getCacheType() == CacheTypes.FULL_CACHE)
     }
 
     @Test
     fun interfaceFile() {
         Assert.assertTrue(file.isValid())
-        Assert.assertTrue(file.isInterfaceFile())
-        Assert.assertFalse(invalid.isValid())
+        Assert.assertTrue(file.getCacheType() == CacheTypes.UNPACKED_CACHE)
 
         IndexedFileSystem(path).use { fs ->
             fs.load()
             val buff = fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)
-            Assert.assertTrue(Arrays.equals(buff!!.array(),
+            Assert.assertTrue(Arrays.equals(buff.array(),
                     ByteBuffer.wrap(File("./cache/interface.jag").readBytes()).array()))
         }
-
-
-
     }
 
     @Test
-    fun validCache() {
+    fun invalidCache() {
+        Assert.assertFalse(invalidPath.isValid())
+        Assert.assertFalse(invalidFile.isValid())
     }
 }

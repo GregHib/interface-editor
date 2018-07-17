@@ -16,7 +16,7 @@ object RsamUtils {
     @Throws(IOException::class)
     @JvmStatic
     fun main(args: Array<String>) {
-        IndexedFileSystem(CachePath(File("cache"))).use { fs ->
+        IndexedFileSystem("cache").use { fs ->
 
             val dir = File("./cache/defragmented/")
 

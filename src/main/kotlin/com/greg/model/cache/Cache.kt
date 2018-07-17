@@ -17,14 +17,14 @@ class Cache(path: CachePath) : IndexedFileSystem(path) {
         }
     }
 
-    override fun readFile(storeId: Int, fileId: Int): ByteBuffer? {
-        if(path.isInterfaceFile() && storeId == FileStore.ARCHIVE_FILE_STORE && fileId == Archive.INTERFACE_ARCHIVE)
-            return ByteBuffer.wrap(path.file.readBytes())
+    override fun readFile(storeId: Int, fileId: Int): ByteBuffer {
+        if(path.getCacheType() == CacheTypes.UNPACKED_CACHE && storeId == FileStore.ARCHIVE_FILE_STORE)
+            return ByteBuffer.wrap(path.getArchiveFile(path.getFiles(), fileId)?.readBytes())
         return super.readFile(storeId, fileId)
     }
 
     fun loadSprites(): Int {
-        val archive = Archive.decode(readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE)!!)
+        val archive = Archive.decode(readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE))
         val index = archive.readFile("index.dat")
 
         val sprites = mutableListOf<Sprite>()

@@ -6,11 +6,10 @@ import io.nshusa.rsam.IndexedFileSystem
 import io.nshusa.rsam.binary.Archive
 import org.junit.Assert
 import org.junit.Test
-import java.io.File
 
 class CacheLoadingTest {
 
-    private val path = CachePath(File("./cache/"))
+    private val path = CachePath("./cache/")
 
     @Test
     fun initCache() {
@@ -39,7 +38,7 @@ class CacheLoadingTest {
     fun mediaArchive() {
         IndexedFileSystem(path).use { fs ->
             fs.load()
-            Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE)!!)
+            Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE))
         }
     }
 
@@ -47,7 +46,7 @@ class CacheLoadingTest {
     fun interfaceArchive() {
         IndexedFileSystem(path).use { fs ->
             fs.load()
-            Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)!!)
+            Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
         }
     }
 
@@ -55,7 +54,7 @@ class CacheLoadingTest {
     fun titleArchive() {
         IndexedFileSystem(path).use { fs ->
             fs.load()
-            Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.TITLE_ARCHIVE)!!)
+            Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.TITLE_ARCHIVE))
         }
     }
 

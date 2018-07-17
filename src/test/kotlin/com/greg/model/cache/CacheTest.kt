@@ -2,11 +2,10 @@ package com.greg.model.cache
 
 import org.junit.Assert
 import org.junit.Test
-import java.io.File
 
 class CacheTest {
 
-    private val path = CachePath(File("./cache/"))
+    private val path = CachePath("./cache/")
     private var cache = Cache(path)
 
     @Test

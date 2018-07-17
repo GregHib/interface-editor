@@ -1,6 +1,7 @@
 package io.nshusa.rsam
 
 import com.greg.model.cache.CachePath
+import com.greg.model.cache.CacheTypes
 import java.io.Closeable
 import java.io.IOException
 import java.io.RandomAccessFile
@@ -8,23 +9,34 @@ import java.nio.ByteBuffer
 import java.nio.file.Files
 import java.util.*
 
-open class IndexedFileSystem(val path: CachePath) : Closeable {
+open class IndexedFileSystem : Closeable {
+
+    val path: CachePath
+
+    constructor(path: CachePath) {
+        this.path = path
+        storeCount = path.getIndices(path.getFiles()).size
+    }
+
+    constructor(path: String) : this(CachePath(path))
 
     private val fileStores = arrayOfNulls<FileStore>(255)
 
     var isLoaded: Boolean = false
         private set
 
-    val storeCount = path.indices?.size ?: 0
+    val storeCount: Int
 
     fun load(): Boolean {
         if(!path.isValid())
             return false
 
-        if(!path.isInterfaceFile()) {
-            val data = path.data ?: return false
+        if(path.getCacheType() == CacheTypes.FULL_CACHE) {
+            val files = path.getFiles()
 
-            val indices = path.indices ?: return false
+            val data = path.getDataFile(files) ?: return false
+
+            val indices = path.getIndices(files)
 
             indices.forEachIndexed { index, file ->
                 fileStores[index] = FileStore(index, RandomAccessFile(data, "rw").channel, RandomAccessFile(file, "rw").channel)//TODO does it need a new RAF instance every time?
@@ -45,9 +57,11 @@ open class IndexedFileSystem(val path: CachePath) : Closeable {
             return false
         }
 
-        val data = path.data ?: return false
+        val files = path.getFiles()
 
-        val indices = path.indices ?: return false
+        val data = path.getDataFile(files) ?: return false
+
+        val indices = path.getIndices(files)
 
         fileStores[storeId] = FileStore(storeId + 1, RandomAccessFile(data, "rw").channel, RandomAccessFile(indices[storeId], "rw").channel)
         return true
@@ -61,7 +75,9 @@ open class IndexedFileSystem(val path: CachePath) : Closeable {
         reset()
 
         try {
-            val indices = path.indices ?: return false
+            val files = path.getFiles()
+
+            val indices = path.getIndices(files)
 
             Files.deleteIfExists(indices[storeId].toPath())
             return true
@@ -97,9 +113,9 @@ open class IndexedFileSystem(val path: CachePath) : Closeable {
 
             reset()
 
-            val data = path.data ?: return false
+            val data = path.getDataFile(files) ?: return false
 
-            val indices = path.indices ?: return false
+            val indices = path.getIndices(files)
 
             Files.deleteIfExists(data.toPath())
 
@@ -131,8 +147,8 @@ open class IndexedFileSystem(val path: CachePath) : Closeable {
         return fileStores[storeId]!!
     }
 
-    open fun readFile(storeId: Int, fileId: Int): ByteBuffer? {
-        return getStore(storeId).readFile(fileId)
+    open fun readFile(storeId: Int, fileId: Int): ByteBuffer {
+        return getStore(storeId).readFile(fileId)?: ByteBuffer.allocate(0)
     }
 
     fun reset() {
