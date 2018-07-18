@@ -58,28 +58,22 @@ class RightPane : Fragment() {
                             }
                         }
 
-                        spinner.focusedProperty().addListener { _, _, newValue ->
+                        spinner.focusedProperty().addListener { _, _, _ ->
                             spinner.editor.fireEvent(ActionEvent())
-
-                            if (newValue)
-                                widgets.start()
-                            else
-                                widgets.finish()
                         }
 
-                        spinner.editor.addEventFilter(ScrollEvent.SCROLL, {
+                        spinner.editor.addEventFilter(ScrollEvent.SCROLL) {
                             if (spinner.editor.isFocused) {
                                 spinner.valueFactory.increment((it.deltaY / 40).toInt())
                             }
-                        })
+                        }
 
                         //Can't override setOnAction
-                        spinner.addEventHandler(KeyEvent.KEY_PRESSED, {
+                        spinner.addEventHandler(KeyEvent.KEY_PRESSED) {
                             if (spinner.editor.isFocused && it.code == KeyCode.ENTER) {
-                                widgets.finish()
                                 it.consume()
                             }
-                        })
+                        }
 
                         editor
                     }
@@ -102,15 +96,6 @@ class RightPane : Fragment() {
 
                             if (field is TextArea) {
                                 field.textProperty().bindBidirectional(param.objectProperty as Property<String>?)
-                                field.focusedProperty().addListener { _, _, newValue ->
-                                    if (newValue)
-                                        widgets.start()
-                                    else
-                                        widgets.finish()
-                                }
-                                /*field.setOnAction {
-                                    widgets.finish()
-                                }*/
                             }
                             editor
                         }

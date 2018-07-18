@@ -58,12 +58,10 @@ class CanvasView : View(), KeyInterface {
         rectangle.widthProperty().bind(widthProperty())
         rectangle.heightProperty().bind(heightProperty())
         clip = rectangle
-
         group {
             //Create canvas
             canvas.layoutX = 100.0
             canvas.layoutY = 100.0
-
             /*val grid = group {
                 for(i in 0..canvas.prefWidth.toInt()/50) {
                     rectangle(i * 50, 0.0, 1.0, canvas.prefHeight) {
@@ -89,7 +87,7 @@ class CanvasView : View(), KeyInterface {
             primaryStage.addEventFilter(KeyEvent.KEY_RELEASED, sceneGestures.onKeyReleasedEventHandler)
         }
 
-        addEventFilter(MouseEvent.ANY, { handleMouseEvents(it)})
+        addEventFilter(MouseEvent.ANY) { handleMouseEvents(it)}
 
         /**
          * Dragging from component panel
@@ -173,6 +171,10 @@ class CanvasView : View(), KeyInterface {
     }
 
     private fun handleKeyPress(event: KeyEvent) {
+        if(event.code == KeyCode.A) {
+            for(i in 0..400)
+                createAndDisplay(WidgetType.RECTANGLE)
+        }
         if (event.code == KeyCode.SPACE) {
             spaceHeld = true
             if (root.cursor != Cursor.OPEN_HAND && root.cursor != Cursor.CLOSED_HAND)

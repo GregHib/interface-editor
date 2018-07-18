@@ -1,7 +1,6 @@
 package com.greg.controller.widgets
 
-import com.greg.controller.actions.ActionController
-import com.greg.controller.actions.ChangeType
+import com.greg.controller.selection.InteractionController
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetsList
 import com.greg.model.widgets.type.*
@@ -21,19 +20,17 @@ class WidgetsController : Controller() {
         val selection = mutableListOf<Widget>().observable()
     }
 //    private val hierarchy: HierarchyController by inject(DefaultScope)
-    val action = ActionController(this)
+    val action = InteractionController(this)
 
 //    val panels = PanelController(this)
 
 //    val refresh = RefreshManager(panels, hierarchy)
 
     fun add(widget: Widget) {
-        recordSingle(ChangeType.ADD, widget)
         widgets.add(widget)
     }
 
     fun remove(widget: Widget) {
-        recordSingle(ChangeType.REMOVE, widget)
         widgets.remove(widget)
     }
 
@@ -100,24 +97,6 @@ class WidgetsController : Controller() {
         action.clone()
     }
 
-    private var counter = 0
-
-    fun start(widget: Widget? = null) {
-        if (counter == 0)
-            action.start(widget)
-
-        counter++
-    }
-
-    fun finish() {
-        val was = counter == 0
-        if (counter > 0)
-            counter--
-
-        if (counter == 0 && !was)
-            action.finish()
-    }
-
     fun cut() {
         action.copy()
         deleteSelection()
@@ -142,28 +121,12 @@ class WidgetsController : Controller() {
         }
     }
 
-    fun redo() {
-        action.redo()
-    }
-
-    fun undo() {
-        action.undo()
-    }
-
     fun paste() {
         action.paste()
     }
 
     fun copy() {
         action.copy()
-    }
-
-    fun record(type: ChangeType, widget: Widget) {
-        action.record(type, widget)
-    }
-
-    private fun recordSingle(type: ChangeType, widget: Widget) {
-        action.addSingle(type, widget)
     }
 
     fun connect(widget: Widget, shape: WidgetShape) {
@@ -190,23 +153,12 @@ class WidgetsController : Controller() {
 
 
         //Listener
-        widget.xProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
-        widget.yProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
-        widget.widthProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
-        widget.heightProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
-        widget.lockedProperty().addListener { _, _, _ -> recordSingle(ChangeType.CHANGE, widget) }
-        widget.hiddenProperty().addListener { _, _, newValue ->
-            shape.isVisible = !newValue
-            recordSingle(ChangeType.CHANGE, widget)
-        }
+        widget.hiddenProperty().addListener { _, _, newValue -> shape.isVisible = !newValue }
 
         if(widget is WidgetRectangle && shape is RectangleShape) {
             shape.rectangle.fillProperty().bind(widget.fillProperty())
             shape.rectangle.strokeProperty().bind(widget.strokeProperty())
 
-            //Records
-            shape.rectangle.fillProperty().addListener { _, _, _ -> recordSingle(ChangeType.CHANGE, widget) }
-            shape.rectangle.strokeProperty().addListener { _, _, _ -> recordSingle(ChangeType.CHANGE, widget) }
         } else if(widget is WidgetText && shape is TextShape) {
             //Binds
             shape.label.textProperty().bind(widget.text)
@@ -214,8 +166,6 @@ class WidgetsController : Controller() {
             shape.label.textFillProperty().bind(widget.colour)
 
             //Records
-            shape.label.textProperty().addListener { _, _, _ -> record(ChangeType.CHANGE, widget) }
-            shape.label.textFillProperty().addListener { _, _, _ -> recordSingle(ChangeType.CHANGE, widget) }
         } else if(widget is WidgetSprite && shape is SpriteShape) {
             shape.spriteProperty().bind(widget.spriteProperty())
 

@@ -36,11 +36,6 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
             }
         }
 
-        //If shift cloned start action with cloned widget
-        if (clone)
-            widgets.start(widgets.getWidget(getClone(event)))
-        else
-            widgets.start(widgets.getWidget(event.target))
 
         if (CanvasView.spaceHeld)
             setCursor(Cursor.CLOSED_HAND)
@@ -64,8 +59,6 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
 
         if (CanvasView.spaceHeld)
             setCursor(Cursor.OPEN_HAND)
-
-        widgets.finish()
     }
 
     override fun handleDoubleClick(event: MouseEvent) {
@@ -75,7 +68,6 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
             view.editState(widget, shape)
 
         cloned = false
-        widgets.finish()
     }
 
     override fun handleMouseClick(event: MouseEvent) {
@@ -87,8 +79,6 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
             marquee.remove(view.root)
             return
         }
-        if (event.code != KeyCode.SHIFT)
-            widgets.start()
 
         if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
             move(event)
@@ -116,19 +106,11 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
                 KeyCode.V -> {
                     widgets.paste()
                 }
-                KeyCode.Z -> {
-                    if (event.isShiftDown)
-                        widgets.redo()
-                    else
-                        widgets.undo()
-                }
                 else -> {
                 }
             }
         }
 
-        if (event.code != KeyCode.SHIFT)
-            widgets.finish()
     }
 
     override fun onClose() {

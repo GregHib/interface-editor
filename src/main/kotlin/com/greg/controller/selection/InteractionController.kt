@@ -1,10 +1,10 @@
 package com.greg.controller.selection
 
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.widgets.type.Widget
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.memento.Memento
+import com.greg.model.widgets.type.Widget
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 
@@ -62,9 +62,11 @@ class InteractionController(val widgets: WidgetsController) {
         }
 
         //Set the clipboard
-        val content = ClipboardContent()
-        content.putString(string.substring(0, string.length - 1))//Remove the extra line space
-        clipboard.setContent(content)
+        if(string.isNotEmpty()) {
+            val content = ClipboardContent()
+            content.putString(string.substring(0, string.length - 1))//Remove the extra line space
+            clipboard.setContent(content)
+        }
     }
 
     fun clone() {

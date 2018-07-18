@@ -4,12 +4,11 @@ import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.type.Widget
-import com.greg.view.canvas.states.edit.ResizeBox
-import com.greg.view.canvas.states.edit.ResizePoint
 import com.greg.view.canvas.CanvasState
 import com.greg.view.canvas.CanvasView
+import com.greg.view.canvas.states.edit.ResizeBox
+import com.greg.view.canvas.states.edit.ResizePoint
 import com.greg.view.canvas.widgets.WidgetShape
-import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 
@@ -28,8 +27,6 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
     }
 
     override fun handleMousePress(event: MouseEvent) {
-        if (event.target != canvas)
-            widgets.start(widget)
 
         when {
             event.target is ResizePoint -> {
@@ -66,7 +63,6 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
             close()
 
         resize.reset()
-        widgets.finish()
     }
 
     override fun handleDoubleClick(event: MouseEvent) {
@@ -87,20 +83,6 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
             Settings.getInt(Settings.CANCEL_KEY_CODE) -> {
                 widget.restore(start)
                 close()
-            }
-        }
-
-        if (event.isControlDown) {
-            when (event.code) {
-                KeyCode.Z -> {
-                    if (event.isShiftDown)
-                        widgets.redo()
-                    else
-                        widgets.undo()
-                    close()
-                }
-                else -> {
-                }
             }
         }
 

@@ -26,6 +26,12 @@ Editable widget names
 Widgets within widgets; recursive for hierarchy + memento's; cutting/pasting etc..
 Hold shift to lock movement on one axis?
 
+//Optimisation
+Test performance without listeners
+Test performance without memento's & action recording
+Test performance with unlimited heap memory
+Better way to handle group changes than one at a time?
+
 
 // Tidy up
 //----------------------
