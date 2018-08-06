@@ -49,7 +49,7 @@ class RightPane : Fragment() {
                         val editor = NumberSpinner(param)
                         val spinner = editor.editor
                         spinner.isDisable = param.disabled
-                        spinner.valueFactory.valueProperty().bindBidirectional(param.objectProperty as Property<Int>?)
+                        spinner.valueFactory.valueProperty().bindBidirectional(param.propertyValue as Property<Int>?)
 
                         spinner.editor.textProperty().addListener { _, oldValue, newValue ->
                             if (oldValue != newValue) {
@@ -62,6 +62,7 @@ class RightPane : Fragment() {
                             spinner.editor.fireEvent(ActionEvent())
                         }
 
+                        //Mouse Wheel Scroll to change value
                         spinner.editor.addEventFilter(ScrollEvent.SCROLL) {
                             if (spinner.editor.isFocused) {
                                 spinner.valueFactory.increment((it.deltaY / 40).toInt())
@@ -80,7 +81,7 @@ class RightPane : Fragment() {
                     param.value is Color -> {
                         val editor = Editors.createColorEditor(param)
                         val field = editor.editor
-                        (field as? ColorPicker)?.valueProperty()?.bindBidirectional(param.objectProperty as Property<Color>?)
+                        (field as? ColorPicker)?.valueProperty()?.bindBidirectional(param.propertyValue as Property<Color>?)
                         editor
                     }
                     else -> {
@@ -88,14 +89,14 @@ class RightPane : Fragment() {
                             val editor = Editors.createChoiceEditor(param, sprites.getInternalArchiveNames())
                             val field = editor.editor
                             val box = field as? ComboBox<String>
-                            box?.valueProperty()?.bindBidirectional(param.objectProperty as Property<String>?)
+                            box?.valueProperty()?.bindBidirectional(param.propertyValue as Property<String>?)
                             editor
                         } else {
                             val editor = TextAreaProperty(param)//Editors.createTextEditor(param)
                             val field = editor.editor
 
                             if (field is TextArea) {
-                                field.textProperty().bindBidirectional(param.objectProperty as Property<String>?)
+                                field.textProperty().bindBidirectional(param.propertyValue as Property<String>?)
                             }
                             editor
                         }
@@ -120,9 +121,9 @@ class RightPane : Fragment() {
                         .filter { !(it is PanelPropertyValues && !it.panel) }
                         .forEach { property ->
                             val item = if (property is CappedPropertyValues)
-                                CappedPropertyItem((property.property as Property<*>).name.capitalize(), property.category, property.property, property.range)
+                                CappedPropertyItem(property.category, property.property as Property<*>, property.range)
                             else
-                                PropertyItem((property.property as Property<*>).name.capitalize(), property.category, property.property)
+                                PropertyItem(property.category, property.property as Property<*>)
 
                             item.disabled = property.property.isDisabled()
 
@@ -132,8 +133,8 @@ class RightPane : Fragment() {
                 sheet.items
                         .filterIsInstance<PropertyItem>()
                         .forEachIndexed { index, propertyItem ->
-                            if (propertyItem.objectProperty.name != "X" && propertyItem.objectProperty.name != "Y")
-                                propertyItem.objectProperty.addListener { _, _, newValue ->
+                            if (propertyItem.name != "X" && propertyItem.name != "Y")
+                                propertyItem.propertyValue.addListener { _, _, newValue ->
                                     it.list
                                             .filter { it != first && it.type == first.type }
                                             .forEach { widget ->
