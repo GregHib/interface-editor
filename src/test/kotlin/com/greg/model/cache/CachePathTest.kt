@@ -1,7 +1,6 @@
 package com.greg.model.cache
 
 import io.nshusa.rsam.FileStore
-import io.nshusa.rsam.IndexedFileSystem
 import io.nshusa.rsam.binary.Archive
 import org.junit.Assert
 import org.junit.Test
@@ -27,8 +26,7 @@ class CachePathTest {
         Assert.assertTrue(file.isValid())
         Assert.assertTrue(file.getCacheType() == CacheTypes.UNPACKED_CACHE)
 
-        IndexedFileSystem(path).use { fs ->
-            fs.load()
+        Cache(file).use { fs ->
             val buff = fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)
             Assert.assertTrue(Arrays.equals(buff.array(),
                     ByteBuffer.wrap(File("./cache/interface.jag").readBytes()).array()))

@@ -4,6 +4,7 @@ import com.greg.controller.selection.InteractionController
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetsList
 import com.greg.model.widgets.type.*
+import com.greg.view.canvas.CanvasView
 import com.greg.view.canvas.widgets.*
 import com.greg.view.sprites.SpriteController
 import javafx.collections.ObservableList
@@ -12,6 +13,7 @@ import javafx.scene.Node
 import javafx.scene.shape.Shape
 import tornadofx.Controller
 import tornadofx.observable
+import tornadofx.onChange
 
 
 class WidgetsController : Controller() {
@@ -19,15 +21,15 @@ class WidgetsController : Controller() {
         val widgets = WidgetsList()
         val selection = mutableListOf<Widget>().observable()
     }
-//    private val hierarchy: HierarchyController by inject(DefaultScope)
+
     val action = InteractionController(this)
-
-//    val panels = PanelController(this)
-
-//    val refresh = RefreshManager(panels, hierarchy)
 
     fun add(widget: Widget) {
         widgets.add(widget)
+    }
+
+    fun addAll(widget: Array<out Widget>) {
+        widgets.addAll(*widget)
     }
 
     fun remove(widget: Widget) {
@@ -158,14 +160,11 @@ class WidgetsController : Controller() {
         if(widget is WidgetRectangle && shape is RectangleShape) {
             shape.rectangle.fillProperty().bind(widget.fillProperty())
             shape.rectangle.strokeProperty().bind(widget.strokeProperty())
-
         } else if(widget is WidgetText && shape is TextShape) {
             //Binds
             shape.label.textProperty().bind(widget.text)
             //Both are needed for colour
             shape.label.textFillProperty().bind(widget.colour)
-
-            //Records
         } else if(widget is WidgetSprite && shape is SpriteShape) {
             shape.spriteProperty().bind(widget.spriteProperty())
 
@@ -187,6 +186,15 @@ class WidgetsController : Controller() {
                     widget.setSprite(if(widget.getSprite() >= size) size else widget.getSprite())
                 }
             }
+        }
+    }
+
+    fun start(canvas: CanvasView) {
+        getAll().onChange {
+            it.next()
+
+            println("Widget's changed ${it.wasAdded()} ${it.addedSize} ${it.wasUpdated()}")
+            canvas.refresh(it)
         }
     }
 }

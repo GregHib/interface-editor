@@ -1,3 +1,18 @@
+//MVP New thoughts
+Focus on 317 format.
+All index's loaded into hierarchy at once (Redo hierarchy, group by interface) - keep it simple
+Save
+Extend indices
+Change indicy id's
+
+User preferences saving
+Custom interface names
+
+
+
+
+
+
 Component naming
 https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 //https://touchgfx.zendesk.com/hc/article_attachments/115001954569/add_new_screen.png

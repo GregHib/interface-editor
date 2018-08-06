@@ -159,7 +159,6 @@ open class IndexedFileSystem : Closeable {
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-
     }
 
     @Throws(IOException::class)

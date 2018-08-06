@@ -23,10 +23,7 @@ class MainView : View("Greg's Interface Editor") {
             leftPane.handleKeyEvents(it)
         }
 
-        widgets.getAll().onChange {
-            it.next()
-            canvas.refresh(it)
-        }
+        widgets.start(canvas)
 
         leftPane.hierarchy.rootTreeItem.children.addListener(canvas.hierarchyListener)
 

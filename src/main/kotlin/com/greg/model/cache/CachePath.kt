@@ -68,9 +68,10 @@ class CachePath {
 
     /**
      * Checks directory for an unpacked archive file
+     * @throws NullPointerException if file not found
      */
-    fun getArchiveFile(files: List<File>, archive: Int): File? {
-        return files.firstOrNull { UnpackedFormat.isFile(it, UnpackedFormat.list[archive]) }
+    fun getArchiveFile(files: List<File>, archive: Int): File {
+        return files.firstOrNull { UnpackedFormat.isFile(it, UnpackedFormat.list[archive]) } ?: throw NullPointerException("Cannot find unpacked cache file '${UnpackedFormat.list[archive]}.jag'")
     }
 
     /**

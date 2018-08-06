@@ -1,13 +1,11 @@
-package tests
+package io.nshusa.rsam
 
 import com.greg.model.cache.CachePath
-import io.nshusa.rsam.FileStore
-import io.nshusa.rsam.IndexedFileSystem
 import io.nshusa.rsam.binary.Archive
 import org.junit.Assert
 import org.junit.Test
 
-class CacheLoadingTest {
+class IndexedFileSystemTest {
 
     private val path = CachePath("./cache/")
 
@@ -19,7 +17,7 @@ class CacheLoadingTest {
     }
 
     @Test
-    fun loadCache() {
+    fun load() {
         IndexedFileSystem(path).use { fs ->
             Assert.assertTrue("File system failed to load FileStores", fs.load())
             fs.getStore(FileStore.ARCHIVE_FILE_STORE)
@@ -27,7 +25,7 @@ class CacheLoadingTest {
     }
 
     @Test
-    fun loadStore() {
+    fun getStore() {
         IndexedFileSystem(path).use { fs ->
             fs.load()
             fs.getStore(FileStore.ARCHIVE_FILE_STORE)
@@ -43,18 +41,20 @@ class CacheLoadingTest {
     }
 
     @Test
-    fun interfaceArchive() {
+    fun readFile() {
         IndexedFileSystem(path).use { fs ->
             fs.load()
             Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
+            Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.TITLE_ARCHIVE))
         }
     }
 
     @Test
-    fun titleArchive() {
+    fun reset() {
         IndexedFileSystem(path).use { fs ->
             fs.load()
-            Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.TITLE_ARCHIVE))
+            fs.reset()
+            Assert.assertFalse(fs.isLoaded)
         }
     }
 
