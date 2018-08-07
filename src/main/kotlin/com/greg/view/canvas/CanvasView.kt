@@ -8,7 +8,6 @@ import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.type.Widget
-import com.greg.model.widgets.type.WidgetCacheSprite
 import com.greg.model.widgets.type.WidgetSprite
 import com.greg.view.KeyInterface
 import com.greg.view.canvas.states.DefaultState
@@ -124,9 +123,7 @@ class CanvasView : View(), KeyInterface {
                 widget.setY(dropY.toInt())
 
                 if(data.size >= 2) {
-                    (widget as? WidgetSprite)?.setSprite(Integer.valueOf(data[1]))
-
-                    if(widget is WidgetCacheSprite) {
+                    if(widget is WidgetSprite) {
                         widget.setSprite(Integer.valueOf(data[1]))
                         widget.setArchive(data[2])
                     }

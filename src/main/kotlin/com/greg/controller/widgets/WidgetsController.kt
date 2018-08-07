@@ -3,9 +3,15 @@ package com.greg.controller.widgets
 import com.greg.controller.selection.InteractionController
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetsList
-import com.greg.model.widgets.type.*
+import com.greg.model.widgets.type.Widget
+import com.greg.model.widgets.type.WidgetRectangle
+import com.greg.model.widgets.type.WidgetSprite
+import com.greg.model.widgets.type.WidgetText
 import com.greg.view.canvas.CanvasView
-import com.greg.view.canvas.widgets.*
+import com.greg.view.canvas.widgets.RectangleShape
+import com.greg.view.canvas.widgets.SpriteShape
+import com.greg.view.canvas.widgets.TextShape
+import com.greg.view.canvas.widgets.WidgetShape
 import com.greg.view.sprites.SpriteController
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
@@ -72,9 +78,9 @@ class WidgetsController : Controller() {
             var parent = target.parent
             if (parent is WidgetShape)
                 return parent
-            else if(parent is Node) {
+            else if (parent is Node) {
                 parent = parent.parent
-                if(parent is WidgetShape)
+                if (parent is WidgetShape)
                     return parent
             }
         }
@@ -106,7 +112,7 @@ class WidgetsController : Controller() {
 
     fun deleteSelection() {
         val iterator = getSelection().iterator()
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             remove(iterator.next())
             iterator.remove()
         }
@@ -114,9 +120,9 @@ class WidgetsController : Controller() {
 
     fun delete(identifier: Int) {
         val iterator = getAll().iterator()
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             val next = iterator.next()
-            if(next.identifier == identifier) {
+            if (next.identifier == identifier) {
                 remove(next)
                 return
             }
@@ -138,7 +144,7 @@ class WidgetsController : Controller() {
                 shape.outline.stroke = Settings.getColour(if (newValue) Settings.SELECTION_STROKE_COLOUR else Settings.DEFAULT_STROKE_COLOUR)
             }
 
-            if(widget.updateSelection) {
+            if (widget.updateSelection) {
                 if (newValue)
                     selection.add(widget)
                 else
@@ -159,34 +165,30 @@ class WidgetsController : Controller() {
         //Listener
         widget.hiddenProperty().addListener { _, _, newValue -> shape.isVisible = !newValue }
 
-        if(widget is WidgetRectangle && shape is RectangleShape) {
+        if (widget is WidgetRectangle && shape is RectangleShape) {
             shape.rectangle.fillProperty().bind(widget.fillProperty())
             shape.rectangle.strokeProperty().bind(widget.strokeProperty())
-        } else if(widget is WidgetText && shape is TextShape) {
+        } else if (widget is WidgetText && shape is TextShape) {
             //Binds
             shape.label.textProperty().bind(widget.text)
             //Both are needed for colour
             shape.label.textFillProperty().bind(widget.colour)
-        } else if(widget is WidgetSprite && shape is SpriteShape) {
+        } else if (widget is WidgetSprite && shape is SpriteShape) {
             shape.spriteProperty().bind(widget.spriteProperty())
+            shape.archiveProperty().bind(widget.archiveProperty())
 
+            //Every time widget archive is changed
+            shape.archiveProperty().addListener { _, _, newValue ->
+                //Get the number of sprites in archive
+                val archive = SpriteController.getArchive("$newValue.dat")//TODO the gnome hash isn't .dat? are all .dat?
+                var size = archive?.sprites?.size ?: 1
+                size -= 1
 
-            if(widget is WidgetCacheSprite && shape is CacheSpriteShape) {
-                shape.archiveProperty().bind(widget.archiveProperty())
+                //Limit the sprite index to archive size
+                widget.setCap(IntRange(0, size))
 
-                //Every time widget archive is changed
-                shape.archiveProperty().addListener { _, _, newValue ->
-                    //Get the number of sprites in archive
-                    val archive = SpriteController.getArchive("$newValue.dat")//TODO the gnome hash isn't .dat? are all .dat?
-                    var size = archive?.sprites?.size ?: 1
-                    size -= 1
-
-                    //Limit the sprite index to archive size
-                    widget.setCap(IntRange(0, size))
-
-                    //If already on an index which is greater than archive index; reduce, otherwise set the same (refresh)
-                    widget.setSprite(if(widget.getSprite() >= size) size else widget.getSprite())
-                }
+                //If already on an index which is greater than archive index; reduce, otherwise set the same (refresh)
+                widget.setSprite(if (widget.getSprite() >= size) size else widget.getSprite())
             }
         }
     }

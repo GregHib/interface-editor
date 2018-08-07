@@ -4,12 +4,14 @@ import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
+import com.greg.model.widgets.properties.extended.StringProperty
 import com.greg.view.sprites.SpriteController
 
-open class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
+class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
 
     private var cap: ObjProperty<IntRange>? = null
     private var sprite: IntProperty? = null
+    private var archive: StringProperty? = null
 
     fun getSprite(): Int {
         return spriteProperty().get()
@@ -33,13 +35,29 @@ open class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
 
     fun capProperty(): ObjProperty<IntRange> {
         if (cap == null)
-            cap = ObjProperty(this, "cap", IntRange(0, SpriteController.observableExternal[0].sprites.size))
+            cap = ObjProperty(this, "cap", IntRange(0, SpriteController.imageArchiveList[0].sprites.size))
 
         return cap!!
     }
 
+    fun getArchive(): String {
+        return archiveProperty().get()
+    }
+
+    fun setArchive(value: String) {
+        archiveProperty().set(value)
+    }
+
+    fun archiveProperty(): StringProperty {
+        if (archive == null)
+            archive = StringProperty(this, "archive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
+
+        return archive!!
+    }
+
     init {
         properties.addCapped(spriteProperty(), capProperty())
+        properties.add(archiveProperty())
         widthToggle.property.setDisabled(true)
         heightToggle.property.setDisabled(true)
     }

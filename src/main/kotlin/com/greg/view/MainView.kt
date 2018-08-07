@@ -41,7 +41,6 @@ class MainView : View("Greg's Interface Editor") {
         top = menubar {
             menu("File") {
                 menu("Load") {
-                    item("Sprites.dat").action { leftPane.loadImages() }
                 }
             }
         }

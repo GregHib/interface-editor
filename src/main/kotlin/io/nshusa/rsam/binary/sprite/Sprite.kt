@@ -4,11 +4,18 @@ import io.nshusa.rsam.binary.Archive
 import io.nshusa.rsam.graphics.render.Raster
 import io.nshusa.rsam.util.ByteBufferUtils
 import io.nshusa.rsam.util.HashUtils
-
+import java.awt.Color
+import java.awt.Image
+import java.awt.Toolkit
 import java.awt.image.BufferedImage
-import java.awt.image.DataBufferInt
+import java.awt.image.FilteredImageSource
+import java.awt.image.RGBImageFilter
 import java.io.IOException
 import java.nio.ByteBuffer
+
+
+
+
 
 class Sprite {
 
@@ -25,9 +32,7 @@ class Sprite {
     var pixels: IntArray? = null
     var format: Int = 0
 
-    constructor() {
-
-    }
+    constructor()
 
     constructor(width: Int, height: Int) {
         this.pixels = IntArray(width * height)
@@ -37,8 +42,7 @@ class Sprite {
         this.height = this.resizeHeight
     }
 
-    constructor(resizeWidth: Int, resizeHeight: Int, horizontalOffset: Int, verticalOffset: Int, width: Int, height: Int, format: Int,
-                pixels: IntArray) {
+    constructor(resizeWidth: Int, resizeHeight: Int, horizontalOffset: Int, verticalOffset: Int, width: Int, height: Int, format: Int, pixels: IntArray) {
         this.resizeWidth = resizeWidth
         this.resizeHeight = resizeHeight
         this.offsetX = horizontalOffset
@@ -149,13 +153,34 @@ class Sprite {
         }
     }
 
+    private fun makeColorTransparent(im: BufferedImage, color: Color): Image {
+        val filter = object : RGBImageFilter() {
+            var markerRGB = color.rgb or -0x1000000
+            override fun filterRGB(x: Int, y: Int, rgb: Int): Int {
+                return if (rgb or -0x1000000 == markerRGB)
+                    0x00FFFFFF and rgb
+                else
+                    rgb
+            }
+        }
+        val ip = FilteredImageSource(im.source, filter)
+        return Toolkit.getDefaultToolkit().createImage(ip)
+    }
+
+    private fun imageToBufferedImage(image: Image): BufferedImage {
+        val bufferedImage = BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB)
+        val g2 = bufferedImage.createGraphics()
+        g2.drawImage(image, 0, 0, null)
+        g2.dispose()
+        return bufferedImage
+    }
+
     fun toBufferedImage(): BufferedImage {
-        val image = BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB)
-        val pixels = (image.raster.dataBuffer as DataBufferInt).data
+        val bi = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+        bi.setRGB(0, 0, width, height, pixels!!, 0, width)
+        val img = makeColorTransparent(bi, Color(0, 0, 0))
 
-        System.arraycopy(this.pixels!!, 0, pixels, 0, this.pixels!!.size)
-
-        return image
+        return imageToBufferedImage(img)
     }
 
     companion object {
