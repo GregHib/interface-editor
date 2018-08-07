@@ -136,8 +136,10 @@ class WidgetsController : Controller() {
             if (oldValue != newValue) {
                 shape.outline.toFront()
                 shape.outline.stroke = Settings.getColour(if (newValue) Settings.SELECTION_STROKE_COLOUR else Settings.DEFAULT_STROKE_COLOUR)
+            }
 
-                if(newValue)
+            if(widget.updateSelection) {
+                if (newValue)
                     selection.add(widget)
                 else
                     selection.remove(widget)

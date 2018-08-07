@@ -78,8 +78,8 @@ class MarqueeController(private val widgets: WidgetsController, private var canv
      */
     private fun selectContents(event: MouseEvent) {
         //Add everything in marquee to selection
-        widgets.getAll()
-                .filter {widget ->
+        val list = widgets.getAll()
+                .filter { widget ->
                     val canvasX = canvas.boundsInParent.minX
                     val scaleOffsetX = canvas.boundsInLocal.minX * canvas.scaleX
                     val widgetX = canvasX - scaleOffsetX + (widget.getX() * canvas.scaleX)
@@ -92,12 +92,20 @@ class MarqueeController(private val widgets: WidgetsController, private var canv
 
                     marquee.boundsInParent.intersects(widgetBounds)
                 }
-                .forEach { widget ->
-                    if (event.isControlDown)
-                        widget.setSelected(!widget.isSelected())
-                    else
-                        widget.setSelected(true)
-                }
+
+
+        //Make selections
+        list.forEach { widget -> widget.setSelected(if (event.isControlDown) !widget.isSelected() else true, false) }
+
+        //Multi-add new selections
+        if (event.isControlDown) {
+            val selected = list.filter { it.isSelected() }
+            val notSelected = list.filter { !it.isSelected() }
+
+            WidgetsController.selection.removeAll(notSelected)
+            WidgetsController.selection.addAll(selected)
+        } else
+            WidgetsController.selection.addAll(list)
 
         //Remove marquee
         val pane = event.source as? Pane ?: return

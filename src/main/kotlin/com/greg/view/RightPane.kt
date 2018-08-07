@@ -107,10 +107,11 @@ class RightPane : Fragment() {
             }
 
         }
-        widgets.getSelection().addListener(ListChangeListener {
-            it.next()
+        widgets.getSelection().addListener(ListChangeListener { change ->
+            change.next()
             //Get items changed
-            val list = if (it.wasAdded()) it.addedSubList else null
+            val list = if (change.wasAdded()) change.addedSubList else null
+
             //Clear property sheet
             sheet.items.clear()
 
@@ -130,12 +131,13 @@ class RightPane : Fragment() {
                             sheet.items.add(item)
                         }
 
+
                 sheet.items
                         .filterIsInstance<PropertyItem>()
                         .forEachIndexed { index, propertyItem ->
                             if (propertyItem.name != "X" && propertyItem.name != "Y")
                                 propertyItem.propertyValue.addListener { _, _, newValue ->
-                                    it.list
+                                    change.list
                                             .filter { it != first && it.type == first.type }
                                             .forEach { widget ->
                                                 (widget.properties.get().filter {

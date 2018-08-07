@@ -31,6 +31,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
     private var locked: BoolProperty? = null
     private var selected: BoolProperty? = null
+    var updateSelection = true
     private var hidden: BoolProperty? = null
 
     internal var widthToggle: PropertyValues
@@ -63,6 +64,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
     fun setLocked(value: Boolean) {
         lockedProperty().set(value)
     }
+
     fun isLocked(): Boolean {
         return lockedProperty().get()
     }
@@ -93,7 +95,8 @@ open class Widget(builder: WidgetBuilder, id: Int) {
         return selectedProperty().get()
     }
 
-    fun setSelected(value: Boolean) {
+    fun setSelected(value: Boolean, selection: Boolean = true) {
+        updateSelection = selection
         selectedProperty().set(if (value && isLocked()) false else value)
     }
 
@@ -103,6 +106,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
 
         return selected!!
     }
+
     fun getX(): Int {
         return xProperty().get()
     }
