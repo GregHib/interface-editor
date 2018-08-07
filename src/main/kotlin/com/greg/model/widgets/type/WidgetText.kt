@@ -3,23 +3,46 @@ package com.greg.model.widgets.type
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.properties.extended.ObjProperty
+import com.greg.model.widgets.properties.extended.StringProperty
 import javafx.scene.paint.Color
 
 class WidgetText(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
 
-    var text = ObjProperty(this, "text", Settings.get(Settings.DEFAULT_TEXT_MESSAGE))
-    var colour = ObjProperty(this, "colour", Settings.getColour(Settings.DEFAULT_TEXT_COLOUR))
+    private var text: StringProperty? = null
+    private var colour: ObjProperty<Color>? = null
+
+    init {
+        properties.add(textProperty())
+        properties.add(colourProperty())
+    }
 
     fun setText(value: String) {
-        text.set(value)
+        textProperty().set(value)
+    }
+
+    fun getText(): String {
+        return textProperty().get()
+    }
+
+    fun textProperty(): StringProperty {
+        if (text == null)
+            text = StringProperty(this, "text", Settings.get(Settings.DEFAULT_TEXT_MESSAGE))
+
+        return text!!
     }
 
     fun setColour(value: Color) {
-        colour.set(value)
+        colourProperty().set(value)
     }
 
-    init {
-        properties.add(text)
-        properties.add(colour)
+    fun getColour(): Color {
+        return colourProperty().get()
+    }
+
+    fun colourProperty(): ObjProperty<Color> {
+        if (colour == null)
+            colour = ObjProperty(this, "colour", Settings.getColour(Settings.DEFAULT_TEXT_COLOUR))
+
+        return colour!!
     }
 }

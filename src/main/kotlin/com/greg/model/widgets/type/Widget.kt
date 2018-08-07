@@ -7,7 +7,6 @@ import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.memento.Memento
 import com.greg.model.widgets.memento.MementoBuilder
 import com.greg.model.widgets.properties.Properties
-import com.greg.model.widgets.properties.PropertyValues
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
@@ -26,6 +25,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
     private var y: IntProperty? = null
     private var width: IntProperty? = null
     private var height: IntProperty? = null
+
     private var widthBounds: ObjProperty<IntRange>? = null
     private var heightBounds: ObjProperty<IntRange>? = null
 
@@ -34,31 +34,16 @@ open class Widget(builder: WidgetBuilder, id: Int) {
     var updateSelection = true
     private var hidden: BoolProperty? = null
 
-    internal var widthToggle: PropertyValues
-    internal var heightToggle: PropertyValues
-
     init {
         properties.add(xProperty(), category = "Layout")
         properties.add(yProperty(), category = "Layout")
-        widthToggle = properties.addCapped(widthProperty(), widthBoundsProperty(), "Layout")
-        heightToggle = properties.addCapped(heightProperty(), heightBoundsProperty(), "Layout")
+        if(builder.type != WidgetType.SPRITE) {
+            properties.addCapped(widthProperty(), widthBoundsProperty(), "Layout")
+            properties.addCapped(heightProperty(), heightBoundsProperty(), "Layout")
+        }
         properties.addPanel(lockedProperty(), false)
         properties.addPanel(selectedProperty(), false)
         properties.addPanel(hiddenProperty(), false)
-    }
-
-    fun widthBoundsProperty(): ObjProperty<IntRange> {
-        if(widthBounds == null)
-            widthBounds = ObjProperty(this, "widthBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_WIDTH), Settings.getInt(Settings.WIDGET_CANVAS_WIDTH)))
-
-        return widthBounds!!
-    }
-
-    fun heightBoundsProperty(): ObjProperty<IntRange> {
-        if(heightBounds == null)
-            heightBounds = ObjProperty(this, "heightBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_HEIGHT), Settings.getInt(Settings.WIDGET_CANVAS_HEIGHT)))
-
-        return heightBounds!!
     }
 
     fun setLocked(value: Boolean) {
@@ -163,6 +148,20 @@ open class Widget(builder: WidgetBuilder, id: Int) {
         if (height == null)
             height = IntProperty(this, "height", Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT))
         return height!!
+    }
+
+    fun widthBoundsProperty(): ObjProperty<IntRange> {
+        if(widthBounds == null)
+            widthBounds = ObjProperty(this, "widthBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_WIDTH), Settings.getInt(Settings.WIDGET_CANVAS_WIDTH)))
+
+        return widthBounds!!
+    }
+
+    fun heightBoundsProperty(): ObjProperty<IntRange> {
+        if(heightBounds == null)
+            heightBounds = ObjProperty(this, "heightBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_HEIGHT), Settings.getInt(Settings.WIDGET_CANVAS_HEIGHT)))
+
+        return heightBounds!!
     }
 
     fun getMemento(): Memento {

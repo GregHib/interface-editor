@@ -14,12 +14,16 @@ class Properties {
         return properties.firstOrNull { it.property == property }
     }
 
-    fun add(property: ToggleProperty, category: String = "Properties") {
-        properties.add(PropertyValues(property, category))
+    fun add(property: ToggleProperty, category: String = "Properties") : PropertyValues {
+        val values = PropertyValues(property, category)
+        properties.add(values)
+        return values
     }
 
-    fun addPanel(property: ToggleProperty, panel: Boolean, category: String = "Properties") {
-        properties.add(PanelPropertyValues(property, category, panel))
+    fun addPanel(property: ToggleProperty, panel: Boolean, category: String = "Properties") : PropertyValues {
+        val values = PanelPropertyValues(property, category, panel)
+        properties.add(values)
+        return values
     }
 
     fun addCapped(property: ToggleProperty, range: ObjectProperty<IntRange>, category: String = "Properties") : PropertyValues {

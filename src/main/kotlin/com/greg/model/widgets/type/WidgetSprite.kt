@@ -13,6 +13,13 @@ class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
     private var sprite: IntProperty? = null
     private var archive: StringProperty? = null
 
+    init {
+        properties.add(widthProperty(), "Layout").property.setDisabled(true)
+        properties.add(heightProperty(), "Layout").property.setDisabled(true)
+        properties.addCapped(spriteProperty(), capProperty())
+        properties.add(archiveProperty())
+    }
+
     fun getSprite(): Int {
         return spriteProperty().get()
     }
@@ -27,7 +34,6 @@ class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
 
         return sprite!!
     }
-
 
     fun setCap(range: IntRange) {
         capProperty().set(range)
@@ -53,12 +59,5 @@ class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
             archive = StringProperty(this, "archive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
 
         return archive!!
-    }
-
-    init {
-        properties.addCapped(spriteProperty(), capProperty())
-        properties.add(archiveProperty())
-        widthToggle.property.setDisabled(true)
-        heightToggle.property.setDisabled(true)
     }
 }

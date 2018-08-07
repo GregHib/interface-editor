@@ -16,7 +16,9 @@ class WidgetRectangle(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
     }
 
     fun setFill(value: Color) { fillProperty().set(value) }
+
     fun getFill(): Color { return fillProperty().get() }
+
     fun fillProperty(): ObjProperty<Color> {
         if (fill == null)
             fill = ObjProperty(this, "fill", Settings.getColour(Settings.DEFAULT_RECTANGLE_FILL_COLOUR))
@@ -25,7 +27,9 @@ class WidgetRectangle(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
     }
 
     fun setStroke(value: Color) { strokeProperty().set(value) }
+
     fun getStroke(): Color { return strokeProperty().get() }
+
     fun strokeProperty(): ObjProperty<Color> {
         if (stroke == null)
             stroke = ObjProperty(this, "stroke", Settings.getColour(Settings.DEFAULT_RECTANGLE_STROKE_COLOUR))

@@ -170,9 +170,9 @@ class WidgetsController : Controller() {
             shape.rectangle.strokeProperty().bind(widget.strokeProperty())
         } else if (widget is WidgetText && shape is TextShape) {
             //Binds
-            shape.label.textProperty().bind(widget.text)
+            shape.label.textProperty().bind(widget.textProperty())
             //Both are needed for colour
-            shape.label.textFillProperty().bind(widget.colour)
+            shape.label.textFillProperty().bind(widget.colourProperty())
         } else if (widget is WidgetSprite && shape is SpriteShape) {
             shape.spriteProperty().bind(widget.spriteProperty())
             shape.archiveProperty().bind(widget.archiveProperty())
