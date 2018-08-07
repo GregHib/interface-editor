@@ -22,7 +22,7 @@ class WidgetsController : Controller() {
         val selection = mutableListOf<Widget>().observable()
     }
 
-    val action = InteractionController(this)
+    private val action = InteractionController(this)
 
     fun add(widget: Widget) {
         widgets.add(widget)
@@ -194,8 +194,6 @@ class WidgetsController : Controller() {
     fun start(canvas: CanvasView) {
         getAll().onChange {
             it.next()
-
-            println("Widget's changed ${it.wasAdded()} ${it.addedSize} ${it.wasUpdated()}")
             canvas.refresh(it)
         }
     }

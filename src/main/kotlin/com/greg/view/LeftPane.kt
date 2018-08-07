@@ -34,18 +34,20 @@ class LeftPane : View(), KeyInterface {
     }
 
     init {
-        widgets.getAll().addListener(ListChangeListener {
-            it.next()
+        widgets.getAll().addListener(ListChangeListener { change ->
+            change.next()
             //Get items changed
-            val list = if (it.wasAdded()) it.addedSubList else it.removed
+            val list = if (change.wasAdded()) change.addedSubList else change.removed
 
             //Sync hierarchy with widget list changes
+            val items = arrayListOf<HierarchyItem>()
+
             list?.forEach { widget ->
-                if (it.wasAdded()) {
+                if (change.wasAdded()) {
                     val item = HierarchyItem(widget.name, widget.identifier, widget)
-                    hierarchy.rootTreeItem.children.add(item)
+                    items.add(item)
                     item.selectedProperty().bindBidirectional(widget.selectedProperty())
-                } else if (it.wasRemoved()) {
+                } else if (change.wasRemoved()) {
                     hierarchy.rootTreeItem.children.removeAll(
                             hierarchy.rootTreeItem.children
                                     .filterIsInstance<HierarchyItem>()
@@ -53,6 +55,9 @@ class LeftPane : View(), KeyInterface {
                     )
                 }
             }
+
+            //Multi-add
+            hierarchy.rootTreeItem.children.addAll(items)
         })
     }
 

@@ -13,7 +13,7 @@ open class WidgetsList {
     }
 
     fun addAll(vararg widget: Widget) {
-        widgets.addAll(*widget)
+        widgets.addAll(widget)
     }
 
     fun remove(widget: Widget) {

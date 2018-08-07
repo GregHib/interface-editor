@@ -105,7 +105,11 @@ class CanvasView : View(), KeyInterface {
             val data = if(string.contains(":")) string.split(":") else arrayListOf(string)
             val type = WidgetType.forString(data[0])
             if (type != null) {
-                val widget = createAndDisplay(type)
+                //Create
+                val widget = WidgetBuilder(type).build()
+
+                //Display
+                widgets.add(widget)
 
                 val scaleOffsetX = canvas.boundsInLocal.minX * canvas.scaleX
                 val canvasX = canvas.boundsInParent.minX - scaleOffsetX
@@ -172,8 +176,10 @@ class CanvasView : View(), KeyInterface {
 
     private fun handleKeyPress(event: KeyEvent) {
         if(event.code == KeyCode.A) {
+            val list = arrayListOf<Widget>()
             for(i in 0..400)
-                createAndDisplay(WidgetType.RECTANGLE)
+                list.add(WidgetBuilder(WidgetType.RECTANGLE).build())
+            widgets.addAll(list.toTypedArray())
         }
         if (event.code == KeyCode.SPACE) {
             spaceHeld = true
@@ -198,12 +204,6 @@ class CanvasView : View(), KeyInterface {
      * Misc
      */
 
-    fun createAndDisplay(type: WidgetType): Widget {
-        val widget = WidgetBuilder(type).build()
-        widgets.add(widget)
-        return widget
-    }
-
     fun refresh(it: ListChangeListener.Change<out Widget>) {
         if (it.wasAdded()) {
             it.addedSubList.forEach { widget ->
@@ -222,11 +222,11 @@ class CanvasView : View(), KeyInterface {
         }
     }
 
-    val hierarchyListener:ListChangeListener<TreeItem<String>> = ListChangeListener {
-        it.next()
-        if(it.wasAdded()) {
+    val hierarchyListener:ListChangeListener<TreeItem<String>> = ListChangeListener { change ->
+        change.next()
+        if(change.wasAdded()) {
             //TODO probably a more efficient way of doing this
-            it.list
+            change.list
                     .filterIsInstance<HierarchyItem>()
                     .forEach { item ->
                         canvas.children.filterIsInstance<WidgetShape>()

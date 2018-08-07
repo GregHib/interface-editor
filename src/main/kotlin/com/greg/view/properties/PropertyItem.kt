@@ -2,9 +2,7 @@ package com.greg.view.properties
 
 import javafx.beans.property.Property
 import javafx.beans.value.ObservableValue
-import javafx.beans.value.WritableIntegerValue
 import org.controlsfx.control.PropertySheet
-import tornadofx.property
 import java.util.*
 
 open class PropertyItem(private val propertyCategory: String, val propertyValue: Property<*>) : PropertySheet.Item {
@@ -20,10 +18,7 @@ open class PropertyItem(private val propertyCategory: String, val propertyValue:
     }
 
     override fun setValue(value: Any?) {
-        if(propertyValue is WritableIntegerValue)
-            propertyValue.set(value as Int)
-        else
-            propertyValue.value = value
+        propertyValue.value = value
     }
 
     override fun getDescription(): String? {

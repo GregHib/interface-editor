@@ -23,6 +23,8 @@ class InteractionController(val widgets: WidgetsController) {
         //Clear the current selection
         widgets.clearSelection()
 
+        val widgetMap = mutableMapOf<Widget, Memento>()
+
         //For each line
         for (line in lines) {
             //Extract name and list from string
@@ -42,13 +44,22 @@ class InteractionController(val widgets: WidgetsController) {
 
                 //Create widget of the corresponding type
                 val widget = WidgetBuilder(memento.type).build()
-                widgets.add(widget)
-                widget.restore(memento)
-                if(!widget.isSelected())
-                    widget.setSelected(true)
+
+                //Add to the list
+                widgetMap[widget] = memento
             } else {
                 error("Error processing paste line: $line")
             }
+        }
+
+        //Display all widgets at once
+        widgets.addAll(widgetMap.keys.toTypedArray())
+
+        //Apply memento & selections
+        widgetMap.forEach { widget, memento ->
+            widget.restore(memento)
+            if(!widget.isSelected())
+                widget.setSelected(true)
         }
     }
 
