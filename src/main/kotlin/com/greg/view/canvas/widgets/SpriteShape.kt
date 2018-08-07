@@ -21,6 +21,9 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
     init {
         add(image)
         loadSprite()
+        spriteProperty().addListener { _, _, _ ->
+            loadSprite()
+        }
         archiveProperty().addListener { _, _, _ ->
             loadSprite()
         }
