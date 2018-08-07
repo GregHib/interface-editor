@@ -1,8 +1,8 @@
 package com.greg.view.canvas.widgets
 
+import com.greg.model.cache.archives.ArchiveMedia
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.properties.extended.StringProperty
-import com.greg.view.sprites.SpriteController
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.embed.swing.SwingFXUtils
@@ -30,7 +30,7 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
     }
 
     private fun loadSprite() {
-        val archive = SpriteController.getArchive("${getArchive()}.dat")
+        val archive = ArchiveMedia.getImage("${getArchive()}.dat")
         if (archive != null) {
             if (getSprite() >= 0 && getSprite() < archive.sprites.size) {
                 val sprite = archive.sprites[getSprite()]

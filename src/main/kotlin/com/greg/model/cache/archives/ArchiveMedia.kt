@@ -1,68 +1,68 @@
-package com.greg.view.sprites
+package com.greg.model.cache.archives
 
+import com.greg.model.cache.Cache
 import com.greg.view.sprites.tree.ImageArchive
 import io.nshusa.rsam.FileStore
-import io.nshusa.rsam.IndexedFileSystem
 import io.nshusa.rsam.binary.Archive
 import io.nshusa.rsam.binary.sprite.Sprite
 import io.nshusa.rsam.util.HashUtils
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import javafx.scene.image.Image
-import tornadofx.Controller
 import java.io.InputStream
 
-class SpriteController : Controller() {
+class ArchiveMedia : CacheArchive() {
+
     companion object {
+        var imageArchive: ObservableList<ImageArchive> = FXCollections.observableArrayList()
 
-        val placeholderIcon = Image(SpriteController::class.java.getResourceAsStream("placeholder.png"))
-
-        var imageArchiveList: ObservableList<ImageArchive> = FXCollections.observableArrayList()
-
-        fun getArchive(archive: String): ImageArchive? {
-            return imageArchiveList.firstOrNull { it.hash == HashUtils.nameToHash(archive) }
+        fun getImage(name: String): ImageArchive? {
+            return imageArchive.firstOrNull { it.hash == HashUtils.nameToHash(name) }
         }
     }
 
-    fun getInternalArchiveNames(): List<String> {
-        return imageArchiveList.map { it -> getName(it.hash) }
+
+    fun getArchive(archive: String): ImageArchive? {
+        return imageArchive.firstOrNull { it.hash == HashUtils.nameToHash(archive) }
     }
 
-    private fun importInternal() {
-        IndexedFileSystem("./cache/").use { fs ->
-            fs.load()
-            val archive = Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE))
-            val index = archive.readFile("index.dat")
+    fun getInternalArchiveNames(): List<String> {
+        return imageArchive.map { it -> getName(it.hash) }
+    }
 
+    override fun load(cache: Cache): Boolean {
+        return try {
+            val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE))
+            val index = archive.readFile("index.dat")
 
             var total = 0
             for (entry in archive.getEntries()) {
 
                 val sprites = mutableListOf<Sprite>()
-
                 spriteLoop@ while (true) {
                     try {
                         sprites.add(Sprite.decode(archive, index, entry.hash, sprites.size))
                     } catch (ex: Exception) {
                         break@spriteLoop
                     }
-
                 }
 
-                imageArchiveList.add(ImageArchive(entry.hash, sprites))
+                imageArchive.add(ImageArchive(entry.hash, sprites))
 
                 total += sprites.size
             }
 
-
             println("Loaded $total sprites")
+            true
+        } catch (e : NullPointerException) {
+            e.printStackTrace()
+            cache.reset()
+            false
         }
-
     }
 
-    fun start() {
-        //Quick start method for developing
-        importInternal()
+    override fun reset(): Boolean {
+        imageArchive.clear()
+        return true
     }
 
     fun getName(hash: Int): String {

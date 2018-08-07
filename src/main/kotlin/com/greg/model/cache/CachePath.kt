@@ -1,5 +1,6 @@
 package com.greg.model.cache
 
+import com.greg.model.cache.formats.CacheFormats
 import com.greg.model.cache.formats.UnpackedFormat
 import java.io.File
 import java.nio.file.Path
@@ -25,16 +26,16 @@ class CachePath {
 
         val files = getFiles()
 
-        return CacheTypes.values().any { it.type.format(path, files) }
+        return CacheFormats.values().any { it.type.format(path, files) }
     }
 
     /**
      * @return cache format type
      */
-    fun getCacheType(): CacheTypes {
+    fun getCacheType(): CacheFormats {
         val files = getFiles()
 
-        return CacheTypes.values().first { it.type.format(path, files) }
+        return CacheFormats.values().first { it.type.format(path, files) }
     }
 
     /**

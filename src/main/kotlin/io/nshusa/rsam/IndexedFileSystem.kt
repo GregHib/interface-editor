@@ -1,7 +1,7 @@
 package io.nshusa.rsam
 
 import com.greg.model.cache.CachePath
-import com.greg.model.cache.CacheTypes
+import com.greg.model.cache.formats.CacheFormats
 import java.io.Closeable
 import java.io.IOException
 import java.io.RandomAccessFile
@@ -11,11 +11,11 @@ import java.util.*
 
 open class IndexedFileSystem : Closeable {
 
-    val path: CachePath
+    internal val path: CachePath
 
     constructor(path: CachePath) {
         this.path = path
-        storeCount = path.getIndices(path.getFiles()).size
+        storeCount = if(path.isValid()) path.getIndices(path.getFiles()).size else 0
     }
 
     constructor(path: String) : this(CachePath(path))
@@ -31,7 +31,7 @@ open class IndexedFileSystem : Closeable {
         if(!path.isValid())
             return false
 
-        if(path.getCacheType() == CacheTypes.FULL_CACHE) {
+        if(path.getCacheType() == CacheFormats.FULL_CACHE) {
             val files = path.getFiles()
 
             val data = path.getDataFile(files) ?: return false

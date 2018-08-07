@@ -1,6 +1,7 @@
 package com.greg.controller.widgets
 
 import com.greg.controller.selection.InteractionController
+import com.greg.model.cache.archives.ArchiveMedia
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetsList
 import com.greg.model.widgets.type.Widget
@@ -12,7 +13,6 @@ import com.greg.view.canvas.widgets.RectangleShape
 import com.greg.view.canvas.widgets.SpriteShape
 import com.greg.view.canvas.widgets.TextShape
 import com.greg.view.canvas.widgets.WidgetShape
-import com.greg.view.sprites.SpriteController
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.scene.Node
@@ -180,7 +180,7 @@ class WidgetsController : Controller() {
             //Every time widget archive is changed
             shape.archiveProperty().addListener { _, _, newValue ->
                 //Get the number of sprites in archive
-                val archive = SpriteController.getArchive("$newValue.dat")//TODO the gnome hash isn't .dat? are all .dat?
+                val archive = ArchiveMedia.getImage("$newValue.dat")//TODO the gnome hash isn't .dat? are all .dat?
                 var size = archive?.sprites?.size ?: 1
                 size -= 1
 

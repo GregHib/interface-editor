@@ -1,5 +1,6 @@
 package com.greg.model.cache
 
+import com.greg.model.cache.formats.CacheFormats
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.binary.Archive
 import org.junit.Assert
@@ -18,13 +19,13 @@ class CachePathTest {
     @Test
     fun cacheDirectory() {
         Assert.assertTrue(path.isValid())
-        Assert.assertTrue(path.getCacheType() == CacheTypes.FULL_CACHE)
+        Assert.assertTrue(path.getCacheType() == CacheFormats.FULL_CACHE)
     }
 
     @Test
     fun interfaceFile() {
         Assert.assertTrue(file.isValid())
-        Assert.assertTrue(file.getCacheType() == CacheTypes.UNPACKED_CACHE)
+        Assert.assertTrue(file.getCacheType() == CacheFormats.UNPACKED_CACHE)
 
         Cache(file).use { fs ->
             val buff = fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)

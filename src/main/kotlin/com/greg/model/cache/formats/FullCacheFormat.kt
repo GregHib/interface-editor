@@ -1,6 +1,5 @@
 package com.greg.model.cache.formats
 
-import com.greg.model.cache.CacheFormat
 import java.io.File
 
 class FullCacheFormat : CacheFormat {

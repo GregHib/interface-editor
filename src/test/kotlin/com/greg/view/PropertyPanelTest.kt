@@ -1,4 +1,4 @@
-
+package com.greg.view
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.StringProperty
 import javafx.application.Application
@@ -28,7 +28,7 @@ class PropertyPanelTest : View() {
         prefHeight = 300.0
     }
 
-    val property = PropertyPanelProperty()
+    private val property = PropertyPanelProperty()
 
     init {
         sheet.items.add(PropertyPanelItem("Numbers", property.anInt))

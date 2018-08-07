@@ -1,6 +1,7 @@
 package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
+import com.greg.model.cache.CacheController
 import com.greg.view.canvas.CanvasView
 import javafx.scene.input.KeyEvent
 import javafx.scene.shape.Rectangle
@@ -12,6 +13,7 @@ import tornadofx.controlsfx.notificationPane
 class MainView : View("Greg's Interface Editor") {
 
     private val widgets: WidgetsController by inject()
+    private val cache: CacheController by inject()
 
     private val canvas = CanvasView()
     private val rightPane = RightPane()
@@ -26,8 +28,6 @@ class MainView : View("Greg's Interface Editor") {
         widgets.start(canvas)
 
         leftPane.hierarchy.rootTreeItem.children.addListener(canvas.hierarchyListener)
-
-        leftPane.controller.start()
     }
 
     override val root = borderpane {
@@ -40,7 +40,8 @@ class MainView : View("Greg's Interface Editor") {
         prefHeight = 768.0
         top = menubar {
             menu("File") {
-                menu("Load") {
+                item("Load cache").action {
+                    cache.select()
                 }
             }
         }

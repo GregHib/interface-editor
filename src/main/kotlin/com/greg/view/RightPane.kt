@@ -1,6 +1,7 @@
 package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
+import com.greg.model.cache.CacheController
 import com.greg.model.widgets.properties.CappedPropertyValues
 import com.greg.model.widgets.properties.PanelPropertyValues
 import com.greg.model.widgets.type.Widget
@@ -8,7 +9,6 @@ import com.greg.view.properties.CappedPropertyItem
 import com.greg.view.properties.NumberSpinner
 import com.greg.view.properties.PropertyItem
 import com.greg.view.properties.TextAreaProperty
-import com.greg.view.sprites.SpriteController
 import javafx.beans.property.Property
 import javafx.collections.ListChangeListener
 import javafx.event.ActionEvent
@@ -34,7 +34,7 @@ import java.util.regex.Pattern
 class RightPane : Fragment() {
 
     val widgets: WidgetsController by inject()
-    val sprites: SpriteController by inject()
+    val cache: CacheController by inject()
     private val sheet = PropertySheet()
     private val pattern = Pattern.compile("^(-?[0-9]+)")
 
@@ -86,7 +86,7 @@ class RightPane : Fragment() {
                     }
                     else -> {
                         if (param.name == "Archive") {
-                            val editor = Editors.createChoiceEditor(param, sprites.getInternalArchiveNames())
+                            val editor = Editors.createChoiceEditor(param, cache.sprites.getInternalArchiveNames())
                             val field = editor.editor
                             val box = field as? ComboBox<String>
                             box?.valueProperty()?.bindBidirectional(param.propertyValue as Property<String>?)
@@ -156,8 +156,6 @@ class RightPane : Fragment() {
                     vbox {
                         add(sheet)
                     }
-                }
-                item("CS2 Editor") {
                 }
             }
 

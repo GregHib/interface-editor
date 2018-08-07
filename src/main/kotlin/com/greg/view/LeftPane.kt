@@ -1,9 +1,9 @@
 package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
+import com.greg.model.cache.CacheController
 import com.greg.view.hierarchy.HierarchyItem
 import com.greg.view.hierarchy.HierarchyView
-import com.greg.view.sprites.SpriteController
 import com.greg.view.sprites.internal.InternalSpriteView
 import javafx.collections.ListChangeListener
 import javafx.geometry.Orientation
@@ -18,12 +18,13 @@ import tornadofx.tabpane
 class LeftPane : View(), KeyInterface {
 
     val hierarchy = HierarchyView()
-    private val sprites = InternalSpriteView()
 
     private lateinit var tabPane: TabPane
     private val components = ComponentView()
     private val widgets: WidgetsController by inject()
-    val controller: SpriteController by inject()
+    val cache: CacheController by inject()
+
+    private val sprites = InternalSpriteView(cache)
 
     init {
         widgets.getAll().addListener(ListChangeListener { change ->

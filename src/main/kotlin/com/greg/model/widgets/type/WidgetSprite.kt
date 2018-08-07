@@ -5,7 +5,6 @@ import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
 import com.greg.model.widgets.properties.extended.StringProperty
-import com.greg.view.sprites.SpriteController
 
 class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
 
@@ -41,7 +40,7 @@ class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
 
     fun capProperty(): ObjProperty<IntRange> {
         if (cap == null)
-            cap = ObjProperty(this, "cap", IntRange(0, SpriteController.imageArchiveList[0].sprites.size))
+            cap = ObjProperty(this, "cap", IntRange(0, 1))
 
         return cap!!
     }

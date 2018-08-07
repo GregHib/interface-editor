@@ -1,22 +1,21 @@
 package com.greg.view.sprites.internal
 
+import com.greg.model.cache.CacheController
+import com.greg.model.cache.archives.ArchiveMedia
 import com.greg.model.widgets.WidgetType
-import com.greg.view.sprites.SpriteController
 import com.greg.view.sprites.SpriteDisplay
 import com.greg.view.sprites.tree.ImageTreeItem
 import javafx.collections.ListChangeListener
 import javafx.scene.control.TreeItem
 
-class InternalSpriteView : SpriteDisplay("Archive", WidgetType.SPRITE, { target: ImageTreeItem -> "${target.value}:${target.parent.value}"}) {
-
-    private val controller: SpriteController by inject()
+class InternalSpriteView(cache: CacheController) : SpriteDisplay("Sprites", WidgetType.SPRITE, { target: ImageTreeItem -> "${target.value}:${target.parent.value}"}) {
 
     init {
-        SpriteController.imageArchiveList.addListener(ListChangeListener { change ->
+        ArchiveMedia.imageArchive.addListener(ListChangeListener { change ->
             change.next()
             if (change.wasAdded()) {
                 for (archive in change.addedSubList) {
-                    val name = controller.getName(archive.hash)
+                    val name = cache.sprites.getName(archive.hash)
                     val archiveItem = TreeItem(name)
 
                     archive.sprites
@@ -27,7 +26,7 @@ class InternalSpriteView : SpriteDisplay("Archive", WidgetType.SPRITE, { target:
             } else if (change.wasRemoved()) {
                 //Find and remove
                 for (archive in change.removed) {
-                    val name = controller.getName(archive.hash)
+                    val name = cache.sprites.getName(archive.hash)
                     for (child in rootTreeItem.children) {
                         if (name == child.value) {
                             rootTreeItem.children.remove(child)

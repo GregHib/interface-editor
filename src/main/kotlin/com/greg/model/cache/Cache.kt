@@ -1,59 +1,20 @@
 package com.greg.model.cache
 
+import com.greg.model.cache.formats.CacheFormats
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.IndexedFileSystem
-import io.nshusa.rsam.binary.Archive
-import io.nshusa.rsam.binary.sprite.Sprite
-import tornadofx.runAsync
 import java.nio.ByteBuffer
 
 class Cache(path: CachePath) : IndexedFileSystem(path) {
 
     init {
-        load()
-
-        runAsync {
-            loadSprites()
-        }
+        if(path.isValid())
+            load()
     }
 
     override fun readFile(storeId: Int, fileId: Int): ByteBuffer {
-        if(path.getCacheType() == CacheTypes.UNPACKED_CACHE && storeId == FileStore.ARCHIVE_FILE_STORE)
+        if(path.getCacheType() == CacheFormats.UNPACKED_CACHE && storeId == FileStore.ARCHIVE_FILE_STORE)
             return ByteBuffer.wrap(path.getArchiveFile(path.getFiles(), fileId - 1).readBytes())
         return super.readFile(storeId, fileId)
-    }
-
-    fun loadSprites(): Int {
-        try {
-            val archive = Archive.decode(readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE))
-            val index = archive.readFile("index.dat")
-
-            val sprites = mutableListOf<Sprite>()
-            for (entry in archive.getEntries()) {
-
-                spriteLoop@ while (true) {
-                    try {
-                        sprites.add(Sprite.decode(archive, index, entry.hash, sprites.size))
-                    } catch (ex: Exception) {
-                        break@spriteLoop
-                    }
-                }
-            }
-
-            return sprites.size
-
-        } catch (e : NullPointerException) {
-            e.printStackTrace()//TODO cancel loading action & display missing file message
-            return 0
-        }
-    }
-
-
-    fun loadFonts() {
-
-    }
-
-    fun loadInterface() {
-
     }
 }
