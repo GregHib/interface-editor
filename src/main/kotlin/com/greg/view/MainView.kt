@@ -48,8 +48,6 @@ class MainView : View("Greg's Interface Editor") {
                     cache.select()
                 }
                 item("Load interface").action {
-
-
                     val alert = IntegerAlert("Interface ID:")
                     val result = alert.showAndWait()
 
@@ -57,7 +55,6 @@ class MainView : View("Greg's Interface Editor") {
                         widgets.deleteAll()
                         cache.interfaces.display(widgets, alert.value)
                     }
-
                 }
             }
         }

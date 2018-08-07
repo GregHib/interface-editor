@@ -26,6 +26,8 @@ class Widget {
     var defaultMedia: Int = 0
     var defaultMediaType: Int = 0
     var defaultSprite: Sprite? = null
+    var defaultSpriteArchive: String? = null
+    var defaultSpriteIndex: Int? = null
     lateinit var defaultText: String
     var filled: Boolean = false
     lateinit var font: Font
@@ -57,6 +59,8 @@ class Widget {
     var secondaryMedia: Int = 0
     var secondaryMediaType: Int = 0
     var secondarySprite: Sprite? = null
+    var secondarySpriteArchive: String? = null
+    var secondarySpriteIndex: Int? = null
     lateinit var secondaryText: String
     var shadowedText: Boolean = false
     var spritePaddingX: Int = 0
@@ -137,13 +141,13 @@ class Widget {
         private const val OPTION_CONTINUE = 6
 
         const val TYPE_CONTAINER = 0
-        private const val TYPE_MODEL_LIST = 1
-        private const val TYPE_INVENTORY = 2
-        private const val TYPE_RECTANGLE = 3
-        private const val TYPE_TEXT = 4
-        private const val TYPE_SPRITE = 5
-        private const val TYPE_MODEL = 6
-        private const val TYPE_ITEM_LIST = 7
+        const val TYPE_MODEL_LIST = 1
+        const val TYPE_INVENTORY = 2
+        const val TYPE_RECTANGLE = 3
+        const val TYPE_TEXT = 4
+        const val TYPE_SPRITE = 5
+        const val TYPE_MODEL = 6
+        const val TYPE_ITEM_LIST = 7
 
         private var widgets: Array<Widget?>? = null
         private val spriteCache = HashMap<Long, Sprite>()
@@ -299,12 +303,25 @@ class Widget {
 
                 if (widget.group == TYPE_SPRITE) {
                     var name = ByteBufferUtils.getString(buffer)
+
+                    if (name.isNotEmpty()) {
+                        index = name.lastIndexOf(",")
+                        widget.defaultSpriteArchive = name.substring(0, index)
+                        widget.defaultSpriteIndex = Integer.parseInt(name.substring(index + 1))
+                    }
+
                     if (graphics != null && name.isNotEmpty()) {
                         index = name.lastIndexOf(",")
                         widget.defaultSprite = getSprite(graphics, name.substring(0, index), Integer.parseInt(name.substring(index + 1)))
                     }
 
                     name = ByteBufferUtils.getString(buffer)
+                    if (name.isNotEmpty()) {
+                        index = name.lastIndexOf(",")
+                        widget.secondarySpriteArchive = name.substring(0, index)
+                        widget.secondarySpriteIndex = Integer.parseInt(name.substring(index + 1))
+                    }
+
                     if (graphics != null && name.isNotEmpty()) {
                         index = name.lastIndexOf(",")
                         widget.secondarySprite = getSprite(graphics, name.substring(0, index), Integer.parseInt(name.substring(index + 1)))

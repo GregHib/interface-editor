@@ -31,7 +31,7 @@ enum class Settings(var default: Any) {
     DEFAULT_SPRITE_ARCHIVE_NAME(""),
     SPRITE_BACKGROUND_COLOUR(0xff00ff),
     DEFAULT_WIDGET_LIST_IMAGE_WIDTH(400.0),
-    DEFAULT_WIDGET_LIST_IMAGE_HEIGHT(200.0)
+    DEFAULT_WIDGET_LIST_IMAGE_HEIGHT(200.0),
     ;
 
     val key: String = this.name

@@ -7,6 +7,7 @@ Change indicy id's
 
 User preferences saving
 Custom interface names
+Loading screen for selecting cache (like intellij with previous locations + option to load last one by default)
 
 
 

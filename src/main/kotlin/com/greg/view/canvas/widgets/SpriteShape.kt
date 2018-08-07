@@ -37,6 +37,9 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
                 if(sprite != null) {
                     val bufferedImage = sprite.toBufferedImage()
                     displayImage(bufferedImage)
+
+                    layoutX = sprite.offsetX.toDouble()
+                    layoutY = sprite.offsetY.toDouble()
                 }
             }
         }
