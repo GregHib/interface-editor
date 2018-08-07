@@ -47,6 +47,11 @@ class CanvasView : View(), KeyInterface {
         state = EditState(this, widget, shape, widgets, canvas)
     }
 
+    fun clear() {
+        widgets.clearSelection()
+    }
+
+
     private fun closeState() {
         state.onClose()
     }

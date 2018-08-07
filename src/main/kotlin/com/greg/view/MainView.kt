@@ -2,12 +2,16 @@ package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.cache.CacheController
+import com.greg.view.alerts.IntegerAlert
 import com.greg.view.canvas.CanvasView
+import javafx.scene.control.ButtonType
 import javafx.scene.input.KeyEvent
 import javafx.scene.shape.Rectangle
 import tornadofx.*
 import tornadofx.controlsfx.content
 import tornadofx.controlsfx.notificationPane
+
+
 
 
 class MainView : View("Greg's Interface Editor") {
@@ -42,6 +46,18 @@ class MainView : View("Greg's Interface Editor") {
             menu("File") {
                 item("Load cache").action {
                     cache.select()
+                }
+                item("Load interface").action {
+
+
+                    val alert = IntegerAlert("Interface ID:")
+                    val result = alert.showAndWait()
+
+                    if(result.get() == ButtonType.OK) {
+                        widgets.deleteAll()
+                        cache.interfaces.display(widgets, alert.value)
+                    }
+
                 }
             }
         }

@@ -110,6 +110,14 @@ class WidgetsController : Controller() {
         deleteSelection()
     }
 
+    fun deleteAll() {
+        val iterator = getAll().iterator()
+        while (iterator.hasNext()) {
+            iterator.next()
+            iterator.remove()
+        }
+    }
+
     fun deleteSelection() {
         val iterator = getSelection().iterator()
         while (iterator.hasNext()) {

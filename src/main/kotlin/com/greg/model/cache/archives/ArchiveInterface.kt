@@ -1,10 +1,12 @@
 package com.greg.model.cache.archives
 
+import com.greg.controller.widgets.WidgetsController
 import com.greg.model.cache.Cache
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.binary.Archive
 import io.nshusa.rsam.binary.Widget
 import javafx.scene.control.TreeItem
+import java.io.InputStream
 
 class ArchiveInterface : CacheArchive() {
 
@@ -25,6 +27,8 @@ class ArchiveInterface : CacheArchive() {
                 if (container.group != Widget.TYPE_CONTAINER || container.children?.isEmpty() ?: continue) {
                     continue
                 }
+
+//                println("$widget ${getName(widget)}")
 
                 val len = container.children?.size ?: continue
 
@@ -48,4 +52,24 @@ class ArchiveInterface : CacheArchive() {
     }
 
 
+    fun getName(index: Int): String {
+        //Get known hashes
+        val inputStream: InputStream = javaClass.getResourceAsStream("interfaces.txt")
+        val lineList = mutableListOf<String>()
+        inputStream.bufferedReader().useLines { lines -> lines.forEach { lineList.add(it) } }
+
+        //If match return description/name
+        lineList.forEach {
+            val split = it.split("   ")
+            val id = split[0].toInt()
+            if (id == index)
+                return split[1]
+        }
+        //Otherwise just return the hash id
+        return index.toString()
+    }
+
+    fun display(widgets: WidgetsController, id: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
