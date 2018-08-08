@@ -1,8 +1,8 @@
 package com.greg.model.widgets
 
 import com.greg.model.widgets.type.Widget
-import com.greg.model.widgets.type.WidgetSprite
 import com.greg.model.widgets.type.WidgetRectangle
+import com.greg.model.widgets.type.WidgetSprite
 import com.greg.model.widgets.type.WidgetText
 
 open class WidgetBuilder(val type: WidgetType = WidgetType.WIDGET) {
@@ -16,6 +16,9 @@ open class WidgetBuilder(val type: WidgetType = WidgetType.WIDGET) {
     }
 
     open fun build(id: Int = -1): Widget {
+        if(id != -1 && id > identifier)
+            identifier = id + 1
+
         val identifier = if(id != -1) id else getId()
         return when(type) {
             WidgetType.TEXT -> WidgetText(this, identifier)

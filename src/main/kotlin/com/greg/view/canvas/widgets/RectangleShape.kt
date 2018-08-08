@@ -18,12 +18,12 @@ class RectangleShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, 
     }
 
     fun updateColour(widget: WidgetRectangle, forceSecondary: Boolean = false) {
-        val colour = if(forceSecondary)
-            if(widget.isHovered() && widget.getSecondaryHoverColour() != Color.BLACK) widget.getSecondaryHoverColour() else widget.getSecondaryColour()
+        val colour = if (forceSecondary)
+            if (widget.isHovered() && widget.getSecondaryHoverColour() != Color.BLACK) widget.getSecondaryHoverColour() else widget.getSecondaryColour()
         else
-            if(widget.isHovered() && widget.getDefaultHoverColour() != Color.BLACK) widget.getDefaultHoverColour() else widget.getDefaultColour()
+            if (widget.isHovered() && widget.getDefaultHoverColour() != Color.BLACK) widget.getDefaultHoverColour() else widget.getDefaultColour()
 
-        rectangle.fill = if(widget.isFilled()) colour else Color.TRANSPARENT
+        rectangle.fill = if (widget.isFilled()) colour else Color.TRANSPARENT
         rectangle.stroke = colour
     }
 }

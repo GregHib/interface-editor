@@ -2,7 +2,7 @@ package com.greg.model.cache
 
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.binary.Archive
-import io.nshusa.rsam.binary.Font
+import com.greg.model.cache.archives.font.Font
 import io.nshusa.rsam.binary.Widget
 import org.junit.Assert
 import org.junit.Test

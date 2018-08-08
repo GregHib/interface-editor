@@ -28,6 +28,7 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
 
     override fun handleMousePress(event: MouseEvent) {
 
+
         when {
             event.target is ResizePoint -> {
                 resize.press(event)
@@ -39,6 +40,12 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
                 //Set starting position
                 widget.dragContext.anchorX = widget.getX()
                 widget.dragContext.anchorY = widget.getY()
+            }
+            else -> {
+                //Close edit state if clicked on empty space
+                val widget = widgets.getWidget(event.target)
+                if (!CanvasView.spaceHeld && this.widget != widget)
+                    close()
             }
         }
     }
@@ -58,10 +65,6 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
     }
 
     override fun handleMouseRelease(event: MouseEvent) {
-        //Close edit state if clicked on empty space
-        if (!CanvasView.spaceHeld && event.target == canvas)
-            close()
-
         resize.reset()
     }
 

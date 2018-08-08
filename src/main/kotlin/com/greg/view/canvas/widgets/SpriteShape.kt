@@ -5,14 +5,11 @@ import com.greg.model.settings.Settings
 import com.greg.model.widgets.properties.extended.StringProperty
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleIntegerProperty
-import javafx.embed.swing.SwingFXUtils
-import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import javafx.scene.image.WritableImage
 import tornadofx.add
 import java.awt.image.BufferedImage
 
-class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height) {
+class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height), ImageResample {
 
     var sprite: SimpleIntegerProperty? = null
     var archive: StringProperty? = null
@@ -61,36 +58,13 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
         image.fitHeight = bufferedImage.height.toDouble()
         image.isPreserveRatio = true
 
-        image.image = if(Settings.getBoolean(Settings.SPRITE_RESAMPLING)) resample(SwingFXUtils.toFXImage(bufferedImage, null), 10) else SwingFXUtils.toFXImage(bufferedImage, null)
+        image.image = resample(bufferedImage)
 
         outline.width = bufferedImage.width.toDouble()
         outline.height = bufferedImage.height.toDouble()
     }
 
-    private fun resample(input: Image, scaleFactor: Int): Image {
-        val w = input.width.toInt()
-        val h = input.height.toInt()
 
-        val output = WritableImage(w * scaleFactor, h * scaleFactor)
-
-        val reader = input.pixelReader
-        val writer = output.pixelWriter
-
-        for (y in 0 until h) {
-            for (x in 0 until w) {
-                val argb = reader.getArgb(x, y)
-
-                //Scale
-                for (dy in 0 until scaleFactor) {
-                    for (dx in 0 until scaleFactor) {
-                        writer.setArgb(x * scaleFactor + dx, y * scaleFactor + dy, argb)
-                    }
-                }
-            }
-        }
-
-        return output
-    }
 
     fun getSprite(): Int {
         return spriteProperty().get()

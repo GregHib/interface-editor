@@ -120,8 +120,11 @@ class ArchiveInterface : CacheArchive() {
                         widget.setSprite(child.defaultSpriteIndex!!)
                 }
                 is WidgetText -> {
-                    widget.setText(child.defaultText)
-                    widget.setColour(getColour(child.defaultColour))
+                    widget.setDefaultText(child.defaultText)
+                    widget.setDefaultColour(getColour(child.defaultColour))
+                    widget.setCentred(child.centeredText)
+                    widget.setFontIndex(child.fontIndex)
+                    widget.setShadow(child.shadowedText)
                 }
                 is WidgetRectangle -> {
                     widget.setDefaultColour(getColour(child.defaultColour))

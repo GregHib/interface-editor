@@ -1,9 +1,9 @@
 package com.greg.model.cache.archives
 
 import com.greg.model.cache.Cache
+import com.greg.model.cache.archives.font.Font
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.binary.Archive
-import io.nshusa.rsam.binary.Font
 
 class ArchiveFont : CacheArchive() {
 

@@ -5,6 +5,7 @@ import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.canvas.SceneGestures
 import com.greg.controller.widgets.WidgetShapeBuilder
 import com.greg.controller.widgets.WidgetsController
+import com.greg.model.cache.CacheController
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.type.Widget
@@ -31,6 +32,7 @@ class CanvasView : View(), KeyInterface {
     }
 
     private val widgets: WidgetsController by inject()
+    private val cache: CacheController by inject()
     private val canvas = PannableCanvas()
     private val nodeGestures = NodeGestures(widgets)
     private val sceneGestures = SceneGestures(canvas)
@@ -214,7 +216,7 @@ class CanvasView : View(), KeyInterface {
                 shape.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeGestures.onMouseDraggedEventHandler)
                 shape.addEventFilter(MouseEvent.MOUSE_ENTERED, nodeGestures.onMouseEnteredEventHandler)
                 shape.addEventFilter(MouseEvent.MOUSE_EXITED, nodeGestures.onMouseExitedEventHandler)
-                widgets.connect(widget, shape)
+                widgets.connect(widget, shape, cache)
                 canvas.children.add(shape)
             }
         } else if (it.wasRemoved()) {

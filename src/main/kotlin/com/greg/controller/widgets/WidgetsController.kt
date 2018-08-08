@@ -1,6 +1,7 @@
 package com.greg.controller.widgets
 
 import com.greg.controller.selection.InteractionController
+import com.greg.model.cache.CacheController
 import com.greg.model.cache.archives.ArchiveMedia
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetsList
@@ -16,7 +17,9 @@ import com.greg.view.canvas.widgets.WidgetShape
 import javafx.beans.value.ChangeListener
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
+import javafx.geometry.Pos
 import javafx.scene.Node
+import javafx.scene.text.TextAlignment
 import tornadofx.Controller
 import tornadofx.observable
 import tornadofx.onChange
@@ -145,7 +148,7 @@ class WidgetsController : Controller() {
         action.copy()
     }
 
-    fun connect(widget: Widget, shape: WidgetShape) {
+    fun connect(widget: Widget, shape: WidgetShape, cache: CacheController) {
 
         //Selection
         widget.selectedProperty().addListener { _, oldValue, newValue -> updateSelection(widget, shape, oldValue, newValue) }
@@ -174,10 +177,34 @@ class WidgetsController : Controller() {
             widget.secondaryColourProperty().addListener(listener)
             widget.secondaryHoverColourProperty().addListener(listener)
         } else if (widget is WidgetText && shape is TextShape) {
-            //Binds
-            shape.label.textProperty().bind(widget.textProperty())
-            //Both are needed for colour
-            shape.label.textFillProperty().bind(widget.colourProperty())
+            shape.updateColour(widget)
+            shape.updateText(widget, cache = cache)
+
+            var listener = ChangeListener<Any> { _, _, _ ->
+                shape.updateColour(widget)
+                shape.updateText(widget, cache = cache)
+            }
+
+            widget.hoveredProperty().addListener(listener)
+            widget.defaultColourProperty().addListener(listener)
+            widget.defaultHoverColourProperty().addListener(listener)
+            widget.secondaryColourProperty().addListener(listener)
+            widget.secondaryHoverColourProperty().addListener(listener)
+
+            listener = ChangeListener { _, _, _ -> shape.updateText(widget, cache = cache) }
+
+            widget.defaultTextProperty().addListener(listener)
+            widget.secondaryTextProperty().addListener(listener)
+            widget.widthProperty().addListener(listener)
+            widget.heightProperty().addListener(listener)
+
+            widget.fontIndexProperty().addListener(listener)
+            widget.shadowProperty().addListener(listener)
+            widget.centredProperty().addListener { _, _, newValue ->
+                shape.label.textAlignment = if(newValue) TextAlignment.CENTER else TextAlignment.LEFT
+                shape.label.alignment = if(newValue) Pos.TOP_CENTER else Pos.TOP_LEFT
+                shape.updateText(widget, cache = cache)
+            }
         } else if (widget is WidgetSprite && shape is SpriteShape) {
             shape.spriteProperty().bind(widget.spriteProperty())
             shape.archiveProperty().bind(widget.archiveProperty())

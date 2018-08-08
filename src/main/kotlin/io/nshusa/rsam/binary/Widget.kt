@@ -1,12 +1,9 @@
 package io.nshusa.rsam.binary
 
+import com.greg.model.cache.archives.font.Font
 import io.nshusa.rsam.binary.sprite.Sprite
-import io.nshusa.rsam.graphics.render.Raster
 import io.nshusa.rsam.util.ByteBufferUtils
 import io.nshusa.rsam.util.HashUtils
-import io.nshusa.rsam.util.RenderUtils
-import java.awt.image.BufferedImage
-import java.awt.image.DataBufferInt
 import java.io.IOException
 import java.util.*
 import kotlin.experimental.and
@@ -31,6 +28,7 @@ class Widget {
     lateinit var defaultText: String
     var filled: Boolean = false
     lateinit var font: Font
+    var fontIndex: Int = 0
     var group: Int = 0
     var hasActions: Boolean = false
     var height: Int = 0
@@ -90,32 +88,6 @@ class Widget {
             widgets!![id] = this
         } else {
             throw IllegalArgumentException(String.format("widget=%d must be between 0 and %d", id, widgets!!.size))
-        }
-    }
-
-    fun toBufferedImage(): BufferedImage? {
-        if (this.width > 0 && this.height > 0) {
-            Raster.init(this.height, this.width, IntArray(this.width * this.height))
-            Raster.reset()
-            if (this.group == 0) {
-                RenderUtils.renderWidget(this, 0, 0, 0)
-            } else if (this.group == 5) {
-                if (this.defaultSprite != null) {
-                    this.defaultSprite!!.drawSprite(0, 0)
-                }
-            } else if (this.group == 4) {
-                RenderUtils.renderText(this, 0, 0)
-            } else if (this.group == 3) {
-                RenderUtils.renderText(this, 0, 0)
-            }
-
-            val data = Raster.raster
-            val bimage = BufferedImage(Raster.width, Raster.height, 1)
-            val pixels = (bimage.raster.dataBuffer as DataBufferInt).data
-            System.arraycopy(data, 0, pixels, 0, data.size)
-            return bimage
-        } else {
-            return null
         }
     }
 
@@ -279,6 +251,7 @@ class Widget {
                 if (widget.group == TYPE_TEXT || widget.group == TYPE_MODEL_LIST) {
                     widget.centeredText = buffer.get().toInt() and 255 == 1
                     font = buffer.get().toInt() and 255
+                    widget.fontIndex = font
                     if (fonts != null) {
                         widget.font = fonts[font]
                     }
@@ -355,6 +328,7 @@ class Widget {
                     widget.inventoryAmounts = IntArray(widget.width * widget.height)
                     widget.centeredText = buffer.get().toInt() and 255 == 1
                     font = buffer.get().toInt() and 255
+                    widget.fontIndex = font
                     if (fonts != null) {
                         widget.font = fonts[font]
                     }

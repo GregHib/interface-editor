@@ -56,7 +56,7 @@ class CacheController : Controller() {
             }
 
             if (!fonts.load(cache)) {
-                alert(Alert.AlertType.ERROR, "Error loading cache", "Unable to load font archive.")
+                alert(Alert.AlertType.ERROR, "Error loading cache", "Unable to load fontIndex archive.")
                 return
             }
 
