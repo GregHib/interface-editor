@@ -172,7 +172,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
         for ((index, value) in properties.get().withIndex()) {
             if(value.property == selectedProperty())
                 continue
-            (value.property as Property<*>).value = memento.values[index].convert(value.property)
+            (value.property as Property<*>).value = memento.getValue(index, value.property)
         }
     }
 }
