@@ -122,8 +122,7 @@ class ArchiveInterface : CacheArchive() {
                     widget.setColour(getColour(child.defaultColour))
                 }
                 is WidgetRectangle -> {
-                    widget.setFill(getColour(child.defaultColour))
-                    widget.setStroke(getColour(child.defaultColour))
+                    widget.setColour(getColour(child.defaultColour))
                 }
             }
 

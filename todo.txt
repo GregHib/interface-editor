@@ -66,3 +66,10 @@ Advanced arrow key movement system, ideally without a game-loop see : https://st
 Undoing and redoing changing an attribute for multiple widgets in one action rather than splitting into individual actions
 Change layout to use mvc?
 Custom names for hierarchy items (have name as a WidgetGroup property?) When saving will need a separate *.names file
+
+
+Credits:
+Savions - Colour conversion code
+Major - 317 deob
+Faris - Interface id list
+Galkon - Sprite to BufferedImage w alpha code

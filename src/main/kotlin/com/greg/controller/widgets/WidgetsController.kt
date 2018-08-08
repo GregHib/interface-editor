@@ -174,8 +174,8 @@ class WidgetsController : Controller() {
         widget.hiddenProperty().addListener { _, _, newValue -> shape.isVisible = !newValue }
 
         if (widget is WidgetRectangle && shape is RectangleShape) {
-            shape.rectangle.fillProperty().bind(widget.fillProperty())
-            shape.rectangle.strokeProperty().bind(widget.strokeProperty())
+            shape.rectangle.fillProperty().bind(widget.colourProperty())
+            shape.rectangle.strokeProperty().bind(widget.colourProperty())
         } else if (widget is WidgetText && shape is TextShape) {
             //Binds
             shape.label.textProperty().bind(widget.textProperty())
