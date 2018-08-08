@@ -16,7 +16,6 @@ import com.greg.view.canvas.widgets.WidgetShape
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.scene.Node
-import javafx.scene.shape.Shape
 import tornadofx.Controller
 import tornadofx.observable
 import tornadofx.onChange
@@ -74,7 +73,7 @@ class WidgetsController : Controller() {
     }
 
     fun getShape(target: EventTarget?): WidgetShape? {
-        if (target is Shape) {
+        if (target is Node) {
             var parent = target.parent
             if (parent is WidgetShape)
                 return parent
