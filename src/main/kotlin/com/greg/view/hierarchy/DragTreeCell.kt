@@ -224,12 +224,12 @@ class DragTreeCell : CheckBoxTreeCell<String>() {
                         }
 
                         //Widget select everything highlighted in hierarchy
-                        treeView.selectionModel.selectedItems
+                        /*treeView.selectionModel.selectedItems
                                 .filterIsInstance<HierarchyItem>()
                                 .filter { it.widget != widget }
                                 .forEach {
                                     it.widget.setSelected(newValue)
-                                }
+                                }*/
                     }
                 }
 

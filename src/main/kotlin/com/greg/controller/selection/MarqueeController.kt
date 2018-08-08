@@ -93,7 +93,6 @@ class MarqueeController(private val widgets: WidgetsController, private var canv
                     marquee.boundsInParent.intersects(widgetBounds)
                 }
 
-
         //Make selections
         list.forEach { widget -> widget.setSelected(if (event.isControlDown) !widget.isSelected() else true, false) }
 

@@ -12,6 +12,10 @@ import javafx.scene.image.WritableImage
 import tornadofx.add
 import java.awt.image.BufferedImage
 
+
+
+
+
 class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height) {
 
     var sprite: SimpleIntegerProperty? = null
@@ -60,7 +64,7 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
         image.fitWidth = bufferedImage.width.toDouble()
         image.fitHeight = bufferedImage.height.toDouble()
         image.isPreserveRatio = true
-        image.image = resample(SwingFXUtils.toFXImage(bufferedImage, null), 10)
+        image.image = resample(SwingFXUtils.toFXImage(bufferedImage, null), 10)//SwingFXUtils.toFXImage(bufferedImage, null)//
 
         //TODO fix width/height on adding sprite 0
         outline.width = bufferedImage.width.toDouble()
@@ -76,22 +80,9 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
         val reader = input.pixelReader
         val writer = output.pixelWriter
 
-        val colour = Settings.getInt(Settings.SPRITE_BACKGROUND_COLOUR)
-        val red = (colour shr 16) and 0xFF
-        val green = (colour shr 8) and 0xFF
-        val blue = colour and 0xFF
-
         for (y in 0 until h) {
             for (x in 0 until w) {
-                var argb = reader.getArgb(x, y)
-
-                //Replace colour with transparent
-                val r = argb shr 16 and 0xFF
-                val g = argb shr 8 and 0xFF
-                val b = argb and 0xFF
-
-                if (r == red && g == green && b == blue)
-                    argb = argb and 0x00FFFFFF
+                val argb = reader.getArgb(x, y)
 
                 //Scale
                 for (dy in 0 until scaleFactor) {

@@ -28,7 +28,7 @@ class InteractionController(val widgets: WidgetsController) {
         //For each line
         for (line in lines) {
             //Extract name and list from string
-            if(!line.contains("[") || !line.contains("]"))
+            if (!line.contains("[") || !line.contains("]"))
                 continue
 
             val name = line.substring(0, line.indexOf(" ["))
@@ -58,24 +58,24 @@ class InteractionController(val widgets: WidgetsController) {
         //Apply memento & selections
         widgetMap.forEach { widget, memento ->
             widget.restore(memento)
-            if(!widget.isSelected())
-                widget.setSelected(true)
+            if (!widget.isSelected())
+                widget.setSelected(true, false)
         }
+
+        //Select all widgets
+        WidgetsController.selection.addAll(widgetMap.keys)
     }
 
     fun copy() {
         val clipboard = Clipboard.getSystemClipboard()
 
         //Convert selected widget's into a string of attribute values
-        var string = ""
-        widgets.forSelected { widget ->
-            string += "${widget.getMemento()}\n"
-        }
+        val array = widgets.getSelection().map { it.getMemento().toString() }
 
         //Set the clipboard
-        if(string.isNotEmpty()) {
+        if (array.isNotEmpty()) {
             val content = ClipboardContent()
-            content.putString(string.substring(0, string.length - 1))//Remove the extra line space
+            content.putString(array.joinToString("\n"))
             clipboard.setContent(content)
         }
     }
@@ -84,17 +84,17 @@ class InteractionController(val widgets: WidgetsController) {
         //TODO can be done better with iteration not a new list
         val cloned = mutableListOf<Widget>()
 
-        widgets.getAll().forEach { widget ->
-            if(widget.isSelected()) {
-                val memento = widget.getMemento()
-                val clone = WidgetBuilder(memento.type).build()
-                widget.setSelected(false)
-                clone.restore(memento)
-                if(!clone.isSelected())
-                    clone.setSelected(true)
-                cloned.add(clone)
-            }
-        }
+        widgets.getAll()
+                .filter { it.isSelected() }
+                .forEach { widget ->
+                    val memento = widget.getMemento()
+                    val clone = WidgetBuilder(memento.type).build()
+                    widget.setSelected(false)
+                    clone.restore(memento)
+                    if (!clone.isSelected())
+                        clone.setSelected(true, false)
+                    cloned.add(clone)
+                }
 
         widgets.addAll(cloned.toTypedArray())
     }

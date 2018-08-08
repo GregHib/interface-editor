@@ -109,6 +109,8 @@ class CanvasView : View(), KeyInterface {
             val data = if(string.contains(":")) string.split(":") else arrayListOf(string)
             val type = WidgetType.forString(data[0])
             if (type != null) {
+                widgets.clearSelection()
+
                 //Create
                 val widget = WidgetBuilder(type).build()
 
@@ -133,8 +135,6 @@ class CanvasView : View(), KeyInterface {
                         widget.setArchive(data[2])
                     }
                 }
-
-                widgets.clearSelection()
 
                 widget.setSelected(true)
             }
