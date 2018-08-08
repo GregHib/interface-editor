@@ -110,7 +110,7 @@ class ArchiveInterface : CacheArchive() {
                 Widget.TYPE_RECTANGLE -> WidgetType.RECTANGLE
                 Widget.TYPE_TEXT -> WidgetType.TEXT
                 else -> WidgetType.WIDGET
-            }).build()
+            }).build(child.id)
 
             when(widget) {
                 is WidgetSprite -> {
@@ -124,7 +124,10 @@ class ArchiveInterface : CacheArchive() {
                     widget.setColour(getColour(child.defaultColour))
                 }
                 is WidgetRectangle -> {
-                    widget.setColour(getColour(child.defaultColour))
+                    widget.setDefaultColour(getColour(child.defaultColour))
+                    widget.setDefaultHoverColour(getColour(child.defaultHoverColour))
+                    widget.setSecondaryColour(getColour(child.secondaryColour))
+                    widget.setSecondaryHoverColour(getColour(child.secondaryHoverColour))
                 }
             }
 

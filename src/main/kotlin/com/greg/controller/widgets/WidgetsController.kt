@@ -13,6 +13,7 @@ import com.greg.view.canvas.widgets.RectangleShape
 import com.greg.view.canvas.widgets.SpriteShape
 import com.greg.view.canvas.widgets.TextShape
 import com.greg.view.canvas.widgets.WidgetShape
+import javafx.beans.value.ChangeListener
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.scene.Node
@@ -163,8 +164,14 @@ class WidgetsController : Controller() {
         widget.hiddenProperty().addListener { _, _, newValue -> updateVisibility(shape, newValue) }
 
         if (widget is WidgetRectangle && shape is RectangleShape) {
-            shape.rectangle.fillProperty().bind(widget.colourProperty())
-            shape.rectangle.strokeProperty().bind(widget.colourProperty())
+            shape.updateColour(widget)
+            val listener = ChangeListener<Any> { _, _, _ -> shape.updateColour(widget) }
+
+            widget.filledProperty().addListener(listener)
+            widget.defaultColourProperty().addListener(listener)
+            widget.defaultHoverColourProperty().addListener(listener)
+            widget.secondaryColourProperty().addListener(listener)
+            widget.secondaryHoverColourProperty().addListener(listener)
         } else if (widget is WidgetText && shape is TextShape) {
             //Binds
             shape.label.textProperty().bind(widget.textProperty())

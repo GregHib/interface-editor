@@ -37,7 +37,7 @@ class LeftPane : View(), KeyInterface {
 
             list?.forEach { widget ->
                 if (change.wasAdded()) {
-                    val item = HierarchyItem(widget.name, widget.identifier, widget)
+                    val item = HierarchyItem("${widget.name} ${widget.identifier}", widget.identifier, widget)
                     items.add(item)
                     item.selectedProperty().bindBidirectional(widget.selectedProperty())
                 } else if (change.wasRemoved()) {
