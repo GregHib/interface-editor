@@ -167,6 +167,7 @@ class WidgetsController : Controller() {
             shape.updateColour(widget)
             val listener = ChangeListener<Any> { _, _, _ -> shape.updateColour(widget) }
 
+            widget.hoveredProperty().addListener(listener)
             widget.filledProperty().addListener(listener)
             widget.defaultColourProperty().addListener(listener)
             widget.defaultHoverColourProperty().addListener(listener)

@@ -21,7 +21,6 @@ class AlertTest : View() {
         }
     }
 
-
     override val root = vbox {
 
         button("Custom").action {
@@ -29,10 +28,7 @@ class AlertTest : View() {
         }
     }
 
-
 }
-
-
 
 class AlertTestApp: App(AlertTest::class)
 

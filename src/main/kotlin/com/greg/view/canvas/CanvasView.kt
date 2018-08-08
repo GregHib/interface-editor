@@ -212,6 +212,8 @@ class CanvasView : View(), KeyInterface {
                 val shape = WidgetShapeBuilder(widget).build()
                 shape.addEventFilter(MouseEvent.MOUSE_PRESSED, nodeGestures.onMousePressedEventHandler)
                 shape.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeGestures.onMouseDraggedEventHandler)
+                shape.addEventFilter(MouseEvent.MOUSE_ENTERED, nodeGestures.onMouseEnteredEventHandler)
+                shape.addEventFilter(MouseEvent.MOUSE_EXITED, nodeGestures.onMouseExitedEventHandler)
                 widgets.connect(widget, shape)
                 canvas.children.add(shape)
             }

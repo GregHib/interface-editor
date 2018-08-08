@@ -17,11 +17,11 @@ class RectangleShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, 
         rectangle.heightProperty().bind(outline.heightProperty())
     }
 
-    fun updateColour(widget: WidgetRectangle, hover: Boolean = false, forceSecondary: Boolean = false) {
+    fun updateColour(widget: WidgetRectangle, forceSecondary: Boolean = false) {
         val colour = if(forceSecondary)
-            if(hover) widget.getSecondaryHoverColour() else widget.getSecondaryColour()
+            if(widget.isHovered() && widget.getSecondaryHoverColour() != Color.BLACK) widget.getSecondaryHoverColour() else widget.getSecondaryColour()
         else
-            if(hover) widget.getDefaultHoverColour() else widget.getDefaultColour()
+            if(widget.isHovered() && widget.getDefaultHoverColour() != Color.BLACK) widget.getDefaultHoverColour() else widget.getDefaultColour()
 
         rectangle.fill = if(widget.isFilled()) colour else Color.TRANSPARENT
         rectangle.stroke = colour

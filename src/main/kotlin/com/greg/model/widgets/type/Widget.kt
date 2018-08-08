@@ -33,6 +33,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
     private var selected: BoolProperty? = null
     var updateSelection = true
     private var hidden: BoolProperty? = null
+    private var hovered: BoolProperty? = null
 
     init {
         properties.add(xProperty(), category = "Layout")
@@ -74,6 +75,21 @@ open class Widget(builder: WidgetBuilder, id: Int) {
             hidden = BoolProperty(this, "hidden", false)
 
         return hidden!!
+    }
+
+    fun isHovered(): Boolean {
+        return hoveredProperty().get()
+    }
+
+    fun setHovered(value: Boolean) {
+        hoveredProperty().set(value)
+    }
+
+    fun hoveredProperty(): BoolProperty {
+        if (hovered == null)
+            hovered = BoolProperty(this, "hovered", false)
+
+        return hovered!!
     }
 
     fun isSelected(): Boolean {
