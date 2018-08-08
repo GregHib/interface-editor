@@ -30,6 +30,7 @@ enum class Settings(var default: Any) {
     DEFAULT_SPRITE_ARCHIVE_NAME(""),
     DEFAULT_WIDGET_LIST_IMAGE_WIDTH(400.0),
     DEFAULT_WIDGET_LIST_IMAGE_HEIGHT(200.0),
+    SPRITE_RESAMPLING(true),
     ;
 
     val key: String = this.name

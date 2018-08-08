@@ -15,7 +15,6 @@ import java.awt.image.BufferedImage
 
 
 
-
 class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height) {
 
     var sprite: SimpleIntegerProperty? = null
@@ -64,7 +63,8 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
         image.fitWidth = bufferedImage.width.toDouble()
         image.fitHeight = bufferedImage.height.toDouble()
         image.isPreserveRatio = true
-        image.image = resample(SwingFXUtils.toFXImage(bufferedImage, null), 10)//SwingFXUtils.toFXImage(bufferedImage, null)//
+
+        image.image = if(Settings.getBoolean(Settings.SPRITE_RESAMPLING)) resample(SwingFXUtils.toFXImage(bufferedImage, null), 10) else SwingFXUtils.toFXImage(bufferedImage, null)
 
         //TODO fix width/height on adding sprite 0
         outline.width = bufferedImage.width.toDouble()

@@ -46,6 +46,9 @@ class ArchiveMedia : CacheArchive() {
                     }
                 }
 
+                if(entry.hash == -1929337337)//Index
+                    continue
+
                 imageArchive.add(ImageArchive(entry.hash, sprites))
 
                 total += sprites.size
