@@ -146,32 +146,23 @@ class WidgetsController : Controller() {
     }
 
     fun connect(widget: Widget, shape: WidgetShape) {
-        widget.selectedProperty().addListener { _, oldValue, newValue ->
-            if (oldValue != newValue) {
-                shape.outline.toFront()
-                shape.outline.stroke = Settings.getColour(if (newValue) Settings.SELECTION_STROKE_COLOUR else Settings.DEFAULT_STROKE_COLOUR)
-            }
 
-            if (widget.updateSelection) {
-                if (newValue)
-                    selection.add(widget)
-                else
-                    selection.remove(widget)
-            }
-        }
-
-        //Binds
+        //Selection
+        updateSelection(widget, shape, widget.isSelected())
+        widget.selectedProperty().addListener { _, oldValue, newValue -> updateSelection(widget, shape, oldValue, newValue) }
 
         //Position
-        widget.xProperty().bindBidirectional(shape.translateXProperty())
-        widget.yProperty().bindBidirectional(shape.translateYProperty())
+        shape.translateXProperty().bindBidirectional(widget.xProperty())
+        shape.translateYProperty().bindBidirectional(widget.yProperty())
+
         //Appearance
         shape.outline.widthProperty().bindBidirectional(widget.widthProperty())
         shape.outline.heightProperty().bindBidirectional(widget.heightProperty())
 
 
         //Listener
-        widget.hiddenProperty().addListener { _, _, newValue -> shape.isVisible = !newValue }
+        updateVisibility(shape, widget.isHidden())
+        widget.hiddenProperty().addListener { _, _, newValue -> updateVisibility(shape, newValue) }
 
         if (widget is WidgetRectangle && shape is RectangleShape) {
             shape.rectangle.fillProperty().bind(widget.colourProperty())
@@ -185,19 +176,41 @@ class WidgetsController : Controller() {
             shape.spriteProperty().bind(widget.spriteProperty())
             shape.archiveProperty().bind(widget.archiveProperty())
 
-            //Every time widget archive is changed
+            //Update archive values
+            updateArchive(widget, widget.getArchive())
             shape.archiveProperty().addListener { _, _, newValue ->
-                //Get the number of sprites in archive
-                val archive = ArchiveMedia.getImage("$newValue.dat")//TODO the gnome hash isn't .dat? are all .dat?
-                var size = archive?.sprites?.size ?: 1
-                size -= 1
-
-                //Limit the sprite index to archive size
-                widget.setCap(IntRange(0, size))
-
-                //If already on an index which is greater than archive index; reduce, otherwise set the same (refresh)
-                widget.setSprite(if (widget.getSprite() >= size) size else widget.getSprite())
+                updateArchive(widget, newValue)
             }
+        }
+    }
+
+    private fun updateArchive(widget: WidgetSprite, newValue: String) {
+        //Get the number of sprites in archive
+        val archive = ArchiveMedia.getImage("$newValue.dat")//TODO the gnome hash isn't .dat? are all .dat?
+        val size = (archive?.sprites?.size ?: 1) - 1
+
+        //Limit the sprite index to archive size
+        widget.setCap(IntRange(0, size))
+
+        //If already on an index which is greater than archive index; reduce, otherwise set the same (refresh)
+        widget.setSprite(if (widget.getSprite() >= size) size else widget.getSprite())
+    }
+
+    private fun updateVisibility(shape: WidgetShape, newValue: Boolean) {
+        shape.isVisible = !newValue
+    }
+
+    private fun updateSelection(widget: Widget, shape: WidgetShape, oldValue: Boolean, newValue: Boolean = oldValue) {
+        if (oldValue != newValue) {
+            shape.outline.toFront()
+            shape.outline.stroke = Settings.getColour(if (newValue) Settings.SELECTION_STROKE_COLOUR else Settings.DEFAULT_STROKE_COLOUR)
+        }
+
+        if (widget.updateSelection) {
+            if (newValue)
+                selection.add(widget)
+            else
+                selection.remove(widget)
         }
     }
 

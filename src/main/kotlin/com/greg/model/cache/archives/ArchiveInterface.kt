@@ -92,6 +92,8 @@ class ArchiveInterface : CacheArchive() {
 
         val len = container.children?.size ?: return
 
+        val children = arrayListOf<com.greg.model.widgets.type.Widget>()
+
         for (id in 0 until len) {
             val child = Widget.lookup(container.children!![id]) ?: continue
 
@@ -126,15 +128,15 @@ class ArchiveInterface : CacheArchive() {
                 }
             }
 
-            widgets.add(widget)
-
             widget.setWidth(child.width)
             widget.setHeight(child.height)
             widget.setX(childX)
             widget.setY(childY)
+
+            children.add(widget)
         }
 
+        widgets.addAll(children.toTypedArray())
 
-//        widgets.addAll(children.toTypedArray())
     }
 }
