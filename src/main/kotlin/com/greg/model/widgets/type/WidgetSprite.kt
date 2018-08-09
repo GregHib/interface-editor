@@ -24,8 +24,8 @@ class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
         return spriteProperty().get()
     }
 
-    fun setSprite(value: Int) {
-        spriteProperty().set(MathUtils.constrain(value, getCap().start, getCap().endInclusive))
+    fun setSprite(value: Int, contrain: Boolean = true) {
+        spriteProperty().set(if(contrain) MathUtils.constrain(value, getCap().start, getCap().endInclusive) else value)
     }
 
     fun spriteProperty(): IntProperty {

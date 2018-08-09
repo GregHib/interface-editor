@@ -187,7 +187,7 @@ class WidgetsController : Controller() {
                 }
             }
 
-//            widget.hoveredProperty().addListener(listener)
+            widget.hoveredProperty().addListener(listener)
             widget.defaultColourProperty().addListener(listener)
             widget.defaultHoverColourProperty().addListener(listener)
             widget.secondaryColourProperty().addListener(listener)
@@ -218,8 +218,9 @@ class WidgetsController : Controller() {
 
             //Update archive values
             updateArchive(widget, widget.getArchive())
-            shape.archiveProperty().addListener { _, _, newValue ->
-                updateArchive(widget, newValue)
+            shape.archiveProperty().addListener { _, oldValue, newValue ->
+                if(oldValue != newValue)
+                    updateArchive(widget, newValue)
             }
         }
     }
