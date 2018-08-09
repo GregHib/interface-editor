@@ -14,6 +14,11 @@ internal class SceneGestures(private var canvas: PannableCanvas) {
     private val sceneDragContext = DragContext()
     private var spacePressed = false
 
+    /**
+     * TODO fix children drag offset
+     * TODO add drop widget onto container adds it as child
+     */
+
     // right mouse button => panning
     val onMousePressedEventHandler: EventHandler<MouseEvent> = EventHandler { event ->
         if (!spacePressed)

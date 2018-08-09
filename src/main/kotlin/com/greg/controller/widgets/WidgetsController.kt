@@ -28,6 +28,49 @@ class WidgetsController : Controller() {
 
     private val action = InteractionController(this)
 
+
+    /**
+     * Selection
+     */
+    inline fun forSelected(action: (Widget) -> Unit) {
+        getSelection().forEach { element ->
+            action(element)
+        }
+    }
+
+    fun getSelection(): ObservableList<Widget> {
+        return selection
+    }
+
+    fun hasSelection(): Boolean {
+        return getSelection().isNotEmpty()
+    }
+
+    fun clearSelection() {
+        forAll { widget ->
+            if (widget.isSelected())
+                widget.setSelected(false)
+        }
+    }
+
+    fun selectAll() {
+        forAll { widget ->
+            if (!widget.isSelected())
+                widget.setSelected(true)
+        }
+    }
+
+    fun deleteSelection() {
+        val iterator = getSelection().iterator()
+        while (iterator.hasNext()) {
+            remove(iterator.next())
+            iterator.remove()
+        }
+    }
+
+    /**
+     * Widgets
+     */
     fun add(widget: Widget) {
         widgets.add(widget)
     }
@@ -40,26 +83,19 @@ class WidgetsController : Controller() {
         widgets.remove(widget)
     }
 
-    inline fun forSelected(action: (Widget) -> Unit) {
-        getSelection().forEach { element ->
-            action(element)
-        }
-    }
-
     fun getAll(): ObservableList<Widget> {
         return widgets.get()
     }
 
-    fun getSelection(): ObservableList<Widget> {
-        return selection
-    }
-
-    fun hasSelection(): Boolean {
-        return getSelection().isNotEmpty()
-    }
-
     fun size(): Int {
         return widgets.size()
+    }
+
+    /*
+     Controls
+     */
+    fun forAll(action: (Widget) -> Unit) {
+        forEach(getAll(), action)
     }
 
     fun getWidget(target: EventTarget?): Widget? {
@@ -85,17 +121,11 @@ class WidgetsController : Controller() {
         return null
     }
 
-    fun clearSelection() {
+    fun forEach(widgets: List<Widget>, action: (Widget) -> Unit) {
         widgets.forEach { widget ->
-            if (widget.isSelected())
-                widget.setSelected(false)
-        }
-    }
-
-    fun selectAll() {
-        widgets.forEach { widget ->
-            if (!widget.isSelected())
-                widget.setSelected(true)
+            if(widget is WidgetContainer)
+                forEach(widget.getChildren(), action)
+            action(widget)
         }
     }
 
@@ -112,14 +142,6 @@ class WidgetsController : Controller() {
         val iterator = getAll().iterator()
         while (iterator.hasNext()) {
             iterator.next()
-            iterator.remove()
-        }
-    }
-
-    fun deleteSelection() {
-        val iterator = getSelection().iterator()
-        while (iterator.hasNext()) {
-            remove(iterator.next())
             iterator.remove()
         }
     }
