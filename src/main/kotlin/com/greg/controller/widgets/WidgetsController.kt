@@ -47,17 +47,25 @@ class WidgetsController : Controller() {
     }
 
     fun clearSelection() {
+        val list = arrayListOf<Widget>()
         forAll { widget ->
-            if (widget.isSelected())
-                widget.setSelected(false)
+            if (widget.isSelected()) {
+                list.add(widget)
+                widget.setSelected(false, false)
+            }
         }
+        WidgetsController.selection.removeAll(list)
     }
 
     fun selectAll() {
+        val list = arrayListOf<Widget>()
         forAll { widget ->
-            if (!widget.isSelected())
-                widget.setSelected(true)
+            if (!widget.isSelected()) {
+                list.add(widget)
+                widget.setSelected(true, false)
+            }
         }
+        WidgetsController.selection.addAll(list)
     }
 
     fun deleteSelection() {

@@ -180,12 +180,6 @@ class CanvasView : View(), KeyInterface {
     }
 
     private fun handleKeyPress(event: KeyEvent) {
-        if(event.code == KeyCode.A) {
-            val list = arrayListOf<Widget>()
-            for(i in 0..400)
-                list.add(WidgetBuilder(WidgetType.RECTANGLE).build())
-            widgets.addAll(list.toTypedArray())
-        }
         if (event.code == KeyCode.SPACE) {
             spaceHeld = true
             if (root.cursor != Cursor.OPEN_HAND && root.cursor != Cursor.CLOSED_HAND)
