@@ -81,22 +81,21 @@ class InteractionController(val widgets: WidgetsController) {
     }
 
     fun clone() {
-        //TODO can be done better with iteration not a new list
-        val cloned = mutableListOf<Widget>()
+        val list = widgets.getAll().filter { it.isSelected() }
 
-        widgets.getAll()
-                .filter { it.isSelected() }
-                .forEach { widget ->
-                    val memento = widget.getMemento()
-                    val clone = WidgetBuilder(memento.type).build()
-                    widget.setSelected(false)
-                    clone.restore(memento)
-                    if (!clone.isSelected())
-                        clone.setSelected(true, false)
-                    cloned.add(clone)
-                }
+        WidgetsController.selection.removeAll(list)
 
-        widgets.addAll(cloned.toTypedArray())
+        val clones = list.map { widget ->
+            val memento = widget.getMemento()
+            val clone = WidgetBuilder(memento.type).build()
+            widget.setSelected(false, false)
+            clone.restore(memento)
+            clone.setSelected(true, false)
+            clone
+        }
+
+        WidgetsController.selection.addAll(clones)
+        widgets.addAll(clones.toTypedArray())
     }
 
     private fun isWidget(name: String): Boolean {

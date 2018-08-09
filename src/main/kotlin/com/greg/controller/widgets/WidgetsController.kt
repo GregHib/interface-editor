@@ -176,6 +176,7 @@ class WidgetsController : Controller() {
     fun connect(widget: Widget, shape: WidgetShape, cache: CacheController, children: List<WidgetShape>?) {
 
         //Selection
+        updateSelection(widget, shape, !widget.isSelected(), widget.isSelected())
         widget.selectedProperty().addListener { _, oldValue, newValue -> updateSelection(widget, shape, oldValue, newValue) }
 
         //Position

@@ -35,7 +35,7 @@ interface GroupChildren {
 
     fun childrenProperty(): ObjProperty<List<Widget>> {
         if (children == null)
-            children = ObjProperty(this, "children", mutableListOf())
+            children = ObjProperty(this, "children", listOf())
 
         return children!!
     }
