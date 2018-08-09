@@ -11,20 +11,6 @@ import javafx.scene.paint.Color
 import javafx.scene.text.TextAlignment
 import tornadofx.add
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height), ImageResample {
 
     val image = ImageView()

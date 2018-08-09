@@ -3,13 +3,12 @@ package com.greg.model.widgets.type.groups
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
+import com.greg.model.widgets.type.Widget
 
 interface GroupChildren {
 
     var scrollLimit: IntProperty?
-    var children: ObjProperty<IntArray>?
-    var childX: ObjProperty<IntArray>?
-    var childY: ObjProperty<IntArray>?
+    var children: ObjProperty<List<Widget>>?
 
     fun setScrollLimit(value: Int) {
         scrollLimitProperty().set(value)
@@ -26,48 +25,18 @@ interface GroupChildren {
         return scrollLimit!!
     }
 
-    fun setChildren(value: IntArray) {
+    fun setChildren(value: List<Widget>) {
         childrenProperty().set(value)
     }
 
-    fun getChildren(): IntArray {
+    fun getChildren(): List<Widget> {
         return childrenProperty().get()
     }
 
-    fun childrenProperty(): ObjProperty<IntArray> {
+    fun childrenProperty(): ObjProperty<List<Widget>> {
         if (children == null)
-            children = ObjProperty(this, "children", IntArray(0))
+            children = ObjProperty(this, "children", mutableListOf())
 
         return children!!
-    }
-
-    fun setChildX(value: IntArray) {
-        childXProperty().set(value)
-    }
-
-    fun getChildX(): IntArray {
-        return childXProperty().get()
-    }
-
-    fun childXProperty(): ObjProperty<IntArray> {
-        if (childX == null)
-            childX = ObjProperty(this, "childX", IntArray(0))
-
-        return childX!!
-    }
-
-    fun setChildY(value: IntArray) {
-        childYProperty().set(value)
-    }
-
-    fun getChildY(): IntArray {
-        return childYProperty().get()
-    }
-
-    fun childYProperty(): ObjProperty<IntArray> {
-        if (childY == null)
-            childY = ObjProperty(this, "childY", IntArray(0))
-
-        return childY!!
     }
 }

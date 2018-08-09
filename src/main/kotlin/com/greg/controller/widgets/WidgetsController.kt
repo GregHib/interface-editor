@@ -5,15 +5,9 @@ import com.greg.model.cache.CacheController
 import com.greg.model.cache.archives.ArchiveMedia
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetsList
-import com.greg.model.widgets.type.Widget
-import com.greg.model.widgets.type.WidgetRectangle
-import com.greg.model.widgets.type.WidgetSprite
-import com.greg.model.widgets.type.WidgetText
+import com.greg.model.widgets.type.*
 import com.greg.view.canvas.CanvasView
-import com.greg.view.canvas.widgets.RectangleShape
-import com.greg.view.canvas.widgets.SpriteShape
-import com.greg.view.canvas.widgets.TextShape
-import com.greg.view.canvas.widgets.WidgetShape
+import com.greg.view.canvas.widgets.*
 import javafx.beans.value.ChangeListener
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
@@ -21,6 +15,7 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.text.TextAlignment
 import tornadofx.Controller
+import tornadofx.add
 import tornadofx.observable
 import tornadofx.onChange
 
@@ -148,7 +143,7 @@ class WidgetsController : Controller() {
         action.copy()
     }
 
-    fun connect(widget: Widget, shape: WidgetShape, cache: CacheController) {
+    fun connect(widget: Widget, shape: WidgetShape, cache: CacheController, children: List<WidgetShape>?) {
 
         //Selection
         widget.selectedProperty().addListener { _, oldValue, newValue -> updateSelection(widget, shape, oldValue, newValue) }
@@ -166,7 +161,9 @@ class WidgetsController : Controller() {
         updateVisibility(shape, widget.isHidden())
         widget.hiddenProperty().addListener { _, _, newValue -> updateVisibility(shape, newValue) }
 
-        if (widget is WidgetRectangle && shape is RectangleShape) {
+        if(widget is WidgetContainer && shape is ContainerShape) {
+            children?.forEach { shape.children.add(it) }
+        } else if (widget is WidgetRectangle && shape is RectangleShape) {
             shape.updateColour(widget)
             val listener = ChangeListener<Any> { _, _, _ -> shape.updateColour(widget) }
 

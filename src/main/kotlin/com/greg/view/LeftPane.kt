@@ -2,6 +2,8 @@ package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.cache.CacheController
+import com.greg.model.widgets.type.Widget
+import com.greg.model.widgets.type.WidgetContainer
 import com.greg.view.hierarchy.HierarchyItem
 import com.greg.view.hierarchy.HierarchyView
 import com.greg.view.sprites.internal.InternalSpriteView
@@ -26,6 +28,16 @@ class LeftPane : View(), KeyInterface {
 
     private val sprites = InternalSpriteView(cache)
 
+    private fun addChildren(parent: HierarchyItem, widget: Widget) {
+        val item = HierarchyItem("${widget.name} ${widget.identifier}", widget.identifier, widget)
+
+        if (widget is WidgetContainer) {
+            widget.getChildren().forEach { child -> addChildren(item, child) }
+        }
+
+        parent.children.add(item)
+    }
+
     init {
         widgets.getAll().addListener(ListChangeListener { change ->
             change.next()
@@ -38,8 +50,10 @@ class LeftPane : View(), KeyInterface {
             list?.forEach { widget ->
                 if (change.wasAdded()) {
                     val item = HierarchyItem("${widget.name} ${widget.identifier}", widget.identifier, widget)
+                    if (widget is WidgetContainer) {
+                        widget.getChildren().forEach { child -> addChildren(item, child) }
+                    }
                     items.add(item)
-                    item.selectedProperty().bindBidirectional(widget.selectedProperty())
                 } else if (change.wasRemoved()) {
                     hierarchy.rootTreeItem.children.removeAll(
                             hierarchy.rootTreeItem.children

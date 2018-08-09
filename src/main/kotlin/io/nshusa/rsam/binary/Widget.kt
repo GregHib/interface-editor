@@ -2,11 +2,6 @@ package io.nshusa.rsam.binary
 
 import com.greg.model.cache.archives.font.Font
 import io.nshusa.rsam.binary.sprite.Sprite
-import io.nshusa.rsam.util.ByteBufferUtils
-import io.nshusa.rsam.util.HashUtils
-import java.io.IOException
-import java.util.*
-import kotlin.experimental.and
 
 class Widget {
     lateinit var actions: Array<String?>
@@ -65,7 +60,8 @@ class Widget {
     var spritePaddingY: Int = 0
     var spritePitch: Int = 0
     var spriteRoll: Int = 0
-    lateinit var sprites: Array<Sprite?>
+    lateinit var spritesArchive: Array<String?>
+    lateinit var spritesIndex: Array<Int?>
     var spriteScale: Int = 0
     lateinit var spriteX: IntArray
     lateinit var spriteY: IntArray
@@ -80,15 +76,6 @@ class Widget {
 
     constructor(id: Int) {
         this.id = id
-        if (id >= 0 && id < widgets!!.size) {
-            if (widgets!![id] != null) {
-                println(String.format("overriding widget: %d", id))
-            }
-
-            widgets!![id] = this
-        } else {
-            throw IllegalArgumentException(String.format("widget=%d must be between 0 and %d", id, widgets!!.size))
-        }
     }
 
     fun swapInventoryItems(first: Int, second: Int) {
@@ -105,12 +92,12 @@ class Widget {
     }
 
     companion object {
-        private const val OPTION_OK = 1
-        private const val OPTION_USABLE = 2
-        private const val OPTION_CLOSE = 3
-        private const val OPTION_TOGGLE_SETTING = 4
-        private const val OPTION_RESET_SETTING = 5
-        private const val OPTION_CONTINUE = 6
+        const val OPTION_OK = 1
+        const val OPTION_USABLE = 2
+        const val OPTION_CLOSE = 3
+        const val OPTION_TOGGLE_SETTING = 4
+        const val OPTION_RESET_SETTING = 5
+        const val OPTION_CONTINUE = 6
 
         const val TYPE_CONTAINER = 0
         const val TYPE_MODEL_LIST = 1
@@ -120,276 +107,5 @@ class Widget {
         const val TYPE_SPRITE = 5
         const val TYPE_MODEL = 6
         const val TYPE_ITEM_LIST = 7
-
-        private var widgets: Array<Widget?>? = null
-        private val spriteCache = HashMap<Long, Sprite>()
-
-
-        @Throws(IOException::class)
-        fun decode(interfaces: Archive, graphics: Archive?, fonts: Array<Font>?) {
-            val buffer = interfaces.readFile("data")
-            widgets = arrayOfNulls(buffer.short.toInt() and 0xffff)
-            var parent = -1
-
-            var widget: Widget
-            while(buffer.hasRemaining()) {
-                var id = buffer.short.toInt() and 0xffff
-                if (id == 65535) {
-                    parent = buffer.short.toInt() and 0xffff
-                    id = buffer.short.toInt() and 0xffff
-                }
-
-                widget = Widget(id)
-                widget.parent = parent
-                widget.group = buffer.get().toInt() and 255
-                widget.optionType = buffer.get().toInt() and 255
-                widget.contentType = buffer.short.toInt() and 0xffff
-                widget.width = buffer.short.toInt() and 0xffff
-                widget.height = buffer.short.toInt() and 0xffff
-                widget.alpha = buffer.get() and 255.toByte()
-                val hover = buffer.get() and 255.toByte()
-                widget.hoverId = if (hover != 0.toByte()) hover - 1 shl 8 or (buffer.get().toInt() and 255) else -1
-
-                val operators = buffer.get().toInt() and 255
-                var scripts: Int
-                if (operators > 0) {
-                    widget.scriptOperators = IntArray(operators)
-                    widget.scriptDefaults = IntArray(operators)
-
-                    scripts = 0
-                    while (scripts < operators) {
-                        widget.scriptOperators[scripts] = buffer.get().toInt() and 255
-                        widget.scriptDefaults[scripts] = buffer.short.toInt() and 0xffff
-                        scripts++
-                    }
-                }
-
-                scripts = buffer.get().toInt() and 255
-                var font: Int
-                var index: Int
-                if (scripts > 0) {
-                    widget.scripts = arrayOfNulls(scripts)
-
-                    font = 0
-                    while (font < scripts) {
-                        index = buffer.short.toInt() and 0xffff
-                        widget.scripts[font] = IntArray(index)
-
-                        for (instruction in 0 until index) {
-                            widget.scripts[font]!![instruction] = buffer.short.toInt() and 0xffff
-                        }
-                        font++
-                    }
-                }
-
-                if (widget.group == TYPE_CONTAINER) {
-                    widget.scrollLimit = buffer.short.toInt() and 0xffff
-                    widget.hidden = buffer.get().toInt() and 255 == 1
-                    font = buffer.short.toInt() and 0xffff
-                    widget.children = IntArray(font)
-                    widget.childX = IntArray(font)
-                    widget.childY = IntArray(font)
-
-                    index = 0
-                    while (index < font) {
-                        widget.children!![index] = buffer.short.toInt() and 0xffff
-                        widget.childX[index] = buffer.short.toInt()
-                        widget.childY[index] = buffer.short.toInt()
-                        index++
-                    }
-                }
-
-                if (widget.group == TYPE_MODEL_LIST) {
-                    buffer.short
-                    buffer.get()
-                }
-
-                if (widget.group == TYPE_INVENTORY) {
-                    widget.inventoryIds = IntArray(widget.width * widget.height)
-                    widget.inventoryAmounts = IntArray(widget.width * widget.height)
-                    widget.swappableItems = buffer.get().toInt() and 255 == 1
-                    widget.hasActions = buffer.get().toInt() and 255 == 1
-                    widget.usableItems = buffer.get().toInt() and 255 == 1
-                    widget.replaceItems = buffer.get().toInt() and 255 == 1
-                    widget.spritePaddingX = buffer.get().toInt() and 255
-                    widget.spritePaddingY = buffer.get().toInt() and 255
-                    widget.spriteX = IntArray(20)
-                    widget.spriteY = IntArray(20)
-                    widget.sprites = arrayOfNulls(20)
-
-                    font = 0
-                    while (font < 20) {
-                        index = buffer.get().toInt() and 255
-                        if (index == 1) {
-                            widget.spriteX[font] = buffer.short.toInt()
-                            widget.spriteY[font] = buffer.short.toInt()
-                            val name = ByteBufferUtils.getString(buffer)
-                            if (graphics != null && name.isNotEmpty()) {
-                                val position = name.lastIndexOf(",")
-                                widget.sprites[font] = getSprite(graphics, name.substring(0, position), Integer.parseInt(name.substring(position + 1)))
-                            }
-                        }
-                        font++
-                    }
-
-                    widget.actions = arrayOfNulls(5)
-
-                    font = 0
-                    while (font < 5) {
-                        widget.actions[font] = ByteBufferUtils.getString(buffer)
-                        if (widget.actions[font]!!.isEmpty()) {
-                            widget.actions[font] = null
-                        }
-                        font++
-                    }
-                }
-
-                if (widget.group == TYPE_RECTANGLE) {
-                    widget.filled = buffer.get().toInt() and 255 == 1
-                }
-
-                if (widget.group == TYPE_TEXT || widget.group == TYPE_MODEL_LIST) {
-                    widget.centeredText = buffer.get().toInt() and 255 == 1
-                    font = buffer.get().toInt() and 255
-                    widget.fontIndex = font
-                    if (fonts != null) {
-                        widget.font = fonts[font]
-                    }
-
-                    widget.shadowedText = buffer.get().toInt() and 255 == 1
-                }
-
-                if (widget.group == TYPE_TEXT) {
-                    widget.defaultText = ByteBufferUtils.getString(buffer)
-                    widget.secondaryText = ByteBufferUtils.getString(buffer)
-                }
-
-                if (widget.group == TYPE_MODEL_LIST || widget.group == TYPE_RECTANGLE || widget.group == TYPE_TEXT) {
-                    widget.defaultColour = buffer.int
-                }
-
-                if (widget.group == TYPE_RECTANGLE || widget.group == TYPE_TEXT) {
-                    widget.secondaryColour = buffer.int
-                    widget.defaultHoverColour = buffer.int
-                    widget.secondaryHoverColour = buffer.int
-                }
-
-                if (widget.group == TYPE_SPRITE) {
-                    var name = ByteBufferUtils.getString(buffer)
-
-                    if (name.isNotEmpty()) {
-                        index = name.lastIndexOf(",")
-                        widget.defaultSpriteArchive = name.substring(0, index)
-                        widget.defaultSpriteIndex = Integer.parseInt(name.substring(index + 1))
-                    }
-
-                    if (graphics != null && name.isNotEmpty()) {
-                        index = name.lastIndexOf(",")
-                        widget.defaultSprite = getSprite(graphics, name.substring(0, index), Integer.parseInt(name.substring(index + 1)))
-                    }
-
-                    name = ByteBufferUtils.getString(buffer)
-                    if (name.isNotEmpty()) {
-                        index = name.lastIndexOf(",")
-                        widget.secondarySpriteArchive = name.substring(0, index)
-                        widget.secondarySpriteIndex = Integer.parseInt(name.substring(index + 1))
-                    }
-
-                    if (graphics != null && name.isNotEmpty()) {
-                        index = name.lastIndexOf(",")
-                        widget.secondarySprite = getSprite(graphics, name.substring(0, index), Integer.parseInt(name.substring(index + 1)))
-                    }
-                }
-
-                if (widget.group == TYPE_MODEL) {
-                    font = buffer.get().toInt() and 255
-                    if (font != 0) {
-                        widget.defaultMediaType = 1
-                        widget.defaultMedia = (font - 1 shl 8) + buffer.get() and 255
-                    }
-
-                    font = buffer.get().toInt() and 255
-                    if (font != 0) {
-                        widget.secondaryMediaType = 1
-                        widget.secondaryMedia = (font - 1 shl 8) + buffer.get() and 255
-                    }
-
-                    font = buffer.get().toInt() and 255
-                    widget.defaultAnimationId = if (font != 0) (font - 1 shl 8) + buffer.get() and 255 else -1
-                    font = buffer.get().toInt() and 255
-                    widget.secondaryAnimationId = if (font != 0) (font - 1 shl 8) + buffer.get() and 255 else -1
-                    widget.spriteScale = buffer.short.toInt() and 0xffff
-                    widget.spritePitch = buffer.short.toInt() and 0xffff
-                    widget.spriteRoll = buffer.short.toInt() and 0xffff
-                }
-
-                if (widget.group == TYPE_ITEM_LIST) {
-                    widget.inventoryIds = IntArray(widget.width * widget.height)
-                    widget.inventoryAmounts = IntArray(widget.width * widget.height)
-                    widget.centeredText = buffer.get().toInt() and 255 == 1
-                    font = buffer.get().toInt() and 255
-                    widget.fontIndex = font
-                    if (fonts != null) {
-                        widget.font = fonts[font]
-                    }
-
-                    widget.shadowedText = buffer.get().toInt() and 255 == 1
-                    widget.defaultColour = buffer.int
-                    widget.spritePaddingX = buffer.short.toInt()
-                    widget.spritePaddingY = buffer.short.toInt()
-                    widget.hasActions = buffer.get().toInt() and 255 == 1
-                    widget.actions = arrayOfNulls(5)
-
-                    index = 0
-                    while (index < 5) {
-                        widget.actions[index] = ByteBufferUtils.getString(buffer)
-                        if (widget.actions[index]!!.isEmpty()) {
-                            widget.actions[index] = null
-                        }
-                        index++
-                    }
-                }
-
-                if (widget.optionType == OPTION_USABLE || widget.group == TYPE_INVENTORY) {
-                    widget.optionCircumfix = ByteBufferUtils.getString(buffer)
-                    widget.optionText = ByteBufferUtils.getString(buffer)
-                    widget.optionAttributes = buffer.short.toInt() and 0xffff
-                }
-
-                if (widget.optionType == OPTION_OK || widget.optionType == OPTION_TOGGLE_SETTING || widget.optionType == OPTION_RESET_SETTING || widget.optionType == OPTION_CONTINUE) {
-                    widget.hover = ByteBufferUtils.getString(buffer)
-
-                    if (widget.hover.isEmpty()) {
-                        widget.hover = when(widget.optionType) {
-                            OPTION_OK -> "Ok"
-                            OPTION_TOGGLE_SETTING -> "Select"
-                            OPTION_RESET_SETTING -> "Select"
-                            OPTION_CONTINUE -> "Continue"
-                            else -> widget.hover
-                        }
-                    }
-                }
-            }
-        }
-
-        private fun getSprite(archive: Archive, name: String, id: Int): Sprite? {
-            val key = HashUtils.hashSpriteName(name) shl 8 or id.toLong()
-            var sprite: Sprite? = spriteCache[key]
-            return sprite ?: try {
-                sprite = Sprite.decode(archive, name, id)
-                spriteCache[key] = sprite
-                sprite
-            } catch (var7: Exception) {
-                null
-            }
-        }
-
-        fun lookup(id: Int): Widget? {
-            return if (widgets == null) null else widgets!![id]
-        }
-
-        fun count(): Int {
-            return if (widgets == null) 0 else widgets!!.size
-        }
     }
 }

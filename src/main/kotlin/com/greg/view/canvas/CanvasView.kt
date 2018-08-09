@@ -9,6 +9,7 @@ import com.greg.model.cache.CacheController
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.type.Widget
+import com.greg.model.widgets.type.WidgetContainer
 import com.greg.model.widgets.type.WidgetSprite
 import com.greg.view.KeyInterface
 import com.greg.view.canvas.states.DefaultState
@@ -208,17 +209,37 @@ class CanvasView : View(), KeyInterface {
      * Misc
      */
 
+    private fun createShape(widget: Widget, children: List<WidgetShape>? = null): WidgetShape {
+        val shape = WidgetShapeBuilder(widget).build()
+        shape.addEventFilter(MouseEvent.MOUSE_PRESSED, nodeGestures.onMousePressedEventHandler)
+        shape.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeGestures.onMouseDraggedEventHandler)
+        shape.addEventFilter(MouseEvent.MOUSE_ENTERED, nodeGestures.onMouseEnteredEventHandler)
+        shape.addEventFilter(MouseEvent.MOUSE_EXITED, nodeGestures.onMouseExitedEventHandler)
+        widgets.connect(widget, shape, cache, children)
+        return shape
+    }
+
+    private fun create(widgets: List<Widget>): List<WidgetShape> {
+        val shapes = arrayListOf<WidgetShape>()
+
+        widgets.forEach { widget ->
+            if(widget is WidgetContainer) {
+                //Create child shapes
+                val children = create(widget.getChildren())
+                //Create shape with children
+                shapes.add(createShape(widget, children))
+            } else {
+                //Create shape
+                shapes.add(createShape(widget))
+            }
+        }
+
+        return shapes
+    }
     fun refresh(it: ListChangeListener.Change<out Widget>) {
         if (it.wasAdded()) {
-            it.addedSubList.forEach { widget ->
-                val shape = WidgetShapeBuilder(widget).build()
-                shape.addEventFilter(MouseEvent.MOUSE_PRESSED, nodeGestures.onMousePressedEventHandler)
-                shape.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeGestures.onMouseDraggedEventHandler)
-                shape.addEventFilter(MouseEvent.MOUSE_ENTERED, nodeGestures.onMouseEnteredEventHandler)
-                shape.addEventFilter(MouseEvent.MOUSE_EXITED, nodeGestures.onMouseExitedEventHandler)
-                widgets.connect(widget, shape, cache)
-                canvas.children.add(shape)
-            }
+            val shapes = create(it.addedSubList)
+            canvas.children.addAll(shapes)
         } else if (it.wasRemoved()) {
             it.removed.forEach { widget ->
                 canvas.children.filterIsInstance<WidgetShape>()
@@ -228,14 +249,15 @@ class CanvasView : View(), KeyInterface {
         }
     }
 
-    val hierarchyListener:ListChangeListener<TreeItem<String>> = ListChangeListener { change ->
+    val hierarchyListener: ListChangeListener<TreeItem<String>> = ListChangeListener { change ->
         change.next()
         if(change.wasAdded()) {
             //TODO probably a more efficient way of doing this
             change.list
                     .filterIsInstance<HierarchyItem>()
                     .forEach { item ->
-                        canvas.children.filterIsInstance<WidgetShape>()
+                        canvas.children
+                                .filterIsInstance<WidgetShape>()
                                 .filter { it.identifier == item.identifier }
                                 .forEach { it.toFront() }
                     }

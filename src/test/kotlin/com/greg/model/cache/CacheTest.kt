@@ -1,9 +1,8 @@
 package com.greg.model.cache
 
+import com.greg.model.cache.archives.font.Font
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.binary.Archive
-import com.greg.model.cache.archives.font.Font
-import io.nshusa.rsam.binary.Widget
 import org.junit.Assert
 import org.junit.Test
 import java.io.IOException
@@ -53,40 +52,6 @@ class CacheTest {
         } catch (e: IOException) {
             e.printStackTrace()
             Assert.fail()
-        }
-    }
-
-    @Test
-    fun loadInterface() {
-
-        cache.use { fs ->
-
-            val archive = Archive.decode(fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
-
-            Widget.decode(archive, null, null)
-
-            /*for (widget in 0 until Widget.count()) {
-
-                val container = Widget.lookup(widget) ?: continue
-
-                if (container.group != Widget.TYPE_CONTAINER || container.children?.isEmpty() ?: continue) {
-                    continue
-                }
-
-                val len = container.children?.size ?: continue
-
-                val treeItem = TreeItem(container)
-
-                for (id in 0 until len) {
-                    val child = Widget.lookup(container.children!![id]) ?: Widget(container.children!![id])
-
-                    val childTreeItem = TreeItem(child)
-
-                    treeItem.children.add(childTreeItem)
-                }
-            }*/
-
-            Assert.assertTrue(Widget.count() > 0)
         }
     }
 }

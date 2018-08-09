@@ -6,7 +6,6 @@ import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.util.Callback
-import org.controlsfx.control.CheckTreeView
 import tornadofx.View
 import tornadofx.tab
 import tornadofx.tabpane
@@ -14,8 +13,8 @@ import tornadofx.tabpane
 class HierarchyView : View(), KeyInterface {
 
     private val widgets: WidgetsController by inject()
-    val rootTreeItem = CheckBoxTreeItem("Root")
-    private val tree = CheckTreeView(rootTreeItem)
+    val rootTreeItem = TreeItem("Root")
+    private val tree = TreeView(rootTreeItem)
 
     override val root = tabpane {
         tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
