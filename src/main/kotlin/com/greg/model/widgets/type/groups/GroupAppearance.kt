@@ -1,5 +1,6 @@
 package com.greg.model.widgets.type.groups
 
+import com.greg.controller.utils.MathUtils
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
@@ -28,7 +29,7 @@ interface GroupAppearance {
     }
 
     fun setFontIndex(value: Int) {
-        fontIndexProperty().set(value)
+        fontIndexProperty().set(MathUtils.constrain(value, getFontBounds().start, getFontBounds().endInclusive))
     }
 
     fun getFontIndex(): Int {
@@ -40,6 +41,10 @@ interface GroupAppearance {
             fontIndex = IntProperty(this, "fontIndex", 0)
 
         return fontIndex!!
+    }
+
+    fun getFontBounds(): IntRange {
+        return fontBoundsProperty().get()
     }
 
     fun fontBoundsProperty(): ObjProperty<IntRange> {

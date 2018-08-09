@@ -1,5 +1,6 @@
 package com.greg.model.widgets.type
 
+import com.greg.controller.utils.MathUtils
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.properties.extended.IntProperty
@@ -24,7 +25,7 @@ class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
     }
 
     fun setSprite(value: Int) {
-        spriteProperty().set(value)
+        spriteProperty().set(MathUtils.constrain(value, getCap().start, getCap().endInclusive))
     }
 
     fun spriteProperty(): IntProperty {
@@ -36,6 +37,10 @@ class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
 
     fun setCap(range: IntRange) {
         capProperty().set(range)
+    }
+
+    fun getCap(): IntRange {
+        return capProperty().get()
     }
 
     fun capProperty(): ObjProperty<IntRange> {

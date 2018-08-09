@@ -180,18 +180,23 @@ class WidgetsController : Controller() {
             shape.updateColour(widget)
             shape.updateText(widget, cache = cache)
 
-            var listener = ChangeListener<Any> { _, _, _ ->
-                shape.updateColour(widget)
-                shape.updateText(widget, cache = cache)
+            var listener = ChangeListener<Any> { _, oldValue, newValue ->
+                if(oldValue != newValue) {
+                    shape.updateColour(widget)
+                    shape.updateText(widget, cache = cache)
+                }
             }
 
-            widget.hoveredProperty().addListener(listener)
+//            widget.hoveredProperty().addListener(listener)
             widget.defaultColourProperty().addListener(listener)
             widget.defaultHoverColourProperty().addListener(listener)
             widget.secondaryColourProperty().addListener(listener)
             widget.secondaryHoverColourProperty().addListener(listener)
 
-            listener = ChangeListener { _, _, _ -> shape.updateText(widget, cache = cache) }
+            listener = ChangeListener { _, oldValue, newValue ->
+                if(oldValue != newValue)
+                shape.updateText(widget, cache = cache)
+            }
 
             widget.defaultTextProperty().addListener(listener)
             widget.secondaryTextProperty().addListener(listener)
@@ -200,10 +205,12 @@ class WidgetsController : Controller() {
 
             widget.fontIndexProperty().addListener(listener)
             widget.shadowProperty().addListener(listener)
-            widget.centredProperty().addListener { _, _, newValue ->
-                shape.label.textAlignment = if(newValue) TextAlignment.CENTER else TextAlignment.LEFT
-                shape.label.alignment = if(newValue) Pos.TOP_CENTER else Pos.TOP_LEFT
-                shape.updateText(widget, cache = cache)
+            widget.centredProperty().addListener { _, oldValue, newValue ->
+                if(oldValue != newValue) {
+                    shape.label.textAlignment = if (newValue) TextAlignment.CENTER else TextAlignment.LEFT
+                    shape.label.alignment = if (newValue) Pos.TOP_CENTER else Pos.TOP_LEFT
+                    shape.updateText(widget, cache = cache)
+                }
             }
         } else if (widget is WidgetSprite && shape is SpriteShape) {
             shape.spriteProperty().bind(widget.spriteProperty())

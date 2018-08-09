@@ -1,6 +1,7 @@
 package com.greg.model.widgets.type
 
 import com.greg.controller.canvas.DragContext
+import com.greg.controller.utils.MathUtils
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
@@ -143,7 +144,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
     }
 
     fun setWidth(value: Int) {
-        widthProperty().set(value)
+        widthProperty().set(MathUtils.constrain(value, getWidthBounds().start, getWidthBounds().endInclusive))
     }
 
     fun widthProperty(): IntProperty {
@@ -157,7 +158,7 @@ open class Widget(builder: WidgetBuilder, id: Int) {
     }
 
     fun setHeight(value: Int) {
-        heightProperty().set(value)
+        heightProperty().set(MathUtils.constrain(value, getHeightBounds().start, getHeightBounds().endInclusive))
     }
 
     fun heightProperty(): IntProperty {
@@ -166,11 +167,19 @@ open class Widget(builder: WidgetBuilder, id: Int) {
         return height!!
     }
 
+    fun getWidthBounds(): IntRange {
+        return widthBoundsProperty().get()
+    }
+
     fun widthBoundsProperty(): ObjProperty<IntRange> {
         if(widthBounds == null)
             widthBounds = ObjProperty(this, "widthBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_WIDTH), Settings.getInt(Settings.WIDGET_CANVAS_WIDTH)))
 
         return widthBounds!!
+    }
+
+    fun getHeightBounds(): IntRange {
+        return heightBoundsProperty().get()
     }
 
     fun heightBoundsProperty(): ObjProperty<IntRange> {
