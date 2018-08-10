@@ -35,8 +35,12 @@ interface GroupChildren {
 
     fun childrenProperty(): ObjProperty<List<Widget>> {
         if (children == null)
-            children = ObjProperty(this, "children", listOf())
+            children = ObjProperty(this, "children", emptyList())
 
+        if(children.toString().contains("kotlin.Unit")) {
+            println("$this")
+            println("$children")
+        }
         return children!!
     }
 }

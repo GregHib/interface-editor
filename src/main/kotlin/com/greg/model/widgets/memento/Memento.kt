@@ -16,7 +16,7 @@ data class Memento(val type: WidgetType, val values: MutableList<String> = mutab
         values.add(property.value.toString())
     }
 
-    fun addAll(list: MutableList<String>) {
+    fun addAll(list: List<String>) {
         values.addAll(list)
     }
 
@@ -27,10 +27,14 @@ data class Memento(val type: WidgetType, val values: MutableList<String> = mutab
             is IntegerProperty -> value.toInt()
             is BooleanProperty -> value.toBoolean()
             is ObjectProperty -> {
-                if(value.startsWith("0x"))
-                    return Color.valueOf(value)
-                else
-                    value
+                when {
+                    value.startsWith("0x") -> return Color.valueOf(value)
+                    property.name == "children" -> {
+                        println("Children: $value")
+                        value
+                    }
+                    else -> value
+                }
             }
             else -> value
         }

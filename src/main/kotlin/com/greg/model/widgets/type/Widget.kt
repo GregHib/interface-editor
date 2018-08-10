@@ -194,10 +194,15 @@ open class Widget(builder: WidgetBuilder, id: Int) {
     }
 
     fun restore(memento: Memento) {
+        println("Restore $memento")
         for ((index, value) in properties.get().withIndex()) {
             if(value.property == selectedProperty())
                 continue
             (value.property as Property<*>).value = memento.getValue(index, value.property)
         }
+    }
+
+    override fun toString(): String {
+        return getMemento().toString()
     }
 }
