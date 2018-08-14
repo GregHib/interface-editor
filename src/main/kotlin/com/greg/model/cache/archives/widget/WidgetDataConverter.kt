@@ -128,141 +128,144 @@ object WidgetDataConverter {
         return data
     }
 
-    fun toChildren(index: Int, x: Int = 0, y: Int = 0): ArrayList<Widget> {
+    private fun create(data: WidgetData, childX: Int, childY: Int): Widget {
+        val widget = WidgetBuilder(WidgetType.values()[data.group]).build(data.id)
+
+        widget.setParent(data.parent)
+
+        widget.setOptionType(data.optionType)
+        widget.setContentType(data.contentType)
+        widget.setWidth(data.width)
+        widget.setHeight(data.height)
+        widget.setAlpha(data.alpha.toInt())
+
+        widget.setHoverId(data.hoverId)
+
+        if(data.scriptOperators != null)
+            widget.setScriptOperators(data.scriptOperators!!)
+        if(data.scriptDefaults != null)
+            widget.setScriptDefaults(data.scriptDefaults!!)
+        if(data.scripts != null)
+            widget.setScripts(data.scripts!!)
+
+        if(widget is WidgetContainer) {
+            widget.setScrollLimit(data.scrollLimit)
+            widget.setHidden(data.hidden)
+            widget.setChildren(toChildren(data))
+        }
+
+        if (widget is WidgetInventory) {
+            widget.setSwappableItems(data.swappableItems)
+            widget.setHasActions(data.hasActions)
+            widget.setUsableItems(data.usableItems)
+            widget.setReplaceItems(data.replaceItems)
+            widget.setSpritePaddingX(data.spritePaddingX)
+            widget.setSpritePaddingY(data.spritePaddingY)
+
+            widget.setSpriteX(data.spriteX)
+            widget.setSpriteY(data.spriteY)
+            widget.setSprites(data.sprites)
+            widget.setSpritesArchive(data.spritesArchive)
+            widget.setSpritesIndex(data.spritesIndex)
+
+            widget.setActions(data.actions)
+        }
+
+        if (widget is WidgetRectangle) {
+            widget.setFilled(data.filled)
+        }
+
+        if ((widget is WidgetText || widget is WidgetModelList) && widget is GroupAppearance) {
+            widget.setCentred(data.centeredText)
+            widget.setFontIndex(data.fontIndex)
+            widget.setShadow(data.shadowedText)
+        }
+
+        if (widget is WidgetText) {
+            widget.setDefaultText(data.defaultText)
+            widget.setSecondaryText(data.secondaryText)
+        }
+
+        if ((widget is WidgetModelList || widget is WidgetRectangle || widget is WidgetText)&& widget is GroupColour) {
+            widget.setDefaultColour(ColourUtils.getColour(data.defaultColour))
+        }
+
+        if ((widget is WidgetRectangle || widget is WidgetText) && widget is GroupColours) {
+            widget.setSecondaryColour(ColourUtils.getColour(data.secondaryColour))
+            widget.setDefaultHoverColour(ColourUtils.getColour(data.defaultHoverColour))
+            widget.setSecondaryHoverColour(ColourUtils.getColour(data.secondaryHoverColour))
+        }
+
+        if (widget is WidgetSprite) {
+            if(!data.defaultSpriteArchive.isNullOrEmpty())
+                widget.setDefaultSpriteArchive(data.defaultSpriteArchive!!)
+            if(data.defaultSpriteIndex != null)
+                widget.setDefaultSprite(data.defaultSpriteIndex!!, false)
+
+            if(!data.secondarySpriteArchive.isNullOrEmpty())
+                widget.setSecondarySpriteArchive(data.secondarySpriteArchive!!)
+            if(data.secondarySpriteIndex != null)
+                widget.setSecondarySprite(data.secondarySpriteIndex!!, false)
+        }
+
+        if (widget is WidgetModel) {
+            if(data.defaultMediaType == 1) {
+                widget.setDefaultMediaType(data.defaultMediaType)
+                widget.setDefaultMedia(data.defaultMedia)
+            }
+            if(data.secondaryMediaType == 1) {
+                widget.setSecondaryMediaType(data.secondaryMediaType)
+                widget.setSecondaryMedia(data.secondaryMedia)
+            }
+
+            widget.setDefaultAnimationId(data.defaultAnimationId)
+            widget.setSecondaryAnimationId(data.secondaryAnimationId)
+            widget.setSpriteScale(data.spriteScale)
+            widget.setSpritePitch(data.spritePitch)
+            widget.setSpriteRoll(data.spriteRoll)
+        }
+
+        if (widget is WidgetItemList) {
+            widget.setCentred(data.centeredText)
+            widget.setFontIndex(data.fontIndex)
+            widget.setShadow(data.shadowedText)
+            widget.setDefaultColour(ColourUtils.getColour(data.defaultColour))
+            widget.setSpritePaddingX(data.spritePaddingX)
+            widget.setSpritePaddingY(data.spritePaddingY)
+            widget.setHasActions(data.hasActions)
+            widget.setActions(data.actions)
+        }
+
+        if (widget.getOptionType() == WidgetData.OPTION_USABLE || widget is WidgetInventory) {
+            widget.setOptionCircumfix(data.optionCircumfix)
+            widget.setOptionText(data.optionText)
+            widget.setOptionAttributes(data.optionAttributes)
+        }
+
+        if (widget.getOptionType() == WidgetData.OPTION_OK || widget.getOptionType() == WidgetData.OPTION_TOGGLE_SETTING || widget.getOptionType() == WidgetData.OPTION_RESET_SETTING || widget.getOptionType() == WidgetData.OPTION_CONTINUE) {
+            widget.setHover(data.hover)
+        }
+
+        widget.setX(childX)
+        widget.setY(childY)
+
+        return widget
+    }
+
+    private fun toChildren(parent: WidgetData): ArrayList<Widget> {
         val children = arrayListOf<Widget>()
 
-        val container = ArchiveInterface.lookup(index) ?: return children
-
-        val len = container.children?.size ?: return children
+        val len = parent.children?.size ?: return children
 
         for (id in 0 until len) {
-            val data = ArchiveInterface.lookup(container.children!![id]) ?: continue
+            val data = ArchiveInterface.lookup(parent.children!![id]) ?: continue
 
-            val childX = container.childX[id] + x
-            val childY = container.childY[id] + y
-
-            val widget = WidgetBuilder(WidgetType.values()[data.group]).build(data.id)
-
-            widget.setParent(data.parent)
-
-            widget.setOptionType(data.optionType)
-            widget.setContentType(data.contentType)
-            widget.setWidth(data.width)
-            widget.setHeight(data.height)
-            widget.setAlpha(data.alpha.toInt())
-
-            widget.setHoverId(data.hoverId)
-
-            if(data.scriptOperators != null)
-                widget.setScriptOperators(data.scriptOperators!!)
-            if(data.scriptDefaults != null)
-                widget.setScriptDefaults(data.scriptDefaults!!)
-            if(data.scripts != null)
-                widget.setScripts(data.scripts!!)
-
-            if(widget is WidgetContainer) {
-                widget.setScrollLimit(data.scrollLimit)
-                widget.setHidden(data.hidden)
-                widget.setChildren(toChildren(data.id, childX, childY))
-            }
-
-            if (widget is WidgetInventory) {
-                widget.setSwappableItems(data.swappableItems)
-                widget.setHasActions(data.hasActions)
-                widget.setUsableItems(data.usableItems)
-                widget.setReplaceItems(data.replaceItems)
-                widget.setSpritePaddingX(data.spritePaddingX)
-                widget.setSpritePaddingY(data.spritePaddingY)
-
-                widget.setSpriteX(data.spriteX)
-                widget.setSpriteY(data.spriteY)
-                widget.setSprites(data.sprites)
-                widget.setSpritesArchive(data.spritesArchive)
-                widget.setSpritesIndex(data.spritesIndex)
-
-                widget.setActions(data.actions)
-            }
-
-            if (widget is WidgetRectangle) {
-                widget.setFilled(data.filled)
-            }
-
-            if ((widget is WidgetText || widget is WidgetModelList) && widget is GroupAppearance) {
-                widget.setCentred(data.centeredText)
-                widget.setFontIndex(data.fontIndex)
-                widget.setShadow(data.shadowedText)
-            }
-
-            if (widget is WidgetText) {
-                widget.setDefaultText(data.defaultText)
-                widget.setSecondaryText(data.secondaryText)
-            }
-
-            if ((widget is WidgetModelList || widget is WidgetRectangle || widget is WidgetText)&& widget is GroupColour) {
-                widget.setDefaultColour(ColourUtils.getColour(data.defaultColour))
-            }
-
-            if ((widget is WidgetRectangle || widget is WidgetText) && widget is GroupColours) {
-                widget.setSecondaryColour(ColourUtils.getColour(data.secondaryColour))
-                widget.setDefaultHoverColour(ColourUtils.getColour(data.defaultHoverColour))
-                widget.setSecondaryHoverColour(ColourUtils.getColour(data.secondaryHoverColour))
-            }
-
-            if (widget is WidgetSprite) {
-                if(!data.defaultSpriteArchive.isNullOrEmpty())
-                    widget.setDefaultSpriteArchive(data.defaultSpriteArchive!!)
-                if(data.defaultSpriteIndex != null)
-                    widget.setDefaultSprite(data.defaultSpriteIndex!!, false)
-
-                if(!data.secondarySpriteArchive.isNullOrEmpty())
-                    widget.setSecondarySpriteArchive(data.secondarySpriteArchive!!)
-                if(data.secondarySpriteIndex != null)
-                    widget.setSecondarySprite(data.secondarySpriteIndex!!, false)
-            }
-
-            if (widget is WidgetModel) {
-                if(data.defaultMediaType == 1) {
-                    widget.setDefaultMediaType(data.defaultMediaType)
-                    widget.setDefaultMedia(data.defaultMedia)
-                }
-                if(data.secondaryMediaType == 1) {
-                    widget.setSecondaryMediaType(data.secondaryMediaType)
-                    widget.setSecondaryMedia(data.secondaryMedia)
-                }
-
-                widget.setDefaultAnimationId(data.defaultAnimationId)
-                widget.setSecondaryAnimationId(data.secondaryAnimationId)
-                widget.setSpriteScale(data.spriteScale)
-                widget.setSpritePitch(data.spritePitch)
-                widget.setSpriteRoll(data.spriteRoll)
-            }
-
-            if (widget is WidgetItemList) {
-                widget.setCentred(data.centeredText)
-                widget.setFontIndex(data.fontIndex)
-                widget.setShadow(data.shadowedText)
-                widget.setDefaultColour(ColourUtils.getColour(data.defaultColour))
-                widget.setSpritePaddingX(data.spritePaddingX)
-                widget.setSpritePaddingY(data.spritePaddingY)
-                widget.setHasActions(data.hasActions)
-                widget.setActions(data.actions)
-            }
-
-            if (widget.getOptionType() == WidgetData.OPTION_USABLE || widget is WidgetInventory) {
-                widget.setOptionCircumfix(data.optionCircumfix)
-                widget.setOptionText(data.optionText)
-                widget.setOptionAttributes(data.optionAttributes)
-            }
-
-            if (widget.getOptionType() == WidgetData.OPTION_OK || widget.getOptionType() == WidgetData.OPTION_TOGGLE_SETTING || widget.getOptionType() == WidgetData.OPTION_RESET_SETTING || widget.getOptionType() == WidgetData.OPTION_CONTINUE) {
-                widget.setHover(data.hover)
-            }
-
-            widget.setX(container.childX[id])
-            widget.setY(container.childY[id])
-
-            children.add(widget)
+            children.add(create(data, parent.childX[id], parent.childY[id]))
         }
         return children
+    }
+
+    fun toChildren(parent: WidgetData, x: Int = 0, y: Int = 0): Widget {
+        return create(parent, x, y)
     }
 }

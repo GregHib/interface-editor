@@ -18,6 +18,7 @@ abstract class GroupWidget {
 
     abstract var locked: BoolProperty?
     abstract var selected: BoolProperty?
+    abstract var invisible: BoolProperty?
     abstract var hidden: BoolProperty?
     abstract var hovered: BoolProperty?
 
@@ -43,6 +44,21 @@ abstract class GroupWidget {
             locked = BoolProperty(this, "locked", false)
 
         return locked!!
+    }
+
+    fun isInvisible(): Boolean {
+        return invisibleProperty().get()
+    }
+
+    fun setInvisible(value: Boolean) {
+        invisibleProperty().set(value)
+    }
+
+    fun invisibleProperty(): BoolProperty {
+        if (invisible == null)
+            invisible = BoolProperty(this, "invisible", false)
+
+        return invisible!!
     }
 
     fun isHidden(): Boolean {

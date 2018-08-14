@@ -117,8 +117,16 @@ class CanvasView : View(), KeyInterface {
                 //Create
                 val widget = WidgetBuilder(type).build()
 
-                //Display
-                widgets.add(widget)
+                //Display as new root or as a child
+                if(widgets.getAll().firstOrNull() is WidgetContainer) {
+                    val first = widgets.getAll().first() as WidgetContainer
+                    widgets.remove(first)
+                    widget.setParent(first.identifier)
+                    first.getChildren().add(widget)
+                    widgets.add(first)
+                } else {
+                    widgets.add(widget)
+                }
 
                 val scaleOffsetX = canvas.boundsInLocal.minX * canvas.scaleX
                 val canvasX = canvas.boundsInParent.minX - scaleOffsetX

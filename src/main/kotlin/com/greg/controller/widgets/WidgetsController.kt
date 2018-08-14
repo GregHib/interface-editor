@@ -189,8 +189,8 @@ class WidgetsController : Controller() {
 
 
         //Listener
-        updateVisibility(shape, widget.isHidden())
-        widget.hiddenProperty().addListener { _, _, newValue -> updateVisibility(shape, newValue) }
+        updateVisibility(shape, widget.isInvisible())
+        widget.invisibleProperty().addListener { _, _, newValue -> updateVisibility(shape, newValue) }
 
         if(widget is WidgetContainer && shape is ContainerShape) {
             children?.forEach { shape.children.add(it) }

@@ -8,7 +8,7 @@ import com.greg.model.widgets.type.Widget
 interface GroupChildren {
 
     var scrollLimit: IntProperty?
-    var children: ObjProperty<List<Widget>>?
+    var children: ObjProperty<MutableList<Widget>>?
 
     fun setScrollLimit(value: Int) {
         scrollLimitProperty().set(value)
@@ -25,22 +25,17 @@ interface GroupChildren {
         return scrollLimit!!
     }
 
-    fun setChildren(value: List<Widget>) {
+    fun setChildren(value: MutableList<Widget>) {
         childrenProperty().set(value)
     }
 
-    fun getChildren(): List<Widget> {
+    fun getChildren(): MutableList<Widget> {
         return childrenProperty().get()
     }
 
-    fun childrenProperty(): ObjProperty<List<Widget>> {
+    fun childrenProperty(): ObjProperty<MutableList<Widget>> {
         if (children == null)
-            children = ObjProperty(this, "children", emptyList())
-
-        if(children.toString().contains("kotlin.Unit")) {
-            println("$this")
-            println("$children")
-        }
+            children = ObjProperty(this, "children", arrayListOf())
         return children!!
     }
 }

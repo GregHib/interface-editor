@@ -33,6 +33,7 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), GroupOptions
 
     override var locked: BoolProperty? = null
     override var selected: BoolProperty? = null
+    override var invisible: BoolProperty? = null
     override var hidden: BoolProperty? = null
     override var hovered: BoolProperty? = null
 
@@ -61,7 +62,7 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), GroupOptions
         }
         properties.addPanel(lockedProperty(), false)
         properties.addPanel(selectedProperty(), false)
-        properties.addPanel(hiddenProperty(), false)
+        properties.addPanel(invisibleProperty(), false)
     }
 
     fun getMemento(): Memento {

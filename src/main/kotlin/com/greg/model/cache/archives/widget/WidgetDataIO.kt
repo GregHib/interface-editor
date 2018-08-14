@@ -254,9 +254,9 @@ object WidgetDataIO {
     fun write(): Buffer {
         val buffer = Buffer()
 
-        buffer.writeShort(ArchiveInterface.get().requireNoNulls().size)
+        buffer.writeShort(ArchiveInterface.get().filterNotNull().size)
 
-        ArchiveInterface.get().requireNoNulls().forEach { widget ->
+        ArchiveInterface.get().filterNotNull().forEach { widget ->
             buffer.writeShort(if (widget.id == widget.parent) -1 else widget.id)
 
             if (widget.id == widget.parent) {
@@ -290,7 +290,7 @@ object WidgetDataIO {
             buffer.writeByte(widget.scripts?.size ?: 0)
 
             if (widget.scripts?.isNotEmpty() == true) {
-                widget.scripts!!.requireNoNulls().forEach { script ->
+                widget.scripts!!.filterNotNull().forEach { script ->
                     buffer.writeShort(script.size)
 
                     script.forEach { int ->

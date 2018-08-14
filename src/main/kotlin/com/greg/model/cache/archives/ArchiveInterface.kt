@@ -31,7 +31,7 @@ class ArchiveInterface : CacheArchive() {
 
         fun set(widgets: Array<WidgetData?>) {
             clear()
-            widgets.requireNoNulls().forEachIndexed { index, data ->
+            widgets.filterNotNull().forEachIndexed { index, data ->
                 widgetsData[index] = data
             }
         }
@@ -50,7 +50,7 @@ class ArchiveInterface : CacheArchive() {
             return false
 
         //Update all the widgets currently in use into the WidgetData list
-        widgets.getAll().forEach { widget -> ArchiveInterface.updateData(widget) }
+        widgets.forAll { widget -> ArchiveInterface.updateData(widget) }
 
         val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
 
@@ -109,14 +109,13 @@ class ArchiveInterface : CacheArchive() {
     }
 
     fun display(widgets: WidgetsController, index: Int, x: Int = 0, y: Int = 0) {
+        val data = lookup(index) ?: return
 
-        val container = lookup(index) ?: return
-
-        if (container.group != WidgetData.TYPE_CONTAINER || container.children?.isEmpty() ?: return)
+        if (data.group != WidgetData.TYPE_CONTAINER || data.children?.isEmpty() ?: return)
             return
 
-        val children = WidgetDataConverter.toChildren(index, x, y)
+        val widget = WidgetDataConverter.toChildren(data, x, y)
 
-        widgets.addAll(children.toTypedArray())
+        widgets.add(widget)
     }
 }

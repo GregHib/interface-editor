@@ -42,7 +42,7 @@ class InteractionController(val widgets: WidgetsController) {
                     .map {
                         val childIndex = it.substring(1).toInt()
                         createChildren(childIndex, containers)
-                    }
+                    }.toMutableList()
             )
         }
         /*
@@ -113,7 +113,7 @@ class InteractionController(val widgets: WidgetsController) {
                 //Create widget of the corresponding type
                 val widget = WidgetBuilder(memento.type).build()
 
-                (widget as? WidgetContainer)?.setChildren(children)
+                (widget as? WidgetContainer)?.setChildren(children.toMutableList())
 
                 //Add to the list
                 widgetMap[widget] = memento

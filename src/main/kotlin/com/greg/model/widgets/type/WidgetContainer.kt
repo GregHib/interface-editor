@@ -7,7 +7,7 @@ import com.greg.model.widgets.type.groups.GroupChildren
 
 class WidgetContainer(builder: WidgetBuilder, id: Int) : Widget(builder, id), GroupChildren {
     override var scrollLimit: IntProperty? = null
-    override var children: ObjProperty<List<Widget>>? = null
+    override var children: ObjProperty<MutableList<Widget>>? = null
 
     init {
         properties.add(scrollLimitProperty())
