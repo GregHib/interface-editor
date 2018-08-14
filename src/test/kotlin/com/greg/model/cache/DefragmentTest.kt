@@ -2,6 +2,7 @@ package com.greg.model.cache
 
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.CompletableFuture
 
 class DefragmentTest {
     val cache = Cache(CachePath("./cache/"))
@@ -67,6 +68,7 @@ class DefragmentTest {
     }
 }
 
+class example: CompletableFuture.AsynchronousCompletionTask
 fun main(args: Array<String>) {
     val test = DefragmentTest()
     test.call()

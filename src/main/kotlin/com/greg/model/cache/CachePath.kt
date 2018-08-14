@@ -7,7 +7,7 @@ import java.nio.file.Path
 
 
 class CachePath {
-    private val path: File
+    val path: File
 
     constructor(path: File) {
         this.path = path
@@ -41,7 +41,7 @@ class CachePath {
     /**
      * @return the cache name identifier, default is "main_file_cache"
      */
-    private fun getIdentifier(files: List<File>): String? {
+    fun getIdentifier(files: List<File>): String? {
         val index = files.firstOrNull { it.extension == "idx0" } ?: return null
 
         return index.nameWithoutExtension

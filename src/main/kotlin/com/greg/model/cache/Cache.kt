@@ -17,4 +17,23 @@ class Cache(path: CachePath) : IndexedFileSystem(path) {
             return ByteBuffer.wrap(path.getArchiveFile(path.getFiles(), fileId - 1).readBytes())
         return super.readFile(storeId, fileId)
     }
+
+    fun save(): Boolean {
+        if(!path.isValid())
+            return false
+
+
+        when(path.getCacheType()) {
+            CacheFormats.FULL_CACHE -> {
+                //Replace
+                //Defrag
+            }
+            CacheFormats.UNPACKED_CACHE -> {
+                //Overwrite
+            }
+        }
+
+
+        return true
+    }
 }

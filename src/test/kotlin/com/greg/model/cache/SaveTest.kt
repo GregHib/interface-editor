@@ -5,17 +5,15 @@ import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.binary.Archive
 import io.nshusa.rsam.binary.Widget
 import io.nshusa.rsam.util.ByteBufferUtils
-import io.nshusa.rsam.util.CompressionUtils
-import org.apache.commons.io.FileUtils
-import java.io.File
+import io.nshusa.rsam.util.HashUtils
 import kotlin.experimental.and
 
 class SaveTest {
-    private val cache = Cache(CachePath("./cache/interface.jag"))
+    val cache = Cache(CachePath("./cache/"))
+    val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
 
     fun load(): Boolean {
         return try {
-            val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
             val buffer = archive.readFile("data")
 
             ArchiveInterface.widgets = arrayOfNulls(buffer.short.toInt() and 0xffff)
@@ -266,7 +264,6 @@ class SaveTest {
                 ArchiveInterface.widgets!![id] = widget
             }
 
-
             true
         } catch (e: NullPointerException) {
             e.printStackTrace()
@@ -502,6 +499,10 @@ fun main(args: Array<String>) {
     test.load()
 
     val buffer = test.write()
-    FileUtils.writeByteArrayToFile(File("save.jag"), CompressionUtils.bzip2(buffer.payload.toByteArray()))
+    test.archive.replaceFile(HashUtils.nameToHash("data"), "data", buffer.payload.toByteArray())
+    println(test.cache.defragment())
+
+
+//    FileUtils.writeByteArrayToFile(File("interface.jag"), test.archive.encode())
 
 }

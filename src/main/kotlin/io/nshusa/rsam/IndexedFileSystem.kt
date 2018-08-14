@@ -1,8 +1,10 @@
 package io.nshusa.rsam
 
+import com.greg.controller.task.tasks.Defragment
 import com.greg.model.cache.CachePath
 import com.greg.model.cache.formats.CacheFormats
 import java.io.Closeable
+import java.io.File
 import java.io.IOException
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
@@ -88,55 +90,8 @@ open class IndexedFileSystem : Closeable {
         return false
     }
 
-    fun defragment(): Boolean {
-        try {
-            if (!isLoaded) {
-                return false
-            }
-
-            val map = LinkedHashMap<Int, MutableList<ByteBuffer>>()
-
-            val files = path.getFiles()
-
-            files.forEachIndexed { store, _ ->
-                val fileStore = getStore(store)
-
-                map[fileStore.storeId] = ArrayList()
-
-                for (file in 0 until fileStore.fileCount) {
-                    val buffer = fileStore.readFile(file) ?: continue
-
-                    val data = map[store]
-                    data!!.add(buffer)
-                }
-            }
-
-            reset()
-
-            val data = path.getDataFile(files) ?: return false
-
-            val indices = path.getIndices(files)
-
-            Files.deleteIfExists(data.toPath())
-
-            indices.forEach { Files.deleteIfExists(it.toPath()) }
-
-            load()
-
-            for ((fileStoreId, value) in map) {
-
-                val fileStore = getStore(fileStoreId)
-
-                for (file in 0 until value.size)
-                    fileStore.writeFile(file, value[file].array())
-
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            return false
-        }
-
-        return true
+    fun defragment() {
+        Thread(Defragment(this)).start()
     }
 
     fun getStore(storeId: Int): FileStore {
@@ -149,6 +104,18 @@ open class IndexedFileSystem : Closeable {
 
     open fun readFile(storeId: Int, fileId: Int): ByteBuffer {
         return getStore(storeId).readFile(fileId)?: ByteBuffer.allocate(0)
+    }
+
+    fun create(identifier: String) {
+        val dataFile = File(path.path, "$identifier.dat")
+        if (!dataFile.exists())
+            dataFile.createNewFile()
+
+        for (i in 0 until storeCount) {
+            val idxFile = File(path.path, "$identifier.idx$i")
+            if (!idxFile.exists())
+                idxFile.createNewFile()
+        }
     }
 
     fun reset() {
