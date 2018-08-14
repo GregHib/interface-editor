@@ -13,22 +13,25 @@ import java.util.*
 
 
 open class IndexedFileSystem : Closeable {
-
-    internal val path: CachePath
-
-    constructor(path: CachePath) {
-        this.path = path
-        storeCount = if (path.isValid()) path.getIndices(path.getFiles()).size else 0
-    }
-
-    constructor(path: String) : this(CachePath(path))
-
     private val fileStores = arrayOfNulls<FileStore>(255)
 
     var isLoaded: Boolean = false
         private set
+    var storeCount: Int = 0
+    internal lateinit var path: CachePath
 
-    val storeCount: Int
+    constructor(path: CachePath) {
+        setPath(path)
+    }
+
+    constructor(path: String) : this(CachePath(path))
+
+    fun setPath(path: CachePath) {
+        if(isLoaded)
+            reset()
+        this.path = path
+        storeCount = if (path.isValid()) path.getIndices(path.getFiles()).size else 0
+    }
 
     fun load(): Boolean {
         if (!path.isValid())

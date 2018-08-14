@@ -16,7 +16,7 @@ class CacheController : Controller() {
 
     var path: CachePath? = null
 
-    var cache: Cache? = null
+    var cache = Cache(CachePath("./"))
 
     val fonts = ArchiveFont()
     val sprites = ArchiveMedia()
@@ -28,7 +28,7 @@ class CacheController : Controller() {
         val chooser = DirectoryChooser()
         chooser.initialDirectory = File("./")
         val directory = chooser.showDialog(null) ?: return
-        select(directory)
+        load(directory)
     }
 
     fun selectFile() {
@@ -40,10 +40,10 @@ class CacheController : Controller() {
         )
 
         val directory = chooser.showOpenDialog(null) ?: return
-        select(directory)
+        load(directory)
     }
 
-    private fun select(directory: File) {
+    private fun load(directory: File) {
         loaded = false
 
         val path = CachePath(directory)
@@ -54,7 +54,7 @@ class CacheController : Controller() {
         }
 
         try {
-            val cache = Cache(path)
+            cache.setPath(path)
 
             if (!cache.load()) {
                 alert(Alert.AlertType.ERROR, "Error loading cache", "Unable to load cache files.")
@@ -76,9 +76,6 @@ class CacheController : Controller() {
                 return
             }
 
-            this.path = path
-            this.cache = cache
-
             loaded = true
         } catch (e: FileNotFoundException) {
             alert(Alert.AlertType.WARNING, "Error loading cache", "Cache already in use.")
@@ -86,11 +83,21 @@ class CacheController : Controller() {
     }
 
     fun save(widgets: WidgetsController) {
-        if(loaded && cache != null) {
+        if(loaded) {
 
-            interfaces.save(widgets, cache!!)
+            interfaces.save(widgets, cache)
 
             println("Save complete")
+        }
+    }
+
+    fun unlink() {
+        if(loaded) {
+            cache.reset()
+            interfaces.reset()
+            sprites.reset()
+            fonts.reset()
+            loaded = false
         }
     }
 

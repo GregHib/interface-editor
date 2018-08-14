@@ -62,6 +62,10 @@ class MainView : View("Greg's Interface Editor") {
                         cache.interfaces.display(widgets, alert.value)
                     }
                 }
+                item("Unlink cache").action {
+                    widgets.deleteAll()
+                    cache.unlink()
+                }
             }
         }
         left = leftPane.root

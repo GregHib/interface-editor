@@ -20,7 +20,6 @@ class ArchiveMedia : CacheArchive() {
         }
     }
 
-
     fun getArchive(archive: String): ImageArchive? {
         return imageArchive.firstOrNull { it.hash == HashUtils.nameToHash(archive) }
     }

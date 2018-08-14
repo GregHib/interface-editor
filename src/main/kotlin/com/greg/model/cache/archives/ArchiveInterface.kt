@@ -78,6 +78,7 @@ class ArchiveInterface : CacheArchive() {
     }
 
     override fun reset(): Boolean {
+        clear()
         return true
     }
 
