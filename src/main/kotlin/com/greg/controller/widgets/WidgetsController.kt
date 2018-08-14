@@ -94,7 +94,7 @@ class WidgetsController : Controller() {
         widgets.remove(widget)
     }
 
-    fun getAll(): ObservableList<Widget> {
+    fun get(): ObservableList<Widget> {
         return widgets.get()
     }
 
@@ -106,7 +106,17 @@ class WidgetsController : Controller() {
      Controls
      */
     fun forAll(action: (Widget) -> Unit) {
-        forEach(getAll(), action)
+        getAll().forEach(action)
+    }
+
+    fun getAll(widgets: List<Widget> = get()): List<Widget> {
+        val list = arrayListOf<Widget>()
+        widgets.forEach { widget ->
+            if(widget is WidgetContainer)
+                list.addAll(getAll(widget.getChildren()))
+            list.add(widget)
+        }
+        return list
     }
 
     fun getAllIntersections(canvas: PannableCanvas, bounds: Bounds): List<Widget> {
@@ -156,14 +166,6 @@ class WidgetsController : Controller() {
                 .firstOrNull { it.identifier == widget.identifier }
     }
 
-    fun forEach(widgets: List<Widget>, action: (Widget) -> Unit) {
-        widgets.forEach { widget ->
-            if(widget is WidgetContainer)
-                forEach(widget.getChildren(), action)
-            action(widget)
-        }
-    }
-
     fun clone() {
         action.clone()
     }
@@ -174,7 +176,7 @@ class WidgetsController : Controller() {
     }
 
     fun deleteAll() {
-        val iterator = getAll().iterator()
+        val iterator = get().iterator()
         while (iterator.hasNext()) {
             iterator.next()
             iterator.remove()
@@ -182,7 +184,7 @@ class WidgetsController : Controller() {
     }
 
     fun delete(identifier: Int) {
-        val iterator = getAll().iterator()
+        val iterator = get().iterator()
         while (iterator.hasNext()) {
             val next = iterator.next()
             if (next.identifier == identifier) {
@@ -311,7 +313,7 @@ class WidgetsController : Controller() {
     }
 
     fun start(canvas: CanvasView) {
-        getAll().onChange {
+        get().onChange {
             it.next()
             canvas.refresh(it)
         }

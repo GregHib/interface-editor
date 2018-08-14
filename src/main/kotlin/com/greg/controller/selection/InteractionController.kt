@@ -162,7 +162,7 @@ class InteractionController(val widgets: WidgetsController) {
     }
 
     fun clone() {
-        val list = widgets.getAll().filter { it.isSelected() }
+        val list = widgets.get().filter { it.isSelected() }
 
         WidgetsController.selection.removeAll(list)
 

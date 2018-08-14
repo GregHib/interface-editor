@@ -118,8 +118,8 @@ class CanvasView : View(), KeyInterface {
                 val widget = WidgetBuilder(type).build()
 
                 //Display as new root or as a child
-                if(widgets.getAll().firstOrNull() is WidgetContainer) {
-                    val first = widgets.getAll().first() as WidgetContainer
+                if(widgets.get().firstOrNull() is WidgetContainer) {
+                    val first = widgets.get().first() as WidgetContainer
                     widgets.remove(first)
                     widget.setParent(first.identifier)
                     first.getChildren().add(widget)

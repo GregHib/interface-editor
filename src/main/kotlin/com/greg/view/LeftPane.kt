@@ -39,7 +39,7 @@ class LeftPane : View(), KeyInterface {
     }
 
     init {
-        widgets.getAll().addListener(ListChangeListener { change ->
+        widgets.get().addListener(ListChangeListener { change ->
             change.next()
             //Get items changed
             val list = if (change.wasAdded()) change.addedSubList else change.removed
