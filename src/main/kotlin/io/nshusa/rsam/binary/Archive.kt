@@ -3,14 +3,11 @@ package io.nshusa.rsam.binary
 import io.nshusa.rsam.util.ByteBufferUtils
 import io.nshusa.rsam.util.CompressionUtils
 import io.nshusa.rsam.util.HashUtils
-
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.ByteBuffer
-import java.util.Arrays
-import java.util.LinkedHashMap
+import java.util.*
 import java.util.zip.CRC32
-import java.util.zip.Checksum
 
 class Archive(entries: Array<ArchiveEntry?>) {
 
@@ -91,12 +88,12 @@ class Archive(entries: Array<ArchiveEntry?>) {
                 continue
             }
 
-            if (!isExtracted) {
+            return if (!isExtracted) {
                 val decompressed = ByteArray(entry.uncompressedSize)
                 CompressionUtils.debzip2(entry.data, decompressed)
-                return ByteBuffer.wrap(decompressed)
+                ByteBuffer.wrap(decompressed)
             } else {
-                return ByteBuffer.wrap(entry.data)
+                ByteBuffer.wrap(entry.data)
             }
 
         }
@@ -115,11 +112,11 @@ class Archive(entries: Array<ArchiveEntry?>) {
         }
 
         val entry: ArchiveEntry
-        if (!isExtracted) {
+        entry = if (!isExtracted) {
             val compressed = CompressionUtils.bzip2(data)
-            entry = Archive.ArchiveEntry(newHash, data.size, compressed.size, compressed)
+            Archive.ArchiveEntry(newHash, data.size, compressed.size, compressed)
         } else {
-            entry = Archive.ArchiveEntry(newHash, data.size, data.size, data)
+            Archive.ArchiveEntry(newHash, data.size, data.size, data)
         }
 
         entries.replace(oldHash, entry)
@@ -138,11 +135,11 @@ class Archive(entries: Array<ArchiveEntry?>) {
         }
 
         val entry: ArchiveEntry
-        if (!isExtracted) {
+        entry = if (!isExtracted) {
             val compressed = CompressionUtils.bzip2(data)
-            entry = Archive.ArchiveEntry(hash, data.size, compressed.size, compressed)
+            Archive.ArchiveEntry(hash, data.size, compressed.size, compressed)
         } else {
-            entry = Archive.ArchiveEntry(hash, data.size, data.size, data)
+            Archive.ArchiveEntry(hash, data.size, data.size, data)
         }
 
         entries[hash] = entry
@@ -184,12 +181,10 @@ class Archive(entries: Array<ArchiveEntry?>) {
             throw FileNotFoundException(String.format("File at index=%d could not be found.", index))
         }
 
-        var pos = 0
-        for (entry in entries.values) {
+        for ((pos, entry) in entries.values.withIndex()) {
             if (pos == index) {
                 return entry
             }
-            pos++
         }
 
         throw FileNotFoundException(String.format("File at index=%d could not be found.", index))
@@ -200,12 +195,10 @@ class Archive(entries: Array<ArchiveEntry?>) {
     }
 
     fun indexOf(hash: Int): Int {
-        var index = 0
-        for (entry in entries.values) {
+        for ((index, entry) in entries.values.withIndex()) {
             if (entry.hash == hash) {
                 return index
             }
-            index++
         }
 
         return -1

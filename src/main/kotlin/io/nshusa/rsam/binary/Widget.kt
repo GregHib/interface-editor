@@ -42,8 +42,8 @@ class Widget {
     var parent: Int = 0
     var replaceItems: Boolean = false
     lateinit var scriptDefaults: IntArray
-    lateinit var scriptOperators: IntArray
-    lateinit var scripts: Array<IntArray?>
+    var scriptOperators: IntArray? = null
+    var scripts: Array<IntArray?>? = null
     var scrollLimit: Int = 0
     var scrollPosition: Int = 0
     var secondaryAnimationId: Int = 0
@@ -61,6 +61,7 @@ class Widget {
     var spritePitch: Int = 0
     var spriteRoll: Int = 0
     lateinit var spritesArchive: Array<String?>
+    lateinit var sprites: Array<String?>
     lateinit var spritesIndex: Array<Int?>
     var spriteScale: Int = 0
     lateinit var spriteX: IntArray

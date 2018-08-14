@@ -64,7 +64,7 @@ class ArchiveInterface : CacheArchive() {
 
                     scripts = 0
                     while (scripts < operators) {
-                        widget.scriptOperators[scripts] = buffer.get().toInt() and 255
+                        widget.scriptOperators!![scripts] = buffer.get().toInt() and 255
                         widget.scriptDefaults[scripts] = buffer.short.toInt() and 0xffff
                         scripts++
                     }
@@ -79,10 +79,10 @@ class ArchiveInterface : CacheArchive() {
                     font = 0
                     while (font < scripts) {
                         index = buffer.short.toInt() and 0xffff
-                        widget.scripts[font] = IntArray(index)
+                        widget.scripts!![font] = IntArray(index)
 
                         for (instruction in 0 until index) {
-                            widget.scripts[font]!![instruction] = buffer.short.toInt() and 0xffff
+                            widget.scripts!![font]!![instruction] = buffer.short.toInt() and 0xffff
                         }
                         font++
                     }
@@ -121,6 +121,7 @@ class ArchiveInterface : CacheArchive() {
                     widget.spritePaddingY = buffer.get().toInt() and 255
                     widget.spriteX = IntArray(20)
                     widget.spriteY = IntArray(20)
+                    widget.sprites = arrayOfNulls(20)
                     widget.spritesArchive = arrayOfNulls(20)
                     widget.spritesIndex = arrayOfNulls(20)
 
@@ -131,6 +132,7 @@ class ArchiveInterface : CacheArchive() {
                             widget.spriteX[font] = buffer.short.toInt()
                             widget.spriteY[font] = buffer.short.toInt()
                             val name = ByteBufferUtils.getString(buffer)
+                            widget.sprites[font] = name
                             if (name.isNotEmpty()) {
                                 val position = name.lastIndexOf(",")
                                 widget.spritesArchive[font] = name.substring(0, position)
