@@ -2,7 +2,7 @@ package com.greg.model.widgets
 
 import com.greg.model.widgets.type.*
 
-open class WidgetBuilder(val type: WidgetType = WidgetType.WIDGET) {
+open class WidgetBuilder(val type: WidgetType) {
 
     companion object {
         var identifier = 0
@@ -18,13 +18,14 @@ open class WidgetBuilder(val type: WidgetType = WidgetType.WIDGET) {
 
         val identifier = if(id != -1) id else getId()
         return when(type) {
-            WidgetType.TEXT -> WidgetText(this, identifier)
-            WidgetType.RECTANGLE -> WidgetRectangle(this, identifier)
-            WidgetType.SPRITE -> WidgetSprite(this, identifier)
             WidgetType.CONTAINER -> WidgetContainer(this, identifier)
-            else -> {
-                Widget(this, identifier)
-            }
+            WidgetType.MODEL_LIST -> WidgetModelList(this, identifier)
+            WidgetType.INVENTORY -> WidgetInventory(this, identifier)
+            WidgetType.RECTANGLE -> WidgetRectangle(this, identifier)
+            WidgetType.TEXT -> WidgetText(this, identifier)
+            WidgetType.SPRITE -> WidgetSprite(this, identifier)
+            WidgetType.MODEL -> WidgetModel(this, identifier)
+            WidgetType.ITEM_LIST -> WidgetItemList(this, identifier)
         }
     }
 }

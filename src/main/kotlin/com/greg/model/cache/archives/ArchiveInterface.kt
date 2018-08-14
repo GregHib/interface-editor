@@ -4,10 +4,7 @@ import com.greg.controller.widgets.WidgetsController
 import com.greg.model.cache.Cache
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
-import com.greg.model.widgets.type.WidgetContainer
-import com.greg.model.widgets.type.WidgetRectangle
-import com.greg.model.widgets.type.WidgetSprite
-import com.greg.model.widgets.type.WidgetText
+import com.greg.model.widgets.type.*
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.binary.Archive
 import io.nshusa.rsam.binary.Widget
@@ -313,19 +310,16 @@ class ArchiveInterface : CacheArchive() {
             val childX = container.childX[id] + x
             val childY = container.childY[id] + y
 
-            val widget = WidgetBuilder(when(child.group) {
-                Widget.TYPE_CONTAINER -> WidgetType.CONTAINER
-                Widget.TYPE_SPRITE -> WidgetType.SPRITE
-                Widget.TYPE_RECTANGLE -> WidgetType.RECTANGLE
-                Widget.TYPE_TEXT -> WidgetType.TEXT
-                else -> WidgetType.WIDGET
-            }).build(child.id)
+            val widget = WidgetBuilder(WidgetType.values()[child.group]).build(child.id)
 
             when(widget) {
                 is WidgetContainer -> {
                     widget.setScrollLimit(child.scrollLimit)
                     widget.setHidden(child.hidden)
                     widget.setChildren(createChildren(widgets, child.id, childX, childY))
+                }
+                is WidgetInventory -> {
+
                 }
                 is WidgetSprite -> {
                     if(child.defaultSpriteArchive != null)
