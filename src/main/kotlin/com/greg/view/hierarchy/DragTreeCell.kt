@@ -93,6 +93,7 @@ class DragTreeCell : TreeCell<String>() {
             var success = false
 
             if (db.hasString()) {
+                //TODO re-order canvas children & widget children also.
                 val size = treeView.selectionModel.selectedIndices.size
                 if (treeView.selectionModel.selectedIndices.first() < index) {
                     val idx = treeView.selectionModel.selectedIndices.first()

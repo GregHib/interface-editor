@@ -27,8 +27,6 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
     }
 
     override fun handleMousePress(event: MouseEvent) {
-
-
         when {
             event.target is ResizePoint -> {
                 resize.press(event)

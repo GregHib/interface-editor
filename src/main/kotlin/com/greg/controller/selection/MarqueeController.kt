@@ -4,7 +4,6 @@ import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.type.Widget
 import javafx.event.EventTarget
-import javafx.geometry.BoundingBox
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Shape
@@ -78,21 +77,7 @@ class MarqueeController(private val widgets: WidgetsController, private var canv
      */
     private fun selectContents(event: MouseEvent) {
         //Add everything in marquee to selection
-        val list = widgets.getAll()
-                .filter { widget -> !widget.isLocked() }
-                .filter { widget ->
-                    val canvasX = canvas.boundsInParent.minX
-                    val scaleOffsetX = canvas.boundsInLocal.minX * canvas.scaleX
-                    val widgetX = canvasX - scaleOffsetX + (widget.getX() * canvas.scaleX)
-
-                    val canvasY = canvas.boundsInParent.minY
-                    val scaleOffsetY = canvas.boundsInLocal.minY * canvas.scaleY
-                    val widgetY = canvasY - scaleOffsetY + (widget.getY() * canvas.scaleY)
-
-                    val widgetBounds = BoundingBox(widgetX, widgetY, widget.getWidth() * canvas.scaleX, widget.getHeight() * canvas.scaleY)
-
-                    marquee.boundsInParent.intersects(widgetBounds)
-                }
+        val list = widgets.getAllIntersections(canvas, marquee.boundsInParent)
 
         //Make selections
         list.forEach { widget -> widget.setSelected(if (event.isControlDown) !widget.isSelected() else true, false) }

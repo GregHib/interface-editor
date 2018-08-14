@@ -7,6 +7,7 @@ import com.greg.controller.widgets.WidgetsController
 import com.greg.view.canvas.CanvasState
 import com.greg.view.canvas.CanvasView
 import com.greg.view.canvas.widgets.WidgetShape
+import javafx.geometry.BoundingBox
 import javafx.scene.Cursor
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -15,7 +16,7 @@ import javafx.scene.input.MouseEvent
 class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets: WidgetsController) : CanvasState {
 
     private var marquee = MarqueeController(widgets, canvas)
-    private val selection = SelectionController(widgets)
+    private val selection = SelectionController(widgets, canvas)
 
     /**
      * Default state variables
@@ -62,10 +63,14 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
     }
 
     override fun handleDoubleClick(event: MouseEvent) {
-        val widget = widgets.getWidget(event.target)
-        val shape = widgets.getShape(event.target)
-        if (widget != null && shape != null && widget.type.resizable)
-            view.editState(widget, shape)
+        val widget = widgets.getAllIntersections(canvas, BoundingBox(event.x, event.y, 1.0, 1.0)).lastOrNull()
+        if(widget != null && widget.type.resizable) {
+            val shape = widgets.getShape(canvas, widget)
+
+            //Set edit state
+            if (shape != null)
+                view.editState(widget, shape)
+        }
 
         cloned = false
     }
