@@ -11,7 +11,7 @@ import com.sun.xml.internal.fastinfoset.util.StringArray
 
 class WidgetInventory(builder: WidgetBuilder, id: Int) : Widget(builder, id), GroupActions, GroupInventory, GroupPadding {
     override var hasActions: BoolProperty? = null
-    override var actions: ObjProperty<StringArray>? = null
+    override var actions: ObjProperty<Array<String?>>? = null
     override var swappableItems: BoolProperty? = null
     override var useableItems: BoolProperty? = null
     override var replaceItems: BoolProperty? = null

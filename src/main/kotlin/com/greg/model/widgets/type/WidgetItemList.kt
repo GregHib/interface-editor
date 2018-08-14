@@ -8,7 +8,6 @@ import com.greg.model.widgets.type.groups.GroupActions
 import com.greg.model.widgets.type.groups.GroupAppearance
 import com.greg.model.widgets.type.groups.GroupColour
 import com.greg.model.widgets.type.groups.GroupPadding
-import com.sun.xml.internal.fastinfoset.util.StringArray
 import javafx.scene.paint.Color
 
 class WidgetItemList(builder: WidgetBuilder, id: Int) : Widget(builder, id), GroupAppearance, GroupColour, GroupPadding, GroupActions {
@@ -21,7 +20,7 @@ class WidgetItemList(builder: WidgetBuilder, id: Int) : Widget(builder, id), Gro
     override var spritePaddingX: IntProperty? = null
     override var spritePaddingY: IntProperty? = null
     override var hasActions: BoolProperty? = null
-    override var actions: ObjProperty<StringArray>? = null
+    override var actions: ObjProperty<Array<String?>>? = null
 
     init {
         properties.add(centredProperty())

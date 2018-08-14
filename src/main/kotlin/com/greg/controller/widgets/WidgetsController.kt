@@ -241,11 +241,11 @@ class WidgetsController : Controller() {
                 }
             }
         } else if (widget is WidgetSprite && shape is SpriteShape) {
-            shape.spriteProperty().bind(widget.spriteProperty())
-            shape.archiveProperty().bind(widget.archiveProperty())
+            shape.spriteProperty().bind(widget.defaultSpriteProperty())
+            shape.archiveProperty().bind(widget.defaultSpriteArchiveProperty())
 
             //Update archive values
-            updateArchive(widget, widget.getArchive())
+            updateArchive(widget, widget.getDefaultSpriteArchive())
             shape.archiveProperty().addListener { _, oldValue, newValue ->
                 if(oldValue != newValue)
                     updateArchive(widget, newValue)
@@ -259,10 +259,10 @@ class WidgetsController : Controller() {
         val size = (archive?.sprites?.size ?: 1) - 1
 
         //Limit the sprite index to archive size
-        widget.setCap(IntRange(0, size))
+        widget.setDefaultCap(IntRange(0, size))
 
         //If already on an index which is greater than archive index; reduce, otherwise set the same (refresh)
-        widget.setSprite(if (widget.getSprite() >= size) size else widget.getSprite())
+        widget.setDefaultSprite(if (widget.getDefaultSprite() >= size) size else widget.getDefaultSprite())
     }
 
     private fun updateVisibility(shape: WidgetShape, newValue: Boolean) {

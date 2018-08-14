@@ -13,7 +13,7 @@ object ColourUtils {
         return blue or (green shl 8) or (red shl 16)
     }
 
-    private fun rsToColour(colour: Int): Color {
+    fun getColour(colour: Int): Color {
         val red = colour shr 16 and 0xff
         val green = colour shr 8 and 0xff
         val blue = colour and 0xff

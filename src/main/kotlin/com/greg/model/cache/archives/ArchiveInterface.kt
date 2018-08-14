@@ -323,9 +323,9 @@ class ArchiveInterface : CacheArchive() {
                 }
                 is WidgetSprite -> {
                     if(child.defaultSpriteArchive != null)
-                        widget.setArchive(child.defaultSpriteArchive!!)
+                        widget.setDefaultSpriteArchive(child.defaultSpriteArchive!!)
                     if(child.defaultSpriteIndex != null)
-                        widget.setSprite(child.defaultSpriteIndex!!, false)
+                        widget.setDefaultSprite(child.defaultSpriteIndex!!, false)
                 }
                 is WidgetText -> {
                     widget.setDefaultText(child.defaultText)

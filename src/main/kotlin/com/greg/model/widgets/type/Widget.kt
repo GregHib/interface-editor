@@ -16,7 +16,6 @@ import com.greg.model.widgets.type.groups.GroupWidget
 import javafx.beans.property.Property
 
 open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), GroupOptions, GroupHover {
-
     val type: WidgetType = builder.type
     val identifier = id
     val name: String = type.name.toLowerCase().capitalize()
@@ -39,8 +38,16 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), GroupOptions
 
     override var optionCircumfix: StringProperty? = null
     override var optionText: StringProperty? = null
-    override var optionAttributes: StringProperty? = null
+    override var optionAttributes: IntProperty? = null
     override var hover: StringProperty? = null
+
+    override var parent: IntProperty? = null
+    override var optionType: IntProperty? = null
+    override var contentType: IntProperty? = null
+    override var alpha: IntProperty? = null
+    override var hoverId: IntProperty? = null
+    override var scriptOperators: ObjProperty<IntArray>? = null
+    override var scriptDefaults: ObjProperty<IntArray>? = null
     
     var updateSelection = true
 

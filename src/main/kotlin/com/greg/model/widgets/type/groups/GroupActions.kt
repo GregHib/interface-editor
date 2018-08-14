@@ -2,12 +2,11 @@ package com.greg.model.widgets.type.groups
 
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
-import com.sun.xml.internal.fastinfoset.util.StringArray
 
 interface GroupActions {
 
     var hasActions: BoolProperty?
-    var actions: ObjProperty<StringArray>?
+    var actions: ObjProperty<Array<String?>>?
 
     fun setHasActions(value: Boolean) { hasActionsProperty().set(value) }
 
@@ -20,13 +19,13 @@ interface GroupActions {
         return hasActions!!
     }
 
-    fun setActions(value: StringArray) { actionsProperty().set(value) }
+    fun setActions(value: Array<String?>) { actionsProperty().set(value) }
 
-    fun getActions(): StringArray { return actionsProperty().get() }
+    fun getActions(): Array<String?> { return actionsProperty().get() }
 
-    fun actionsProperty(): ObjProperty<StringArray> {
+    fun actionsProperty(): ObjProperty<Array<String?>> {
         if (actions == null)
-            actions = ObjProperty(this, "actions", StringArray())
+            actions = ObjProperty(this, "actions", arrayOfNulls(0))
 
         return actions!!
     }

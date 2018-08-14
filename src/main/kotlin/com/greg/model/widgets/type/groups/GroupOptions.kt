@@ -1,12 +1,13 @@
 package com.greg.model.widgets.type.groups
 
+import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.StringProperty
 
 interface GroupOptions {
 
     var optionCircumfix: StringProperty?
     var optionText: StringProperty?
-    var optionAttributes: StringProperty?
+    var optionAttributes: IntProperty?
 
     fun setOptionCircumfix(value: String) {
         optionCircumfixProperty().set(value)
@@ -38,17 +39,17 @@ interface GroupOptions {
         return optionText!!
     }
 
-    fun setOptionAttributes(value: String) {
+    fun setOptionAttributes(value: Int) {
         optionAttributesProperty().set(value)
     }
 
-    fun getOptionAttributes(): String {
+    fun getOptionAttributes(): Int {
         return optionAttributesProperty().get()
     }
 
-    fun optionAttributesProperty(): StringProperty {
+    fun optionAttributesProperty(): IntProperty {
         if (optionAttributes == null)
-            optionAttributes = StringProperty(this, "optionAttributes", "")
+            optionAttributes = IntProperty(this, "optionAttributes", 0)
 
         return optionAttributes!!
     }

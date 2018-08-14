@@ -21,6 +21,14 @@ abstract class GroupWidget {
     abstract var hidden: BoolProperty?
     abstract var hovered: BoolProperty?
 
+    abstract var parent: IntProperty?
+    abstract var optionType: IntProperty?
+    abstract var contentType: IntProperty?
+    abstract var alpha: IntProperty?
+    abstract var hoverId: IntProperty?
+    abstract var scriptOperators: ObjProperty<IntArray>?
+    abstract var scriptDefaults: ObjProperty<IntArray>?
+
     fun setLocked(value: Boolean) {
         lockedProperty().set(value)
     }
@@ -160,5 +168,79 @@ abstract class GroupWidget {
             heightBounds = ObjProperty(this, "heightBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_HEIGHT), Settings.getInt(Settings.WIDGET_CANVAS_HEIGHT)))
 
         return heightBounds!!
+    }
+
+    fun setParent(value: Int) {
+        parentProperty().set(value)
+    }
+
+    fun getParent(): Int {
+        return parentProperty().get()
+    }
+
+    fun parentProperty(): IntProperty {
+        if (parent == null)
+            parent = IntProperty(this, "parent", -1)
+        return parent!!
+    }
+
+    fun setOptionType(value: Int) { optionTypeProperty().set(value) }
+
+    fun getOptionType(): Int { return optionTypeProperty().get() }
+
+    fun optionTypeProperty(): IntProperty {
+        if (optionType == null)
+            optionType = IntProperty(this, "optionType", 0)
+        return optionType!!
+    }
+
+    fun setContentType(value: Int) { contentTypeProperty().set(value) }
+
+    fun getContentType(): Int { return contentTypeProperty().get() }
+
+    fun contentTypeProperty(): IntProperty {
+        if (contentType == null)
+            contentType = IntProperty(this, "contentType", 0)
+        return contentType!!
+    }
+
+    fun setAlpha(value: Int) { alphaProperty().set(value) }
+
+    fun getAlpha(): Int { return alphaProperty().get() }
+
+    fun alphaProperty(): IntProperty {
+        if (alpha == null)
+            alpha = IntProperty(this, "alpha", 0)
+        return alpha!!
+    }
+
+    fun setHoverId(value: Int) { hoverIdProperty().set(value) }
+
+    fun getHoverId(): Int { return hoverIdProperty().get() }
+
+    fun hoverIdProperty(): IntProperty {
+        if (hoverId == null)
+            hoverId = IntProperty(this, "hoverId", 0)
+        return hoverId!!
+    }
+
+    fun setScriptOperators(value: IntArray) { scriptOperatorsProperty().set(value) }
+
+    fun getScriptOperators(): IntArray { return scriptOperatorsProperty().get() }
+
+    fun scriptOperatorsProperty(): ObjProperty<IntArray> {
+        if (scriptOperators == null)
+            scriptOperators = ObjProperty(this, "scriptOperators", IntArray(0))
+        return scriptOperators!!
+    }
+
+    fun setScriptDefaults(value: IntArray) { scriptDefaultsProperty().set(value) }
+
+    fun getScriptDefaults(): IntArray { return scriptDefaultsProperty().get() }
+
+    fun scriptDefaultsProperty(): ObjProperty<IntArray> {
+        if (scriptDefaults == null)
+            scriptDefaults = ObjProperty(this, "scriptDefaults", IntArray(0))
+        return scriptDefaults!!
     }
 }

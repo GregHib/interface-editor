@@ -500,7 +500,7 @@ fun main(args: Array<String>) {
 
     val buffer = test.write()
     test.archive.replaceFile(HashUtils.nameToHash("data"), "data", buffer.payload.toByteArray())
-    println(test.cache.defragment())
+//    println(test.cache.defragment())
 
 
 //    FileUtils.writeByteArrayToFile(File("interface.jag"), test.archive.encode())
