@@ -19,7 +19,7 @@ class Archive(entries: Array<ArchiveEntry?>) {
     val entryCount: Int
         get() = entries.size
 
-    class ArchiveEntry(val hash: Int, val uncompressedSize: Int, val compresseedSize: Int, val data: ByteArray)
+    class ArchiveEntry(val hash: Int, val uncompressedSize: Int, val compressedSize: Int, val data: ByteArray)
 
     init {
         Arrays.asList(*entries).forEach { it -> this.entries[it!!.hash] = it }
@@ -31,7 +31,7 @@ class Archive(entries: Array<ArchiveEntry?>) {
         var size = 2 + entries.size * 10
 
         for (file in entries.values) {
-            size += file.compresseedSize
+            size += file.compressedSize
         }
 
         var buffer: ByteBuffer
@@ -48,7 +48,7 @@ class Archive(entries: Array<ArchiveEntry?>) {
         for (entry in entries.values) {
             buffer.putInt(entry.hash)
             ByteBufferUtils.write24Int(buffer, entry.uncompressedSize)
-            ByteBufferUtils.write24Int(buffer, entry.compresseedSize)
+            ByteBufferUtils.write24Int(buffer, entry.compressedSize)
         }
 
         for (file in entries.values) {
@@ -72,7 +72,6 @@ class Archive(entries: Array<ArchiveEntry?>) {
         }
 
         return data
-
     }
 
     @Throws(IOException::class)
@@ -157,7 +156,7 @@ class Archive(entries: Array<ArchiveEntry?>) {
 
         val old = entries[oldHash] ?: return false
 
-        entries.replace(oldHash, ArchiveEntry(newHash, old.uncompressedSize, old.compresseedSize, old.data))
+        entries.replace(oldHash, ArchiveEntry(newHash, old.uncompressedSize, old.compressedSize, old.data))
         return true
     }
 

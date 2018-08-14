@@ -13,7 +13,7 @@ class Cache(path: CachePath) : IndexedFileSystem(path) {
     }
 
     override fun readFile(storeId: Int, fileId: Int): ByteBuffer {
-        if(path.getCacheType() == CacheFormats.UNPACKED_CACHE && storeId == FileStore.ARCHIVE_FILE_STORE)
+        if(storeId == FileStore.ARCHIVE_FILE_STORE && path.getCacheType() == CacheFormats.UNPACKED_CACHE)
             return ByteBuffer.wrap(path.getArchiveFile(path.getFiles(), fileId - 1).readBytes())
         return super.readFile(storeId, fileId)
     }
