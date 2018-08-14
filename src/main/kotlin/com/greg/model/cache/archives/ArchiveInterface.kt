@@ -15,14 +15,33 @@ import java.io.InputStream
 class ArchiveInterface : CacheArchive() {
 
     companion object {
-        var widgetsData: Array<WidgetData?>? = null
+        private var widgetsData = arrayOfNulls<WidgetData>(Short.MAX_VALUE.toInt())
 
         fun lookup(id: Int): WidgetData? {
-            return if (widgetsData == null) null else widgetsData!![id]
+            return widgetsData[id]
         }
 
         fun updateData(widget: Widget) {
-            widgetsData!![widget.identifier] = WidgetDataConverter.toData(widget)
+            widgetsData[widget.identifier] = WidgetDataConverter.toData(widget)
+        }
+
+        private fun clear() {
+            widgetsData = arrayOfNulls(Short.MAX_VALUE.toInt())
+        }
+
+        fun set(widgets: Array<WidgetData?>) {
+            clear()
+            widgets.requireNoNulls().forEachIndexed { index, data ->
+                widgetsData[index] = data
+            }
+        }
+
+        fun set(widgets: WidgetData) {
+            widgetsData[widgets.id] = widgets
+        }
+
+        fun get(): Array<WidgetData?> {
+            return widgetsData
         }
     }
 
@@ -67,7 +86,7 @@ class ArchiveInterface : CacheArchive() {
         val buffer = archive.readFile("data")
         val data = WidgetDataIO.read(buffer) ?: return false
 
-        widgetsData = data
+        set(data)
         return true
     }
 

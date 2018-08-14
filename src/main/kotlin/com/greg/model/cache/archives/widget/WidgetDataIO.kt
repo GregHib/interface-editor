@@ -254,9 +254,9 @@ object WidgetDataIO {
     fun write(): Buffer {
         val buffer = Buffer()
 
-        buffer.writeShort(ArchiveInterface.widgetsData!!.requireNoNulls().size)
+        buffer.writeShort(ArchiveInterface.get().requireNoNulls().size)
 
-        ArchiveInterface.widgetsData!!.requireNoNulls().forEach { widget ->
+        ArchiveInterface.get().requireNoNulls().forEach { widget ->
             buffer.writeShort(if (widget.id == widget.parent) -1 else widget.id)
 
             if (widget.id == widget.parent) {

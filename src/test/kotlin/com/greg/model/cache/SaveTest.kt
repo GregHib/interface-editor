@@ -17,7 +17,7 @@ class SaveTest {
     fun load(buffer: ByteBuffer = archive.readFile("data")): Boolean {
         return try {
 
-            ArchiveInterface.widgetsData = arrayOfNulls(buffer.short.toInt() and 0xffff)
+            ArchiveInterface.set(arrayOfNulls(buffer.short.toInt() and 0xffff))
 
             var parent = -1
 
@@ -262,7 +262,7 @@ class SaveTest {
                     return true
                 }*/
 
-                ArchiveInterface.widgetsData!![id] = widget
+                ArchiveInterface.set(widget)
             }
 
             true
@@ -277,9 +277,9 @@ class SaveTest {
 
         val buffer = Buffer()
 
-        buffer.writeShort(ArchiveInterface.widgetsData!!.requireNoNulls().size)
+        buffer.writeShort(ArchiveInterface.get().requireNoNulls().size)
 
-        ArchiveInterface.widgetsData!!.requireNoNulls().forEach { widget ->
+        ArchiveInterface.get().requireNoNulls().forEach { widget ->
             buffer.writeShort(if (widget.id == widget.parent) -1 else widget.id)
 
             if (widget.id == widget.parent) {
