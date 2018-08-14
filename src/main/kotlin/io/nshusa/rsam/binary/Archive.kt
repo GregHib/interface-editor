@@ -82,7 +82,6 @@ class Archive(entries: Array<ArchiveEntry?>) {
     @Throws(IOException::class)
     fun readFile(hash: Int): ByteBuffer {
         for (entry in entries.values) {
-
             if (entry.hash != hash) {
                 continue
             }
@@ -106,19 +105,21 @@ class Archive(entries: Array<ArchiveEntry?>) {
 
     @Throws(IOException::class)
     fun replaceFile(oldHash: Int, newHash: Int, data: ByteArray): Boolean {
-        if (entries.containsKey(oldHash)) {
+        if (!entries.containsKey(oldHash))
             return false
-        }
 
         val entry: ArchiveEntry
-        entry = if (!isExtracted) {
-            val compressed = CompressionUtils.bzip2(data)
+        val compressed = CompressionUtils.bzip2(data)
+        println("$oldHash $newHash ${data.size} ${compressed.size} ${data.size > compressed.size}")
+        entry = if (data.size > compressed.size) {
             Archive.ArchiveEntry(newHash, data.size, compressed.size, compressed)
         } else {
             Archive.ArchiveEntry(newHash, data.size, data.size, data)
         }
 
         entries.replace(oldHash, entry)
+
+        println(Arrays.deepToString(entries.keys.toTypedArray()))
         return true
     }
 

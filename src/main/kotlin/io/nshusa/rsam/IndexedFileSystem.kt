@@ -1,6 +1,6 @@
 package io.nshusa.rsam
 
-import com.greg.controller.task.tasks.Defragment
+import com.greg.model.cache.Cache
 import com.greg.model.cache.CachePath
 import com.greg.model.cache.formats.CacheFormats
 import java.io.Closeable
@@ -11,13 +11,14 @@ import java.nio.ByteBuffer
 import java.nio.file.Files
 import java.util.*
 
+
 open class IndexedFileSystem : Closeable {
 
     internal val path: CachePath
 
     constructor(path: CachePath) {
         this.path = path
-        storeCount = if(path.isValid()) path.getIndices(path.getFiles()).size else 0
+        storeCount = if (path.isValid()) path.getIndices(path.getFiles()).size else 0
     }
 
     constructor(path: String) : this(CachePath(path))
@@ -30,10 +31,10 @@ open class IndexedFileSystem : Closeable {
     val storeCount: Int
 
     fun load(): Boolean {
-        if(!path.isValid())
+        if (!path.isValid())
             return false
 
-        if(path.getCacheType() == CacheFormats.FULL_CACHE) {
+        if (path.getCacheType() == CacheFormats.FULL_CACHE) {
             val files = path.getFiles()
 
             val data = path.getDataFile(files) ?: return false
@@ -90,8 +91,112 @@ open class IndexedFileSystem : Closeable {
         return false
     }
 
-    fun defragment() {
-        Thread(Defragment(this)).start()
+    fun defrag2(): Boolean {
+        val dir = File("./defragmented_cache/")
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
+
+        val dataFile = File(dir, "main_file_cache.dat")
+        if (!dataFile.exists()) {
+            dataFile.createNewFile()
+        }
+
+        for (i in 0 until storeCount) {
+            val idxFile = File(dir, "main_file_cache.idx$i")
+            if (!idxFile.exists())
+                idxFile.createNewFile()
+        }
+
+
+        val nFs = Cache(CachePath(dir.toPath()))
+
+        var var26: Throwable? = null
+        try {
+            val stores = storeCount
+
+            for (i in 0 until storeCount) {
+                val store = getStore(i)
+                val copy = nFs.getStore(i)
+
+                val files = store.fileCount
+
+                for (file in 0..files) {
+                    val buffer = store.readFile(file)
+                    copy.writeFile(file, buffer?.array() ?: ByteArray(0))
+                    val progress = i + 1 / stores * 100.0
+                }
+            }
+        } catch (t: Throwable) {
+            var26 = t
+            throw t
+        } finally {
+            if (var26 != null) {
+                try {
+                    nFs.close()
+                } catch (var21: Throwable) {
+                    var26.addSuppressed(var21)
+                }
+            } else {
+                nFs.close()
+            }
+
+        }
+        return true
+    }
+
+    fun defragment(): Boolean {
+        try {
+            if (!isLoaded || path.getCacheType() != CacheFormats.FULL_CACHE)
+                return false
+
+            val map = LinkedHashMap<Int, MutableList<ByteBuffer>>()
+
+            val files = path.getFiles()
+
+            for (store in 0 until storeCount) {
+                val fileStore = getStore(store)
+
+                val list = ArrayList<ByteBuffer>()
+
+                for (file in 0 until fileStore.fileCount) {
+                    val buffer = fileStore.readFile(file) ?: continue
+
+                    list.add(buffer)
+                }
+                map[fileStore.storeId] = list
+            }
+
+            val identifier = path.getIdentifier(path.getFiles())
+
+            reset()
+
+            val data = path.getDataFile(files) ?: return false
+
+            val indices = path.getIndices(files)
+
+            Files.deleteIfExists(data.toPath())
+
+            indices.forEach { Files.deleteIfExists(it.toPath()) }
+
+            create(identifier ?: "main_file_cache")
+
+            load()
+
+            for ((fileStoreId, value) in map) {
+                val fileStore = getStore(fileStoreId)
+
+                for (file in 0 until value.size)
+                    fileStore.writeFile(file, value[file].array())
+            }
+
+            return true
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            return false
+        }/* finally {
+            close()
+        }*/
     }
 
     fun getStore(storeId: Int): FileStore {
@@ -103,7 +208,11 @@ open class IndexedFileSystem : Closeable {
     }
 
     open fun readFile(storeId: Int, fileId: Int): ByteBuffer {
-        return getStore(storeId).readFile(fileId)?: ByteBuffer.allocate(0)
+        return getStore(storeId).readFile(fileId) ?: ByteBuffer.allocate(0)
+    }
+
+    fun writeFile(storeId: Int, fileId: Int, data: ByteArray): Boolean {
+        return getStore(storeId).writeFile(fileId, data)
     }
 
     fun create(identifier: String) {

@@ -3,6 +3,8 @@ package com.greg.model.cache
 import com.greg.model.cache.archives.ArchiveFont
 import com.greg.model.cache.archives.ArchiveInterface
 import com.greg.model.cache.archives.ArchiveMedia
+import io.nshusa.rsam.FileStore
+import io.nshusa.rsam.binary.Archive
 import javafx.scene.control.Alert
 import javafx.stage.DirectoryChooser
 import tornadofx.Controller
@@ -66,6 +68,20 @@ class CacheController : Controller() {
             loaded = true
         } catch (e: FileNotFoundException) {
             alert(Alert.AlertType.WARNING, "Error loading cache", "Cache already in use.")
+        }
+    }
+
+    fun save() {
+        if(loaded) {
+            val archiveFile = cache!!.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)
+            val archive = Archive.decode(archiveFile)
+            val buffer = interfaces.write()
+
+            archive.writeFile("data", buffer.array())
+
+            val encoded = archive.encode()
+
+            cache!!.writeFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE, encoded)
         }
     }
 

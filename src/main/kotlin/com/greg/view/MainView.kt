@@ -47,6 +47,9 @@ class MainView : View("Greg's Interface Editor") {
                 item("Load cache").action {
                     cache.select()
                 }
+                item("Save").action {
+                    cache.save()
+                }
                 item("Load interface").action {
                     val alert = IntegerAlert("Interface ID:")
                     val result = alert.showAndWait()

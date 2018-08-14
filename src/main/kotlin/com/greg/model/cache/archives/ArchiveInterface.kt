@@ -199,19 +199,19 @@ class ArchiveInterface : CacheArchive() {
                     font = buffer.get().toInt() and 255
                     if (font != 0) {
                         widget.defaultMediaType = 1
-                        widget.defaultMedia = (font - 1 shl 8) + buffer.get() and 255
+                        widget.defaultMedia = (font - 1 shl 8) + (buffer.get().toInt() and 255)
                     }
 
                     font = buffer.get().toInt() and 255
                     if (font != 0) {
                         widget.secondaryMediaType = 1
-                        widget.secondaryMedia = (font - 1 shl 8) + buffer.get() and 255
+                        widget.secondaryMedia = (font - 1 shl 8) + (buffer.get().toInt() and 255)
                     }
 
                     font = buffer.get().toInt() and 255
-                    widget.defaultAnimationId = if (font != 0) (font - 1 shl 8) + buffer.get() and 255 else -1
+                    widget.defaultAnimationId = if (font != 0) (font - 1 shl 8) + (buffer.get().toInt() and 255) else -1
                     font = buffer.get().toInt() and 255
-                    widget.secondaryAnimationId = if (font != 0) (font - 1 shl 8) + buffer.get() and 255 else -1
+                    widget.secondaryAnimationId = if (font != 0) (font - 1 shl 8) + (buffer.get().toInt() and 255) else -1
                     widget.spriteScale = buffer.short.toInt() and 0xffff
                     widget.spritePitch = buffer.short.toInt() and 0xffff
                     widget.spriteRoll = buffer.short.toInt() and 0xffff
@@ -270,6 +270,198 @@ class ArchiveInterface : CacheArchive() {
             cache.reset()
             false
         }
+    }
+
+    fun write(): Buffer {
+
+        val buffer = Buffer()
+
+        buffer.writeShort(ArchiveInterface.widgets!!.requireNoNulls().size)
+
+        ArchiveInterface.widgets!!.requireNoNulls().forEach { widget ->
+            buffer.writeShort(if (widget.id == widget.parent) -1 else widget.id)
+
+            if (widget.id == widget.parent) {
+                buffer.writeShort(widget.parent)
+                buffer.writeShort(widget.id)
+            }
+
+            buffer.writeByte(widget.group)
+            buffer.writeByte(widget.optionType)
+            buffer.writeShort(widget.contentType)
+            buffer.writeShort(widget.width)
+            buffer.writeShort(widget.height)
+            buffer.writeByte(widget.alpha)
+
+            if (widget.hoverId == -1) {
+                buffer.writeByte(0)
+            } else {
+                buffer.writeByte((widget.hoverId shr 8) + 1)
+                buffer.writeByte(widget.hoverId and 255)
+            }
+
+            buffer.writeByte(widget.scriptOperators?.size ?: 0)
+
+            if (widget.scriptOperators?.isNotEmpty() == true) {
+                widget.scriptOperators!!.forEachIndexed { index, i ->
+                    buffer.writeByte(i)
+                    buffer.writeShort(widget.scriptDefaults[index])
+                }
+            }
+
+            buffer.writeByte(widget.scripts?.size ?: 0)
+
+            if (widget.scripts?.isNotEmpty() == true) {
+                widget.scripts!!.requireNoNulls().forEach { script ->
+                    buffer.writeShort(script.size)
+
+                    script.forEach { int ->
+                        buffer.writeShort(int)
+                    }
+                }
+            }
+
+            if (widget.group == Widget.TYPE_CONTAINER) {
+                buffer.writeShort(widget.scrollLimit)
+                buffer.writeByte(if (widget.hidden) 1 else 0)
+                buffer.writeShort(widget.children?.size ?: 0)
+                widget.children?.forEachIndexed { index, child ->
+                    buffer.writeShort(child)
+                    buffer.writeShort(widget.childX[index])
+                    buffer.writeShort(widget.childY[index])
+                }
+            }
+
+            if (widget.group == Widget.TYPE_MODEL_LIST) {
+                buffer.writeShort(0)
+                buffer.writeInt(0)
+            }
+
+            if (widget.group == Widget.TYPE_INVENTORY) {
+                buffer.writeByte(if (widget.swappableItems) 1 else 0)
+                buffer.writeByte(if (widget.hasActions) 1 else 0)
+                buffer.writeByte(if (widget.usableItems) 1 else 0)
+                buffer.writeByte(if (widget.replaceItems) 1 else 0)
+                buffer.writeByte(widget.spritePaddingX)
+                buffer.writeByte(widget.spritePaddingY)
+
+                widget.sprites.forEachIndexed { index, s ->
+                    buffer.writeByte(if (s == null) 0 else 1)
+                    if (s != null) {
+                        buffer.writeShort(widget.spriteX[index])
+                        buffer.writeShort(widget.spriteY[index])
+
+                        if (widget.spritesArchive[index] == null && widget.spritesIndex[index] == null)
+                            buffer.writeString("")
+                        else
+                            buffer.writeString("${widget.spritesArchive[index]},${widget.spritesIndex[index]}")
+                    }
+                }
+
+                widget.actions.forEach { buffer.writeString(it ?: "") }
+            }
+
+            if (widget.group == Widget.TYPE_RECTANGLE) {
+                buffer.writeByte(if (widget.filled) 1 else 0)
+            }
+
+            if (widget.group == Widget.TYPE_TEXT || widget.group == Widget.TYPE_MODEL_LIST) {
+                buffer.writeByte(if (widget.centeredText) 1 else 0)
+                buffer.writeByte(widget.fontIndex)
+                buffer.writeByte(if (widget.shadowedText) 1 else 0)
+            }
+
+            if (widget.group == Widget.TYPE_TEXT) {
+                buffer.writeString(widget.defaultText)
+                buffer.writeString(widget.secondaryText)
+            }
+
+            if (widget.group == Widget.TYPE_MODEL_LIST || widget.group == Widget.TYPE_RECTANGLE || widget.group == Widget.TYPE_TEXT) {
+                buffer.writeInt(widget.defaultColour)
+            }
+
+            if (widget.group == Widget.TYPE_RECTANGLE || widget.group == Widget.TYPE_TEXT) {
+                buffer.writeInt(widget.secondaryColour)
+                buffer.writeInt(widget.defaultHoverColour)
+                buffer.writeInt(widget.secondaryHoverColour)
+            }
+
+            if (widget.group == Widget.TYPE_SPRITE) {
+                if (widget.defaultSpriteArchive.isNullOrEmpty())
+                    buffer.writeString("")
+                else
+                    buffer.writeString("${widget.defaultSpriteArchive},${widget.defaultSpriteIndex}")
+
+                if (widget.secondarySpriteArchive.isNullOrEmpty())
+                    buffer.writeString("")
+                else
+                    buffer.writeString("${widget.secondarySpriteArchive},${widget.secondarySpriteIndex}")
+            }
+
+            if (widget.group == Widget.TYPE_MODEL) {
+                if (widget.defaultMediaType != 1) {
+                    buffer.writeByte(0)
+                } else {
+                    buffer.writeByte((widget.defaultMedia shr 8) + 1)
+                    buffer.writeByte(widget.defaultMedia and 255)
+                }
+
+                if (widget.secondaryMediaType != 1) {
+                    buffer.writeByte(0)
+                } else {
+                    buffer.writeByte((widget.secondaryMedia shr 8) + 1)
+                    buffer.writeByte(widget.secondaryMedia and 255)
+                }
+
+                if (widget.defaultAnimationId == -1) {
+                    buffer.writeByte(0)
+                } else {
+                    buffer.writeByte((widget.defaultAnimationId shr 8) + 1)
+                    buffer.writeByte(widget.defaultAnimationId and 255)
+                }
+                if (widget.secondaryAnimationId == -1) {
+                    buffer.writeByte(0)
+                } else {
+                    buffer.writeByte((widget.secondaryAnimationId shr 8) + 1)
+                    buffer.writeByte(widget.secondaryAnimationId and 255)
+                }
+
+                buffer.writeShort(widget.spriteScale)
+                buffer.writeShort(widget.spritePitch)
+                buffer.writeShort(widget.spriteRoll)
+            }
+
+            if (widget.group == Widget.TYPE_ITEM_LIST) {
+                buffer.writeByte(if (widget.centeredText) 1 else 0)
+                buffer.writeByte(widget.fontIndex)
+
+
+                buffer.writeByte(if (widget.shadowedText) 1 else 0)
+                buffer.writeInt(widget.defaultColour)
+                buffer.writeShort(widget.spritePaddingX)
+                buffer.writeShort(widget.spritePaddingY)
+                buffer.writeByte(if (widget.hasActions) 1 else 0)
+
+                widget.actions.forEach { buffer.writeString(it ?: "") }
+            }
+
+            if (widget.optionType == Widget.OPTION_USABLE || widget.group == Widget.TYPE_INVENTORY) {
+                buffer.writeString(widget.optionCircumfix)
+                buffer.writeString(widget.optionText)
+                buffer.writeShort(widget.optionAttributes)
+            }
+
+            if (widget.optionType == Widget.OPTION_OK || widget.optionType == Widget.OPTION_TOGGLE_SETTING || widget.optionType == Widget.OPTION_RESET_SETTING || widget.optionType == Widget.OPTION_CONTINUE) {
+                if ((widget.hover == "Ok" && widget.optionType == Widget.OPTION_OK)
+                        || (widget.hover == "Select" && (widget.optionType == Widget.OPTION_TOGGLE_SETTING || widget.optionType == Widget.OPTION_RESET_SETTING))
+                        || (widget.hover == "Continue" && widget.optionType == Widget.OPTION_CONTINUE))
+                    buffer.writeString("")
+                else
+                    buffer.writeString(widget.hover)
+            }
+        }
+
+        return buffer
     }
 
 

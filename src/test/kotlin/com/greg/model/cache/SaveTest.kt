@@ -5,16 +5,15 @@ import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.binary.Archive
 import io.nshusa.rsam.binary.Widget
 import io.nshusa.rsam.util.ByteBufferUtils
-import io.nshusa.rsam.util.HashUtils
+import java.nio.ByteBuffer
 import kotlin.experimental.and
 
 class SaveTest {
     val cache = Cache(CachePath("./cache/"))
     val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
 
-    fun load(): Boolean {
+    fun load(buffer: ByteBuffer): Boolean {
         return try {
-            val buffer = archive.readFile("data")
 
             ArchiveInterface.widgets = arrayOfNulls(buffer.short.toInt() and 0xffff)
 
@@ -152,7 +151,7 @@ class SaveTest {
                 }
 
                 if (widget.group == Widget.TYPE_TEXT) {
-                    widget.defaultText = ByteBufferUtils.getString(buffer)
+                    widget.defaultText = ByteBufferUtils.getString(buffer).replace("RuneScape", "Run Escape")
                     widget.secondaryText = ByteBufferUtils.getString(buffer)
                 }
 
@@ -496,13 +495,24 @@ class SaveTest {
 
 fun main(args: Array<String>) {
     val test = SaveTest()
-    test.load()
 
+
+    val archiveFile = test.cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)
+    var archive = Archive.decode(archiveFile)
+
+
+    val dataFile = archive.readFile("data")
+
+    test.load(dataFile)
     val buffer = test.write()
-    test.archive.replaceFile(HashUtils.nameToHash("data"), "data", buffer.payload.toByteArray())
-//    println(test.cache.defragment())
 
+    println("Archive file ${archiveFile.array().size}")
+    println("Data file ${dataFile.array().size}")
+    println("Buffer file ${buffer.payload.size}")
 
-//    FileUtils.writeByteArrayToFile(File("interface.jag"), test.archive.encode())
+    println("Replace ${archive.writeFile("data", buffer.payload.toByteArray())}")
 
+    val encoded = archive.encode()
+
+    println("Write ${test.cache.writeFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE, encoded)}")
 }
