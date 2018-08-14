@@ -1,28 +1,21 @@
-package com.greg.model.cache
+package com.greg.model.cache.archives.widget
 
 import com.greg.model.cache.archives.ArchiveInterface
-import com.greg.model.cache.archives.widget.WidgetData
-import io.nshusa.rsam.FileStore
-import io.nshusa.rsam.binary.Archive
+import com.greg.model.cache.archives.Buffer
+import com.greg.model.widgets.WidgetBuilder
 import io.nshusa.rsam.util.ByteBufferUtils
-import org.apache.commons.io.FileUtils
-import java.io.File
 import java.nio.ByteBuffer
 import kotlin.experimental.and
 
-class SaveTest {
-    val cache = Cache(CachePath("./interface.jag"))
-    val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
+object WidgetDataIO {
 
-    fun load(buffer: ByteBuffer = archive.readFile("data")): Boolean {
+    fun read(buffer: ByteBuffer): Array<WidgetData?>? {
         return try {
-
-            ArchiveInterface.widgetsData = arrayOfNulls(buffer.short.toInt() and 0xffff)
-
+            val widgetsData: Array<WidgetData?> = arrayOfNulls(buffer.short.toInt() and 0xffff)
             var parent = -1
 
             var widget: WidgetData
-            while (buffer.hasRemaining()) {
+            while(buffer.hasRemaining()) {
                 var id = buffer.short.toInt() and 0xffff
                 if (id == 65535) {
                     parent = buffer.short.toInt() and 0xffff
@@ -38,9 +31,7 @@ class SaveTest {
                 widget.height = buffer.short.toInt() and 0xffff
                 widget.alpha = buffer.get() and 255.toByte()
                 val hover = buffer.get() and 255.toByte()
-                val h2 = if (hover != 0.toByte()) buffer.get().toInt() else -1
-
-                widget.hoverId = if (hover != 0.toByte()) hover - 1 shl 8 or (h2 and 255) else -1
+                widget.hoverId = if (hover != 0.toByte()) hover - 1 shl 8 or (buffer.get().toInt() and 255) else -1
 
                 val operators = buffer.get().toInt() and 255
                 var scripts: Int
@@ -62,15 +53,15 @@ class SaveTest {
                 if (scripts > 0) {
                     widget.scripts = arrayOfNulls(scripts)
 
-                    var index = 0
-                    while (index < scripts) {
-                        val length = buffer.short.toInt() and 0xffff
-                        widget.scripts!![index] = IntArray(length)
+                    font = 0
+                    while (font < scripts) {
+                        index = buffer.short.toInt() and 0xffff
+                        widget.scripts!![font] = IntArray(index)
 
-                        for (instruction in 0 until length) {
-                            widget.scripts!![index]!![instruction] = buffer.short.toInt() and 0xffff
+                        for (instruction in 0 until index) {
+                            widget.scripts!![font]!![instruction] = buffer.short.toInt() and 0xffff
                         }
-                        index++
+                        font++
                     }
                 }
 
@@ -153,7 +144,7 @@ class SaveTest {
                 }
 
                 if (widget.group == WidgetData.TYPE_TEXT) {
-                    widget.defaultText = ByteBufferUtils.getString(buffer).replace("RuneScape", "Run Escape")
+                    widget.defaultText = ByteBufferUtils.getString(buffer)
                     widget.secondaryText = ByteBufferUtils.getString(buffer)
                 }
 
@@ -240,7 +231,7 @@ class SaveTest {
                     widget.hover = ByteBufferUtils.getString(buffer)
 
                     if (widget.hover.isEmpty()) {
-                        widget.hover = when (widget.optionType) {
+                        widget.hover = when(widget.optionType) {
                             WidgetData.OPTION_OK -> "Ok"
                             WidgetData.OPTION_TOGGLE_SETTING -> "Select"
                             WidgetData.OPTION_RESET_SETTING -> "Select"
@@ -250,31 +241,17 @@ class SaveTest {
                     }
                 }
 
-                /*val newBuffer = write(widget)
-
-                val current = Arrays.copyOfRange(buffer.array(), start, buffer.position()).toTypedArray()
-                val new = newBuffer.payload.toArray()
-
-                if (!Arrays.equals(current, new)) {
-                    println("Widget ${widget.id} ${widget.parent} ${widget.group} ${widget.optionType}")
-                    println(Arrays.deepToString(current))
-                    println(Arrays.deepToString(new))
-                    return true
-                }*/
-
-                ArchiveInterface.widgetsData!![id] = widget
+                widgetsData[id] = widget
+                WidgetBuilder.identifier = widget.id + 1
             }
-
-            true
+            widgetsData
         } catch (e: NullPointerException) {
             e.printStackTrace()
-            cache.reset()
-            false
+            null
         }
     }
 
     fun write(): Buffer {
-
         val buffer = Buffer()
 
         buffer.writeShort(ArchiveInterface.widgetsData!!.requireNoNulls().size)
@@ -464,60 +441,4 @@ class SaveTest {
 
         return buffer
     }
-
-    class Buffer {
-        var payload = arrayListOf<Byte>()
-
-        fun writeByte(i: Int) {
-            payload.add(i.toByte())
-        }
-
-        fun writeByte(i: Byte) {
-            payload.add(i)
-        }
-
-        fun writeInt(i: Int) {
-            payload.add((i shr 24).toByte())
-            payload.add((i shr 16).toByte())
-            payload.add((i shr 8).toByte())
-            payload.add(i.toByte())
-        }
-
-        fun writeShort(i: Int) {
-            payload.add((i shr 8).toByte())
-            payload.add(i.toByte())
-        }
-
-        fun writeString(string: String) {
-            string.forEach { writeByte(it.toByte()) }
-            writeByte(10)
-        }
-    }
-}
-
-fun main(args: Array<String>) {
-    val test = SaveTest()
-
-
-    val archiveFile = test.cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)
-    val archive = Archive.decode(archiveFile)
-
-    println("File ${archiveFile.array().size}")
-
-    val dataFile = archive.readFile("data")
-
-    test.load(dataFile)
-    val buffer = test.write()
-
-    println("Archive file ${archiveFile.array().size}")
-    println("Data file ${dataFile.array().size}")
-    println("Buffer file ${buffer.payload.size}")
-
-    println("Replace ${archive.writeFile("data", buffer.payload.toByteArray())}")
-
-    val encoded = archive.encode()
-
-
-    FileUtils.writeByteArrayToFile(File("save.jag"), encoded)
-//    println("Write ${test.cache.writeFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE, encoded)}")
 }

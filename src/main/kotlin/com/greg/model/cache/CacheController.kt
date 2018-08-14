@@ -1,12 +1,12 @@
 package com.greg.model.cache
 
+import com.greg.controller.widgets.WidgetsController
 import com.greg.model.cache.archives.ArchiveFont
 import com.greg.model.cache.archives.ArchiveInterface
 import com.greg.model.cache.archives.ArchiveMedia
-import io.nshusa.rsam.FileStore
-import io.nshusa.rsam.binary.Archive
 import javafx.scene.control.Alert
 import javafx.stage.DirectoryChooser
+import javafx.stage.FileChooser
 import tornadofx.Controller
 import tornadofx.alert
 import java.io.File
@@ -24,12 +24,26 @@ class CacheController : Controller() {
 
     var loaded = false
 
-    fun select() {
+    fun selectDirectory() {
         val chooser = DirectoryChooser()
         chooser.initialDirectory = File("./")
-
         val directory = chooser.showDialog(null) ?: return
+        select(directory)
+    }
 
+    fun selectFile() {
+        val chooser = FileChooser()
+        chooser.initialDirectory = File("./")
+        chooser.extensionFilters.addAll(
+                FileChooser.ExtensionFilter("Jagex Archive File (*.jag)", "*.jag"),
+                FileChooser.ExtensionFilter("Cache Data File (*.dat)", "*.dat")
+        )
+
+        val directory = chooser.showOpenDialog(null) ?: return
+        select(directory)
+    }
+
+    private fun select(directory: File) {
         loaded = false
 
         val path = CachePath(directory)
@@ -71,17 +85,12 @@ class CacheController : Controller() {
         }
     }
 
-    fun save() {
-        if(loaded) {
-            val archiveFile = cache!!.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)
-            val archive = Archive.decode(archiveFile)
-            val buffer = interfaces.write()
+    fun save(widgets: WidgetsController) {
+        if(loaded && cache != null) {
 
-            archive.writeFile("data", buffer.array())
+            interfaces.save(widgets, cache!!)
 
-            val encoded = archive.encode()
-
-            cache!!.writeFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE, encoded)
+            println("Save complete")
         }
     }
 

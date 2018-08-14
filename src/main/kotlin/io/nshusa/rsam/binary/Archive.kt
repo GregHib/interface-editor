@@ -110,7 +110,6 @@ class Archive(entries: Array<ArchiveEntry?>) {
 
         val entry: ArchiveEntry
         val compressed = CompressionUtils.bzip2(data)
-        println("$oldHash $newHash ${data.size} ${compressed.size} ${data.size > compressed.size}")
         entry = if (data.size > compressed.size) {
             Archive.ArchiveEntry(newHash, data.size, compressed.size, compressed)
         } else {
@@ -118,8 +117,6 @@ class Archive(entries: Array<ArchiveEntry?>) {
         }
 
         entries.replace(oldHash, entry)
-
-        println(Arrays.deepToString(entries.keys.toTypedArray()))
         return true
     }
 

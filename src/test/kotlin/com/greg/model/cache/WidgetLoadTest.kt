@@ -1,6 +1,7 @@
 package com.greg.model.cache
 
 import com.greg.controller.utils.ColourUtils
+import com.greg.model.cache.archives.widget.WidgetData
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.type.*
@@ -240,21 +241,21 @@ class WidgetLoadTest {
                     widget.setActions(actions)
                 }
 
-                if (widget.getOptionType() == io.nshusa.rsam.binary.Widget.OPTION_USABLE || widget is WidgetInventory) {
+                if (widget.getOptionType() == WidgetData.OPTION_USABLE || widget is WidgetInventory) {
                     widget.setOptionCircumfix(ByteBufferUtils.getString(buffer))
                     widget.setOptionText(ByteBufferUtils.getString(buffer))
                     widget.setOptionAttributes(buffer.short.toInt() and 0xffff)
                 }
 
-                if (widget.getOptionType() == io.nshusa.rsam.binary.Widget.OPTION_OK || widget.getOptionType() == io.nshusa.rsam.binary.Widget.OPTION_TOGGLE_SETTING || widget.getOptionType() == io.nshusa.rsam.binary.Widget.OPTION_RESET_SETTING || widget.getOptionType() == io.nshusa.rsam.binary.Widget.OPTION_CONTINUE) {
+                if (widget.getOptionType() == WidgetData.OPTION_OK || widget.getOptionType() == WidgetData.OPTION_TOGGLE_SETTING || widget.getOptionType() == WidgetData.OPTION_RESET_SETTING || widget.getOptionType() == WidgetData.OPTION_CONTINUE) {
                     var hover = ByteBufferUtils.getString(buffer)
 
                     if (hover.isEmpty()) {
                         hover = when (widget.getOptionType()) {
-                            io.nshusa.rsam.binary.Widget.OPTION_OK -> "Ok"
-                            io.nshusa.rsam.binary.Widget.OPTION_TOGGLE_SETTING -> "Select"
-                            io.nshusa.rsam.binary.Widget.OPTION_RESET_SETTING -> "Select"
-                            io.nshusa.rsam.binary.Widget.OPTION_CONTINUE -> "Continue"
+                            WidgetData.OPTION_OK -> "Ok"
+                            WidgetData.OPTION_TOGGLE_SETTING -> "Select"
+                            WidgetData.OPTION_RESET_SETTING -> "Select"
+                            WidgetData.OPTION_CONTINUE -> "Continue"
                             else -> hover
                         }
                     }
@@ -283,42 +284,21 @@ class WidgetLoadTest {
             false
         }
     }
-
-    class Buffer {
-        var payload = arrayListOf<Byte>()
-
-        fun writeByte(i: Int) {
-            payload.add(i.toByte())
-        }
-
-        fun writeByte(i: Byte) {
-            payload.add(i)
-        }
-
-        fun writeInt(i: Int) {
-            payload.add((i shr 24).toByte())
-            payload.add((i shr 16).toByte())
-            payload.add((i shr 8).toByte())
-            payload.add(i.toByte())
-        }
-
-        fun writeShort(i: Int) {
-            payload.add((i shr 8).toByte())
-            payload.add(i.toByte())
-        }
-
-        fun writeString(string: String) {
-            string.forEach { writeByte(it.toByte()) }
-            writeByte(10)
-        }
-    }
 }
 
 fun main(args: Array<String>) {
-    val test = WidgetLoadTest()
-    test.load()
+    val load = WidgetLoadTest()
+    val save = SaveTest()
 
-    println(test.widgets!!.size)
+    var start = System.currentTimeMillis()
+    load.load()
+    println("Load complete in ${System.currentTimeMillis() - start}")
+
+    start = System.currentTimeMillis()
+    save.load()
+    println("Load complete in ${System.currentTimeMillis() - start}")
+
+    println(load.widgets!!.size)
 
 //    FileUtils.writeByteArrayToFile(File("interface.jag"), test.archive.encode())
 

@@ -21,13 +21,14 @@ abstract class GroupWidget {
     abstract var hidden: BoolProperty?
     abstract var hovered: BoolProperty?
 
-    abstract var parent: IntProperty?
+    internal abstract var parent: IntProperty?
     abstract var optionType: IntProperty?
     abstract var contentType: IntProperty?
     abstract var alpha: IntProperty?
     abstract var hoverId: IntProperty?
     abstract var scriptOperators: ObjProperty<IntArray>?
     abstract var scriptDefaults: ObjProperty<IntArray>?
+    abstract var scripts: ObjProperty<Array<IntArray?>>?
 
     fun setLocked(value: Boolean) {
         lockedProperty().set(value)
@@ -242,5 +243,15 @@ abstract class GroupWidget {
         if (scriptDefaults == null)
             scriptDefaults = ObjProperty(this, "scriptDefaults", IntArray(0))
         return scriptDefaults!!
+    }
+
+    fun setScripts(value: Array<IntArray?>) { scriptsProperty().set(value) }
+
+    fun getScripts(): Array<IntArray?> { return scriptsProperty().get() }
+
+    fun scriptsProperty(): ObjProperty<Array<IntArray?>> {
+        if (scripts == null)
+            scripts = ObjProperty(this, "scripts", arrayOfNulls(0))
+        return scripts!!
     }
 }

@@ -48,7 +48,8 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), GroupOptions
     override var hoverId: IntProperty? = null
     override var scriptOperators: ObjProperty<IntArray>? = null
     override var scriptDefaults: ObjProperty<IntArray>? = null
-    
+    override var scripts: ObjProperty<Array<IntArray?>>? = null
+
     var updateSelection = true
 
     init {

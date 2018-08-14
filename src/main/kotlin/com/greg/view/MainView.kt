@@ -44,11 +44,14 @@ class MainView : View("Greg's Interface Editor") {
         prefHeight = 768.0
         top = menubar {
             menu("File") {
-                item("Load cache").action {
-                    cache.select()
+                item("Open cache folder").action {
+                    cache.selectDirectory()
+                }
+                item("Open interface file").action {
+                    cache.selectFile()
                 }
                 item("Save").action {
-                    cache.save()
+                    cache.save(widgets)
                 }
                 item("Load interface").action {
                     val alert = IntegerAlert("Interface ID:")

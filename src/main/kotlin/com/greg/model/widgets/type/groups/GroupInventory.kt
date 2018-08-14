@@ -2,7 +2,6 @@ package com.greg.model.widgets.type.groups
 
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
-import com.sun.xml.internal.fastinfoset.util.StringArray
 
 interface GroupInventory {
 
@@ -11,9 +10,9 @@ interface GroupInventory {
     var replaceItems: BoolProperty?
     var spriteX: ObjProperty<IntArray>?
     var spriteY: ObjProperty<IntArray>?
-    var sprites: ObjProperty<StringArray>?
-    var spritesArchive: ObjProperty<StringArray>?
-    var spritesIndex: ObjProperty<IntArray>?
+    var sprites: ObjProperty<Array<String?>>?
+    var spritesArchive: ObjProperty<Array<String?>>?
+    var spritesIndex: ObjProperty<Array<Int?>>?
 
     fun setSwappableItems(value: Boolean) { swappableItemsProperty().set(value) }
 
@@ -70,35 +69,35 @@ interface GroupInventory {
         return spriteY!!
     }
 
-    fun setSprites(value: StringArray) { spritesProperty().set(value) }
+    fun setSprites(value: Array<String?>) { spritesProperty().set(value) }
 
-    fun getSprites(): StringArray { return spritesProperty().get() }
+    fun getSprites(): Array<String?> { return spritesProperty().get() }
 
-    fun spritesProperty(): ObjProperty<StringArray> {
+    fun spritesProperty(): ObjProperty<Array<String?>> {
         if (sprites == null)
-            sprites = ObjProperty(this, "sprites", StringArray())
+            sprites = ObjProperty(this, "sprites", arrayOfNulls(0))
 
         return sprites!!
     }
 
-    fun setSpritesArchive(value: StringArray) { spritesArchiveProperty().set(value) }
+    fun setSpritesArchive(value: Array<String?>) { spritesArchiveProperty().set(value) }
 
-    fun getSpritesArchive(): StringArray { return spritesArchiveProperty().get() }
+    fun getSpritesArchive(): Array<String?> { return spritesArchiveProperty().get() }
 
-    fun spritesArchiveProperty(): ObjProperty<StringArray> {
+    fun spritesArchiveProperty(): ObjProperty<Array<String?>> {
         if (spritesArchive == null)
-            spritesArchive = ObjProperty(this, "spritesArchive", StringArray())
+            spritesArchive = ObjProperty(this, "spritesArchive", arrayOfNulls(0))
 
         return spritesArchive!!
     }
 
-    fun setSpritesIndex(value: IntArray) { spritesIndexProperty().set(value) }
+    fun setSpritesIndex(value: Array<Int?>) { spritesIndexProperty().set(value) }
 
-    fun getSpritesIndex(): IntArray { return spritesIndexProperty().get() }
+    fun getSpritesIndex(): Array<Int?> { return spritesIndexProperty().get() }
 
-    fun spritesIndexProperty(): ObjProperty<IntArray> {
+    fun spritesIndexProperty(): ObjProperty<Array<Int?>> {
         if (spritesIndex == null)
-            spritesIndex = ObjProperty(this, "spritesIndex", IntArray(0))
+            spritesIndex = ObjProperty(this, "spritesIndex", arrayOfNulls(0))
 
         return spritesIndex!!
     }

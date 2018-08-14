@@ -36,4 +36,8 @@ class Cache(path: CachePath) : IndexedFileSystem(path) {
 
         return true
     }
+
+    fun getCacheType() : CacheFormats {
+        return path.getCacheType()
+    }
 }
