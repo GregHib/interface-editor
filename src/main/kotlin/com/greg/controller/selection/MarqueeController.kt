@@ -79,6 +79,7 @@ class MarqueeController(private val widgets: WidgetsController, private var canv
     private fun selectContents(event: MouseEvent) {
         //Add everything in marquee to selection
         val list = widgets.getAll()
+                .filter { widget -> !widget.isLocked() }
                 .filter { widget ->
                     val canvasX = canvas.boundsInParent.minX
                     val scaleOffsetX = canvas.boundsInLocal.minX * canvas.scaleX

@@ -1,17 +1,23 @@
 package com.greg.view.hierarchy
 
+import com.greg.model.settings.Settings
+import com.greg.model.widgets.type.Widget
 import javafx.event.EventHandler
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.control.TreeCell
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.DragEvent
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
 import tornadofx.action
 import tornadofx.checkbox
 import tornadofx.move
+import tornadofx.pane
 
 class DragTreeCell : TreeCell<String>() {
 
@@ -125,53 +131,137 @@ class DragTreeCell : TreeCell<String>() {
             return
         }
 
-        val label = Label(treeItem.value)
+        if(treeItem is HierarchyItem || treeItem == treeView.root) {
+            val label = Label(treeItem.value)
 
-        graphic = when (treeItem) {
-            treeView.root -> label
-            is HierarchyItem -> {
-                val cellBox = HBox(5.0)
+            val space = pane {
+                HBox.setHgrow(this, Priority.ALWAYS)
+                setMinSize(10.0, 1.0)
+            }
 
-                val widget = (treeItem as HierarchyItem).widget
+            val cellBox = HBox(5.0)
 
-                setup()
+            when (treeItem) {
+                treeView.root -> {
+                    val eye = ImageView(Image(javaClass.getResourceAsStream("eye.png")))
+                    val lock = ImageView(Image(javaClass.getResourceAsStream("lock.png")))
+                    cellBox.children.addAll(label, space, eye, pane {}, lock, pane {})
+                }
+                is HierarchyItem -> {
+                    val widget = (treeItem as HierarchyItem).widget
 
-                val box = checkbox {
-                    selectedProperty().bindBidirectional(widget.selectedProperty())
+                    setup()
 
-                    action {
-                        //Widget select everything highlighted in hierarchy
-                        treeView.selectionModel.selectedItems
-                                .filterIsInstance<HierarchyItem>()
-                                .filter { it.widget != widget }
-                                .forEach {
-                                    it.widget.setSelected(isSelected)
+                    val box = checkbox {
+                        selectedProperty().bindBidirectional(widget.selectedProperty())
+
+                        action {
+                            //Widget select everything highlighted in hierarchy
+                            treeView.selectionModel.selectedItems
+                                    .filterIsInstance<HierarchyItem>()
+                                    .filter { it.widget != widget }
+                                    .forEach {
+                                        it.widget.setSelected(isSelected)
+                                    }
+
+                            //Hierarchy highlight if not already
+                            if (treeItem != null) {
+                                val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
+                                if (index == -1) {
+                                    treeView.selectionModel.clearSelection()
+                                    treeView.selectionModel.select(treeItem)
                                 }
-                    }
-
-                    selectedProperty().addListener { _, _, newValue ->
-                        //Deselect checkbox if locked
-                        if (newValue && widget.isLocked())
-                            isSelected = false
-
-                        //Hierarchy highlight if not already
-                        if (treeItem != null) {
-                            val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
-                            if (index == -1) {
-                                treeView.selectionModel.clearSelection()
-                                treeView.selectionModel.select(treeItem)
                             }
                         }
+
+                        selectedProperty().addListener { _, _, newValue ->
+                            //Deselect checkbox if locked
+                            if (newValue && widget.isLocked())
+                                isSelected = false
+                        }
                     }
+
+                    val visibilityBox = checkbox {
+                        selectedProperty().bindBidirectional(widget.invisibleProperty())
+
+                        //Lock if invisible or unlock if visible and that setting is enabled
+                        fun updateLock(widget: Widget, value: Boolean) {
+                            if (!widget.isLocked() && (value || Settings.getBoolean(Settings.DISABLE_LOCK_ON_UNHIDDEN))) {
+                                widget.setLocked(!widget.isLocked())
+                                if (widget.isLocked())
+                                    widget.setSelected(false)
+                            }
+                        }
+
+                        action {
+                            //Hide all highlighted
+                            treeView.selectionModel.selectedItems
+                                    .filterIsInstance<HierarchyItem>()
+                                    .filter { it.widget != widget }
+                                    .forEach {
+                                        it.widget.setInvisible(isSelected)
+                                        updateLock(it.widget, isSelected)
+                                    }
+
+                            //Hierarchy highlight if not already
+                            if (treeItem != null) {
+                                val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
+                                if (index == -1) {
+                                    treeView.selectionModel.clearSelection()
+                                    treeView.selectionModel.select(treeItem)
+                                }
+                            }
+                        }
+
+                        selectedProperty().addListener { _, _, newValue ->
+                            updateLock(widget, newValue)
+                        }
+                    }
+
+                    val lockBox = checkbox {
+                        selectedProperty().bindBidirectional(widget.lockedProperty())
+
+                        action {
+                            //Lock all highlighted
+                            treeView.selectionModel.selectedItems
+                                    .filterIsInstance<HierarchyItem>()
+                                    .filter { it.widget != widget }
+                                    .forEach {
+                                        it.widget.setLocked(isSelected)
+                                        //Deselect if locked
+                                        if(isSelected)
+                                            it.widget.setSelected(false)
+                                        //TODO finish (if invisibility is set then it fires the other listener changing some weird stuff)
+//                                        if(it.widget.isInvisible())
+//                                            it.widget.setInvisible(false)
+                                    }
+
+                            //Hierarchy highlight if not already
+                            if (treeItem != null) {
+                                val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
+                                if (index == -1) {
+                                    treeView.selectionModel.clearSelection()
+                                    treeView.selectionModel.select(treeItem)
+                                }
+                            }
+                        }
+
+                        selectedProperty().addListener { _, _, newValue ->
+                            //Deselect if locked
+                            if(newValue)
+                                widget.setSelected(false)
+//                            if(widget.isInvisible())
+//                                widget.setInvisible(false)
+                        }
+                    }
+
+                    cellBox.children.addAll(box, label, space, visibilityBox, lockBox)
                 }
-
-                cellBox.children.addAll(box, label)
-
-                cellBox
             }
-            else -> {
-                null
-            }
+
+            graphic = cellBox
+        } else {
+            graphic = null
         }
     }
 }
