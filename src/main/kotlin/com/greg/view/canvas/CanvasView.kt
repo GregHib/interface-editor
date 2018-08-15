@@ -52,13 +52,12 @@ class CanvasView : View(), KeyInterface {
         state = EditState(this, widget, shape, widgets, canvas)
     }
 
-    fun clear() {
-        widgets.clearSelection()
-    }
-
-
     private fun closeState() {
         state.onClose()
+    }
+
+    fun clear() {
+        widgets.clearSelection()
     }
 
     override val root = pane {
@@ -119,16 +118,22 @@ class CanvasView : View(), KeyInterface {
                 //Create
                 val widget = WidgetBuilder(type).build()
 
+                //Check if there's a widget under the dropped location
                 val target = widgets.getAllIntersections(canvas, BoundingBox(event.x, event.y, 1.0, 1.0)).lastOrNull()
 
+                //If there's a widget get the linked shape
                 val targetShape = if(target != null) widgets.getShape(canvas, target) else null
+
+                //Get parent position if target has parents
                 val point = if(target != null && targetShape != null) widgets.getParentPosition(targetShape) else Point2D(target?.getX()?.toDouble() ?: 0.0, target?.getY()?.toDouble() ?: 0.0)
 
-                //Display as new root or as a child
+                //Add as a child if target is a container
                 if(target != null && target is WidgetContainer) {
                     widget.setParent(target.identifier)
                     target.getChildren().add(widget)
                     widgets.updateHierarchy.set(true)
+                    if(state is EditState)
+                        defaultState()
                 } else {
                     widgets.add(widget)
                 }
@@ -142,6 +147,7 @@ class CanvasView : View(), KeyInterface {
                 val dropX = (event.x - canvasX) / canvas.scaleX
                 val dropY = (event.y - canvasY) / canvas.scaleY
 
+                //Set location of new widget to drop point minus offset if a child of a parent
                 widget.setX((dropX - point.x).toInt())
                 widget.setY((dropY - point.y).toInt())
 

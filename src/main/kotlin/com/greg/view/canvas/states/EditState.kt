@@ -22,7 +22,6 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
     }
 
     private fun close() {
-        resize.close()
         view.defaultState()
     }
 
@@ -93,5 +92,6 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
 
 
     override fun onClose() {
+        resize.close()
     }
 }
