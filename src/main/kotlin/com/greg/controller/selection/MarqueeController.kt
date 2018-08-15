@@ -3,19 +3,16 @@ package com.greg.controller.selection
 import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.type.Widget
-import javafx.event.EventTarget
+import javafx.geometry.BoundingBox
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
-import javafx.scene.shape.Shape
 
 class MarqueeController(private val widgets: WidgetsController, private var canvas: PannableCanvas) {
     private var marquee = Marquee()
-    private var target: EventTarget? = null
     private var widget: Widget? = null
 
     fun init(event: MouseEvent) {
-        target = event.target
-        this.widget = widgets.getWidget(event.target)
+        widget = widgets.getAllIntersections(canvas, BoundingBox(event.x, event.y, 1.0, 1.0)).lastOrNull()
     }
 
     fun select(event: MouseEvent) {
@@ -27,8 +24,8 @@ class MarqueeController(private val widgets: WidgetsController, private var canv
 
     fun handle(event: MouseEvent): Boolean {
         //If marquee box isn't already on the screen and...
-        //If clicking blank space or a unselected shape with a multi select key down
-        if (!marquee.selecting && (target !is Shape || (widget != null && !widget!!.isSelected() && event.isControlDown))) {
+        //If clicking blank space, locked widget or a unselected shape with a multi select key down
+        if (!marquee.selecting && (widget == null || (widget != null && !widget!!.isSelected() && event.isControlDown))) {
             //Begin marquee selection box
             marquee.selecting = true
             add(event)
