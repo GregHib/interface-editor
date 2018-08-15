@@ -3,7 +3,6 @@ package com.greg.controller.widgets
 import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.selection.InteractionController
 import com.greg.model.cache.CacheController
-import com.greg.model.cache.archives.ArchiveMedia
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetsList
 import com.greg.model.widgets.properties.extended.BoolProperty
@@ -338,28 +337,24 @@ class WidgetsController : Controller() {
                 }
             }
         } else if (widget is WidgetSprite && shape is SpriteShape) {
-            shape.spriteProperty().bind(widget.defaultSpriteProperty())
-            shape.archiveProperty().bind(widget.defaultSpriteArchiveProperty())
+            shape.flip = WidgetScripts.scriptStateChanged(widget)
+            shape.defaultSpriteProperty().bind(widget.defaultSpriteProperty())
+            shape.defaultArchiveProperty().bind(widget.defaultSpriteArchiveProperty())
+            shape.secondarySpriteProperty().bind(widget.secondarySpriteProperty())
+            shape.secondaryArchiveProperty().bind(widget.secondarySpriteArchiveProperty())
 
             //Update archive values
-            updateArchive(widget, widget.getDefaultSpriteArchive())
-            shape.archiveProperty().addListener { _, oldValue, newValue ->
+            shape.updateArchive(widget, widget.getDefaultSpriteArchive(), true)
+            widget.defaultSpriteArchiveProperty().addListener { _, oldValue, newValue ->
                 if (oldValue != newValue)
-                    updateArchive(widget, newValue)
+                    shape.updateArchive(widget, newValue, true)
+            }
+            shape.updateArchive(widget, widget.getSecondarySpriteArchive(), false)
+            widget.secondarySpriteArchiveProperty().addListener { _, oldValue, newValue ->
+                if (oldValue != newValue)
+                    shape.updateArchive(widget, newValue, false)
             }
         }
-    }
-
-    private fun updateArchive(widget: WidgetSprite, newValue: String) {
-        //Get the number of sprites in archive
-        val archive = ArchiveMedia.getImage("$newValue.dat")//TODO the gnome hash isn't .dat? are all .dat?
-        val size = (archive?.sprites?.size ?: 1) - 1
-
-        //Limit the sprite index to archive size
-        widget.setDefaultCap(IntRange(0, size))
-
-        //If already on an index which is greater than archive index; reduce, otherwise set the same (refresh)
-        widget.setDefaultSprite(if (widget.getDefaultSprite() >= size) size else widget.getDefaultSprite())
     }
 
     private fun updateVisibility(shape: WidgetShape, newValue: Boolean) {

@@ -77,6 +77,7 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), GroupOptions
         }
     }
 
+
     override fun toString(): String {
         return getMemento().toString()
     }

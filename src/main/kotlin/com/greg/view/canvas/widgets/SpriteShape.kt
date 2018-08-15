@@ -3,34 +3,39 @@ package com.greg.view.canvas.widgets
 import com.greg.model.cache.archives.ArchiveMedia
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.properties.extended.StringProperty
+import com.greg.model.widgets.type.WidgetSprite
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.scene.image.ImageView
+import tornadofx.ChangeListener
 import tornadofx.add
 import java.awt.image.BufferedImage
 
 class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height), ImageResample {
 
-    var sprite: SimpleIntegerProperty? = null
-    var archive: StringProperty? = null
+    private var defaultSprite: SimpleIntegerProperty? = null
+    private var secondarySprite: SimpleIntegerProperty? = null
+    private var defaultArchive: StringProperty? = null
+    private var secondaryArchive: StringProperty? = null
     private val image = ImageView()
+    var flip = false
 
     init {
         add(image)
         loadSprite()
-        spriteProperty().addListener { _, _, _ ->
-            loadSprite()
-        }
-        archiveProperty().addListener { _, _, _ ->
-            loadSprite()
-        }
+        val listener = ChangeListener<Any> { _, _, _ -> loadSprite() }
+        defaultSpriteProperty().addListener(listener)
+        secondarySpriteProperty().addListener(listener)
+        defaultArchiveProperty().addListener(listener)
+        secondaryArchiveProperty().addListener(listener)
     }
 
     private fun loadSprite() {
-        val archive = ArchiveMedia.getImage("${getArchive()}.dat")
+        val archive = ArchiveMedia.getImage("${if(flip) getSecondaryArchive() else getDefaultArchive()}.dat")
         if (archive != null) {
-            if (getSprite() >= 0 && getSprite() < archive.sprites.size) {
-                val sprite = archive.sprites[getSprite()]
+            val spriteIndex = if(flip) getSecondarySprite() else getDefaultSprite()
+            if (spriteIndex >= 0 && spriteIndex < archive.sprites.size) {
+                val sprite = archive.sprites[spriteIndex]
                 if(sprite != null) {
                     val bufferedImage = sprite.toBufferedImage()
                     displayImage(bufferedImage)
@@ -42,15 +47,48 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
         }
     }
 
-    fun getArchive(): String {
-        return archiveProperty().get()
+    fun getDefaultArchive(): String {
+        return defaultArchiveProperty().get()
     }
 
-    fun archiveProperty(): StringProperty {
-        if (archive == null)
-            archive = StringProperty(this, "archive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
+    fun defaultArchiveProperty(): StringProperty {
+        if (defaultArchive == null)
+            defaultArchive = StringProperty(this, "defaultArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
 
-        return archive!!
+        return defaultArchive!!
+    }
+
+    fun getSecondaryArchive(): String {
+        return secondaryArchiveProperty().get()
+    }
+
+    fun secondaryArchiveProperty(): StringProperty {
+        if (secondaryArchive == null)
+            secondaryArchive = StringProperty(this, "secondaryArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
+
+        return secondaryArchive!!
+    }
+
+    fun getDefaultSprite(): Int {
+        return defaultSpriteProperty().get()
+    }
+
+    fun defaultSpriteProperty(): IntegerProperty {
+        if (defaultSprite == null)
+            defaultSprite = SimpleIntegerProperty(this, "defaultSprite", Settings.getInt(Settings.DEFAULT_SPRITE_ID))
+
+        return defaultSprite!!
+    }
+
+    fun getSecondarySprite(): Int {
+        return secondarySpriteProperty().get()
+    }
+
+    fun secondarySpriteProperty(): IntegerProperty {
+        if (secondarySprite == null)
+            secondarySprite = SimpleIntegerProperty(this, "secondarySprite", Settings.getInt(Settings.DEFAULT_SPRITE_ID))
+
+        return secondarySprite!!
     }
 
     private fun displayImage(bufferedImage: BufferedImage) {
@@ -64,16 +102,21 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
         outline.height = bufferedImage.height.toDouble()
     }
 
+    fun updateArchive(widget: WidgetSprite, archiveName: String, default: Boolean) {
+        //Get the number of sprites in archive
+        val archive = ArchiveMedia.getImage("$archiveName.dat")//TODO the gnome hash isn't .dat? are all .dat?
+        val size = (archive?.sprites?.size ?: 1) - 1
 
+        //Limit the sprite index to archive size
+        if(default)
+            widget.setDefaultCap(IntRange(0, size))
+        else
+            widget.setSecondaryCap(IntRange(0, size))
 
-    fun getSprite(): Int {
-        return spriteProperty().get()
-    }
-
-    fun spriteProperty(): IntegerProperty {
-        if (sprite == null)
-            sprite = SimpleIntegerProperty(this, "sprite", Settings.getInt(Settings.DEFAULT_SPRITE_ID))
-
-        return sprite!!
+        //If already on an index which is greater than archive index; reduce, otherwise set the same (refresh)
+        if(default)
+            widget.setDefaultSprite(if (widget.getDefaultSprite() >= size) size else widget.getDefaultSprite())
+        else
+            widget.setSecondarySprite(if (widget.getSecondarySprite() >= size) size else widget.getSecondarySprite())
     }
 }

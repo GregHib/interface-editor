@@ -18,6 +18,10 @@ class ColourTest : View() {
 
     private lateinit var rgbRS: Label
 
+    init {
+        println(0x23201b)
+    }
+
     override val root = pane {
         title = "Colour Converter"
         hbox(20) {

@@ -20,8 +20,8 @@ interface GroupSprite {
         return defaultSpriteProperty().get()
     }
 
-    fun setDefaultSprite(value: Int, contrain: Boolean = true) {
-        defaultSpriteProperty().set(if(contrain) MathUtils.constrain(value, getDefaultCap().start, getDefaultCap().endInclusive) else value)
+    fun setDefaultSprite(value: Int, constrain: Boolean = true) {
+        defaultSpriteProperty().set(if(constrain) MathUtils.constrain(value, getDefaultCap().start, getDefaultCap().endInclusive) else value)
     }
 
     fun defaultSpriteProperty(): IntProperty {
@@ -65,8 +65,8 @@ interface GroupSprite {
         return secondarySpriteProperty().get()
     }
 
-    fun setSecondarySprite(value: Int, contrain: Boolean = true) {
-        secondarySpriteProperty().set(if(contrain) MathUtils.constrain(value, getSecondaryCap().start, getSecondaryCap().endInclusive) else value)
+    fun setSecondarySprite(value: Int, constrain: Boolean = true) {
+        secondarySpriteProperty().set(if(constrain) MathUtils.constrain(value, getSecondaryCap().start, getSecondaryCap().endInclusive) else value)
     }
 
     fun secondarySpriteProperty(): IntProperty {
