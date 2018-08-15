@@ -291,6 +291,7 @@ class WidgetsController : Controller() {
             })
             children?.forEach { shape.group.add(it) }
         } else if (widget is WidgetRectangle && shape is RectangleShape) {
+            shape.flip = WidgetScripts.scriptStateChanged(widget)
             shape.updateColour(widget)
             val listener = ChangeListener<Any> { _, _, _ -> shape.updateColour(widget) }
 
@@ -301,13 +302,14 @@ class WidgetsController : Controller() {
             widget.secondaryColourProperty().addListener(listener)
             widget.secondaryHoverColourProperty().addListener(listener)
         } else if (widget is WidgetText && shape is TextShape) {
+            shape.flip = WidgetScripts.scriptStateChanged(widget)
             shape.updateColour(widget)
-            shape.updateText(widget, cache = cache)
+            shape.updateText(widget, cache)
 
             var listener = ChangeListener<Any> { _, oldValue, newValue ->
                 if (oldValue != newValue) {
                     shape.updateColour(widget)
-                    shape.updateText(widget, cache = cache)
+                    shape.updateText(widget, cache)
                 }
             }
 
@@ -319,7 +321,7 @@ class WidgetsController : Controller() {
 
             listener = ChangeListener { _, oldValue, newValue ->
                 if (oldValue != newValue)
-                    shape.updateText(widget, cache = cache)
+                    shape.updateText(widget, cache)
             }
 
             widget.defaultTextProperty().addListener(listener)
@@ -333,7 +335,7 @@ class WidgetsController : Controller() {
                 if (oldValue != newValue) {
                     shape.label.textAlignment = if (newValue) TextAlignment.CENTER else TextAlignment.LEFT
                     shape.label.alignment = if (newValue) Pos.TOP_CENTER else Pos.TOP_LEFT
-                    shape.updateText(widget, cache = cache)
+                    shape.updateText(widget, cache)
                 }
             }
         } else if (widget is WidgetSprite && shape is SpriteShape) {

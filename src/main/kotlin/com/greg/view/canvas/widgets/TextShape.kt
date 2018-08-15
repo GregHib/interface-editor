@@ -15,6 +15,7 @@ class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, heigh
 
     val image = ImageView()
     val label = Label(Settings.get(Settings.DEFAULT_TEXT_MESSAGE))
+    var flip = false
 
     init {
         label.textFill = Settings.getColour(Settings.DEFAULT_TEXT_DEFAULT_COLOUR)
@@ -30,8 +31,8 @@ class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, heigh
         add(image)
     }
 
-    fun updateColour(widget: WidgetText, forceSecondary: Boolean = false) {
-        val colour = if (forceSecondary)
+    fun updateColour(widget: WidgetText) {
+        val colour = if (flip)
             if (widget.isHovered() && widget.getSecondaryHoverColour() != Color.BLACK) widget.getSecondaryHoverColour() else widget.getSecondaryColour()
         else
             if (widget.isHovered() && widget.getDefaultHoverColour() != Color.BLACK) widget.getDefaultHoverColour() else widget.getDefaultColour()
@@ -40,12 +41,13 @@ class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, heigh
     }
 
 
-    fun updateText(widget: WidgetText, forceSecondary: Boolean = false, cache: CacheController) {
-        val text = if (forceSecondary) widget.getSecondaryText() else widget.getDefaultText()
+    fun updateText(widget: WidgetText, cache: CacheController) {
+        val text = if (flip && widget.getSecondaryText().isNotEmpty()) widget.getSecondaryText() else widget.getDefaultText()
         label.text = text
         if(cache.loaded) {
             val font = cache.fonts.fonts[widget.getFontIndex()]
-            val bi = font.getAsImage(text, outline.width.toInt(), outline.height.toInt(), widget.hasShadow(), widget.isCentred(), ColourUtils.colourToRS(label.textFill as Color))
+            //TODO don't use outline for size, use calculated sizes
+            val bi = font.getAsImage(text, outline.width.toInt() + (if(widget.hasShadow()) 1 else 0), outline.height.toInt() + (if(widget.hasShadow()) 1 else 0), widget.hasShadow(), widget.isCentred(), ColourUtils.colourToRS(label.textFill as Color))
             image.image = resample(bi, 1)
         }
     }
