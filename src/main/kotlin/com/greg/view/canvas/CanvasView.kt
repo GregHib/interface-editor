@@ -17,6 +17,8 @@ import com.greg.view.canvas.states.EditState
 import com.greg.view.canvas.widgets.WidgetShape
 import com.greg.view.hierarchy.HierarchyItem
 import javafx.collections.ListChangeListener
+import javafx.geometry.BoundingBox
+import javafx.geometry.Point2D
 import javafx.scene.Cursor
 import javafx.scene.control.TreeItem
 import javafx.scene.input.*
@@ -117,13 +119,16 @@ class CanvasView : View(), KeyInterface {
                 //Create
                 val widget = WidgetBuilder(type).build()
 
+                val target = widgets.getAllIntersections(canvas, BoundingBox(event.x, event.y, 1.0, 1.0)).lastOrNull()
+
+                val targetShape = if(target != null) widgets.getShape(canvas, target) else null
+                val point = if(target != null && targetShape != null) widgets.getParentPosition(targetShape) else Point2D(target?.getX()?.toDouble() ?: 0.0, target?.getY()?.toDouble() ?: 0.0)
+
                 //Display as new root or as a child
-                if(widgets.get().firstOrNull() is WidgetContainer) {
-                    val first = widgets.get().first() as WidgetContainer
-                    widgets.remove(first)
-                    widget.setParent(first.identifier)
-                    first.getChildren().add(widget)
-                    widgets.add(first)
+                if(target != null && target is WidgetContainer) {
+                    widget.setParent(target.identifier)
+                    target.getChildren().add(widget)
+                    widgets.updateHierarchy.set(true)
                 } else {
                     widgets.add(widget)
                 }
@@ -137,8 +142,8 @@ class CanvasView : View(), KeyInterface {
                 val dropX = (event.x - canvasX) / canvas.scaleX
                 val dropY = (event.y - canvasY) / canvas.scaleY
 
-                widget.setX(dropX.toInt())
-                widget.setY(dropY.toInt())
+                widget.setX((dropX - point.x).toInt())
+                widget.setY((dropY - point.y).toInt())
 
                 if(data.size >= 2) {
                     if(widget is WidgetSprite) {
@@ -223,11 +228,11 @@ class CanvasView : View(), KeyInterface {
         shape.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeGestures.onMouseDraggedEventHandler)
         shape.addEventFilter(MouseEvent.MOUSE_ENTERED, nodeGestures.onMouseEnteredEventHandler)
         shape.addEventFilter(MouseEvent.MOUSE_EXITED, nodeGestures.onMouseExitedEventHandler)
-        widgets.connect(widget, shape, cache, children)
+        widgets.connect(widget, shape, cache, children, createUnit)
         return shape
     }
 
-    private fun create(widgets: List<Widget>): List<WidgetShape> {
+    private val createUnit:(widgets: List<Widget>) -> List<WidgetShape> = { widgets ->
         val shapes = arrayListOf<WidgetShape>()
 
         widgets.forEach { widget ->
@@ -242,12 +247,17 @@ class CanvasView : View(), KeyInterface {
             }
         }
 
-        return shapes
+        shapes
     }
+
+    private fun create(widgets: List<Widget>): List<WidgetShape> {
+        return createUnit(widgets)
+    }
+
     fun refresh(it: ListChangeListener.Change<out Widget>) {
         if (it.wasAdded()) {
-            val shapes = create(it.addedSubList)
-            canvas.children.addAll(shapes)
+            val shape = create(it.addedSubList)
+            canvas.children.addAll(shape)
         } else if (it.wasRemoved()) {
             it.removed.forEach { widget ->
                 canvas.children.filterIsInstance<WidgetShape>()
@@ -260,7 +270,6 @@ class CanvasView : View(), KeyInterface {
     val hierarchyListener: ListChangeListener<TreeItem<String>> = ListChangeListener { change ->
         change.next()
         if(change.wasAdded()) {
-            //TODO probably a more efficient way of doing this
             change.list
                     .filterIsInstance<HierarchyItem>()
                     .forEach { item ->

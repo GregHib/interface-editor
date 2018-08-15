@@ -39,6 +39,25 @@ class LeftPane : View(), KeyInterface {
     }
 
     init {
+        widgets.updateHierarchy.addListener { _, _, newValue ->
+            if(newValue) {
+                hierarchy.rootTreeItem.children.clear()
+
+                val items = arrayListOf<HierarchyItem>()
+
+                widgets.get().forEach { widget ->
+                    val item = HierarchyItem("${widget.name} ${widget.identifier}", widget.identifier, widget)
+                    (widget as? WidgetContainer)?.getChildren()?.forEach { child -> addChildren(item, child) }
+                    items.add(item)
+                }
+
+                //Multi-add
+                hierarchy.rootTreeItem.children.addAll(items)
+
+                widgets.updateHierarchy.set(false)
+            }
+        }
+
         widgets.get().addListener(ListChangeListener { change ->
             change.next()
             //Get items changed

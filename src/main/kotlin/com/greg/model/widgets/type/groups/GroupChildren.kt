@@ -4,11 +4,13 @@ import com.greg.model.settings.Settings
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
 import com.greg.model.widgets.type.Widget
+import javafx.collections.ObservableList
+import tornadofx.observableList
 
 interface GroupChildren {
 
     var scrollLimit: IntProperty?
-    var children: ObjProperty<MutableList<Widget>>?
+    var children: ObjProperty<ObservableList<Widget>>?
 
     fun setScrollLimit(value: Int) {
         scrollLimitProperty().set(value)
@@ -25,17 +27,17 @@ interface GroupChildren {
         return scrollLimit!!
     }
 
-    fun setChildren(value: MutableList<Widget>) {
+    fun setChildren(value: ObservableList<Widget>) {
         childrenProperty().set(value)
     }
 
-    fun getChildren(): MutableList<Widget> {
+    fun getChildren(): ObservableList<Widget> {
         return childrenProperty().get()
     }
 
-    fun childrenProperty(): ObjProperty<MutableList<Widget>> {
+    fun childrenProperty(): ObjProperty<ObservableList<Widget>> {
         if (children == null)
-            children = ObjProperty(this, "children", arrayListOf())
+            children = ObjProperty(this, "children", observableList())
         return children!!
     }
 }

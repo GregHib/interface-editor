@@ -6,11 +6,11 @@ import tornadofx.add
 
 class ContainerShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height), ImageResample {
 
-    val children = Group()
+    val group = Group()
 
     private val clipRectangle = Rectangle(0.0, 0.0, width.toDouble(), height.toDouble())
     init {
-        add(children)
+        add(group)
         clipRectangle.widthProperty().bind(outline.widthProperty())
         clipRectangle.heightProperty().bind(outline.heightProperty())
         this.clip = clipRectangle

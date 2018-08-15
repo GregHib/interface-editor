@@ -25,7 +25,7 @@ class NodeGestures(val widgets: WidgetsController) {
             widget.dragContext.mouseAnchorY = event.sceneY.toInt()
 
             //Get the shape which represents this widget
-            val node = pane.children.firstOrNull { it is WidgetShape && it.identifier == widget.identifier }
+            val node = widgets.getShape(pane, widget)
 
             //Store starting position of widget
             if (node != null) {
@@ -51,6 +51,7 @@ class NodeGestures(val widgets: WidgetsController) {
             //(scene - mouseAnchor) = Difference between click start and current mouse position
 
             //startPosition + (mouse change offset) / scale
+
             widget.setX((widget.dragContext.anchorX + (event.sceneX - widget.dragContext.mouseAnchorX) / pane.scale).toInt())//Could also change via node
             widget.setY((widget.dragContext.anchorY + (event.sceneY - widget.dragContext.mouseAnchorY) / pane.scale).toInt())
         }

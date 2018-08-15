@@ -8,6 +8,7 @@ import com.greg.model.widgets.type.*
 import com.greg.model.widgets.type.groups.GroupAppearance
 import com.greg.model.widgets.type.groups.GroupColour
 import com.greg.model.widgets.type.groups.GroupColours
+import tornadofx.observable
 
 object WidgetDataConverter {
     fun toData(widget: Widget): WidgetData {
@@ -151,7 +152,7 @@ object WidgetDataConverter {
         if(widget is WidgetContainer) {
             widget.setScrollLimit(data.scrollLimit)
             widget.setHidden(data.hidden)
-            widget.setChildren(toChildren(data))
+            widget.setChildren(toChildren(data).observable())
         }
 
         if (widget is WidgetInventory) {

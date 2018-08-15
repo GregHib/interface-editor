@@ -6,15 +6,19 @@ import com.greg.model.cache.CacheController
 import com.greg.model.cache.archives.ArchiveMedia
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetsList
+import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.type.*
 import com.greg.view.canvas.CanvasView
 import com.greg.view.canvas.widgets.*
 import javafx.beans.value.ChangeListener
+import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
+import javafx.geometry.Point2D
 import javafx.geometry.Pos
+import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.text.TextAlignment
 import tornadofx.Controller
@@ -31,6 +35,7 @@ class WidgetsController : Controller() {
 
     private val action = InteractionController(this)
 
+    val updateHierarchy = BoolProperty(this, "updateHierarchy", false)
 
     /**
      * Selection
@@ -112,29 +117,66 @@ class WidgetsController : Controller() {
     fun getAll(widgets: List<Widget> = get()): List<Widget> {
         val list = arrayListOf<Widget>()
         widgets.forEach { widget ->
-            if(widget is WidgetContainer)
-                list.addAll(getAll(widget.getChildren()))
             list.add(widget)
+            if (widget is WidgetContainer)
+                list.addAll(getAll(widget.getChildren()))
         }
         return list
     }
 
+    private fun intersections(widget: Widget, x: Int, y: Int, action: (widget: Widget, x: Int, y: Int) -> Boolean): List<Widget> {
+        val list = arrayListOf<Widget>()
+        var x = x
+        var y = y
+
+        x += widget.getX()
+        y += widget.getY()
+
+        if (action(widget, x, y))
+            list.add(widget)
+        (widget as? WidgetContainer)?.getChildren()?.forEach { list.addAll(intersections(it, x, y, action)) }
+
+        return list
+    }
+
+    fun getParentPosition(widget: WidgetShape): Point2D {
+        var point = Point2D(0.0, 0.0)
+        var parent: Node = widget
+
+        while(parent is ContainerShape || parent is Group) {
+            if(parent is ContainerShape)
+                point = point.add(parent.translateX, parent.translateY)
+
+
+            parent = parent.parent
+        }
+
+        return point
+    }
     fun getAllIntersections(canvas: PannableCanvas, bounds: Bounds): List<Widget> {
-        return getAll()
-                .filter { widget -> !widget.isLocked() }
-                .filter { widget ->
-                    val canvasX = canvas.boundsInParent.minX
-                    val scaleOffsetX = canvas.boundsInLocal.minX * canvas.scaleX
-                    val widgetX = canvasX - scaleOffsetX + (widget.getX() * canvas.scaleX)
+        val list = arrayListOf<Widget>()
+        get().forEach {
+            list.addAll(
+                    intersections(it, 0, 0) { widget, x, y ->
+                        if (widget.isLocked())
+                            false
+                        else {
+                            val canvasX = canvas.boundsInParent.minX
+                            val scaleOffsetX = canvas.boundsInLocal.minX * canvas.scaleX
+                            val widgetX = canvasX - scaleOffsetX + (x * canvas.scaleX)
 
-                    val canvasY = canvas.boundsInParent.minY
-                    val scaleOffsetY = canvas.boundsInLocal.minY * canvas.scaleY
-                    val widgetY = canvasY - scaleOffsetY + (widget.getY() * canvas.scaleY)
+                            val canvasY = canvas.boundsInParent.minY
+                            val scaleOffsetY = canvas.boundsInLocal.minY * canvas.scaleY
+                            val widgetY = canvasY - scaleOffsetY + (y * canvas.scaleY)
 
-                    val widgetBounds = BoundingBox(widgetX, widgetY, widget.getWidth() * canvas.scaleX, widget.getHeight() * canvas.scaleY)
+                            val widgetBounds = BoundingBox(widgetX, widgetY, widget.getWidth() * canvas.scaleX, widget.getHeight() * canvas.scaleY)
 
-                    bounds.intersects(widgetBounds)
-                }
+                            bounds.intersects(widgetBounds)
+                        }
+                    }
+            )
+        }
+        return list
     }
 
     fun getWidget(target: EventTarget?): Widget? {
@@ -161,9 +203,27 @@ class WidgetsController : Controller() {
     }
 
     fun getShape(canvas: PannableCanvas, widget: Widget): WidgetShape? {
-        return canvas.children
+        canvas.children
                 .filterIsInstance<WidgetShape>()
-                .firstOrNull { it.identifier == widget.identifier }
+                .forEach {
+                    val shape = getAllShapes(it, widget)
+                    if(shape != null)
+                        return shape
+                }
+        return null
+    }
+
+    private fun getAllShapes(shape: WidgetShape, widget: Widget): WidgetShape? {
+        if (shape.identifier == widget.identifier)
+            return shape
+        (shape as? ContainerShape)?.group?.children
+                ?.filterIsInstance<WidgetShape>()
+                ?.forEach {
+                    val child = getAllShapes(it, widget)
+                    if(child != null)
+                        return child
+                }
+        return null
     }
 
     fun clone() {
@@ -202,7 +262,7 @@ class WidgetsController : Controller() {
         action.copy()
     }
 
-    fun connect(widget: Widget, shape: WidgetShape, cache: CacheController, children: List<WidgetShape>?) {
+    fun connect(widget: Widget, shape: WidgetShape, cache: CacheController, children: List<WidgetShape>?, create: (widgets: List<Widget>) -> List<WidgetShape>) {
 
         //Selection
         updateSelection(widget, shape, !widget.isSelected(), widget.isSelected())
@@ -221,8 +281,16 @@ class WidgetsController : Controller() {
         updateVisibility(shape, widget.isInvisible())
         widget.invisibleProperty().addListener { _, _, newValue -> updateVisibility(shape, newValue) }
 
-        if(widget is WidgetContainer && shape is ContainerShape) {
-            children?.forEach { shape.children.add(it) }
+        if (widget is WidgetContainer && shape is ContainerShape) {
+            widget.getChildren().addListener(ListChangeListener<Widget> { change ->
+                change.next()
+                if(change.wasAdded()) {
+                    shape.group.children.addAll(create(change.addedSubList.filterIsInstance<Widget>()))
+                } else if(change.wasRemoved()) {
+                    shape.group.children.removeAll(change.removed as List<*>)
+                }
+            })
+            children?.forEach { shape.group.add(it) }
         } else if (widget is WidgetRectangle && shape is RectangleShape) {
             shape.updateColour(widget)
             val listener = ChangeListener<Any> { _, _, _ -> shape.updateColour(widget) }
@@ -238,7 +306,7 @@ class WidgetsController : Controller() {
             shape.updateText(widget, cache = cache)
 
             var listener = ChangeListener<Any> { _, oldValue, newValue ->
-                if(oldValue != newValue) {
+                if (oldValue != newValue) {
                     shape.updateColour(widget)
                     shape.updateText(widget, cache = cache)
                 }
@@ -251,8 +319,8 @@ class WidgetsController : Controller() {
             widget.secondaryHoverColourProperty().addListener(listener)
 
             listener = ChangeListener { _, oldValue, newValue ->
-                if(oldValue != newValue)
-                shape.updateText(widget, cache = cache)
+                if (oldValue != newValue)
+                    shape.updateText(widget, cache = cache)
             }
 
             widget.defaultTextProperty().addListener(listener)
@@ -263,7 +331,7 @@ class WidgetsController : Controller() {
             widget.fontIndexProperty().addListener(listener)
             widget.shadowProperty().addListener(listener)
             widget.centredProperty().addListener { _, oldValue, newValue ->
-                if(oldValue != newValue) {
+                if (oldValue != newValue) {
                     shape.label.textAlignment = if (newValue) TextAlignment.CENTER else TextAlignment.LEFT
                     shape.label.alignment = if (newValue) Pos.TOP_CENTER else Pos.TOP_LEFT
                     shape.updateText(widget, cache = cache)
@@ -276,7 +344,7 @@ class WidgetsController : Controller() {
             //Update archive values
             updateArchive(widget, widget.getDefaultSpriteArchive())
             shape.archiveProperty().addListener { _, oldValue, newValue ->
-                if(oldValue != newValue)
+                if (oldValue != newValue)
                     updateArchive(widget, newValue)
             }
         }

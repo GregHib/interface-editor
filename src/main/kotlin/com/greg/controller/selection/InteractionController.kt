@@ -9,6 +9,7 @@ import com.greg.model.widgets.type.Widget
 import com.greg.model.widgets.type.WidgetContainer
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
+import tornadofx.observable
 
 class InteractionController(val widgets: WidgetsController) {
 
@@ -42,7 +43,7 @@ class InteractionController(val widgets: WidgetsController) {
                     .map {
                         val childIndex = it.substring(1).toInt()
                         createChildren(childIndex, containers)
-                    }.toMutableList()
+                    }.observable()
             )
         }
         /*
@@ -113,7 +114,7 @@ class InteractionController(val widgets: WidgetsController) {
                 //Create widget of the corresponding type
                 val widget = WidgetBuilder(memento.type).build()
 
-                (widget as? WidgetContainer)?.setChildren(children.toMutableList())
+                (widget as? WidgetContainer)?.setChildren(children.observable())
 
                 //Add to the list
                 widgetMap[widget] = memento

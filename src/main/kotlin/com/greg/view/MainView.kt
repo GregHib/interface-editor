@@ -47,9 +47,9 @@ class MainView : View("Greg's Interface Editor") {
                 item("Open cache folder").action {
                     cache.selectDirectory()
                 }
-                item("Open interface file").action {
+                /*item("Open interface file").action {
                     cache.selectFile()
-                }
+                }*/
                 item("Save").action {
                     cache.save(widgets)
                 }

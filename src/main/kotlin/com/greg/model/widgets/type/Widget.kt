@@ -70,7 +70,6 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), GroupOptions
     }
 
     fun restore(memento: Memento) {
-        println("Restore $memento")
         for ((index, value) in properties.get().withIndex()) {
             if(value.property == selectedProperty())
                 continue

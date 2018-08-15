@@ -29,7 +29,7 @@ data class Memento(val type: WidgetType, val values: MutableList<String> = mutab
             is ObjectProperty -> {
                 when {
                     value.startsWith("0x") -> return Color.valueOf(value)
-                    property.name == "children" -> {
+                    property.name == "group" -> {
                         println("Children: $value")
                         value
                     }
