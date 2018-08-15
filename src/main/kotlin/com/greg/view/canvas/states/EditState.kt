@@ -12,10 +12,10 @@ import com.greg.view.canvas.widgets.WidgetShape
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 
-class EditState(private val view: CanvasView, private var widget: Widget, shape: WidgetShape, val widgets: WidgetsController, private val canvas: PannableCanvas) : CanvasState {
+class EditState(private val view: CanvasView, private var widget: Widget, shape: WidgetShape, val widgets: WidgetsController, canvas: PannableCanvas) : CanvasState {
 
     private val start = widget.getMemento()
-    private var resize = ResizeBox(widget, canvas)
+    private var resize = ResizeBox(widget, canvas, widgets)
 
     init {
         resize.start(shape)

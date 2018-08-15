@@ -140,8 +140,8 @@ class WidgetsController : Controller() {
     }
 
     fun getParentPosition(widget: WidgetShape): Point2D {
-        var point = Point2D(0.0, 0.0)
-        var parent: Node = widget
+        var point = Point2D(widget.translateX, widget.translateY)
+        var parent: Node = widget.parent
 
         while(parent is ContainerShape || parent is Group) {
             if(parent is ContainerShape)

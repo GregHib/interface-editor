@@ -1,12 +1,13 @@
 package com.greg.view.canvas.states.edit
 
 import com.greg.controller.canvas.PannableCanvas
+import com.greg.controller.widgets.WidgetsController
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.type.Widget
 import com.greg.view.canvas.widgets.WidgetShape
 import javafx.scene.input.MouseEvent
 
-class ResizeBox(private val widget: Widget, private val canvas: PannableCanvas) {
+class ResizeBox(private val widget: Widget, private val canvas: PannableCanvas, private val widgets: WidgetsController) {
 
     private val points = ResizePoints()
 
@@ -17,7 +18,7 @@ class ResizeBox(private val widget: Widget, private val canvas: PannableCanvas) 
     var click: MouseEvent? = null
 
     fun start(widget: WidgetShape) {
-        points.init(widget)
+        points.init(widget, widgets)
         canvas.children.addAll(points.get())
     }
 

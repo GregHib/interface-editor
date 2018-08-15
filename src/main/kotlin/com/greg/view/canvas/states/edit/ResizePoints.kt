@@ -1,5 +1,6 @@
 package com.greg.view.canvas.states.edit
 
+import com.greg.controller.widgets.WidgetsController
 import com.greg.model.settings.Settings
 import com.greg.view.canvas.widgets.WidgetShape
 import javafx.beans.binding.DoubleBinding
@@ -8,11 +9,16 @@ class ResizePoints {
 
     private val points = mutableListOf<ResizePoint>()
 
-    fun init(widget: WidgetShape) {
+    fun init(widget: WidgetShape, widgets: WidgetsController) {
         val rect = widget.outline
 
-        val x = widget.translateXProperty()
-        val y = widget.translateYProperty()
+        val translateX = widget.translateXProperty()
+        val translateY = widget.translateYProperty()
+
+        val point = widgets.getParentPosition(widget)
+
+        val x = translateX.add(point.x - widget.translateX)
+        val y = translateY.add(point.y - widget.translateY)
 
         val offset = 0.0
 
