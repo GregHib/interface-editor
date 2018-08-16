@@ -1,6 +1,6 @@
 package com.greg.model.widgets
 
-import com.greg.model.widgets.type.*
+import com.greg.model.widgets.type.Widget
 
 open class WidgetBuilder(val type: WidgetType) {
 
@@ -17,15 +17,7 @@ open class WidgetBuilder(val type: WidgetType) {
             identifier = id + 1
 
         val identifier = if(id != -1) id else getId()
-        return when(type) {
-            WidgetType.CONTAINER -> WidgetContainer(this, identifier)
-            WidgetType.MODEL_LIST -> WidgetModelList(this, identifier)
-            WidgetType.INVENTORY -> WidgetInventory(this, identifier)
-            WidgetType.RECTANGLE -> WidgetRectangle(this, identifier)
-            WidgetType.TEXT -> WidgetText(this, identifier)
-            WidgetType.SPRITE -> WidgetSprite(this, identifier)
-            WidgetType.MODEL -> WidgetModel(this, identifier)
-            WidgetType.ITEM_LIST -> WidgetItemList(this, identifier)
-        }
+
+        return type.widget.constructors.first().call(this, identifier)
     }
 }
