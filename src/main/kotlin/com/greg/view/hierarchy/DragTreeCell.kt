@@ -2,6 +2,7 @@ package com.greg.view.hierarchy
 
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.type.Widget
+import com.greg.model.widgets.type.WidgetContainer
 import javafx.event.EventHandler
 import javafx.event.EventTarget
 import javafx.scene.Node
@@ -84,6 +85,7 @@ class DragTreeCell : TreeCell<String>() {
                 opacity = 1.0
         }
 
+
         setOnDragDropped { event ->
             if (item == null) {
                 return@setOnDragDropped
@@ -93,22 +95,48 @@ class DragTreeCell : TreeCell<String>() {
             var success = false
 
             if (db.hasString()) {
-                //TODO re-order canvas children & widget children also.
-                val size = treeView.selectionModel.selectedIndices.size
-                if (treeView.selectionModel.selectedIndices.first() < index) {
-                    val idx = treeView.selectionModel.selectedIndices.first()
-                    for (i in size downTo 1)
-                        treeView.root.children.move(treeView.root.children[idx - 1], index - 1)
-                    treeView.selectionModel.clearSelection()
-                    for (i in index - size + 1 until index + 1)
-                        treeView.selectionModel.select(i)
-                } else {
-                    val idx = treeView.selectionModel.selectedIndices.last()
-                    for (i in size downTo 1)
-                        treeView.root.children.move(treeView.root.children[idx - 1], index - 1)
-                    treeView.selectionModel.clearSelection()
-                    treeView.selectionModel.selectRange(index, index + size)
+
+                val selected = treeView.selectionModel.selectedItems
+                val target = treeView.getTreeItem(index)
+                var targetIndex = -1
+                try {
+                    //For multiple selections, reverse list and run for each
+                    selected.reversed().forEachIndexed { index, select ->
+                        if (select is HierarchyItem && target is HierarchyItem) {
+                            val targetWidget = target.widget
+                            if (targetWidget is WidgetContainer) {//If target is a container
+                                if (select.parent == target) {//if is in that container
+                                    val child = select.widget
+                                    val length = targetWidget.getChildren().size - 1
+                                    targetWidget.getChildren().move(child, length - index)//Move to end
+                                } else {
+                                    val parent = (select.parent as HierarchyItem).widget as WidgetContainer
+                                    val child = select.widget
+                                    if(parent.getChildren().remove(child))//Remove from current container
+                                        targetWidget.getChildren().add(targetWidget.getChildren().size - index, child)//Add to target container
+                                }
+                            } else {//If target isn't a container
+                                if (target.parent == select.parent) {//If target is in same container
+                                    val parent = (select.parent as HierarchyItem).widget as WidgetContainer
+                                    val reverse = parent.getChildren().indexOf(target.widget) < parent.getChildren().indexOf(select.widget)
+                                    if(targetIndex == -1)
+                                        targetIndex = parent.getChildren().indexOf(target.widget)
+                                    parent.getChildren().move(select.widget, if(reverse) targetIndex else parent.getChildren().indexOf(target.widget))//move to target index
+                                } else {
+                                    val parent = (select.parent as HierarchyItem).widget as WidgetContainer
+                                    val container = (target.parent as HierarchyItem).widget as WidgetContainer
+                                    val child = select.widget
+                                    if (parent.getChildren().remove(child))//Remove from current parent container
+                                        container.getChildren().add(container.getChildren().indexOf(target.widget) - index, child)//Add to target container at index
+                                }
+                            }
+                        }
+                    }
+                } catch (t: Throwable) {
+                    t.printStackTrace()
                 }
+
+                treeView.selectionModel.clearSelection()
 
                 opacity = 1.0
 
@@ -127,12 +155,12 @@ class DragTreeCell : TreeCell<String>() {
     override fun updateItem(item: String?, empty: Boolean) {
         super.updateItem(item, empty)
         //Only show extra check box's if has no children
-        if(isEmpty) {
+        if (isEmpty) {
             graphic = null
             return
         }
 
-        if(treeItem is HierarchyItem || treeItem == treeView.root) {
+        if (treeItem is HierarchyItem || treeItem == treeView.root) {
             val label = Label(treeItem.value)
 
             val space = pane {
@@ -166,13 +194,13 @@ class DragTreeCell : TreeCell<String>() {
                                     }
 
                             //Hierarchy highlight if not already
-                            if (treeItem != null) {
+                            /*if (treeItem != null) {
                                 val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
                                 if (index == -1) {
                                     treeView.selectionModel.clearSelection()
                                     treeView.selectionModel.select(treeItem)
                                 }
-                            }
+                            }*/
                         }
 
                         selectedProperty().addListener { _, _, newValue ->
@@ -205,13 +233,13 @@ class DragTreeCell : TreeCell<String>() {
                                     }
 
                             //Hierarchy highlight if not already
-                            if (treeItem != null) {
+                            /*if (treeItem != null) {
                                 val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
                                 if (index == -1) {
                                     treeView.selectionModel.clearSelection()
                                     treeView.selectionModel.select(treeItem)
                                 }
-                            }
+                            }*/
                         }
 
                         selectedProperty().addListener { _, _, newValue ->
@@ -230,7 +258,7 @@ class DragTreeCell : TreeCell<String>() {
                                     .forEach {
                                         it.widget.setLocked(isSelected)
                                         //Deselect if locked
-                                        if(isSelected)
+                                        if (isSelected)
                                             it.widget.setSelected(false)
                                         //TODO finish (if invisibility is set then it fires the other listener changing some weird stuff)
 //                                        if(it.widget.isInvisible())
@@ -238,18 +266,18 @@ class DragTreeCell : TreeCell<String>() {
                                     }
 
                             //Hierarchy highlight if not already
-                            if (treeItem != null) {
+                            /*if (treeItem != null) {
                                 val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
                                 if (index == -1) {
                                     treeView.selectionModel.clearSelection()
                                     treeView.selectionModel.select(treeItem)
                                 }
-                            }
+                            }*/
                         }
 
                         selectedProperty().addListener { _, _, newValue ->
                             //Deselect if locked
-                            if(newValue)
+                            if (newValue)
                                 widget.setSelected(false)
 //                            if(widget.isInvisible())
 //                                widget.setInvisible(false)

@@ -31,9 +31,7 @@ class LeftPane : View(), KeyInterface {
     private fun addChildren(parent: HierarchyItem, widget: Widget) {
         val item = HierarchyItem("${widget.name} ${widget.identifier}", widget.identifier, widget)
 
-        if (widget is WidgetContainer) {
-            widget.getChildren().forEach { child -> addChildren(item, child) }
-        }
+        (widget as? WidgetContainer)?.getChildren()?.forEach { child -> addChildren(item, child) }
 
         parent.children.add(item)
     }
@@ -69,9 +67,7 @@ class LeftPane : View(), KeyInterface {
             list?.forEach { widget ->
                 if (change.wasAdded()) {
                     val item = HierarchyItem("${widget.name} ${widget.identifier}", widget.identifier, widget)
-                    if (widget is WidgetContainer) {
-                        widget.getChildren().forEach { child -> addChildren(item, child) }
-                    }
+                    (widget as? WidgetContainer)?.getChildren()?.forEach { child -> addChildren(item, child) }
                     items.add(item)
                 } else if (change.wasRemoved()) {
                     hierarchy.rootTreeItem.children.removeAll(

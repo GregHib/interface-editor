@@ -284,12 +284,12 @@ class WidgetsController : Controller() {
             widget.getChildren().addListener(ListChangeListener<Widget> { change ->
                 change.next()
                 if(change.wasAdded()) {
-                    shape.group.children.addAll(create(change.addedSubList.filterIsInstance<Widget>()))
-                    updateHierarchy.set(true)
+                    shape.group.children.addAll(change.to - 1, create(change.addedSubList.filterIsInstance<Widget>()))
                 } else if(change.wasRemoved()) {
                     shape.group.children.removeAll(shape.group.children.filterIsInstance<WidgetShape>().filter { shape -> change.removed.any { shape.identifier == it.identifier } })
-                    updateHierarchy.set(true)
                 }
+
+                updateHierarchy.set(true)
             })
             children?.forEach { shape.group.add(it) }
         } else if (widget is WidgetRectangle && shape is RectangleShape) {
