@@ -131,7 +131,6 @@ class CanvasView : View(), KeyInterface {
                 if(target != null && target is WidgetContainer) {
                     widget.setParent(target.identifier)
                     target.getChildren().add(widget)
-                    widgets.updateHierarchy.set(true)
                     if(state is EditState)
                         defaultState()
                 } else {

@@ -285,8 +285,10 @@ class WidgetsController : Controller() {
                 change.next()
                 if(change.wasAdded()) {
                     shape.group.children.addAll(create(change.addedSubList.filterIsInstance<Widget>()))
+                    updateHierarchy.set(true)
                 } else if(change.wasRemoved()) {
-                    shape.group.children.removeAll(change.removed as List<*>)
+                    shape.group.children.removeAll(shape.group.children.filterIsInstance<WidgetShape>().filter { shape -> change.removed.any { shape.identifier == it.identifier } })
+                    updateHierarchy.set(true)
                 }
             })
             children?.forEach { shape.group.add(it) }
