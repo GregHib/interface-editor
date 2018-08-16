@@ -119,7 +119,7 @@ class CanvasView : View(), KeyInterface {
                 val widget = WidgetBuilder(type).build()
 
                 //Check if there's a widget under the dropped location
-                val target = widgets.getAllIntersections(canvas, BoundingBox(event.x, event.y, 1.0, 1.0)).lastOrNull()
+                val target = widgets.getAllIntersections(canvas, BoundingBox(event.x, event.y, 1.0, 1.0)).lastOrNull { it is WidgetContainer }
 
                 //If there's a widget get the linked shape
                 val targetShape = if(target != null) widgets.getShape(canvas, target) else null
