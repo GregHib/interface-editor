@@ -47,7 +47,7 @@ class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, heigh
         if(cache.loaded) {
             val font = cache.fonts.fonts[widget.getFontIndex()]
             //TODO don't use outline for size, use calculated sizes
-            val bi = font.getAsImage(text, outline.width.toInt() + (if(widget.hasShadow()) 1 else 0), outline.height.toInt() + (if(widget.hasShadow()) 1 else 0), widget.hasShadow(), widget.isCentred(), ColourUtils.colourToRS(label.textFill as Color))
+            val bi = font.getAsImage(text, widget.hasShadow(), widget.isCentred(), ColourUtils.colourToRS(label.textFill as Color))
             image.image = resample(bi, 1)
         }
     }

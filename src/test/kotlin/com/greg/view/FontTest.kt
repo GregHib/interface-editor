@@ -31,13 +31,14 @@ class FontTest : View() {
     }
 
     init {
+        cache.load()
         cache.use { fs ->
 
             val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.TITLE_ARCHIVE))
 
             val font = Font.decode(archive, "p11_full", false)
 
-            val text = "A longer line"
+            val text = "A longer line\nOr two"
             val colour = 0xb31a1a
 
             val rgba = toRgba(colour)
@@ -49,7 +50,7 @@ class FontTest : View() {
     }
 
     private fun getImage(font: Font, text: String, shadow: Boolean, colour: Int, alpha: Int = 255): BufferedImage? {
-        return font.getAsImage(text, 100, 100, shadow, false, colour, alpha)
+        return font.getAsImage(text, shadow, false, colour, alpha)
     }
 
     private fun toRgba(colour: Int, alpha: Int = 255): Int {

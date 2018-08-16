@@ -37,7 +37,7 @@ open class Font : Raster() {
         }
     }
 
-    private fun getTextWidth(text: String?): Int {
+    fun getTextWidth(text: String?): Int {
         return if (text == null) {
             0
         } else {
@@ -51,13 +51,13 @@ open class Font : Raster() {
         }
     }
 
-    private fun getLineHeight(text: String?): Int {
+    fun getLineHeight(text: String?): Int {
         if (text == null)
             return 0
 
         var height = 0
         for (index in 0 until text.length) {
-            val h = glyphHeights[text[index].toInt()] + verticalSpace / 2//verticalOffsets[text[index].toInt()]
+            val h = glyphHeights[text[index].toInt()] + verticalSpace / 2
             if (h > height)
                 height = h
         }
@@ -65,12 +65,21 @@ open class Font : Raster() {
         return height
     }
 
-    fun getAsImage(text: String, maxWidth: Int, maxHeight: Int, shadow: Boolean, centred: Boolean, colour: Int, alpha: Int = 255): BufferedImage? {
+    fun getAsImage(text: String, shadow: Boolean, centred: Boolean, colour: Int, alpha: Int = 255): BufferedImage? {
         return if (text.contains("\n")) {
             val lines = text.split("\n")
+            var maxWidth = 0
+            var maxHeight = 0
+            lines.forEach {
+                val width = getTextWidth(it)
+                val height = getLineHeight(it)
+                maxHeight += height
+                if(width > maxWidth)
+                    maxWidth = width
+            }
             getImage(lines.toTypedArray(), maxWidth, maxHeight, shadow, centred, toRgba(colour, alpha))
         } else {
-            getImage(arrayOf(text), maxWidth, maxHeight, shadow, centred, toRgba(colour, alpha))
+            getImage(arrayOf(text), getTextWidth(text), getLineHeight(text), shadow, centred, toRgba(colour, alpha))
         }
     }
 
@@ -80,7 +89,7 @@ open class Font : Raster() {
 
         val separator = 0
 
-        val size = Math.max(Math.max(maxWidth, maxHeight), verticalSpace)
+        val size = Math.max(Math.max(maxWidth + if(shadow) 1 else 0, maxHeight + if(shadow) 1 else 0), verticalSpace)
 
         val pixels = IntArray(size * size)
         Raster.init(size, size, pixels)//Raster's have to be square
