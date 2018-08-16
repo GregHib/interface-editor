@@ -26,6 +26,8 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
     private var vertical = 0
 
     override fun handleMousePress(event: MouseEvent) {
+        view.root.requestFocus()
+
         if (!CanvasView.spaceHeld)
             selection.start(event)
 
@@ -76,7 +78,6 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
     }
 
     override fun handleMouseClick(event: MouseEvent) {
-        view.root.requestFocus()
     }
 
     override fun handleKeyPress(event: KeyEvent) {

@@ -76,11 +76,8 @@ class WidgetsController : Controller() {
     }
 
     fun deleteSelection() {
-        val iterator = getSelection().iterator()
-        while (iterator.hasNext()) {
-            remove(iterator.next())
-            iterator.remove()
-        }
+        getSelection().forEach { remove(it) }
+        getSelection().clear()
     }
 
     /**
@@ -243,12 +240,10 @@ class WidgetsController : Controller() {
     }
 
     fun delete(identifier: Int) {
-        val iterator = get().iterator()
-        while (iterator.hasNext()) {
-            val next = iterator.next()
-            if (next.identifier == identifier) {
-                remove(next)
-                return
+        forAll {
+            if (it.identifier == identifier) {
+                remove(it)
+                return@forAll
             }
         }
     }
