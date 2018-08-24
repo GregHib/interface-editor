@@ -3,6 +3,7 @@ package com.greg.model.widgets.type
 import com.greg.controller.canvas.DragContext
 import com.greg.model.cache.archives.widget.WidgetData
 import com.greg.model.cache.archives.widget.WidgetDataConverter
+import com.greg.model.settings.Settings
 import com.greg.model.widgets.JsonSerializer
 import com.greg.model.widgets.Jsonable
 import com.greg.model.widgets.WidgetBuilder
@@ -25,46 +26,46 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, Gr
 
     val properties = Properties()
 
-    override var x: IntProperty? = null
-    override var y: IntProperty? = null
-    override var width: IntProperty? = null
-    override var height: IntProperty? = null
+    override var x = IntProperty("x", Settings.getInt(Settings.DEFAULT_POSITION_X))
+    override var y = IntProperty("y", Settings.getInt(Settings.DEFAULT_POSITION_Y))
+    override var width = IntProperty("width", Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH))
+    override var height = IntProperty("height", Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT))
 
-    override var widthBounds: ObjProperty<IntRange>? = null
-    override var heightBounds: ObjProperty<IntRange>? = null
+    override var widthBounds = ObjProperty("widthBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_WIDTH), Settings.getInt(Settings.WIDGET_CANVAS_WIDTH)))
+    override var heightBounds = ObjProperty("heightBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_HEIGHT), Settings.getInt(Settings.WIDGET_CANVAS_HEIGHT)))
 
-    override var locked: BoolProperty? = null
-    override var selected: BoolProperty? = null
-    override var invisible: BoolProperty? = null
-    override var hidden: BoolProperty? = null
-    override var hovered: BoolProperty? = null
+    override var locked = BoolProperty("locked", false)
+    override var selected = BoolProperty("selected", false)
+    override var invisible = BoolProperty("invisible", false)
+    override var hidden = BoolProperty("hidden", false)
+    override var hovered = BoolProperty("hovered", false)
 
-    override var optionCircumfix: StringProperty? = null
-    override var optionText: StringProperty? = null
-    override var optionAttributes: IntProperty? = null
-    override var hover: StringProperty? = null
+    override var optionCircumfix = StringProperty("optionCircumfix", "")
+    override var optionText = StringProperty("optionText", "")
+    override var optionAttributes = IntProperty("optionAttributes", 0)
+    override var hover = StringProperty("hover", "")
 
-    override var parent: IntProperty? = null
-    override var optionType: IntProperty? = null
-    override var contentType: IntProperty? = null
-    override var alpha: IntProperty? = null
-    override var hoverId: IntProperty? = null
-    override var scriptOperators: ObjProperty<IntArray>? = null
-    override var scriptDefaults: ObjProperty<IntArray>? = null
-    override var scripts: ObjProperty<Array<IntArray?>>? = null
+    override var parent = IntProperty("parent", -1)
+    override var optionType = IntProperty("optionType", 0)
+    override var contentType = IntProperty("contentType", 0)
+    override var alpha = IntProperty("alpha", 0)
+    override var hoverId = IntProperty("hoverId", 0)
+    override var scriptOperators = ObjProperty("scriptOperators", IntArray(0))
+    override var scriptDefaults = ObjProperty("scriptDefaults", IntArray(0))
+    override var scripts: ObjProperty<Array<IntArray?>> = ObjProperty("scripts", arrayOfNulls(0))
 
     var updateSelection = true
 
     init {
-        properties.add(xProperty(), category = "Layout")
-        properties.add(yProperty(), category = "Layout")
+        properties.add(x, category = "Layout")
+        properties.add(y, category = "Layout")
         if(builder.type != WidgetType.SPRITE) {
-            properties.addCapped(widthProperty(), widthBoundsProperty(), "Layout")
-            properties.addCapped(heightProperty(), heightBoundsProperty(), "Layout")
+            properties.addCapped(width, widthBounds, "Layout")
+            properties.addCapped(height, heightBounds, "Layout")
         }
-        properties.addPanel(lockedProperty(), false)
-        properties.addPanel(selectedProperty(), false)
-        properties.addPanel(invisibleProperty(), false)
+        properties.addPanel(locked, false)
+        properties.addPanel(selected, false)
+        properties.addPanel(invisible, false)
     }
 
     fun toData(): WidgetData {

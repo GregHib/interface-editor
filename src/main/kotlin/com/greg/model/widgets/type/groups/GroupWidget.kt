@@ -1,273 +1,149 @@
 package com.greg.model.widgets.type.groups
 
 import com.greg.controller.utils.MathUtils
-import com.greg.model.settings.Settings
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
 import com.greg.model.widgets.type.Widget
 
 abstract class GroupWidget {
-    abstract var x: IntProperty?
-    abstract var y: IntProperty?
-    abstract var width: IntProperty?
-    abstract var height: IntProperty?
+    abstract var x: IntProperty
+    abstract var y: IntProperty
+    abstract var width: IntProperty
+    abstract var height: IntProperty
 
-    abstract var widthBounds: ObjProperty<IntRange>?
-    abstract var heightBounds: ObjProperty<IntRange>?
+    abstract var widthBounds: ObjProperty<IntRange>
+    abstract var heightBounds: ObjProperty<IntRange>
 
-    abstract var locked: BoolProperty?
-    abstract var selected: BoolProperty?
-    abstract var invisible: BoolProperty?
-    abstract var hidden: BoolProperty?
-    abstract var hovered: BoolProperty?
+    abstract var locked: BoolProperty
+    abstract var selected: BoolProperty
+    abstract var invisible: BoolProperty
+    abstract var hidden: BoolProperty
+    abstract var hovered: BoolProperty
 
-    internal abstract var parent: IntProperty?
-    abstract var optionType: IntProperty?
-    abstract var contentType: IntProperty?
-    abstract var alpha: IntProperty?
-    abstract var hoverId: IntProperty?
-    abstract var scriptOperators: ObjProperty<IntArray>?
-    abstract var scriptDefaults: ObjProperty<IntArray>?
-    abstract var scripts: ObjProperty<Array<IntArray?>>?
+    internal abstract var parent: IntProperty
+    abstract var optionType: IntProperty
+    abstract var contentType: IntProperty
+    abstract var alpha: IntProperty
+    abstract var hoverId: IntProperty
+    abstract var scriptOperators: ObjProperty<IntArray>
+    abstract var scriptDefaults: ObjProperty<IntArray>
+    abstract var scripts: ObjProperty<Array<IntArray?>>
 
     fun setLocked(value: Boolean) {
-        lockedProperty().set(value)
+        locked.set(value)
     }
 
     fun isLocked(): Boolean {
-        return lockedProperty().get()
-    }
-
-    fun lockedProperty(): BoolProperty {
-        if (locked == null)
-            locked = BoolProperty(this, "locked", false)
-
-        return locked!!
+        return locked.get()
     }
 
     fun isInvisible(): Boolean {
-        return invisibleProperty().get()
+        return invisible.get()
     }
 
     fun setInvisible(value: Boolean) {
-        invisibleProperty().set(value)
-    }
-
-    fun invisibleProperty(): BoolProperty {
-        if (invisible == null)
-            invisible = BoolProperty(this, "invisible", false)
-
-        return invisible!!
+        invisible.set(value)
     }
 
     fun isHidden(): Boolean {
-        return hiddenProperty().get()
+        return hidden.get()
     }
 
     fun setHidden(value: Boolean) {
-        hiddenProperty().set(value)
-    }
-
-    fun hiddenProperty(): BoolProperty {
-        if (hidden == null)
-            hidden = BoolProperty(this, "hidden", false)
-
-        return hidden!!
+        hidden.set(value)
     }
 
     fun isHovered(): Boolean {
-        return hoveredProperty().get()
+        return hovered.get()
     }
 
     fun setHovered(value: Boolean) {
-        hoveredProperty().set(value)
-    }
-
-    fun hoveredProperty(): BoolProperty {
-        if (hovered == null)
-            hovered = BoolProperty(this, "hovered", false)
-
-        return hovered!!
+        hovered.set(value)
     }
 
     fun isSelected(): Boolean {
-        return selectedProperty().get()
+        return selected.get()
     }
 
     fun setSelected(value: Boolean, selection: Boolean = true) {
         (this as? Widget)?.updateSelection = selection
-        selectedProperty().set(if (value && isLocked()) false else value)
-    }
-
-    fun selectedProperty(): BoolProperty {
-        if (selected == null)
-            selected = BoolProperty(this, "selected", false)
-
-        return selected!!
+        selected.set(if (value && isLocked()) false else value)
     }
 
     fun getX(): Int {
-        return xProperty().get()
+        return x.get()
     }
 
     fun setX(value: Int) {
-        xProperty().set(value)
-    }
-
-    fun xProperty(): IntProperty {
-        if (x == null)
-            x = IntProperty(this, "x", Settings.getInt(Settings.DEFAULT_POSITION_X))
-
-        return x!!
+        x.set(value)
     }
 
     fun getY(): Int {
-        return yProperty().get()
+        return y.get()
     }
 
     fun setY(value: Int) {
-        yProperty().set(value)
-    }
-
-    fun yProperty(): IntProperty {
-        if (y == null)
-            y = IntProperty(this, "y", 100)
-
-        return y!!
+        y.set(value)
     }
 
     fun getWidth(): Int {
-        return widthProperty().get()
+        return width.get()
     }
 
     fun setWidth(value: Int) {
-        widthProperty().set(MathUtils.constrain(value, getWidthBounds().start, getWidthBounds().endInclusive))
-    }
-
-    fun widthProperty(): IntProperty {
-        if (width == null)
-            width = IntProperty(this, "width", Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH))
-        return width!!
+        width.set(MathUtils.constrain(value, getWidthBounds().start, getWidthBounds().endInclusive))
     }
 
     fun getHeight(): Int {
-        return heightProperty().get()
+        return height.get()
     }
 
     fun setHeight(value: Int) {
-        heightProperty().set(MathUtils.constrain(value, getHeightBounds().start, getHeightBounds().endInclusive))
-    }
-
-    fun heightProperty(): IntProperty {
-        if (height == null)
-            height = IntProperty(this, "height", Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT))
-        return height!!
+        height.set(MathUtils.constrain(value, getHeightBounds().start, getHeightBounds().endInclusive))
     }
 
     fun getWidthBounds(): IntRange {
-        return widthBoundsProperty().get()
-    }
-
-    fun widthBoundsProperty(): ObjProperty<IntRange> {
-        if(widthBounds == null)
-            widthBounds = ObjProperty(this, "widthBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_WIDTH), Settings.getInt(Settings.WIDGET_CANVAS_WIDTH)))
-
-        return widthBounds!!
+        return widthBounds.get()
     }
 
     fun getHeightBounds(): IntRange {
-        return heightBoundsProperty().get()
-    }
-
-    fun heightBoundsProperty(): ObjProperty<IntRange> {
-        if(heightBounds == null)
-            heightBounds = ObjProperty(this, "heightBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_HEIGHT), Settings.getInt(Settings.WIDGET_CANVAS_HEIGHT)))
-
-        return heightBounds!!
+        return heightBounds.get()
     }
 
     fun setParent(value: Int) {
-        parentProperty().set(value)
+        parent.set(value)
     }
 
     fun getParent(): Int {
-        return parentProperty().get()
+        return parent.get()
     }
 
-    fun parentProperty(): IntProperty {
-        if (parent == null)
-            parent = IntProperty(this, "parent", -1)
-        return parent!!
-    }
+    fun setOptionType(value: Int) { optionType.set(value) }
 
-    fun setOptionType(value: Int) { optionTypeProperty().set(value) }
+    fun getOptionType(): Int { return optionType.get() }
 
-    fun getOptionType(): Int { return optionTypeProperty().get() }
+    fun setContentType(value: Int) { contentType.set(value) }
 
-    fun optionTypeProperty(): IntProperty {
-        if (optionType == null)
-            optionType = IntProperty(this, "optionType", 0)
-        return optionType!!
-    }
+    fun getContentType(): Int { return contentType.get() }
 
-    fun setContentType(value: Int) { contentTypeProperty().set(value) }
+    fun setAlpha(value: Int) { alpha.set(value) }
 
-    fun getContentType(): Int { return contentTypeProperty().get() }
+    fun getAlpha(): Int { return alpha.get() }
 
-    fun contentTypeProperty(): IntProperty {
-        if (contentType == null)
-            contentType = IntProperty(this, "contentType", 0)
-        return contentType!!
-    }
+    fun setHoverId(value: Int) { hoverId.set(value) }
 
-    fun setAlpha(value: Int) { alphaProperty().set(value) }
+    fun getHoverId(): Int { return hoverId.get() }
 
-    fun getAlpha(): Int { return alphaProperty().get() }
+    fun setScriptOperators(value: IntArray) { scriptOperators.set(value) }
 
-    fun alphaProperty(): IntProperty {
-        if (alpha == null)
-            alpha = IntProperty(this, "alpha", 0)
-        return alpha!!
-    }
+    fun getScriptOperators(): IntArray { return scriptOperators.get() }
 
-    fun setHoverId(value: Int) { hoverIdProperty().set(value) }
+    fun setScriptDefaults(value: IntArray) { scriptDefaults.set(value) }
 
-    fun getHoverId(): Int { return hoverIdProperty().get() }
+    fun getScriptDefaults(): IntArray { return scriptDefaults.get() }
 
-    fun hoverIdProperty(): IntProperty {
-        if (hoverId == null)
-            hoverId = IntProperty(this, "hoverId", 0)
-        return hoverId!!
-    }
+    fun setScripts(value: Array<IntArray?>) { scripts.set(value) }
 
-    fun setScriptOperators(value: IntArray) { scriptOperatorsProperty().set(value) }
-
-    fun getScriptOperators(): IntArray { return scriptOperatorsProperty().get() }
-
-    fun scriptOperatorsProperty(): ObjProperty<IntArray> {
-        if (scriptOperators == null)
-            scriptOperators = ObjProperty(this, "scriptOperators", IntArray(0))
-        return scriptOperators!!
-    }
-
-    fun setScriptDefaults(value: IntArray) { scriptDefaultsProperty().set(value) }
-
-    fun getScriptDefaults(): IntArray { return scriptDefaultsProperty().get() }
-
-    fun scriptDefaultsProperty(): ObjProperty<IntArray> {
-        if (scriptDefaults == null)
-            scriptDefaults = ObjProperty(this, "scriptDefaults", IntArray(0))
-        return scriptDefaults!!
-    }
-
-    fun setScripts(value: Array<IntArray?>) { scriptsProperty().set(value) }
-
-    fun getScripts(): Array<IntArray?> { return scriptsProperty().get() }
-
-    fun scriptsProperty(): ObjProperty<Array<IntArray?>> {
-        if (scripts == null)
-            scripts = ObjProperty(this, "scripts", arrayOfNulls(0))
-        return scripts!!
-    }
+    fun getScripts(): Array<IntArray?> { return scripts.get() }
 }

@@ -34,7 +34,7 @@ class WidgetsController : Controller() {
 
     private val action = InteractionController(this)
 
-    val updateHierarchy = BoolProperty(this, "updateHierarchy", false)
+    val updateHierarchy = BoolProperty("updateHierarchy", false)
 
     /**
      * Selection
@@ -260,20 +260,20 @@ class WidgetsController : Controller() {
 
         //Selection
         updateSelection(widget, shape, !widget.isSelected(), widget.isSelected())
-        widget.selectedProperty().addListener { _, oldValue, newValue -> updateSelection(widget, shape, oldValue, newValue) }
+        widget.selected.addListener { _, oldValue, newValue -> updateSelection(widget, shape, oldValue, newValue) }
 
         //Position
-        shape.translateXProperty().bindBidirectional(widget.xProperty())
-        shape.translateYProperty().bindBidirectional(widget.yProperty())
+        shape.translateXProperty().bindBidirectional(widget.x)
+        shape.translateYProperty().bindBidirectional(widget.y)
 
         //Appearance
-        shape.outline.widthProperty().bindBidirectional(widget.widthProperty())
-        shape.outline.heightProperty().bindBidirectional(widget.heightProperty())
+        shape.outline.widthProperty().bindBidirectional(widget.width)
+        shape.outline.heightProperty().bindBidirectional(widget.height)
 
 
         //Listener
         updateVisibility(shape, widget.isInvisible())
-        widget.invisibleProperty().addListener { _, _, newValue -> updateVisibility(shape, newValue) }
+        widget.invisible.addListener { _, _, newValue -> updateVisibility(shape, newValue) }
 
         if (widget is WidgetContainer && shape is ContainerShape) {
             widget.getChildren().addListener(ListChangeListener<Widget> { change ->
@@ -292,12 +292,12 @@ class WidgetsController : Controller() {
             shape.updateColour(widget)
             val listener = ChangeListener<Any> { _, _, _ -> shape.updateColour(widget) }
 
-            widget.hoveredProperty().addListener(listener)
-            widget.filledProperty().addListener(listener)
-            widget.defaultColourProperty().addListener(listener)
-            widget.defaultHoverColourProperty().addListener(listener)
-            widget.secondaryColourProperty().addListener(listener)
-            widget.secondaryHoverColourProperty().addListener(listener)
+            widget.hovered.addListener(listener)
+            widget.filled.addListener(listener)
+            widget.defaultColour.addListener(listener)
+            widget.defaultHoverColour.addListener(listener)
+            widget.secondaryColour.addListener(listener)
+            widget.secondaryHoverColour.addListener(listener)
         } else if (widget is WidgetText && shape is TextShape) {
             shape.flip = WidgetScripts.scriptStateChanged(widget)
             shape.updateColour(widget)
@@ -310,25 +310,25 @@ class WidgetsController : Controller() {
                 }
             }
 
-            widget.hoveredProperty().addListener(listener)
-            widget.defaultColourProperty().addListener(listener)
-            widget.defaultHoverColourProperty().addListener(listener)
-            widget.secondaryColourProperty().addListener(listener)
-            widget.secondaryHoverColourProperty().addListener(listener)
+            widget.hovered.addListener(listener)
+            widget.defaultColour.addListener(listener)
+            widget.defaultHoverColour.addListener(listener)
+            widget.secondaryColour.addListener(listener)
+            widget.secondaryHoverColour.addListener(listener)
 
             listener = ChangeListener { _, oldValue, newValue ->
                 if (oldValue != newValue)
                     shape.updateText(widget, cache)
             }
 
-            widget.defaultTextProperty().addListener(listener)
-            widget.secondaryTextProperty().addListener(listener)
-            widget.widthProperty().addListener(listener)
-            widget.heightProperty().addListener(listener)
+            widget.defaultText.addListener(listener)
+            widget.secondaryText.addListener(listener)
+            widget.width.addListener(listener)
+            widget.height.addListener(listener)
 
-            widget.fontIndexProperty().addListener(listener)
-            widget.shadowProperty().addListener(listener)
-            widget.centredProperty().addListener { _, oldValue, newValue ->
+            widget.fontIndex.addListener(listener)
+            widget.shadow.addListener(listener)
+            widget.centred.addListener { _, oldValue, newValue ->
                 if (oldValue != newValue) {
                     shape.label.textAlignment = if (newValue) TextAlignment.CENTER else TextAlignment.LEFT
                     shape.label.alignment = if (newValue) Pos.TOP_CENTER else Pos.TOP_LEFT

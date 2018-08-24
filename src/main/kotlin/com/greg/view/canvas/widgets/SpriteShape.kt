@@ -55,7 +55,7 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
 
     fun defaultArchiveProperty(): StringProperty {
         if (defaultArchive == null)
-            defaultArchive = StringProperty(this, "defaultArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
+            defaultArchive = StringProperty("defaultArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
 
         return defaultArchive!!
     }
@@ -66,7 +66,7 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
 
     fun secondaryArchiveProperty(): StringProperty {
         if (secondaryArchive == null)
-            secondaryArchive = StringProperty(this, "secondaryArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
+            secondaryArchive = StringProperty("secondaryArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
 
         return secondaryArchive!!
     }

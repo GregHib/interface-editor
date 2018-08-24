@@ -5,88 +5,39 @@ import com.greg.model.widgets.properties.extended.ObjProperty
 
 interface GroupInventory {
 
-    var swappableItems: BoolProperty?
-    var usableItems: BoolProperty?
-    var replaceItems: BoolProperty?
-    var spriteX: ObjProperty<IntArray>?
-    var spriteY: ObjProperty<IntArray>?
-    var spritesArchive: ObjProperty<Array<String?>>?
-    var spritesIndex: ObjProperty<Array<Int?>>?
+    var swappableItems: BoolProperty
+    var usableItems: BoolProperty
+    var replaceItems: BoolProperty
+    var spriteX: ObjProperty<IntArray>
+    var spriteY: ObjProperty<IntArray>
+    var spritesArchive: ObjProperty<Array<String?>>
+    var spritesIndex: ObjProperty<Array<Int?>>
 
-    fun setSwappableItems(value: Boolean) { swappableItemsProperty().set(value) }
+    fun setSwappableItems(value: Boolean) { swappableItems.set(value) }
 
-    fun getSwappableItems(): Boolean { return swappableItemsProperty().get() }
+    fun getSwappableItems(): Boolean { return swappableItems.get() }
 
-    fun swappableItemsProperty(): BoolProperty {
-        if (swappableItems == null)
-            swappableItems = BoolProperty(this, "swappableItems", false)
+    fun setUsableItems(value: Boolean) { usableItems.set(value) }
 
-        return swappableItems!!
-    }
+    fun hasUsableItems(): Boolean { return usableItems.get() }
 
-    fun setUsableItems(value: Boolean) { usableItemsProperty().set(value) }
+    fun setReplaceItems(value: Boolean) { replaceItems.set(value) }
 
-    fun hasUsableItems(): Boolean { return usableItemsProperty().get() }
+    fun isReplaceItems(): Boolean { return replaceItems.get() }
 
-    fun usableItemsProperty(): BoolProperty {
-        if (usableItems == null)
-            usableItems = BoolProperty(this, "usableItems", false)
+    fun setSpriteX(value: IntArray) { spriteX.set(value) }
 
-        return usableItems!!
-    }
+    fun getSpriteX(): IntArray { return spriteX.get() }
 
-    fun setReplaceItems(value: Boolean) { replaceItemsProperty().set(value) }
+    fun setSpriteY(value: IntArray) { spriteY.set(value) }
 
-    fun isReplaceItems(): Boolean { return replaceItemsProperty().get() }
+    fun getSpriteY(): IntArray { return spriteY.get() }
 
-    fun replaceItemsProperty(): BoolProperty {
-        if (replaceItems == null)
-            replaceItems = BoolProperty(this, "replaceItems", false)
+    fun setSpritesArchive(value: Array<String?>) { spritesArchive.set(value) }
 
-        return replaceItems!!
-    }
+    fun getSpritesArchive(): Array<String?> { return spritesArchive.get() }
 
-    fun setSpriteX(value: IntArray) { spriteXProperty().set(value) }
+    fun setSpritesIndex(value: Array<Int?>) { spritesIndex.set(value) }
 
-    fun getSpriteX(): IntArray { return spriteXProperty().get() }
-
-    fun spriteXProperty(): ObjProperty<IntArray> {
-        if (spriteX == null)
-            spriteX = ObjProperty(this, "spriteX", IntArray(0))
-
-        return spriteX!!
-    }
-
-    fun setSpriteY(value: IntArray) { spriteYProperty().set(value) }
-
-    fun getSpriteY(): IntArray { return spriteYProperty().get() }
-
-    fun spriteYProperty(): ObjProperty<IntArray> {
-        if (spriteY == null)
-            spriteY = ObjProperty(this, "spriteY", IntArray(0))
-
-        return spriteY!!
-    }
-
-    fun setSpritesArchive(value: Array<String?>) { spritesArchiveProperty().set(value) }
-
-    fun getSpritesArchive(): Array<String?> { return spritesArchiveProperty().get() }
-
-    fun spritesArchiveProperty(): ObjProperty<Array<String?>> {
-        if (spritesArchive == null)
-            spritesArchive = ObjProperty(this, "spritesArchive", arrayOfNulls(0))
-
-        return spritesArchive!!
-    }
-
-    fun setSpritesIndex(value: Array<Int?>) { spritesIndexProperty().set(value) }
-
-    fun getSpritesIndex(): Array<Int?> { return spritesIndexProperty().get() }
-
-    fun spritesIndexProperty(): ObjProperty<Array<Int?>> {
-        if (spritesIndex == null)
-            spritesIndex = ObjProperty(this, "spritesIndex", arrayOfNulls(0))
-
-        return spritesIndex!!
-    }
+    fun getSpritesIndex(): Array<Int?> { return spritesIndex.get() }
 }

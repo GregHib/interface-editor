@@ -182,7 +182,7 @@ class DragTreeCell : TreeCell<String>() {
                     setup()
 
                     val box = checkbox {
-                        selectedProperty().bindBidirectional(widget.selectedProperty())
+                        selectedProperty().bindBidirectional(widget.selected)
 
                         action {
                             //Widget select everything highlighted in hierarchy
@@ -211,7 +211,7 @@ class DragTreeCell : TreeCell<String>() {
                     }
 
                     val visibilityBox = checkbox {
-                        selectedProperty().bindBidirectional(widget.invisibleProperty())
+                        selectedProperty().bindBidirectional(widget.invisible)
 
                         //Lock if invisible or unlock if visible and that setting is enabled
                         fun updateLock(widget: Widget, value: Boolean) {
@@ -248,7 +248,7 @@ class DragTreeCell : TreeCell<String>() {
                     }
 
                     val lockBox = checkbox {
-                        selectedProperty().bindBidirectional(widget.lockedProperty())
+                        selectedProperty().bindBidirectional(widget.locked)
 
                         action {
                             //Lock all highlighted

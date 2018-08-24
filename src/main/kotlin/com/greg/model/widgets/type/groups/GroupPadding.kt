@@ -4,28 +4,14 @@ import com.greg.model.widgets.properties.extended.IntProperty
 
 interface GroupPadding {
 
-    var spritePaddingX: IntProperty?
-    var spritePaddingY: IntProperty?
+    var spritePaddingX: IntProperty
+    var spritePaddingY: IntProperty
 
-    fun setSpritePaddingX(value: Int) { spritePaddingXProperty().set(value) }
+    fun setSpritePaddingX(value: Int) { spritePaddingX.set(value) }
 
-    fun getSpritePaddingX(): Int { return spritePaddingXProperty().get() }
+    fun getSpritePaddingX(): Int { return spritePaddingX.get() }
 
-    fun spritePaddingXProperty(): IntProperty {
-        if (spritePaddingX == null)
-            spritePaddingX = IntProperty(this, "spritePaddingX", 0)
+    fun setSpritePaddingY(value: Int) { spritePaddingY.set(value) }
 
-        return spritePaddingX!!
-    }
-
-    fun setSpritePaddingY(value: Int) { spritePaddingYProperty().set(value) }
-
-    fun getSpritePaddingY(): Int { return spritePaddingYProperty().get() }
-
-    fun spritePaddingYProperty(): IntProperty {
-        if (spritePaddingY == null)
-            spritePaddingY = IntProperty(this, "spritePaddingY", 0)
-
-        return spritePaddingY!!
-    }
+    fun getSpritePaddingY(): Int { return spritePaddingY.get() }
 }

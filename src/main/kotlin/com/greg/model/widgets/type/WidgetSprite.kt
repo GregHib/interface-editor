@@ -8,16 +8,16 @@ import com.greg.model.widgets.properties.extended.StringProperty
 import com.greg.model.widgets.type.groups.GroupSprite
 
 class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id), GroupSprite {
-    override var defaultCap = ObjProperty(this, "defaultCap", IntRange(0, 1))
-    override var defaultSprite = IntProperty(this, "defaultSprite", Settings.getInt(Settings.DEFAULT_SPRITE_ID))
-    override var defaultSpriteArchive: StringProperty = StringProperty(this, "defaultSpriteArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
-    override var secondaryCap = ObjProperty(this, "secondaryCap", IntRange(0, 1))
-    override var secondarySprite = IntProperty(this, "secondarySprite", 0)
-    override var secondarySpriteArchive = StringProperty(this, "secondarySpriteArchive", "")
+    override var defaultCap = ObjProperty("defaultCap", IntRange(0, 1))
+    override var defaultSprite = IntProperty("defaultSprite", Settings.getInt(Settings.DEFAULT_SPRITE_ID))
+    override var defaultSpriteArchive: StringProperty = StringProperty("defaultSpriteArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
+    override var secondaryCap = ObjProperty("secondaryCap", IntRange(0, 1))
+    override var secondarySprite = IntProperty("secondarySprite", 0)
+    override var secondarySpriteArchive = StringProperty("secondarySpriteArchive", "")
 
     init {
-        properties.add(widthProperty(), "Layout").property.setDisabled(true)
-        properties.add(heightProperty(), "Layout").property.setDisabled(true)
+        properties.add(width, "Layout").property.setDisabled(true)
+        properties.add(height, "Layout").property.setDisabled(true)
         properties.addCapped(defaultSprite, defaultCap)
         properties.add(defaultSpriteArchive)
         properties.addCapped(secondarySprite, secondaryCap)

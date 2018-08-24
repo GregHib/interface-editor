@@ -10,25 +10,25 @@ import com.greg.model.widgets.type.groups.GroupInventory
 import com.greg.model.widgets.type.groups.GroupPadding
 
 class WidgetInventory(builder: WidgetBuilder, id: Int) : Widget(builder, id), GroupActions, GroupInventory, GroupPadding {
-    override var hasActions = BoolProperty(this, "hasActions", Settings.getBoolean(Settings.DEFAULT_HAS_ACTIONS))
-    override var actions: ObjProperty<Array<String?>> = ObjProperty(this, "actions", arrayOfNulls(0))
-    override var swappableItems: BoolProperty? = null
-    override var usableItems: BoolProperty? = null
-    override var replaceItems: BoolProperty? = null
-    override var spritePaddingX: IntProperty? = null
-    override var spritePaddingY: IntProperty? = null
-    override var spriteX: ObjProperty<IntArray>? = null
-    override var spriteY: ObjProperty<IntArray>? = null
-    override var spritesArchive: ObjProperty<Array<String?>>? = null
-    override var spritesIndex: ObjProperty<Array<Int?>>? = null
+    override var hasActions = BoolProperty("hasActions", Settings.getBoolean(Settings.DEFAULT_HAS_ACTIONS))
+    override var actions: ObjProperty<Array<String?>> = ObjProperty("actions", arrayOfNulls(0))
+    override var swappableItems = BoolProperty("swappableItems", false)
+    override var usableItems = BoolProperty("usableItems", false)
+    override var replaceItems = BoolProperty("replaceItems", false)
+    override var spritePaddingX = IntProperty("spritePaddingX", 0)
+    override var spritePaddingY = IntProperty("spritePaddingY", 0)
+    override var spriteX = ObjProperty("spriteX", IntArray(0))
+    override var spriteY = ObjProperty("spriteY", IntArray(0))
+    override var spritesArchive: ObjProperty<Array<String?>> = ObjProperty("spritesArchive", arrayOfNulls(0))
+    override var spritesIndex: ObjProperty<Array<Int?>> = ObjProperty("spritesIndex", arrayOfNulls(0))
 
     init {
-        properties.add(swappableItemsProperty())
+        properties.add(swappableItems)
         properties.add(hasActions)
-        properties.add(usableItemsProperty())
-        properties.add(replaceItemsProperty())
-        properties.add(spritePaddingXProperty())
-        properties.add(spritePaddingYProperty())
+        properties.add(usableItems)
+        properties.add(replaceItems)
+        properties.add(spritePaddingX)
+        properties.add(spritePaddingY)
     }
 
 }

@@ -4,20 +4,13 @@ import com.greg.model.widgets.properties.extended.StringProperty
 
 interface GroupHover {
 
-    var hover: StringProperty?
+    var hover: StringProperty
 
     fun setHover(value: String) {
-        hoverProperty().set(value)
+        hover.set(value)
     }
 
     fun getHover(): String {
-        return hoverProperty().get()
-    }
-
-    fun hoverProperty(): StringProperty {
-        if (hover == null)
-            hover = StringProperty(this, "hover", "")
-
-        return hover!!
+        return hover.get()
     }
 }

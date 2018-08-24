@@ -16,7 +16,7 @@ interface ToggleProperty {
 
     fun disabledProperty(): BooleanProperty {
         if (disabled == null)
-            disabled = SimpleBooleanProperty(this, "disabled", false)
+            disabled = SimpleBooleanProperty( null, "disabled", false)
 
         return disabled!!
     }

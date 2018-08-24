@@ -36,8 +36,8 @@ class PropertyPanelTest : View() {
     }
 
     class PropertyPanelProperty {
-        var anInt: IntProperty = IntProperty(this, "anInt", 1)
-        var aString: StringProperty = StringProperty(this, "aString", "Null")
+        var anInt: IntProperty = IntProperty("anInt", 1)
+        var aString: StringProperty = StringProperty("aString", "Null")
     }
 
     private class PropertyPanelItem(private val propertyCategory: String, private var propertyValue: Property<*>) : PropertySheet.Item {
