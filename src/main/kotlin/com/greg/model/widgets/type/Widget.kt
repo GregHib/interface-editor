@@ -1,10 +1,12 @@
 package com.greg.model.widgets.type
 
 import com.greg.controller.canvas.DragContext
+import com.greg.model.cache.archives.widget.WidgetData
+import com.greg.model.cache.archives.widget.WidgetDataConverter
+import com.greg.model.widgets.JsonSerializer
+import com.greg.model.widgets.Jsonable
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
-import com.greg.model.widgets.memento.Memento
-import com.greg.model.widgets.memento.MementoBuilder
 import com.greg.model.widgets.properties.Properties
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
@@ -13,9 +15,9 @@ import com.greg.model.widgets.properties.extended.StringProperty
 import com.greg.model.widgets.type.groups.GroupHover
 import com.greg.model.widgets.type.groups.GroupOptions
 import com.greg.model.widgets.type.groups.GroupWidget
-import javafx.beans.property.Property
 
-open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), GroupOptions, GroupHover {
+open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, GroupOptions, GroupHover {
+
     val type: WidgetType = builder.type
     val identifier = id
     val name: String = type.name.toLowerCase().capitalize()
@@ -65,20 +67,25 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), GroupOptions
         properties.addPanel(invisibleProperty(), false)
     }
 
-    fun getMemento(): Memento {
-        return MementoBuilder(this).build()
+    fun toData(): WidgetData {
+        return WidgetDataConverter.toData(this)
     }
 
-    fun restore(memento: Memento) {
-        for ((index, value) in properties.get().withIndex()) {
-            if(value.property == selectedProperty())
-                continue
-            (value.property as Property<*>).value = memento.getValue(index, value.property)
-        }
+    fun fromData(data: WidgetData) {
+        WidgetDataConverter.setData(this, data)
     }
 
+    override fun fromJson(json: String) {
+        val data = JsonSerializer.deserializer(json, WidgetData::class.java) ?: return
+        fromData(data)
+    }
+
+    override fun toJson(): String {
+        return JsonSerializer.serialize(toData())
+    }
 
     override fun toString(): String {
-        return getMemento().toString()
+        return toJson()
     }
+
 }

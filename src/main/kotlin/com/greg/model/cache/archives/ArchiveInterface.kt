@@ -22,7 +22,7 @@ class ArchiveInterface : CacheArchive() {
         }
 
         fun updateData(widget: Widget) {
-            widgetsData[widget.identifier] = WidgetDataConverter.toData(widget)
+            widgetsData[widget.identifier] = widget.toData()
         }
 
         private fun clear() {
@@ -85,10 +85,39 @@ class ArchiveInterface : CacheArchive() {
     override fun load(cache: Cache): Boolean {
         val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
         val buffer = archive.readFile("data")
-        val data = WidgetDataIO.read(buffer) ?: return false
+        var data = WidgetDataIO.read(buffer) ?: return false
+
+        data = convert(data)
 
         set(data)
         return true
+    }
+
+    private fun convert(widgetsData: Array<WidgetData?>): Array<WidgetData?> {
+        val widgetsList = widgetsData.filterNotNull().toTypedArray()
+        //For all interfaces
+        return widgetsData.map { widget ->
+            if(widget == null)
+                return@map widget
+
+            //Convert child indices to actual WidgetData with children
+            if(widget.children != null && widget.children!!.isNotEmpty())
+                convert(widgetsList, widget)
+            else
+                widget
+        }.toTypedArray()
+    }
+
+    private fun convert(widgetData: Array<WidgetData>, child: WidgetData): WidgetData {
+        if(child.children != null && child.children!!.isNotEmpty()) {
+            child.kids = child.children!!.mapIndexed { index, i ->
+                val c = convert(widgetData, widgetData[i].clone())
+                c.x = child.childX!![index]
+                c.y = child.childY!![index]
+                c
+            }.toTypedArray()
+        }
+        return child
     }
 
     fun getName(index: Int): String {
@@ -108,13 +137,13 @@ class ArchiveInterface : CacheArchive() {
         return index.toString()
     }
 
-    fun display(widgets: WidgetsController, index: Int, x: Int = 0, y: Int = 0) {
+    fun display(widgets: WidgetsController, index: Int) {
         val data = lookup(index) ?: return
 
         if (data.group != WidgetData.TYPE_CONTAINER || data.children?.isEmpty() ?: return)
             return
 
-        val widget = WidgetDataConverter.toChildren(data, x, y)
+        val widget = WidgetDataConverter.create(data)
 
         widgets.add(widget)
     }

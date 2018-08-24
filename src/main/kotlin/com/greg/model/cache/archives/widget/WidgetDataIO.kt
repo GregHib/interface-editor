@@ -34,51 +34,44 @@ object WidgetDataIO {
                 widget.hoverId = if (hover != 0.toByte()) hover - 1 shl 8 or (buffer.get().toInt() and 255) else -1
 
                 val operators = buffer.get().toInt() and 255
-                var scripts: Int
                 if (operators > 0) {
                     widget.scriptOperators = IntArray(operators)
                     widget.scriptDefaults = IntArray(operators)
 
-                    scripts = 0
-                    while (scripts < operators) {
-                        widget.scriptOperators!![scripts] = buffer.get().toInt() and 255
-                        widget.scriptDefaults!![scripts] = buffer.short.toInt() and 0xffff
-                        scripts++
+                    for(scriptIndex in 0 until operators) {
+                        widget.scriptOperators!![scriptIndex] = buffer.get().toInt() and 255
+                        widget.scriptDefaults!![scriptIndex] = buffer.short.toInt() and 0xffff
                     }
                 }
 
-                scripts = buffer.get().toInt() and 255
-                var font: Int
-                var index: Int
+                val scripts = buffer.get().toInt() and 255
                 if (scripts > 0) {
                     widget.scripts = arrayOfNulls(scripts)
 
-                    font = 0
-                    while (font < scripts) {
-                        index = buffer.short.toInt() and 0xffff
-                        widget.scripts!![font] = IntArray(index)
+                    var length: Int
 
-                        for (instruction in 0 until index) {
-                            widget.scripts!![font]!![instruction] = buffer.short.toInt() and 0xffff
+                    for(script in 0 until scripts) {
+                        length = buffer.short.toInt() and 0xffff
+                        widget.scripts!![script] = IntArray(length)
+
+                        for (instruction in 0 until length) {
+                            widget.scripts!![script]!![instruction] = buffer.short.toInt() and 0xffff
                         }
-                        font++
                     }
                 }
 
                 if (widget.group == WidgetData.TYPE_CONTAINER) {
                     widget.scrollLimit = buffer.short.toInt() and 0xffff
                     widget.hidden = buffer.get().toInt() and 255 == 1
-                    font = buffer.short.toInt() and 0xffff
-                    widget.children = IntArray(font)
-                    widget.childX = IntArray(font)
-                    widget.childY = IntArray(font)
+                    val count = buffer.short.toInt() and 0xffff
+                    widget.children = IntArray(count)
+                    widget.childX = IntArray(count)
+                    widget.childY = IntArray(count)
 
-                    index = 0
-                    while (index < font) {
-                        widget.children!![index] = buffer.short.toInt() and 0xffff
-                        widget.childX[index] = buffer.short.toInt()
-                        widget.childY[index] = buffer.short.toInt()
-                        index++
+                    for(child in 0 until count) {
+                        widget.children!![child] = buffer.short.toInt() and 0xffff
+                        widget.childX!![child] = buffer.short.toInt()
+                        widget.childY!![child] = buffer.short.toInt()
                     }
                 }
 
@@ -102,32 +95,28 @@ object WidgetDataIO {
                     widget.spritesArchive = arrayOfNulls(20)
                     widget.spritesIndex = arrayOfNulls(20)
 
-                    font = 0
-                    while (font < 20) {
+                    var index: Int
+                    for(spriteIndex in 0 until 20) {
                         index = buffer.get().toInt() and 255
                         if (index == 1) {
-                            widget.spriteX[font] = buffer.short.toInt()
-                            widget.spriteY[font] = buffer.short.toInt()
+                            widget.spriteX!![spriteIndex] = buffer.short.toInt()
+                            widget.spriteY!![spriteIndex] = buffer.short.toInt()
                             val name = ByteBufferUtils.getString(buffer)
-                            widget.sprites[font] = name
+                            widget.sprites!![spriteIndex] = name
                             if (name.isNotEmpty()) {
                                 val position = name.lastIndexOf(",")
-                                widget.spritesArchive[font] = name.substring(0, position)
-                                widget.spritesIndex[font] = Integer.parseInt(name.substring(position + 1))
+                                widget.spritesArchive!![spriteIndex] = name.substring(0, position)
+                                widget.spritesIndex!![spriteIndex] = Integer.parseInt(name.substring(position + 1))
                             }
                         }
-                        font++
                     }
 
                     widget.actions = arrayOfNulls(5)
 
-                    font = 0
-                    while (font < 5) {
-                        widget.actions[font] = ByteBufferUtils.getString(buffer)
-                        if (widget.actions[font]!!.isEmpty()) {
-                            widget.actions[font] = null
-                        }
-                        font++
+                    for(actionIndex in 0 until 5) {
+                        widget.actions!![actionIndex] = ByteBufferUtils.getString(buffer)
+                        if (widget.actions!![actionIndex]!!.isEmpty())
+                            widget.actions!![actionIndex] = null
                     }
                 }
 
@@ -137,8 +126,7 @@ object WidgetDataIO {
 
                 if (widget.group == WidgetData.TYPE_TEXT || widget.group == WidgetData.TYPE_MODEL_LIST) {
                     widget.centeredText = buffer.get().toInt() and 255 == 1
-                    font = buffer.get().toInt() and 255
-                    widget.fontIndex = font
+                    widget.fontIndex = buffer.get().toInt() and 255
 
                     widget.shadowedText = buffer.get().toInt() and 255 == 1
                 }
@@ -160,7 +148,7 @@ object WidgetDataIO {
 
                 if (widget.group == WidgetData.TYPE_SPRITE) {
                     var name = ByteBufferUtils.getString(buffer)
-
+                    var index: Int
                     if (name.isNotEmpty()) {
                         index = name.lastIndexOf(",")
                         widget.defaultSpriteArchive = name.substring(0, index)
@@ -176,22 +164,22 @@ object WidgetDataIO {
                 }
 
                 if (widget.group == WidgetData.TYPE_MODEL) {
-                    font = buffer.get().toInt() and 255
-                    if (font != 0) {
+                    var media = buffer.get().toInt() and 255
+                    if (media != 0) {
                         widget.defaultMediaType = 1
-                        widget.defaultMedia = (font - 1 shl 8) + (buffer.get().toInt() and 255)
+                        widget.defaultMedia = (media - 1 shl 8) + (buffer.get().toInt() and 255)
                     }
 
-                    font = buffer.get().toInt() and 255
-                    if (font != 0) {
+                    media = buffer.get().toInt() and 255
+                    if (media != 0) {
                         widget.secondaryMediaType = 1
-                        widget.secondaryMedia = (font - 1 shl 8) + (buffer.get().toInt() and 255)
+                        widget.secondaryMedia = (media - 1 shl 8) + (buffer.get().toInt() and 255)
                     }
 
-                    font = buffer.get().toInt() and 255
-                    widget.defaultAnimationId = if (font != 0) (font - 1 shl 8) + (buffer.get().toInt() and 255) else -1
-                    font = buffer.get().toInt() and 255
-                    widget.secondaryAnimationId = if (font != 0) (font - 1 shl 8) + (buffer.get().toInt() and 255) else -1
+                    media = buffer.get().toInt() and 255
+                    widget.defaultAnimationId = if (media != 0) (media - 1 shl 8) + (buffer.get().toInt() and 255) else -1
+                    media = buffer.get().toInt() and 255
+                    widget.secondaryAnimationId = if (media != 0) (media - 1 shl 8) + (buffer.get().toInt() and 255) else -1
                     widget.spriteScale = buffer.short.toInt() and 0xffff
                     widget.spritePitch = buffer.short.toInt() and 0xffff
                     widget.spriteRoll = buffer.short.toInt() and 0xffff
@@ -201,8 +189,7 @@ object WidgetDataIO {
                     widget.inventoryIds = IntArray(widget.width * widget.height)
                     widget.inventoryAmounts = IntArray(widget.width * widget.height)
                     widget.centeredText = buffer.get().toInt() and 255 == 1
-                    font = buffer.get().toInt() and 255
-                    widget.fontIndex = font
+                    widget.fontIndex = buffer.get().toInt() and 255
 
                     widget.shadowedText = buffer.get().toInt() and 255 == 1
                     widget.defaultColour = buffer.int
@@ -211,13 +198,10 @@ object WidgetDataIO {
                     widget.hasActions = buffer.get().toInt() and 255 == 1
                     widget.actions = arrayOfNulls(5)
 
-                    index = 0
-                    while (index < 5) {
-                        widget.actions[index] = ByteBufferUtils.getString(buffer)
-                        if (widget.actions[index]!!.isEmpty()) {
-                            widget.actions[index] = null
-                        }
-                        index++
+                    for(action in 0 until 5) {
+                        widget.actions!![action] = ByteBufferUtils.getString(buffer)
+                        if (widget.actions!![action]!!.isEmpty())
+                            widget.actions!![action] = null
                     }
                 }
 
@@ -302,11 +286,11 @@ object WidgetDataIO {
             if (widget.group == WidgetData.TYPE_CONTAINER) {
                 buffer.writeShort(widget.scrollLimit)
                 buffer.writeByte(if (widget.hidden) 1 else 0)
-                buffer.writeShort(widget.children?.size ?: 0)
-                widget.children?.forEachIndexed { index, child ->
-                    buffer.writeShort(child)
-                    buffer.writeShort(widget.childX[index])
-                    buffer.writeShort(widget.childY[index])
+                buffer.writeShort(widget.kids?.size ?: 0)
+                widget.kids?.forEach { child ->
+                    buffer.writeShort(child.id)
+                    buffer.writeShort(child.x)
+                    buffer.writeShort(child.y)
                 }
             }
 
@@ -323,20 +307,20 @@ object WidgetDataIO {
                 buffer.writeByte(widget.spritePaddingX)
                 buffer.writeByte(widget.spritePaddingY)
 
-                widget.sprites.forEachIndexed { index, s ->
+                widget.sprites?.forEachIndexed { index, s ->
                     buffer.writeByte(if (s == null) 0 else 1)
                     if (s != null) {
-                        buffer.writeShort(widget.spriteX[index])
-                        buffer.writeShort(widget.spriteY[index])
+                        buffer.writeShort(widget.spriteX!![index])
+                        buffer.writeShort(widget.spriteY!![index])
 
-                        if (widget.spritesArchive[index] == null && widget.spritesIndex[index] == null)
+                        if (widget.spritesArchive!![index] == null && widget.spritesIndex!![index] == null)
                             buffer.writeString("")
                         else
-                            buffer.writeString("${widget.spritesArchive[index]},${widget.spritesIndex[index]}")
+                            buffer.writeString("${widget.spritesArchive!![index]},${widget.spritesIndex!![index]}")
                     }
                 }
 
-                widget.actions.forEach { buffer.writeString(it ?: "") }
+                widget.actions?.forEach { buffer.writeString(it ?: "") }
             }
 
             if (widget.group == WidgetData.TYPE_RECTANGLE) {
@@ -350,8 +334,8 @@ object WidgetDataIO {
             }
 
             if (widget.group == WidgetData.TYPE_TEXT) {
-                buffer.writeString(widget.defaultText)
-                buffer.writeString(widget.secondaryText)
+                buffer.writeString(widget.defaultText!!)
+                buffer.writeString(widget.secondaryText!!)
             }
 
             if (widget.group == WidgetData.TYPE_MODEL_LIST || widget.group == WidgetData.TYPE_RECTANGLE || widget.group == WidgetData.TYPE_TEXT) {
@@ -420,12 +404,12 @@ object WidgetDataIO {
                 buffer.writeShort(widget.spritePaddingY)
                 buffer.writeByte(if (widget.hasActions) 1 else 0)
 
-                widget.actions.forEach { buffer.writeString(it ?: "") }
+                widget.actions?.forEach { buffer.writeString(it ?: "") }
             }
 
             if (widget.optionType == WidgetData.OPTION_USABLE || widget.group == WidgetData.TYPE_INVENTORY) {
-                buffer.writeString(widget.optionCircumfix)
-                buffer.writeString(widget.optionText)
+                buffer.writeString(widget.optionCircumfix!!)
+                buffer.writeString(widget.optionText!!)
                 buffer.writeShort(widget.optionAttributes)
             }
 

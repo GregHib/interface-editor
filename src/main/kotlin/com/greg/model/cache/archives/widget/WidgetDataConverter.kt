@@ -1,7 +1,6 @@
 package com.greg.model.cache.archives.widget
 
 import com.greg.controller.utils.ColourUtils
-import com.greg.model.cache.archives.ArchiveInterface
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.type.*
@@ -13,6 +12,9 @@ import tornadofx.observable
 object WidgetDataConverter {
     fun toData(widget: Widget): WidgetData {
         val data = WidgetData(widget.identifier)
+
+        data.x = widget.getX()
+        data.y = widget.getY()
 
         data.parent = widget.getParent()
         data.group = widget.type.ordinal
@@ -30,17 +32,7 @@ object WidgetDataConverter {
         if (widget is WidgetContainer) {
             data.scrollLimit = widget.getScrollLimit()
             data.hidden = widget.isHidden()
-
-            val size = widget.getChildren().size
-            data.children = IntArray(size)
-            data.childX = IntArray(size)
-            data.childY = IntArray(size)
-
-            widget.getChildren().forEachIndexed { index, widget ->
-                data.children!![index] = widget.identifier
-                data.childX[index] = widget.getX()
-                data.childY[index] = widget.getY()
-            }
+            data.kids = widget.getChildren().map { it.toData() }.toTypedArray()
         }
 
         if (widget is WidgetInventory) {
@@ -129,11 +121,11 @@ object WidgetDataConverter {
         return data
     }
 
-    private fun create(data: WidgetData, childX: Int, childY: Int): Widget {
-        val widget = WidgetBuilder(WidgetType.values()[data.group]).build(data.id)
-
+    fun setData(widget: Widget, data: WidgetData) {
         widget.setParent(data.parent)
 
+        widget.setX(data.x)
+        widget.setY(data.y)
         widget.setOptionType(data.optionType)
         widget.setContentType(data.contentType)
         widget.setWidth(data.width)
@@ -152,7 +144,6 @@ object WidgetDataConverter {
         if(widget is WidgetContainer) {
             widget.setScrollLimit(data.scrollLimit)
             widget.setHidden(data.hidden)
-            widget.setChildren(toChildren(data).observable())
         }
 
         if (widget is WidgetInventory) {
@@ -163,13 +154,13 @@ object WidgetDataConverter {
             widget.setSpritePaddingX(data.spritePaddingX)
             widget.setSpritePaddingY(data.spritePaddingY)
 
-            widget.setSpriteX(data.spriteX)
-            widget.setSpriteY(data.spriteY)
-            widget.setSprites(data.sprites)
-            widget.setSpritesArchive(data.spritesArchive)
-            widget.setSpritesIndex(data.spritesIndex)
+            widget.setSpriteX(data.spriteX!!)
+            widget.setSpriteY(data.spriteY!!)
+            widget.setSprites(data.sprites!!)
+            widget.setSpritesArchive(data.spritesArchive!!)
+            widget.setSpritesIndex(data.spritesIndex!!)
 
-            widget.setActions(data.actions)
+            widget.setActions(data.actions!!)
         }
 
         if (widget is WidgetRectangle) {
@@ -183,8 +174,8 @@ object WidgetDataConverter {
         }
 
         if (widget is WidgetText) {
-            widget.setDefaultText(data.defaultText)
-            widget.setSecondaryText(data.secondaryText)
+            widget.setDefaultText(data.defaultText!!)
+            widget.setSecondaryText(data.secondaryText!!)
         }
 
         if ((widget is WidgetModelList || widget is WidgetRectangle || widget is WidgetText)&& widget is GroupColour) {
@@ -234,39 +225,34 @@ object WidgetDataConverter {
             widget.setSpritePaddingX(data.spritePaddingX)
             widget.setSpritePaddingY(data.spritePaddingY)
             widget.setHasActions(data.hasActions)
-            widget.setActions(data.actions)
+            widget.setActions(data.actions!!)
         }
 
         if (widget.getOptionType() == WidgetData.OPTION_USABLE || widget is WidgetInventory) {
-            widget.setOptionCircumfix(data.optionCircumfix)
-            widget.setOptionText(data.optionText)
+            widget.setOptionCircumfix(data.optionCircumfix!!)
+            widget.setOptionText(data.optionText!!)
             widget.setOptionAttributes(data.optionAttributes)
         }
 
         if (widget.getOptionType() == WidgetData.OPTION_OK || widget.getOptionType() == WidgetData.OPTION_TOGGLE_SETTING || widget.getOptionType() == WidgetData.OPTION_RESET_SETTING || widget.getOptionType() == WidgetData.OPTION_CONTINUE) {
             widget.setHover(data.hover)
         }
+    }
 
-        widget.setX(childX)
-        widget.setY(childY)
+    fun create(data: WidgetData): Widget {
+        val widget = WidgetBuilder(WidgetType.values()[data.group]).build(data.id)
+
+        setData(widget, data)
+        if(widget is WidgetContainer) {
+            val children = toChildren(data)
+            if(children != null)
+                widget.setChildren(children.observable())
+        }
 
         return widget
     }
 
-    private fun toChildren(parent: WidgetData): ArrayList<Widget> {
-        val children = arrayListOf<Widget>()
-
-        val len = parent.children?.size ?: return children
-
-        for (id in 0 until len) {
-            val data = ArchiveInterface.lookup(parent.children!![id]) ?: continue
-
-            children.add(create(data, parent.childX[id], parent.childY[id]))
-        }
-        return children
-    }
-
-    fun toChildren(parent: WidgetData, x: Int = 0, y: Int = 0): Widget {
-        return create(parent, x, y)
+    private fun toChildren(parent: WidgetData): ArrayList<Widget>? {
+        return parent.kids?.map { create(it) }?.toCollection(ArrayList())
     }
 }

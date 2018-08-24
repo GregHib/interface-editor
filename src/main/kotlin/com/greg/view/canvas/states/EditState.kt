@@ -14,7 +14,7 @@ import javafx.scene.input.MouseEvent
 
 class EditState(private val view: CanvasView, private var widget: Widget, shape: WidgetShape, val widgets: WidgetsController, canvas: PannableCanvas) : CanvasState {
 
-    private val start = widget.getMemento()
+    private val start = widget.toJson()
     private var resize = ResizeBox(widget, canvas, widgets)
 
     init {
@@ -81,7 +81,7 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
         when (event.code.ordinal) {
             Settings.getInt(Settings.ACCEPT_KEY_CODE) -> close()
             Settings.getInt(Settings.CANCEL_KEY_CODE) -> {
-                widget.restore(start)
+                widget.fromJson(start)
                 close()
             }
         }

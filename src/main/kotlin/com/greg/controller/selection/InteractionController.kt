@@ -1,74 +1,14 @@
 package com.greg.controller.selection
 
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.widgets.WidgetBuilder
+import com.greg.model.cache.archives.widget.WidgetData
+import com.greg.model.cache.archives.widget.WidgetDataConverter
 import com.greg.model.widgets.WidgetType
-import com.greg.model.widgets.memento.Memento
-import com.greg.model.widgets.memento.MementoString
 import com.greg.model.widgets.type.Widget
-import com.greg.model.widgets.type.WidgetContainer
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
-import tornadofx.observable
 
 class InteractionController(val widgets: WidgetsController) {
-
-    private fun createWidget(container: String): Widget {
-        val name = MementoString.getType(container)
-        val list = MementoString.getVariables(container)
-
-        //Create a memento using data
-        val memento = Memento(WidgetType.valueOf(name))
-        println("Create widget: $list")//TODO fix list containing $'s? not children?
-        memento.addAll(list)//TODO what if memento has children?
-
-        //Create widget of the corresponding type
-        val widget = WidgetBuilder(memento.type).build()
-
-        widget.restore(memento)
-
-        return widget
-    }
-
-    private fun createChildren(index: Int, containers: ArrayList<String>): Widget {
-        val container = containers[index]
-        val values = MementoString.getVariables(container)
-
-        //create widget
-        val widget = createWidget(container)
-
-        if (widget is WidgetContainer) {
-            widget.setChildren(values
-                    .filter { it.startsWith("\$") }
-                    .map {
-                        val childIndex = it.substring(1).toInt()
-                        createChildren(childIndex, containers)
-                    }.observable()
-            )
-        }
-        /*
-        for every index in the array
-
-        get container using index
-
-        get container values
-
-        create widget
-
-        for every value
-
-        if value is an index {
-            call this method (returns children)
-
-            add children to widget
-        }
-
-        return widget
-
-
-         */
-        return widget
-    }
 
     fun paste() {
         val clipboard = Clipboard.getSystemClipboard()
@@ -84,61 +24,20 @@ class InteractionController(val widgets: WidgetsController) {
         //Clear the current selection
         widgets.clearSelection()
 
-        val widgetMap = mutableMapOf<Widget, Memento>()
+        val widgetMap = mutableMapOf<Widget, WidgetData>()
 
         //For each line
         for (line in lines) {
 
-            val name = MementoString.getType(line)
-
-            if (!isWidget(name))
-                error("Error processing paste line: $line")
-
-            val type = WidgetType.valueOf(name)
-
-            if (type == WidgetType.CONTAINER && MementoString.hasArray(line)) {
-                val array = MementoString.extractArray(line)
-
-                val containers = MementoString.extractContainers(array)
-
-                val final = MementoString.replaceContainers(array, containers)
-
-                val list = MementoString.getVariables(line)
-
-                val children = final.split(", ").map { createChildren(it.substring(1).toInt(), containers) }
-
-                //Create a memento using data
-                val memento = Memento(type)
-                memento.addAll(list)
-
-                //Create widget of the corresponding type
-                val widget = WidgetBuilder(memento.type).build()
-
-                (widget as? WidgetContainer)?.setChildren(children.observable())
-
-                //Add to the list
-                widgetMap[widget] = memento
-            } else if (MementoString.hasFormat(line)) {
-                val list = MementoString.getVariables(line)
-
-                //Create a memento using data
-                val memento = Memento(WidgetType.valueOf(name))
-                memento.addAll(list)
-
-                //Create widget of the corresponding type
-                val widget = WidgetBuilder(memento.type).build()
-
-                //Add to the list
-                widgetMap[widget] = memento
-            }
+            //TODO serialize w/children
         }
 
         //Display all widgets at once
         widgets.addAll(widgetMap.keys.toTypedArray())
 
-        //Apply memento & selections
-        widgetMap.forEach { widget, memento ->
-            widget.restore(memento)
+        //Apply data & selections
+        widgetMap.forEach { widget, data ->
+            widget.fromData(data)
             if (!widget.isSelected())
                 widget.setSelected(true, false)
         }
@@ -151,7 +50,7 @@ class InteractionController(val widgets: WidgetsController) {
         val clipboard = Clipboard.getSystemClipboard()
 
         //Convert selected widget's into a string of attribute values
-        val array = widgets.getSelection().map { it.getMemento().toString() }
+        val array = widgets.getSelection().map { it.toJson() }
 
 
         //Set the clipboard
@@ -163,15 +62,14 @@ class InteractionController(val widgets: WidgetsController) {
     }
 
     fun clone() {
+        //TODO fix cloning children in containers
         val list = widgets.get().filter { it.isSelected() }
 
         WidgetsController.selection.removeAll(list)
 
         val clones = list.map { widget ->
-            val memento = widget.getMemento()
-            val clone = WidgetBuilder(memento.type).build()
+            val clone = WidgetDataConverter.create(widget.toData())
             widget.setSelected(false, false)
-            clone.restore(memento)
             clone.setSelected(true, false)
             clone
         }

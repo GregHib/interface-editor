@@ -1,69 +1,164 @@
 package com.greg.model.cache.archives.widget
 
-import com.greg.model.cache.archives.font.Font
-
 class WidgetData(var id: Int) {
-    lateinit var actions: Array<String?>
-    var alpha: Byte = 0
-    var centeredText: Boolean = false
-    var children: IntArray? = null
-    lateinit var childX: IntArray
-    lateinit var childY: IntArray
-    var contentType: Int = 0
-    var defaultAnimationId: Int = 0
-    var defaultColour: Int = 0
-    var defaultHoverColour: Int = 0
-    var defaultMedia: Int = 0
-    var defaultMediaType: Int = 0
-    var defaultSpriteArchive: String? = null
-    var defaultSpriteIndex: Int? = null
-    lateinit var defaultText: String
-    var filled: Boolean = false
-    lateinit var font: Font
-    var fontIndex: Int = 0
-    var group: Int = 0
-    var hasActions: Boolean = false
-    var height: Int = 0
-    var hidden: Boolean = false
-    lateinit var hover: String
-    var hoverId: Int = 0
-    lateinit var inventoryAmounts: IntArray
-    lateinit var inventoryIds: IntArray
-    var optionAttributes: Int = 0
-    lateinit var optionCircumfix: String
-    lateinit var optionText: String
-    var optionType: Int = 0
+
+    //Default
+    var x: Int = 0
+    var y: Int = 0
     var parent: Int = 0
-    var replaceItems: Boolean = false
+    var group: Int = 0
+    var optionType: Int = 0
+    var contentType: Int = 0
+    var width: Int = 0
+    var height: Int = 0
+    var alpha: Byte = 0
+    var hoverId: Int = 0
     var scriptDefaults: IntArray? = null
     var scriptOperators: IntArray? = null
     var scripts: Array<IntArray?>? = null
+
+    //Container
     var scrollLimit: Int = 0
-    var secondaryAnimationId: Int = 0
+    var hidden: Boolean = false
+
+    //Actions
+    var hasActions: Boolean = false
+    var actions: Array<String?>? = null
+
+    //Appearance
+    var centeredText: Boolean = false
+    var fontIndex: Int = 0
+    var shadowedText: Boolean = false
+
+    //Children
+    @Transient var children: IntArray? = null
+    @Transient var childX: IntArray? = null
+    @Transient var childY: IntArray? = null
+    var kids: Array<WidgetData>? = null
+
+    //Colour
+    var defaultColour: Int = 0
+
+    //Colours
+    var defaultHoverColour: Int = 0
     var secondaryColour: Int = 0
     var secondaryHoverColour: Int = 0
-    var secondaryMedia: Int = 0
-    var secondaryMediaType: Int = 0
-    var secondarySpriteArchive: String? = null
-    var secondarySpriteIndex: Int? = null
-    lateinit var secondaryText: String
-    var shadowedText: Boolean = false
-    var spritePaddingX: Int = 0
-    var spritePaddingY: Int = 0
-    var spritePitch: Int = 0
-    var spriteRoll: Int = 0
-    lateinit var spritesArchive: Array<String?>
-    lateinit var sprites: Array<String?>
-    lateinit var spritesIndex: Array<Int?>
-    var spriteScale: Int = 0
-    lateinit var spriteX: IntArray
-    lateinit var spriteY: IntArray
+
+    //Hover
+    var hover: String = ""
+
+    //Inventory
     var swappableItems: Boolean = false
     var usableItems: Boolean = false
-    var width: Int = 0
+    var replaceItems: Boolean = false
+    var spriteX: IntArray? = null
+    var spriteY: IntArray? = null
+    var spritesIndex: Array<Int?>? = null
+    var spritesArchive: Array<String?>? = null
+    var sprites: Array<String?>? = null
+    var inventoryIds: IntArray? = null
+    var inventoryAmounts: IntArray? = null
+
+    //Rectangle
+    var filled: Boolean = false
+
+    //Model
+    var defaultMediaType: Int = 0
+    var defaultMedia: Int = 0
+    var secondaryMediaType: Int = 0
+    var secondaryMedia: Int = 0
+    var defaultAnimationId: Int = 0
+    var secondaryAnimationId: Int = 0
+    var spriteScale: Int = 0
+    var spritePitch: Int = 0
+    var spriteRoll: Int = 0
+
+    //Options
+    var optionAttributes: Int = 0
+    var optionText: String? = ""
+    var optionCircumfix: String? = ""
+
+    //Padding
+    var spritePaddingX: Int = 0
+    var spritePaddingY: Int = 0
+
+    //Sprite
+    var defaultSpriteIndex: Int? = null
+    var defaultSpriteArchive: String? = null
+    var secondarySpriteIndex: Int? = null
+    var secondarySpriteArchive: String? = null
+
+    //Text
+    var defaultText: String? = ""
+    var secondaryText: String? = ""
 
     override fun toString(): String {
         return Integer.toString(this.id)
+    }
+
+    fun clone(): WidgetData {
+        val data = WidgetData(id)
+        data.x = x
+        data.y = y
+        data.parent = parent
+        data.group = group
+        data.optionType = optionType
+        data.contentType = contentType
+        data.width = width
+        data.height = height
+        data.alpha = alpha
+        data.hoverId = hoverId
+        data.scriptDefaults = scriptDefaults
+        data.scriptOperators = scriptOperators
+        data.scripts = scripts
+        data.scrollLimit = scrollLimit
+        data.hidden = hidden
+        data.hasActions = hasActions
+        data.actions = actions
+        data.centeredText = centeredText
+        data.fontIndex = fontIndex
+        data.shadowedText = shadowedText
+        data.children = children
+        data.childX = childX
+        data.childY = childY
+        data.kids = kids
+        data.defaultColour = defaultColour
+        data.defaultHoverColour = defaultHoverColour
+        data.secondaryColour = secondaryColour
+        data.secondaryHoverColour = secondaryHoverColour
+        data.hover = hover
+        data.swappableItems = swappableItems
+        data.usableItems = usableItems
+        data.replaceItems = replaceItems
+        data.spriteX = spriteX
+        data.spriteY = spriteY
+        data.spritesIndex = spritesIndex
+        data.spritesArchive = spritesArchive
+        data.sprites = sprites
+        data.inventoryIds = inventoryIds
+        data.inventoryAmounts = inventoryAmounts
+        data.filled = filled
+        data.defaultMediaType = defaultMediaType
+        data.defaultMedia = defaultMedia
+        data.secondaryMediaType = secondaryMediaType
+        data.secondaryMedia = secondaryMedia
+        data.defaultAnimationId = defaultAnimationId
+        data.secondaryAnimationId = secondaryAnimationId
+        data.spriteScale = spriteScale
+        data.spritePitch = spritePitch
+        data.spriteRoll = spriteRoll
+        data.optionAttributes = optionAttributes
+        data.optionText = optionText
+        data.optionCircumfix = optionCircumfix
+        data.spritePaddingX = spritePaddingX
+        data.spritePaddingY = spritePaddingY
+        data.defaultSpriteIndex = defaultSpriteIndex
+        data.defaultSpriteArchive = defaultSpriteArchive
+        data.secondarySpriteIndex = secondarySpriteIndex
+        data.secondarySpriteArchive = secondarySpriteArchive
+        data.defaultText = defaultText
+        data.secondaryText = secondaryText
+        return data
     }
 
     companion object {
