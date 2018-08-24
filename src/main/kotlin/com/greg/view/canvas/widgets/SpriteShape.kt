@@ -44,6 +44,8 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
                     layoutY = sprite.offsetY.toDouble()
                 }
             }
+        } else {
+            displayImage(null)
         }
     }
 
@@ -91,15 +93,15 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
         return secondarySprite!!
     }
 
-    private fun displayImage(bufferedImage: BufferedImage) {
-        image.fitWidth = bufferedImage.width.toDouble()
-        image.fitHeight = bufferedImage.height.toDouble()
+    private fun displayImage(bufferedImage: BufferedImage?) {
+        image.fitWidth = (bufferedImage?.width ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH)).toDouble()
+        image.fitHeight = (bufferedImage?.height ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT)).toDouble()
         image.isPreserveRatio = true
 
-        image.image = resample(bufferedImage)
+        image.image = if(bufferedImage != null) resample(bufferedImage) else null
 
-        outline.width = bufferedImage.width.toDouble()
-        outline.height = bufferedImage.height.toDouble()
+        outline.width = (bufferedImage?.width ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH)).toDouble()
+        outline.height = (bufferedImage?.height ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT)).toDouble()
     }
 
     fun updateArchive(widget: WidgetSprite, archiveName: String, default: Boolean) {
