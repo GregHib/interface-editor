@@ -101,9 +101,8 @@ object WidgetDataIO {
                     widget.actions = arrayOfNulls(5)
 
                     for(actionIndex in 0 until 5) {
-                        widget.actions!![actionIndex] = ByteBufferUtils.getString(buffer)
-                        if (widget.actions!![actionIndex]!!.isEmpty())
-                            widget.actions!![actionIndex] = null
+                        val action = ByteBufferUtils.getString(buffer)
+                        widget.actions!![actionIndex] = if(action.isNotEmpty()) action else null
                     }
                 }
 
@@ -185,10 +184,9 @@ object WidgetDataIO {
                     widget.hasActions = buffer.get().toInt() and 255 == 1
                     widget.actions = arrayOfNulls(5)
 
-                    for(action in 0 until 5) {
-                        widget.actions!![action] = ByteBufferUtils.getString(buffer)
-                        if (widget.actions!![action]!!.isEmpty())
-                            widget.actions!![action] = null
+                    for(actionIndex in 0 until 5) {
+                        val action = ByteBufferUtils.getString(buffer)
+                        widget.actions!![actionIndex] = if(action.isNotEmpty()) action else null
                     }
                 }
 
