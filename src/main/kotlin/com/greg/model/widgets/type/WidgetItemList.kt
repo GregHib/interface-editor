@@ -1,5 +1,6 @@
 package com.greg.model.widgets.type
 
+import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
@@ -19,8 +20,8 @@ class WidgetItemList(builder: WidgetBuilder, id: Int) : Widget(builder, id), Gro
     override var defaultColour: ObjProperty<Color>? = null
     override var spritePaddingX: IntProperty? = null
     override var spritePaddingY: IntProperty? = null
-    override var hasActions: BoolProperty? = null
-    override var actions: ObjProperty<Array<String?>>? = null
+    override var hasActions = BoolProperty(this, "hasActions", Settings.getBoolean(Settings.DEFAULT_HAS_ACTIONS))
+    override var actions: ObjProperty<Array<String?>> = ObjProperty(this, "actions", arrayOfNulls(0))
 
     init {
         properties.add(centredProperty())
@@ -29,7 +30,7 @@ class WidgetItemList(builder: WidgetBuilder, id: Int) : Widget(builder, id), Gro
         properties.add(defaultColourProperty())
         properties.add(spritePaddingXProperty())
         properties.add(spritePaddingYProperty())
-        properties.add(hasActionsProperty())
+        properties.add(hasActions)
     }
 
 }

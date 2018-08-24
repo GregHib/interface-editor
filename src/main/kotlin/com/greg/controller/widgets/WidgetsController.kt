@@ -337,19 +337,19 @@ class WidgetsController : Controller() {
             }
         } else if (widget is WidgetSprite && shape is SpriteShape) {
             shape.flip = WidgetScripts.scriptStateChanged(widget)
-            shape.defaultSpriteProperty().bind(widget.defaultSpriteProperty())
-            shape.defaultArchiveProperty().bind(widget.defaultSpriteArchiveProperty())
-            shape.secondarySpriteProperty().bind(widget.secondarySpriteProperty())
-            shape.secondaryArchiveProperty().bind(widget.secondarySpriteArchiveProperty())
+            shape.defaultSpriteProperty().bind(widget.defaultSprite)
+            shape.defaultArchiveProperty().bind(widget.defaultSpriteArchive)
+            shape.secondarySpriteProperty().bind(widget.secondarySprite)
+            shape.secondaryArchiveProperty().bind(widget.secondarySpriteArchive)
 
             //Update archive values
             shape.updateArchive(widget, widget.getDefaultSpriteArchive(), true)
-            widget.defaultSpriteArchiveProperty().addListener { _, oldValue, newValue ->
+            widget.defaultSpriteArchive.addListener { _, oldValue, newValue ->
                 if (oldValue != newValue)
                     shape.updateArchive(widget, newValue, true)
             }
             shape.updateArchive(widget, widget.getSecondarySpriteArchive(), false)
-            widget.secondarySpriteArchiveProperty().addListener { _, oldValue, newValue ->
+            widget.secondarySpriteArchive.addListener { _, oldValue, newValue ->
                 if (oldValue != newValue)
                     shape.updateArchive(widget, newValue, false)
             }

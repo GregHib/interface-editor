@@ -5,28 +5,14 @@ import com.greg.model.widgets.properties.extended.ObjProperty
 
 interface GroupActions {
 
-    var hasActions: BoolProperty?
-    var actions: ObjProperty<Array<String?>>?
+    var hasActions: BoolProperty
+    var actions: ObjProperty<Array<String?>>
 
-    fun setHasActions(value: Boolean) { hasActionsProperty().set(value) }
+    fun setHasActions(value: Boolean) { hasActions.set(value) }
 
-    fun hasActions(): Boolean { return hasActionsProperty().get() }
+    fun hasActions(): Boolean { return hasActions.get() }
 
-    fun hasActionsProperty(): BoolProperty {
-        if (hasActions == null)
-            hasActions = BoolProperty(this, "hasActions", false)
+    fun setActions(value: Array<String?>) { actions.set(value) }
 
-        return hasActions!!
-    }
-
-    fun setActions(value: Array<String?>) { actionsProperty().set(value) }
-
-    fun getActions(): Array<String?> { return actionsProperty().get() }
-
-    fun actionsProperty(): ObjProperty<Array<String?>> {
-        if (actions == null)
-            actions = ObjProperty(this, "actions", arrayOfNulls(0))
-
-        return actions!!
-    }
+    fun getActions(): Array<String?> { return actions.get() }
 }
