@@ -6,7 +6,7 @@ import com.greg.model.widgets.properties.extended.ObjProperty
 interface GroupInventory {
 
     var swappableItems: BoolProperty?
-    var useableItems: BoolProperty?
+    var usableItems: BoolProperty?
     var replaceItems: BoolProperty?
     var spriteX: ObjProperty<IntArray>?
     var spriteY: ObjProperty<IntArray>?
@@ -29,10 +29,10 @@ interface GroupInventory {
     fun hasUsableItems(): Boolean { return useableItemsProperty().get() }
 
     fun useableItemsProperty(): BoolProperty {
-        if (useableItems == null)
-            useableItems = BoolProperty(this, "useableItems", false)
+        if (usableItems == null)
+            usableItems = BoolProperty(this, "usableItems", false)
 
-        return useableItems!!
+        return usableItems!!
     }
 
     fun setReplaceItems(value: Boolean) { replaceItemsProperty().set(value) }

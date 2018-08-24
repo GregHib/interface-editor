@@ -12,7 +12,7 @@ class WidgetInventory(builder: WidgetBuilder, id: Int) : Widget(builder, id), Gr
     override var hasActions: BoolProperty? = null
     override var actions: ObjProperty<Array<String?>>? = null
     override var swappableItems: BoolProperty? = null
-    override var useableItems: BoolProperty? = null
+    override var usableItems: BoolProperty? = null
     override var replaceItems: BoolProperty? = null
     override var spritePaddingX: IntProperty? = null
     override var spritePaddingY: IntProperty? = null
