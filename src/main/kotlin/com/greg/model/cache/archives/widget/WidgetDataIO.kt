@@ -89,18 +89,13 @@ object WidgetDataIO {
                     widget.replaceItems = buffer.get().toInt() and 255 == 1
                     widget.spritePaddingX = buffer.get().toInt() and 255
                     widget.spritePaddingY = buffer.get().toInt() and 255
-                    widget.spriteX = IntArray(20)
-                    widget.spriteY = IntArray(20)
                     widget.sprites = arrayOfNulls(20)
 
                     var index: Int
                     for(spriteIndex in 0 until 20) {
                         index = buffer.get().toInt() and 255
-                        if (index == 1) {
-                            widget.spriteX!![spriteIndex] = buffer.short.toInt()
-                            widget.spriteY!![spriteIndex] = buffer.short.toInt()
-                            widget.sprites!![spriteIndex] = ByteBufferUtils.getString(buffer)
-                        }
+                        if (index == 1)
+                            widget.sprites!![spriteIndex] = SpriteData(buffer.short.toInt(), buffer.short.toInt(), ByteBufferUtils.getString(buffer))
                     }
 
                     widget.actions = arrayOfNulls(5)
@@ -305,9 +300,9 @@ object WidgetDataIO {
                     buffer.writeByte(if (sprite != null) 1 else 0)
 
                     if(sprite != null) {
-                        buffer.writeShort(widget.spriteX!![index])
-                        buffer.writeShort(widget.spriteY!![index])
-                        buffer.writeString(sprite)
+                        buffer.writeShort(sprite.x)
+                        buffer.writeShort(sprite.y)
+                        buffer.writeString(sprite.name)
                     }
                 }
 

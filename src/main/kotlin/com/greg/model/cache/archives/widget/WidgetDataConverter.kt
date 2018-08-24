@@ -42,10 +42,11 @@ object WidgetDataConverter {
             data.replaceItems = widget.isReplaceItems()
             data.spritePaddingX = widget.getSpritePaddingX()
             data.spritePaddingY = widget.getSpritePaddingY()
-
-            data.spriteX = widget.getSpriteX()
-            data.spriteY = widget.getSpriteY()
-            data.sprites = widget.getSpritesArchive().mapIndexed { index, archive -> if(archive != null) "$archive,${widget.getSpritesIndex()[index]}" else null }.toTypedArray()
+            data.sprites = widget.getSpritesArchive().mapIndexed { index, archive ->
+                if(archive != null)
+                SpriteData(widget.getSpriteX()[index], widget.getSpriteY()[index], "$archive,${widget.getSpritesIndex()[index]}")
+                else null
+            }.toTypedArray()
             data.actions = widget.getActions()
         }
 
@@ -152,12 +153,18 @@ object WidgetDataConverter {
             widget.setSpritePaddingX(data.spritePaddingX)
             widget.setSpritePaddingY(data.spritePaddingY)
 
-            widget.setSpriteX(data.spriteX!!)
-            widget.setSpriteY(data.spriteY!!)
             val sprites = data.sprites
             if(sprites != null) {
-                widget.setSpritesArchive(sprites.map { if (it != null && it.isNotEmpty()) it.substring(0, it.lastIndexOf(",")) else null }.toTypedArray())
-                widget.setSpritesIndex(sprites.map { if (it != null && it.isNotEmpty()) Integer.parseInt(it.substring(it.lastIndexOf(",") + 1)) else null }.toTypedArray())
+                widget.setSpriteX(sprites.map { sprite -> sprite?.x ?: 0 }.toIntArray())
+                widget.setSpriteY(sprites.map { sprite -> sprite?.y ?: 0 }.toIntArray())
+                widget.setSpritesArchive(sprites.map { sprite ->
+                    val name = sprite?.name ?: return@map null
+                    if (name.isNotEmpty()) name.substring(0, name.lastIndexOf(",")) else null
+                }.toTypedArray())
+                widget.setSpritesIndex(sprites.map { sprite ->
+                    val name = sprite?.name ?: return@map null
+                    if (name.isNotEmpty()) Integer.parseInt(name.substring(name.lastIndexOf(",") + 1)) else null
+                }.toTypedArray())
             }
 
             widget.setActions(data.actions!!)

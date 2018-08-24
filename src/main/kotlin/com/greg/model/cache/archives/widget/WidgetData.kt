@@ -51,9 +51,7 @@ class WidgetData(var id: Int) {
     var swappableItems: Boolean = false
     var usableItems: Boolean = false
     var replaceItems: Boolean = false
-    var spriteX: IntArray? = null
-    var spriteY: IntArray? = null
-    var sprites: Array<String?>? = null
+    var sprites: Array<SpriteData?>? = null
     var inventoryIds: IntArray? = null
     var inventoryAmounts: IntArray? = null
 
@@ -128,8 +126,6 @@ class WidgetData(var id: Int) {
         data.swappableItems = swappableItems
         data.usableItems = usableItems
         data.replaceItems = replaceItems
-        data.spriteX = spriteX
-        data.spriteY = spriteY
         data.sprites = sprites
         data.inventoryIds = inventoryIds
         data.inventoryAmounts = inventoryAmounts
