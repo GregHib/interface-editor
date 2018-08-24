@@ -43,11 +43,9 @@ object WidgetDataConverter {
             data.spritePaddingX = widget.getSpritePaddingX()
             data.spritePaddingY = widget.getSpritePaddingY()
 
-            data.sprites = widget.getSprites()
             data.spriteX = widget.getSpriteX()
             data.spriteY = widget.getSpriteY()
-            data.spritesArchive = widget.getSpritesArchive()
-            data.spritesIndex = widget.getSpritesIndex()
+            data.sprites = widget.getSpritesArchive().mapIndexed { index, archive -> if(archive != null) "$archive,${widget.getSpritesIndex()[index]}" else null }.toTypedArray()
             data.actions = widget.getActions()
         }
 
@@ -156,9 +154,11 @@ object WidgetDataConverter {
 
             widget.setSpriteX(data.spriteX!!)
             widget.setSpriteY(data.spriteY!!)
-            widget.setSprites(data.sprites!!)
-            widget.setSpritesArchive(data.spritesArchive!!)
-            widget.setSpritesIndex(data.spritesIndex!!)
+            val sprites = data.sprites
+            if(sprites != null) {
+                widget.setSpritesArchive(sprites.map { if (it != null && it.isNotEmpty()) it.substring(0, it.lastIndexOf(",")) else null }.toTypedArray())
+                widget.setSpritesIndex(sprites.map { if (it != null && it.isNotEmpty()) Integer.parseInt(it.substring(it.lastIndexOf(",") + 1)) else null }.toTypedArray())
+            }
 
             widget.setActions(data.actions!!)
         }

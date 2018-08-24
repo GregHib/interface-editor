@@ -18,7 +18,6 @@ class WidgetInventory(builder: WidgetBuilder, id: Int) : Widget(builder, id), Gr
     override var spritePaddingY: IntProperty? = null
     override var spriteX: ObjProperty<IntArray>? = null
     override var spriteY: ObjProperty<IntArray>? = null
-    override var sprites: ObjProperty<Array<String?>>? = null
     override var spritesArchive: ObjProperty<Array<String?>>? = null
     override var spritesIndex: ObjProperty<Array<Int?>>? = null
 

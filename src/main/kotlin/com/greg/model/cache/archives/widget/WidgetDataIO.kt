@@ -92,8 +92,6 @@ object WidgetDataIO {
                     widget.spriteX = IntArray(20)
                     widget.spriteY = IntArray(20)
                     widget.sprites = arrayOfNulls(20)
-                    widget.spritesArchive = arrayOfNulls(20)
-                    widget.spritesIndex = arrayOfNulls(20)
 
                     var index: Int
                     for(spriteIndex in 0 until 20) {
@@ -101,13 +99,7 @@ object WidgetDataIO {
                         if (index == 1) {
                             widget.spriteX!![spriteIndex] = buffer.short.toInt()
                             widget.spriteY!![spriteIndex] = buffer.short.toInt()
-                            val name = ByteBufferUtils.getString(buffer)
-                            widget.sprites!![spriteIndex] = name
-                            if (name.isNotEmpty()) {
-                                val position = name.lastIndexOf(",")
-                                widget.spritesArchive!![spriteIndex] = name.substring(0, position)
-                                widget.spritesIndex!![spriteIndex] = Integer.parseInt(name.substring(position + 1))
-                            }
+                            widget.sprites!![spriteIndex] = ByteBufferUtils.getString(buffer)
                         }
                     }
 
@@ -307,16 +299,15 @@ object WidgetDataIO {
                 buffer.writeByte(widget.spritePaddingX)
                 buffer.writeByte(widget.spritePaddingY)
 
-                widget.sprites?.forEachIndexed { index, s ->
-                    buffer.writeByte(if (s == null) 0 else 1)
-                    if (s != null) {
+                val sprites = widget.sprites
+                for(index in 0 until 20) {
+                    val sprite = if(sprites != null) sprites[index] else null
+                    buffer.writeByte(if (sprite != null) 1 else 0)
+
+                    if(sprite != null) {
                         buffer.writeShort(widget.spriteX!![index])
                         buffer.writeShort(widget.spriteY!![index])
-
-                        if (widget.spritesArchive!![index] == null && widget.spritesIndex!![index] == null)
-                            buffer.writeString("")
-                        else
-                            buffer.writeString("${widget.spritesArchive!![index]},${widget.spritesIndex!![index]}")
+                        buffer.writeString(sprite)
                     }
                 }
 
