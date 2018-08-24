@@ -64,12 +64,12 @@ object WidgetDataIO {
                     widget.scrollLimit = buffer.short.toInt() and 0xffff
                     widget.hidden = buffer.get().toInt() and 255 == 1
                     val count = buffer.short.toInt() and 0xffff
-                    widget.children = IntArray(count)
+                    widget.childIndices = IntArray(count)
                     widget.childX = IntArray(count)
                     widget.childY = IntArray(count)
 
                     for(child in 0 until count) {
-                        widget.children!![child] = buffer.short.toInt() and 0xffff
+                        widget.childIndices!![child] = buffer.short.toInt() and 0xffff
                         widget.childX!![child] = buffer.short.toInt()
                         widget.childY!![child] = buffer.short.toInt()
                     }
@@ -286,8 +286,8 @@ object WidgetDataIO {
             if (widget.group == WidgetData.TYPE_CONTAINER) {
                 buffer.writeShort(widget.scrollLimit)
                 buffer.writeByte(if (widget.hidden) 1 else 0)
-                buffer.writeShort(widget.kids?.size ?: 0)
-                widget.kids?.forEach { child ->
+                buffer.writeShort(widget.children?.size ?: 0)
+                widget.children?.forEach { child ->
                     buffer.writeShort(child.id)
                     buffer.writeShort(child.x)
                     buffer.writeShort(child.y)

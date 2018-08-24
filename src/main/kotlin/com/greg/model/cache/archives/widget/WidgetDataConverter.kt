@@ -32,7 +32,7 @@ object WidgetDataConverter {
         if (widget is WidgetContainer) {
             data.scrollLimit = widget.getScrollLimit()
             data.hidden = widget.isHidden()
-            data.kids = widget.getChildren().map { it.toData() }.toTypedArray()
+            data.children = widget.getChildren().map { it.toData() }.toTypedArray()
         }
 
         if (widget is WidgetInventory) {
@@ -253,6 +253,6 @@ object WidgetDataConverter {
     }
 
     private fun toChildren(parent: WidgetData): ArrayList<Widget>? {
-        return parent.kids?.map { create(it) }?.toCollection(ArrayList())
+        return parent.children?.map { create(it) }?.toCollection(ArrayList())
     }
 }

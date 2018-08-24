@@ -31,10 +31,10 @@ class WidgetData(var id: Int) {
     var shadowedText: Boolean = false
 
     //Children
-    @Transient var children: IntArray? = null
+    @Transient var childIndices: IntArray? = null
     @Transient var childX: IntArray? = null
     @Transient var childY: IntArray? = null
-    var kids: Array<WidgetData>? = null
+    var children: Array<WidgetData>? = null
 
     //Colour
     var defaultColour: Int = 0
@@ -118,10 +118,10 @@ class WidgetData(var id: Int) {
         data.centeredText = centeredText
         data.fontIndex = fontIndex
         data.shadowedText = shadowedText
-        data.children = children
+        data.childIndices = childIndices
         data.childX = childX
         data.childY = childY
-        data.kids = kids
+        data.children = children?.map { it.clone() }?.toTypedArray() ?: children
         data.defaultColour = defaultColour
         data.defaultHoverColour = defaultHoverColour
         data.secondaryColour = secondaryColour

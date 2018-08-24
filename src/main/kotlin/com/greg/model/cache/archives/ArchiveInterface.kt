@@ -87,12 +87,19 @@ class ArchiveInterface : CacheArchive() {
         val buffer = archive.readFile("data")
         var data = WidgetDataIO.read(buffer) ?: return false
 
+        //Children converted after as likely child.id > parent.id so child data wouldn't have been loaded
         data = convert(data)
 
         set(data)
         return true
     }
 
+    /**
+     * Converts widgetIndex, childX & childY arrays to WidgetData array
+     * Has to be called with complete list as child id is likely to be greater than parent id
+     * @param widgetsData Complete list of WidgetData
+     * @return widgetsData with children indices converted to WidgetData
+     */
     private fun convert(widgetsData: Array<WidgetData?>): Array<WidgetData?> {
         val widgetsList = widgetsData.filterNotNull().toTypedArray()
         //For all interfaces
@@ -101,21 +108,32 @@ class ArchiveInterface : CacheArchive() {
                 return@map widget
 
             //Convert child indices to actual WidgetData with children
-            if(widget.children != null && widget.children!!.isNotEmpty())
+            if(widget.childIndices != null && widget.childIndices!!.isNotEmpty())
                 convert(widgetsList, widget)
             else
                 widget
         }.toTypedArray()
     }
 
-    private fun convert(widgetData: Array<WidgetData>, child: WidgetData): WidgetData {
-        if(child.children != null && child.children!!.isNotEmpty()) {
-            child.kids = child.children!!.mapIndexed { index, i ->
-                val c = convert(widgetData, widgetData[i].clone())
+    /**
+     * Sub convert function, used for iteration any number of children of children etc..
+     * @param widgetsData Complete list of WidgetData
+     * @param child The WidgetData to convert
+     * @return child The WidgetData once children have been converted
+     */
+    private fun convert(widgetsData: Array<WidgetData>, child: WidgetData): WidgetData {
+        if(child.childIndices != null && child.childIndices!!.isNotEmpty()) {
+            child.children = child.childIndices!!.mapIndexed { index, i ->
+                val c = convert(widgetsData, widgetsData[i].clone())
                 c.x = child.childX!![index]
                 c.y = child.childY!![index]
                 c
             }.toTypedArray()
+
+            //Not necessary just a lil memory saving
+            child.childIndices = null
+            child.childX = null
+            child.childY = null
         }
         return child
     }
