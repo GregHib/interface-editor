@@ -24,7 +24,7 @@ class WidgetInventory(builder: WidgetBuilder, id: Int) : Widget(builder, id), Gr
     init {
         properties.add(swappableItemsProperty())
         properties.add(hasActionsProperty())
-        properties.add(useableItemsProperty())
+        properties.add(usableItemsProperty())
         properties.add(replaceItemsProperty())
         properties.add(spritePaddingXProperty())
         properties.add(spritePaddingYProperty())

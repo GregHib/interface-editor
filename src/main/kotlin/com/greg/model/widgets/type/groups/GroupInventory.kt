@@ -24,11 +24,11 @@ interface GroupInventory {
         return swappableItems!!
     }
 
-    fun setUsableItems(value: Boolean) { useableItemsProperty().set(value) }
+    fun setUsableItems(value: Boolean) { usableItemsProperty().set(value) }
 
-    fun hasUsableItems(): Boolean { return useableItemsProperty().get() }
+    fun hasUsableItems(): Boolean { return usableItemsProperty().get() }
 
-    fun useableItemsProperty(): BoolProperty {
+    fun usableItemsProperty(): BoolProperty {
         if (usableItems == null)
             usableItems = BoolProperty(this, "usableItems", false)
 
