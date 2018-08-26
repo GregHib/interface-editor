@@ -3,6 +3,7 @@ package com.greg.controller.selection
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.cache.archives.widget.WidgetData
 import com.greg.model.cache.archives.widget.WidgetDataConverter
+import com.greg.model.widgets.JsonSerializer
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.type.Widget
 import javafx.scene.input.Clipboard
@@ -24,26 +25,32 @@ class InteractionController(val widgets: WidgetsController) {
         //Clear the current selection
         widgets.clearSelection()
 
-        val widgetMap = mutableMapOf<Widget, WidgetData>()
+        val widgetList = arrayListOf<Widget>()
 
         //For each line
         for (line in lines) {
 
-            //TODO serialize w/children
+            val data = JsonSerializer.deserializer(line, WidgetData::class.java)
+
+            if(data == null) {
+                println("Error deserializing WidgetData $line")
+                continue
+            }
+
+            val widget = WidgetDataConverter.create(data)
+
+            //Apply selection
+            if (!widget.isSelected())
+                widget.setSelected(true, false)
+
+            widgetList.add(widget)
         }
 
         //Display all widgets at once
-        widgets.addAll(widgetMap.keys.toTypedArray())
-
-        //Apply data & selections
-        widgetMap.forEach { widget, data ->
-            widget.fromData(data)
-            if (!widget.isSelected())
-                widget.setSelected(true, false)
-        }
+        widgets.addAll(widgetList.toTypedArray())//TODO apply to parent if pasted on a container?
 
         //Select all widgets
-        WidgetsController.selection.addAll(widgetMap.keys)
+        WidgetsController.selection.addAll(widgetList)
     }
 
     fun copy() {

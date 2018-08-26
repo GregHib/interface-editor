@@ -4,6 +4,7 @@ import com.greg.controller.widgets.WidgetsController
 import com.greg.model.cache.archives.ArchiveFont
 import com.greg.model.cache.archives.ArchiveInterface
 import com.greg.model.cache.archives.ArchiveMedia
+import com.greg.model.widgets.WidgetBuilder
 import javafx.scene.control.Alert
 import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
@@ -99,6 +100,7 @@ class CacheController : Controller() {
             fonts.reset()
             loaded = false
         }
+        WidgetBuilder.identifier = 0
     }
 
 }

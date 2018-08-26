@@ -59,11 +59,13 @@ class MainView : View("Greg's Interface Editor") {
 
                     if(result.get() == ButtonType.OK) {
                         widgets.deleteAll()
+                        canvas.defaultState()
                         cache.interfaces.display(widgets, alert.value)
                     }
                 }
                 item("Unlink cache").action {
                     widgets.deleteAll()
+                    canvas.defaultState()
                     cache.unlink()
                 }
             }

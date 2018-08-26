@@ -4,6 +4,7 @@ import com.greg.model.widgets.type.Widget
 import com.greg.model.widgets.type.WidgetContainer
 import com.greg.view.canvas.widgets.WidgetShape
 import javafx.collections.ObservableList
+import tornadofx.move
 import tornadofx.observable
 
 open class WidgetsList {
@@ -13,25 +14,39 @@ open class WidgetsList {
         widgets.add(widget)
     }
 
-    fun addAll(vararg widget: Widget) {
-        widgets.addAll(widget)
+    fun add(index: Int, widget: Widget) {
+        widgets.add(index, widget)
     }
 
-    fun remove(widget: Widget) {
-        if(widgets.contains(widget))
+    fun addAll(index: Int, widgets: Collection<Widget>) {
+        this.widgets.addAll(index, widgets)
+    }
+
+    fun addAll(vararg widgets: Widget) {
+        this.widgets.addAll(widgets)
+    }
+
+    fun remove(widget: Widget): Boolean {
+        return if(widgets.contains(widget))
             widgets.remove(widget)
         else {
-            widgets.forEach { removeChild(it, widget) }
+            var removed = false//TODO always return true because something could've been removed?
+            widgets.forEach { removed = removed or !removeChild(it, widget) }
+            !removed
         }
     }
 
-    private fun removeChild(parent: Widget, toRemove: Widget) {
+    private fun removeChild(parent: Widget, toRemove: Widget): Boolean {
         if(parent is WidgetContainer) {
-            if(parent.getChildren().contains(toRemove))
+            return if(parent.getChildren().contains(toRemove))
                 parent.getChildren().remove(toRemove)
-            else
-                parent.getChildren().forEach { removeChild(it, toRemove) }
+            else {
+                var removed = false//TODO always return true because something could've been removed?
+                parent.getChildren().forEach { removed = removed or !removeChild(it, toRemove) }
+                !removed
+            }
         }
+        return false
     }
 
     private fun getChildren(widget: Widget): List<Widget> {
@@ -61,6 +76,14 @@ open class WidgetsList {
 
     fun get(): ObservableList<Widget> {
         return widgets
+    }
+
+    fun indexOf(widget: Widget): Int {
+        return widgets.indexOf(widget)
+    }
+
+    fun move(widget: Widget, index: Int) {
+        widgets.move(widget, index)
     }
 
     inline fun forEach(action: (Widget) -> Unit) {

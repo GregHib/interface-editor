@@ -86,7 +86,7 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, Gr
     }
 
     override fun toString(): String {
-        return toJson()
+        return "$type $identifier"//toJson()
     }
 
 }

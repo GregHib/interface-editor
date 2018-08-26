@@ -102,9 +102,8 @@ class CanvasView : View(), KeyInterface {
          */
 
         setOnDragOver { event ->
-            if (event.dragboard.hasString())
+            if (event.dragboard.hasString() && event.dragboard.string.isNotEmpty())
                 event.acceptTransferModes(TransferMode.MOVE)
-
             event.consume()
         }
 

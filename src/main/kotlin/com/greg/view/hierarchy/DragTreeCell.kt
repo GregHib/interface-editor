@@ -1,11 +1,10 @@
 package com.greg.view.hierarchy
 
+import com.greg.controller.widgets.WidgetsController.Companion.widgets
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.type.Widget
 import com.greg.model.widgets.type.WidgetContainer
 import javafx.event.EventHandler
-import javafx.event.EventTarget
-import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.control.TreeCell
 import javafx.scene.image.Image
@@ -17,7 +16,6 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import tornadofx.action
 import tornadofx.checkbox
-import tornadofx.move
 import tornadofx.pane
 
 class DragTreeCell : TreeCell<String>() {
@@ -32,24 +30,6 @@ class DragTreeCell : TreeCell<String>() {
             super.startEdit()
     }
 
-    private fun canDrop(cell: DragTreeCell): Boolean {
-        //Can drop if not part of the current selection & not root
-        val row = treeView.getRow(cell.treeItem)
-        return row != 0 && !treeView.selectionModel.selectedIndices.contains(row)
-    }
-
-    private fun getTreeItem(target: EventTarget): DragTreeCell {
-        var pal = target
-        for (i in 0..5) {
-            if (pal is DragTreeCell)
-                return pal
-
-            if (pal is Node)
-                pal = pal.parent
-        }
-        return target as DragTreeCell
-    }
-
     private fun setup() {
         if (setup)
             return
@@ -58,30 +38,30 @@ class DragTreeCell : TreeCell<String>() {
             if (item == null)
                 return@setOnDragDetected
 
-            val dragboard = startDragAndDrop(TransferMode.MOVE)
+            val board = startDragAndDrop(TransferMode.MOVE)
             val content = ClipboardContent()
 
             content.putString("")
 
-            dragboard.setContent(content)
+            board.setContent(content)
 
             event.consume()
         }
 
         setOnDragOver { event ->
-            if (canDrop(getTreeItem(event.target)) && event.dragboard.hasString())
+            if (event.dragboard.hasString() && event.dragboard.string.isEmpty())
                 event.acceptTransferModes(TransferMode.MOVE)
 
             event.consume()
         }
 
         setOnDragEntered { event ->
-            if (canDrop(getTreeItem(event.target)) && event.dragboard.hasString())
+            if (event.dragboard.hasString() && event.dragboard.string.isEmpty())
                 opacity = 0.3
         }
 
         setOnDragExited { event ->
-            if (canDrop(getTreeItem(event.target)) && event.dragboard.hasString())
+            if (event.dragboard.hasString() && event.dragboard.string.isEmpty())
                 opacity = 1.0
         }
 
@@ -96,41 +76,53 @@ class DragTreeCell : TreeCell<String>() {
 
             if (db.hasString()) {
 
-                val selected = treeView.selectionModel.selectedItems
                 val target = treeView.getTreeItem(index)
-                var targetIndex = -1
                 try {
                     //For multiple selections, reverse list and run for each
-                    selected.reversed().forEachIndexed { index, select ->
-                        if (select is HierarchyItem && target is HierarchyItem) {
-                            val targetWidget = target.widget
-                            if (targetWidget is WidgetContainer) {//If target is a container
-                                if (select.parent == target) {//if is in that container
-                                    val child = select.widget
-                                    val length = targetWidget.getChildren().size - 1
-                                    targetWidget.getChildren().move(child, length - index)//Move to end
-                                } else {
-                                    val parent = (select.parent as HierarchyItem).widget as WidgetContainer
-                                    val child = select.widget
-                                    if(parent.getChildren().remove(child))//Remove from current container
-                                        targetWidget.getChildren().add(targetWidget.getChildren().size - index, child)//Add to target container
-                                }
-                            } else {//If target isn't a container
-                                if (target.parent == select.parent) {//If target is in same container
-                                    val parent = (select.parent as HierarchyItem).widget as WidgetContainer
-                                    val reverse = parent.getChildren().indexOf(target.widget) < parent.getChildren().indexOf(select.widget)
-                                    if(targetIndex == -1)
-                                        targetIndex = parent.getChildren().indexOf(target.widget)
-                                    parent.getChildren().move(select.widget, if(reverse) targetIndex else parent.getChildren().indexOf(target.widget))//move to target index
-                                } else {
-                                    val parent = (select.parent as HierarchyItem).widget as WidgetContainer
-                                    val container = (target.parent as HierarchyItem).widget as WidgetContainer
-                                    val child = select.widget
-                                    if (parent.getChildren().remove(child))//Remove from current parent container
-                                        container.getChildren().add(container.getChildren().indexOf(target.widget) - index, child)//Add to target container at index
-                                }
+                    val filtered = treeView.selectionModel.selectedItems.filterIsInstance<HierarchyItem>()
+                    val selected = filtered.map { it.widget }
+
+                    //Have to get parent before removing stuff
+                    val targetParent = target.parent
+
+                    //Check if to add selection above or below the target
+                    val addAbove = treeView.selectionModel.selectedIndices.min() ?: 0 > index
+
+                    //Remove all selected widgets from their parents
+                    filtered.map { it.parent }.forEachIndexed { index, treeItem ->
+                        if(treeItem is HierarchyItem) {//If container
+                            (treeItem.widget as WidgetContainer).getChildren().remove(selected[index])
+                        } else if(treeItem == treeView.root) {//If root
+                            widgets.remove(selected[index])
+                        }
+                    }
+
+                    //Now that all selected widgets have been removed, now we need to add back to where the target is
+                    if(target is HierarchyItem) {
+                        val targetWidget = target.widget
+                        if(targetWidget is WidgetContainer) {//if target is a container
+                            targetWidget.getChildren().addAll(targetWidget.getChildren().size, selected)//Add to the end
+                        } else {//or just a regular widget
+                            if(targetParent is HierarchyItem) {//if target parent is container
+                                //Add to target parent at index of target
+                                val container = (targetParent.widget as WidgetContainer)
+                                val index = container.getChildren().indexOf(targetWidget) + if(addAbove) 0 else 1
+                                if(index >= container.getChildren().size)
+                                    container.getChildren().addAll(selected)
+                                else
+                                    container.getChildren().addAll(container.getChildren().indexOf(targetWidget) + if(addAbove) 0 else 1, selected)
+                            } else if(targetParent == treeView.root) {
+                                //Add to root aka widgets at index of target
+                                val index = widgets.indexOf(targetWidget) + if(addAbove) 0 else 1
+                                if(index >= widgets.size())
+                                    widgets.addAll(*selected.toTypedArray())
+                                else
+                                    widgets.addAll(widgets.indexOf(targetWidget) + if(addAbove) 0 else 1, selected)
                             }
                         }
+                    } else if(target == treeView.root) {
+                        //If target is the "root" send to the end
+                        widgets.addAll(widgets.size() - 1, selected)//TODO toggle for adding widgets to end or start of containers?
                     }
                 } catch (t: Throwable) {
                     t.printStackTrace()

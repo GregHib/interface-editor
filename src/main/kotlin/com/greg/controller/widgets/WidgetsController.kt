@@ -91,8 +91,8 @@ class WidgetsController : Controller() {
         widgets.addAll(*widget)
     }
 
-    fun remove(widget: Widget) {
-        widgets.remove(widget)
+    fun remove(widget: Widget): Boolean {
+        return widgets.remove(widget)
     }
 
     fun get(): ObservableList<Widget> {
@@ -279,7 +279,10 @@ class WidgetsController : Controller() {
             widget.getChildren().addListener(ListChangeListener<Widget> { change ->
                 change.next()
                 if(change.wasAdded()) {
-                    shape.group.children.addAll(change.to - 1, create(change.addedSubList.filterIsInstance<Widget>()))
+                    if(change.to - 1 >= shape.group.children.size)
+                        shape.group.children.addAll(create(change.addedSubList.filterIsInstance<Widget>()))
+                    else
+                        shape.group.children.addAll(change.to - 1, create(change.addedSubList.filterIsInstance<Widget>()))
                 } else if(change.wasRemoved()) {
                     shape.group.children.removeAll(shape.group.children.filterIsInstance<WidgetShape>().filter { shape -> change.removed.any { shape.identifier == it.identifier } })
                 }

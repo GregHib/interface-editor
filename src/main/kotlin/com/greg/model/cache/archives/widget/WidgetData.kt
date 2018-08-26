@@ -1,6 +1,6 @@
 package com.greg.model.cache.archives.widget
 
-class WidgetData(var id: Int) {
+class WidgetData(@Transient var id: Int = -1) {
 
     //Default
     var x: Int = 0

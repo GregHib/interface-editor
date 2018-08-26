@@ -13,7 +13,7 @@ import tornadofx.tabpane
 class HierarchyView : View(), KeyInterface {
 
     private val widgets: WidgetsController by inject()
-    val rootTreeItem = TreeItem("Root")
+    val rootTreeItem: TreeItem<String> = TreeItem("Root")
     private val tree = TreeView(rootTreeItem)
 
     override val root = tabpane {
