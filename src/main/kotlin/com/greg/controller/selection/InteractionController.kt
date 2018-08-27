@@ -6,6 +6,7 @@ import com.greg.model.cache.archives.widget.WidgetDataConverter
 import com.greg.model.widgets.JsonSerializer
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.type.Widget
+import com.greg.model.widgets.type.WidgetContainer
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 
@@ -69,20 +70,23 @@ class InteractionController(val widgets: WidgetsController) {
     }
 
     fun clone() {
-        //TODO fix cloning children in containers
-        val list = widgets.get().filter { it.isSelected() }
+        val list = widgets.getSelection().toList()
+
+        val map = mutableMapOf<Widget, Widget?>()
 
         WidgetsController.selection.removeAll(list)
 
-        val clones = list.map { widget ->
-            val clone = WidgetDataConverter.create(widget.toData())
+        list.forEach { widget ->
+            val data = widget.toData()
+            val clone = WidgetDataConverter.create(data, -1)
             widget.setSelected(false, false)
             clone.setSelected(true, false)
-            clone
+            map[clone] = widget.getParent()
         }
 
-        WidgetsController.selection.addAll(clones)
-        widgets.addAll(clones.toTypedArray())
+        WidgetsController.selection.addAll(map.keys)
+        widgets.addAll(map.filterValues { it == null }.keys.toTypedArray())
+        map.filterValues { it != null }.forEach { widget, parent -> (parent as? WidgetContainer)?.getChildren()?.add(widget) }
     }
 
     private fun isWidget(name: String): Boolean {

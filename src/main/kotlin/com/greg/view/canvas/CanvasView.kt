@@ -128,7 +128,6 @@ class CanvasView : View(), KeyInterface {
 
                 //Add as a child if target is a container
                 if(target != null && target is WidgetContainer) {
-                    widget.setParent(target.identifier)
                     target.getChildren().add(widget)
                     if(state is EditState)
                         defaultState()

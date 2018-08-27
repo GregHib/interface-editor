@@ -117,7 +117,7 @@ class RightPane : Fragment() {
 
             if (list.isNotEmpty()) {
                 //Add properties for first item only
-                val first = list.first()
+                val first = list.first()//List is ordered by first in not by id
                 first.properties.get()
                         .filter { !(it is PanelPropertyValues && !it.panel) }
                         .forEach { property ->

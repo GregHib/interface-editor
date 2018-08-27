@@ -38,7 +38,7 @@ class WidgetLoadTest {
                 val group = buffer.get().toInt() and 255
 
                 widget = WidgetBuilder(WidgetType.values()[group]).build(id)
-                widget.setParent(parent)
+//                widget.setParent(parent)
 
                 widget.setOptionType(buffer.get().toInt() and 255)
                 widget.setContentType(buffer.short.toInt() and 0xffff)

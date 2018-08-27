@@ -5,7 +5,7 @@ class WidgetData(@Transient var id: Int = -1) {
     //Default
     var x: Int = 0
     var y: Int = 0
-    var parent: Int = 0
+    var parent: Int = -1
     var group: Int = 0
     var optionType: Int = 0
     var contentType: Int = 0

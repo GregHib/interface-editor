@@ -21,7 +21,7 @@ abstract class GroupWidget {
     abstract var hidden: BoolProperty
     abstract var hovered: BoolProperty
 
-    internal abstract var parent: IntProperty
+    internal abstract var parent: ObjProperty<Widget?>
     abstract var optionType: IntProperty
     abstract var contentType: IntProperty
     abstract var alpha: IntProperty
@@ -111,11 +111,11 @@ abstract class GroupWidget {
         return heightBounds.get()
     }
 
-    fun setParent(value: Int) {
+    fun setParent(value: Widget?) {
         parent.set(value)
     }
 
-    fun getParent(): Int {
+    fun getParent(): Widget? {
         return parent.get()
     }
 

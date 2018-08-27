@@ -16,7 +16,7 @@ object WidgetDataConverter {
         data.x = widget.getX()
         data.y = widget.getY()
 
-        data.parent = widget.getParent()
+        data.parent = widget.getParent()?.identifier ?: -1
         data.group = widget.type.ordinal
         data.optionType = widget.getOptionType()
         data.width = widget.getWidth()
@@ -121,8 +121,6 @@ object WidgetDataConverter {
     }
 
     fun setData(widget: Widget, data: WidgetData) {
-        widget.setParent(data.parent)
-
         widget.setX(data.x)
         widget.setY(data.y)
         widget.setOptionType(data.optionType)
@@ -246,20 +244,27 @@ object WidgetDataConverter {
         }
     }
 
-    fun create(data: WidgetData): Widget {
-        val widget = WidgetBuilder(WidgetType.values()[data.group]).build(data.id)
+    /**
+     * Creates Widget (and children) from {@link WidgetData.class}
+     * @param data WidgetData to be converted
+     * @param id Override identifier, (only used for -1 to create unspecified id's)
+     */
+    fun create(data: WidgetData, id: Int = data.id): Widget {
+        val widget = WidgetBuilder(WidgetType.values()[data.group]).build(id)
 
         setData(widget, data)
         if(widget is WidgetContainer) {
-            val children = toChildren(data)
-            if(children != null)
+            val children = toChildren(data, id)
+            if(children != null) {
+                children.forEach { it.setParent(widget) }
                 widget.setChildren(children.observable())
+            }
         }
 
         return widget
     }
 
-    private fun toChildren(parent: WidgetData): ArrayList<Widget>? {
-        return parent.children?.map { create(it) }?.toCollection(ArrayList())
+    private fun toChildren(parent: WidgetData, id: Int): ArrayList<Widget>? {
+        return parent.children?.map { create(it, id) }?.toCollection(ArrayList())
     }
 }

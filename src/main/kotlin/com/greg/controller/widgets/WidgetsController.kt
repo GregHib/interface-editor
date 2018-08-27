@@ -279,11 +279,15 @@ class WidgetsController : Controller() {
             widget.getChildren().addListener(ListChangeListener<Widget> { change ->
                 change.next()
                 if(change.wasAdded()) {
+                    val widgets = change.addedSubList.filterIsInstance<Widget>()
+                    widgets.forEach { it.setParent(widget) }
+
                     if(change.to - 1 >= shape.group.children.size)
-                        shape.group.children.addAll(create(change.addedSubList.filterIsInstance<Widget>()))
+                        shape.group.children.addAll(create(widgets))
                     else
-                        shape.group.children.addAll(change.to - 1, create(change.addedSubList.filterIsInstance<Widget>()))
+                        shape.group.children.addAll(change.to - 1, create(widgets))
                 } else if(change.wasRemoved()) {
+                    change.removed.forEach { it.setParent(null) }
                     shape.group.children.removeAll(shape.group.children.filterIsInstance<WidgetShape>().filter { shape -> change.removed.any { shape.identifier == it.identifier } })
                 }
 

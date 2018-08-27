@@ -45,7 +45,7 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, Gr
     override var optionAttributes = IntProperty("optionAttributes", 0)
     override var hover = StringProperty("hover", "")
 
-    override var parent = IntProperty("parent", -1)
+    override var parent = ObjProperty<Widget?>("parent", null)
     override var optionType = IntProperty("optionType", 0)
     override var contentType = IntProperty("contentType", 0)
     override var alpha = IntProperty("alpha", 0)
