@@ -57,12 +57,14 @@ class MainView : View("Greg's Interface Editor") {
                     val result = alert.showAndWait()
 
                     if (result.get() == ButtonType.OK) {
+                        widgets.clearSelection()
                         widgets.deleteAll()
                         canvas.defaultState()
                         cache.interfaces.display(widgets, alert.value)
                     }
                 }
                 item("Unlink cache").action {
+                    widgets.clearSelection()
                     widgets.deleteAll()
                     canvas.defaultState()
                     cache.unlink()
