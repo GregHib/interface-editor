@@ -8,6 +8,7 @@ import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
+import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import tornadofx.add
 
@@ -22,6 +23,8 @@ class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, heigh
         label.alignment = Pos.TOP_LEFT
         label.textAlignment = TextAlignment.LEFT
         label.isWrapText = true
+        label.font = Font.font(11.0)
+        //TODO add text shadow toggle to non-cache text
 
         add(label)
         label.prefWidthProperty().bindBidirectional(outline.widthProperty())
@@ -45,10 +48,12 @@ class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, heigh
         val text = if (flip && widget.getSecondaryText().isNotEmpty()) widget.getSecondaryText() else widget.getDefaultText()
         label.text = text
         if(cache.loaded) {
+            label.isVisible = false
             val font = cache.fonts.fonts[widget.getFontIndex()]
-            //TODO don't use outline for size, use calculated sizes
             val bi = font.getAsImage(text, widget.hasShadow(), widget.isCentred(), ColourUtils.colourToRS(label.textFill as Color))
             image.image = resample(bi, 1)
+        } else {
+            label.isVisible = true
         }
     }
 }

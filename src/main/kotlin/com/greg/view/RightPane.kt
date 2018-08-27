@@ -92,9 +92,15 @@ class RightPane : Fragment() {
                             box?.valueProperty()?.bindBidirectional(param.propertyValue as Property<String>?)
                             editor
                         } else {
-                            val editor = TextAreaProperty(param)//Editors.createTextEditor(param)
+                            val editor = TextAreaProperty(param)
+//                            val editor2 = Editors.createTextEditor(param)
+//                            println(editor2.editor)
                             val field = editor.editor
 
+//                            val field2 = editor2.editor
+//                            if(field2 is TextField) {
+//                                field2.textProperty().bindBidirectional(param.propertyValue as Property<String>?)
+//                            }
                             if (field is TextArea) {
                                 field.textProperty().bindBidirectional(param.propertyValue as Property<String>?)
                             }
