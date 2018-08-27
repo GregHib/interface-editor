@@ -110,12 +110,12 @@ class RightPane : Fragment() {
         widgets.getSelection().addListener(ListChangeListener { change ->
             change.next()
             //Get items changed
-            val list = if (change.wasAdded()) change.addedSubList else null
+            val list = change.list
 
             //Clear property sheet
             sheet.items.clear()
 
-            if (list != null) {
+            if (list.isNotEmpty()) {
                 //Add properties for first item only
                 val first = list.first()
                 first.properties.get()

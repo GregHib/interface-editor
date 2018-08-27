@@ -1,5 +1,6 @@
 package com.greg.view.hierarchy
 
+import com.greg.controller.widgets.WidgetsController
 import com.greg.controller.widgets.WidgetsController.Companion.widgets
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.type.Widget
@@ -178,12 +179,19 @@ class DragTreeCell : TreeCell<String>() {
 
                         action {
                             //Widget select everything highlighted in hierarchy
-                            treeView.selectionModel.selectedItems
+                            val selected = treeView.selectionModel.selectedItems
                                     .filterIsInstance<HierarchyItem>()
                                     .filter { it.widget != widget }
-                                    .forEach {
-                                        it.widget.setSelected(isSelected)
-                                    }
+                                    .map { it.widget }
+                                    .toMutableList()
+
+                            selected.forEach { it.setSelected(isSelected, false) }
+                            selected.add(widget)
+                            if(isSelected)
+                                WidgetsController.selection.addAll(selected)
+                            else
+                                WidgetsController.selection.removeAll(selected)
+
 
                             //Hierarchy highlight if not already
                             /*if (treeItem != null) {
@@ -196,6 +204,7 @@ class DragTreeCell : TreeCell<String>() {
                         }
 
                         selectedProperty().addListener { _, _, newValue ->
+                            widget.updateSelection = true
                             //Deselect checkbox if locked
                             if (newValue && widget.isLocked())
                                 isSelected = false
