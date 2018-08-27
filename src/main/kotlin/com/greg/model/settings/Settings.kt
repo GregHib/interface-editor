@@ -43,7 +43,8 @@ enum class Settings(var default: Any) {
     DEFAULT_WIDGET_LIST_IMAGE_HEIGHT(200.0),
     SPRITE_RESAMPLING(false),
     DEFAULT_HAS_ACTIONS(false),
-    NIGHT_MODE(false)
+    NIGHT_MODE(false),
+    HIERARCHY_OPEN_NEW_CONTAINERS(true)
     ;
 
     val key: String = this.name

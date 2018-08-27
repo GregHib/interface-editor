@@ -1,6 +1,7 @@
 package com.greg.view.hierarchy
 
 import com.greg.controller.widgets.WidgetsController
+import com.greg.model.widgets.type.WidgetContainer
 import com.greg.view.KeyInterface
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
@@ -15,6 +16,27 @@ class HierarchyView : View(), KeyInterface {
     private val widgets: WidgetsController by inject()
     val rootTreeItem: TreeItem<String> = TreeItem("Root")
     private val tree = TreeView(rootTreeItem)
+
+    fun getExpanded(children: List<TreeItem<String>> = tree.root.children): List<Int> {
+        val list = children
+                .filterIsInstance<HierarchyItem>()
+                .filter { it.widget is WidgetContainer && it.isExpanded }
+        val ids = mutableListOf<Int>()
+        ids.addAll(list.map { it.widget.identifier })
+        ids.addAll(list.flatMap { getExpanded(it.children) })
+        return ids
+    }
+
+    fun setExpended(ids: List<Int>, children: List<TreeItem<String>> = tree.root.children) {
+        children
+                .filterIsInstance<HierarchyItem>()
+                .filter { it.widget is WidgetContainer }
+                .forEach {
+                    if(ids.contains(it.widget.identifier))
+                        it.isExpanded = true
+                    setExpended(ids, it.children)
+                }
+    }
 
     override val root = tabpane {
         tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE

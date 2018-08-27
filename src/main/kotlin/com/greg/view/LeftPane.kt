@@ -30,15 +30,17 @@ class LeftPane : View(), KeyInterface {
 
     private fun addChildren(parent: HierarchyItem, widget: Widget) {
         val item = HierarchyItem("${widget.name} ${widget.identifier}", widget.identifier, widget)
-
         (widget as? WidgetContainer)?.getChildren()?.forEach { child -> addChildren(item, child) }
-
         parent.children.add(item)
     }
 
     init {
         widgets.updateHierarchy.addListener { _, oldValue, newValue ->
             if(!oldValue && newValue) {
+                //Get id's of container widgets which are expanded
+                val expanded = hierarchy.getExpanded()
+
+                //Clear current hierarchy
                 hierarchy.rootTreeItem.children.clear()
 
                 val items = arrayListOf<HierarchyItem>()
@@ -51,6 +53,9 @@ class LeftPane : View(), KeyInterface {
 
                 //Multi-add
                 hierarchy.rootTreeItem.children.addAll(items)
+
+                //Set containers which were expanded, expanded again
+                hierarchy.setExpended(expanded)
 
                 //Cancel update
                 widgets.updateHierarchy.set(false)
