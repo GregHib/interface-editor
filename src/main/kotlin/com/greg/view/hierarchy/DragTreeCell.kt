@@ -178,6 +178,15 @@ class DragTreeCell : TreeCell<String>() {
                         selectedProperty().bindBidirectional(widget.selected)
 
                         action {
+                            //Hierarchy highlight if not already
+                            if (treeItem != null) {
+                                val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
+                                if (index == -1) {
+                                    treeView.selectionModel.clearSelection()
+                                    treeView.selectionModel.select(treeItem)
+                                }
+                            }
+
                             //Widget select everything highlighted in hierarchy
                             val selected = treeView.selectionModel.selectedItems
                                     .filterIsInstance<HierarchyItem>()
@@ -191,16 +200,6 @@ class DragTreeCell : TreeCell<String>() {
                                 WidgetsController.selection.addAll(selected)
                             else
                                 WidgetsController.selection.removeAll(selected)
-
-
-                            //Hierarchy highlight if not already
-                            /*if (treeItem != null) {
-                                val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
-                                if (index == -1) {
-                                    treeView.selectionModel.clearSelection()
-                                    treeView.selectionModel.select(treeItem)
-                                }
-                            }*/
                         }
 
                         selectedProperty().addListener { _, _, newValue ->
@@ -224,6 +223,15 @@ class DragTreeCell : TreeCell<String>() {
                         }
 
                         action {
+                            //Hierarchy highlight if not already
+                            if (treeItem != null) {
+                                val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
+                                if (index == -1) {
+                                    treeView.selectionModel.clearSelection()
+                                    treeView.selectionModel.select(treeItem)
+                                }
+                            }
+
                             //Hide all highlighted
                             treeView.selectionModel.selectedItems
                                     .filterIsInstance<HierarchyItem>()
@@ -232,15 +240,6 @@ class DragTreeCell : TreeCell<String>() {
                                         it.widget.setInvisible(isSelected)
                                         updateLock(it.widget, isSelected)
                                     }
-
-                            //Hierarchy highlight if not already
-                            /*if (treeItem != null) {
-                                val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
-                                if (index == -1) {
-                                    treeView.selectionModel.clearSelection()
-                                    treeView.selectionModel.select(treeItem)
-                                }
-                            }*/
                         }
 
                         selectedProperty().addListener { _, _, newValue ->
@@ -252,6 +251,15 @@ class DragTreeCell : TreeCell<String>() {
                         selectedProperty().bindBidirectional(widget.locked)
 
                         action {
+                            //Hierarchy highlight if not already
+                            if (treeItem != null) {
+                                val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
+                                if (index == -1) {
+                                    treeView.selectionModel.clearSelection()
+                                    treeView.selectionModel.select(treeItem)
+                                }
+                            }
+
                             //Lock all highlighted
                             treeView.selectionModel.selectedItems
                                     .filterIsInstance<HierarchyItem>()
@@ -265,15 +273,6 @@ class DragTreeCell : TreeCell<String>() {
 //                                        if(it.widget.isInvisible())
 //                                            it.widget.setInvisible(false)
                                     }
-
-                            //Hierarchy highlight if not already
-                            /*if (treeItem != null) {
-                                val index = treeView.selectionModel.selectedItems.indexOf(treeItem)
-                                if (index == -1) {
-                                    treeView.selectionModel.clearSelection()
-                                    treeView.selectionModel.select(treeItem)
-                                }
-                            }*/
                         }
 
                         selectedProperty().addListener { _, _, newValue ->
