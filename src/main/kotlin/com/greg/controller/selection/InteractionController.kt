@@ -57,9 +57,11 @@ class InteractionController(val widgets: WidgetsController) {
     fun copy() {
         val clipboard = Clipboard.getSystemClipboard()
 
+        //Deselect children to prevent duplicates
+        widgets.deselectChildren()
+
         //Convert selected widget's into a string of attribute values
         val array = widgets.getSelection().map { it.toJson() }
-
 
         //Set the clipboard
         if (array.isNotEmpty()) {

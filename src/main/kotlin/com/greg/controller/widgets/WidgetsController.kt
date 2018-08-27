@@ -49,6 +49,20 @@ class WidgetsController : Controller() {
         return selection
     }
 
+    /**
+     * Removes children from selection which already have parents which are selected
+     */
+    fun deselectChildren() {
+        deselect(*getSelection().filterIsInstance<WidgetContainer>().toTypedArray())
+    }
+
+    private fun deselect(vararg containers: WidgetContainer) {
+        containers.forEach { container ->
+            deselect(*container.getChildren().filterIsInstance<WidgetContainer>().toTypedArray())
+            selection.removeAll(container.getChildren())
+        }
+    }
+
     fun hasSelection(): Boolean {
         return getSelection().isNotEmpty()
     }
