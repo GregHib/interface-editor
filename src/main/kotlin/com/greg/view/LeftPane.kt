@@ -68,7 +68,7 @@ class LeftPane : View(), KeyInterface {
         prefWidth = 290.0
         tabPane = tabpane {
             tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
-            tab("Hierarchy") {
+            tab("Components") {
                 add(components)
             }
             tab("Sprites") {

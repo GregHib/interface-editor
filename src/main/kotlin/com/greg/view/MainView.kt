@@ -2,6 +2,7 @@ package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.cache.CacheController
+import com.greg.model.settings.Settings
 import com.greg.view.alerts.IntegerAlert
 import com.greg.view.canvas.CanvasView
 import javafx.scene.control.ButtonType
@@ -10,8 +11,6 @@ import javafx.scene.shape.Rectangle
 import tornadofx.*
 import tornadofx.controlsfx.content
 import tornadofx.controlsfx.notificationPane
-
-
 
 
 class MainView : View("Greg's Interface Editor") {
@@ -40,6 +39,8 @@ class MainView : View("Greg's Interface Editor") {
         primaryStage.width = 1280.0
         primaryStage.height = 768.0
 
+//        stylesheets.add("stylesheet.css")
+
         prefWidth = 1280.0
         prefHeight = 768.0
         top = menubar {
@@ -57,7 +58,7 @@ class MainView : View("Greg's Interface Editor") {
                     val alert = IntegerAlert("Interface ID:")
                     val result = alert.showAndWait()
 
-                    if(result.get() == ButtonType.OK) {
+                    if (result.get() == ButtonType.OK) {
                         widgets.deleteAll()
                         canvas.defaultState()
                         cache.interfaces.display(widgets, alert.value)
@@ -67,6 +68,19 @@ class MainView : View("Greg's Interface Editor") {
                     widgets.deleteAll()
                     canvas.defaultState()
                     cache.unlink()
+                }
+            }
+            menu("Settings") {
+                checkmenuitem("Night mode") {
+                    isSelected = Settings.getBoolean(Settings.NIGHT_MODE)
+                    if(isSelected)
+                        this@borderpane.stylesheets.add("stylesheet.css")
+                    action {
+                        if (isSelected)
+                            this@borderpane.stylesheets.add("stylesheet.css")
+                        else
+                            this@borderpane.stylesheets.remove("stylesheet.css")
+                    }
                 }
             }
         }
