@@ -80,7 +80,7 @@ class InteractionController(val widgets: WidgetsController) {
 
         list.forEach { widget ->
             val data = widget.toData()
-            val clone = WidgetDataConverter.create(data, -1)
+            val clone = WidgetDataConverter.create(data, true)
             widget.setSelected(false, false)
             clone.setSelected(true, false)
             map[clone] = widget.getParent()

@@ -247,14 +247,14 @@ object WidgetDataConverter {
     /**
      * Creates Widget (and children) from {@link WidgetData.class}
      * @param data WidgetData to be converted
-     * @param id Override identifier, (only used for -1 to create unspecified id's)
+     * @param override overrides identifier, (only used for -1 to create unspecified id's)
      */
-    fun create(data: WidgetData, id: Int = data.id): Widget {
-        val widget = WidgetBuilder(WidgetType.values()[data.group]).build(id)
+    fun create(data: WidgetData, override: Boolean = false): Widget {
+        val widget = WidgetBuilder(WidgetType.values()[data.group]).build(if(override) -1 else data.id)
 
         setData(widget, data)
         if(widget is WidgetContainer) {
-            val children = toChildren(data, id)
+            val children = toChildren(data, override)
             if(children != null) {
                 children.forEach { it.setParent(widget) }
                 widget.setChildren(children.observable())
@@ -264,7 +264,7 @@ object WidgetDataConverter {
         return widget
     }
 
-    private fun toChildren(parent: WidgetData, id: Int): ArrayList<Widget>? {
-        return parent.children?.map { create(it, id) }?.toCollection(ArrayList())
+    private fun toChildren(parent: WidgetData, override: Boolean): ArrayList<Widget>? {
+        return parent.children?.map { create(it, override) }?.toCollection(ArrayList())
     }
 }

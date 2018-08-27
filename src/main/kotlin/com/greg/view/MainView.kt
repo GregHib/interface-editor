@@ -39,8 +39,6 @@ class MainView : View("Greg's Interface Editor") {
         primaryStage.width = 1280.0
         primaryStage.height = 768.0
 
-//        stylesheets.add("stylesheet.css")
-
         prefWidth = 1280.0
         prefHeight = 768.0
         top = menubar {
