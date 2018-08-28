@@ -2,13 +2,13 @@ package com.greg.view.canvas.widgets
 
 import com.greg.controller.utils.ColourUtils
 import com.greg.model.cache.CacheController
+import com.greg.model.cache.archives.ArchiveFont
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.type.WidgetText
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
-import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import tornadofx.add
 
@@ -23,8 +23,7 @@ class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, heigh
         label.alignment = Pos.TOP_LEFT
         label.textAlignment = TextAlignment.LEFT
         label.isWrapText = true
-        label.font = Font.font(11.0)
-        //TODO add text shadow toggle to non-cache text
+        label.font = ArchiveFont.small
 
         add(label)
         label.prefWidthProperty().bindBidirectional(outline.widthProperty())
@@ -54,6 +53,14 @@ class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, heigh
             image.image = resample(bi, 1)
         } else {
             label.isVisible = true
+            label.effect = if(widget.hasShadow()) ArchiveFont.shadow else null
+            //Only supports the 4 basic fonts
+            label.font = when(widget.getFontIndex()) {
+                1 -> ArchiveFont.medium
+                2 -> ArchiveFont.bold
+                3 -> ArchiveFont.thin
+                else -> ArchiveFont.small
+            }
         }
     }
 }
