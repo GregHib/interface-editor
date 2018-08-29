@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.scene.image.ImageView
 import tornadofx.ChangeListener
 import tornadofx.add
-import java.awt.image.BufferedImage
 
 class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height), ImageResample {
 
@@ -38,14 +37,14 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
                 val sprite = archive.sprites[spriteIndex]
                 if(sprite != null) {
                     val bufferedImage = sprite.toBufferedImage()
-                    displayImage(bufferedImage)
+                    displayImage(image, bufferedImage, outline)
 
                     layoutX = sprite.offsetX.toDouble()
                     layoutY = sprite.offsetY.toDouble()
                 }
             }
         } else {
-            displayImage(null)
+            displayImage(image, null, outline)
         }
     }
 
@@ -91,17 +90,6 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
             secondarySprite = SimpleIntegerProperty(this, "secondarySprite", Settings.getInt(Settings.DEFAULT_SPRITE_ID))
 
         return secondarySprite!!
-    }
-
-    private fun displayImage(bufferedImage: BufferedImage?) {
-        image.fitWidth = (bufferedImage?.width ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH)).toDouble()
-        image.fitHeight = (bufferedImage?.height ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT)).toDouble()
-        image.isPreserveRatio = true
-
-        image.image = if(bufferedImage != null) resample(bufferedImage) else null
-
-        outline.width = (bufferedImage?.width ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH)).toDouble()
-        outline.height = (bufferedImage?.height ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT)).toDouble()
     }
 
     fun updateArchive(widget: WidgetSprite, archiveName: String, default: Boolean) {

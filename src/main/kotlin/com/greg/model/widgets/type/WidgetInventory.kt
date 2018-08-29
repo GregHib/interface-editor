@@ -21,14 +21,20 @@ class WidgetInventory(builder: WidgetBuilder, id: Int) : Widget(builder, id), Gr
     override var spriteY = ObjProperty("spriteY", IntArray(0))
     override var spritesArchive: ObjProperty<Array<String?>> = ObjProperty("spritesArchive", arrayOfNulls(0))
     override var spritesIndex: ObjProperty<Array<Int?>> = ObjProperty("spritesIndex", arrayOfNulls(0))
+    override var slotWidth = IntProperty("slotWidth", 0)
+    override var slotHeight = IntProperty("slotHeight", 0)
 
     init {
+        properties.add(width, "Layout").property.setDisabled(true)
+        properties.add(height, "Layout").property.setDisabled(true)
         properties.add(swappableItems)
         properties.add(hasActions)
         properties.add(usableItems)
         properties.add(replaceItems)
         properties.add(spritePaddingX)
         properties.add(spritePaddingY)
+        properties.add(slotWidth)
+        properties.add(slotHeight)
     }
 
 }

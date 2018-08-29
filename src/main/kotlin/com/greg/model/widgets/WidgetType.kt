@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 enum class WidgetType(val widget: KClass<out Widget>, val shape: KClass<out WidgetShape>, val type: String? = widget.simpleName, val resizable: Boolean = true, val hidden: Boolean = false) {
     CONTAINER(WidgetContainer::class, ContainerShape::class),
     MODEL_LIST(WidgetModelList::class, ModelListShape::class),
-    INVENTORY(WidgetInventory::class, InventoryShape::class),
+    INVENTORY(WidgetInventory::class, InventoryShape::class, resizable = false),
     RECTANGLE(WidgetRectangle::class, RectangleShape::class),
     TEXT(WidgetText::class, TextShape::class),
     SPRITE(WidgetSprite::class, SpriteShape::class, resizable = false),

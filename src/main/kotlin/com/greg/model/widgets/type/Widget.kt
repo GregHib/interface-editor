@@ -59,7 +59,7 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, Gr
     init {
         properties.add(x, category = "Layout")
         properties.add(y, category = "Layout")
-        if(builder.type != WidgetType.SPRITE) {
+        if(builder.type != WidgetType.SPRITE && builder.type != WidgetType.INVENTORY) {
             properties.addCapped(width, widthBounds, "Layout")
             properties.addCapped(height, heightBounds, "Layout")
         }

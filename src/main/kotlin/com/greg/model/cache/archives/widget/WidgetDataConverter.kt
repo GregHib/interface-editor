@@ -19,8 +19,8 @@ object WidgetDataConverter {
         data.parent = widget.getParent()?.identifier ?: -1
         data.group = widget.type.ordinal
         data.optionType = widget.getOptionType()
-        data.width = widget.getWidth()
-        data.height = widget.getHeight()
+        data.width = (widget as? WidgetInventory)?.getSlotWidth() ?: widget.getWidth()
+        data.height = (widget as? WidgetInventory)?.getSlotHeight() ?: widget.getHeight()
         data.alpha = widget.getAlpha().toByte()
         data.hoverId = widget.getHoverId()
 
@@ -125,8 +125,13 @@ object WidgetDataConverter {
         widget.setY(data.y)
         widget.setOptionType(data.optionType)
         widget.setContentType(data.contentType)
-        widget.setWidth(data.width)
-        widget.setHeight(data.height)
+        if(widget is WidgetInventory) {
+            widget.setSlotWidth(data.width)
+            widget.setSlotHeight(data.height)
+        } else {
+            widget.setWidth(data.width)
+            widget.setHeight(data.height)
+        }
         widget.setAlpha(data.alpha.toInt())
 
         widget.setHoverId(data.hoverId)

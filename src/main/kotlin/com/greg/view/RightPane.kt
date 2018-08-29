@@ -85,7 +85,9 @@ class RightPane : Fragment() {
                     }
                     else -> {
                         if (param.name.contains("Archive")) {
-                            val editor = Editors.createChoiceEditor(param, cache.sprites.getInternalArchiveNames())
+                            val options = cache.sprites.getInternalArchiveNames().toMutableList()
+                            options.add(0, "")
+                            val editor = Editors.createChoiceEditor(param, options)
                             val field = editor.editor
                             val box = field as? ComboBox<String>
                             box?.valueProperty()?.bindBidirectional(param.propertyValue as Property<String>?)

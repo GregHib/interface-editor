@@ -1,6 +1,7 @@
 package com.greg.model.widgets.type.groups
 
 import com.greg.model.widgets.properties.extended.BoolProperty
+import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
 
 interface GroupInventory {
@@ -12,6 +13,8 @@ interface GroupInventory {
     var spriteY: ObjProperty<IntArray>
     var spritesArchive: ObjProperty<Array<String?>>
     var spritesIndex: ObjProperty<Array<Int?>>
+    var slotWidth: IntProperty
+    var slotHeight: IntProperty
 
     fun setSwappableItems(value: Boolean) { swappableItems.set(value) }
 
@@ -40,4 +43,12 @@ interface GroupInventory {
     fun setSpritesIndex(value: Array<Int?>) { spritesIndex.set(value) }
 
     fun getSpritesIndex(): Array<Int?> { return spritesIndex.get() }
+
+    fun setSlotWidth(value: Int) { slotWidth.set(value) }
+
+    fun getSlotWidth(): Int { return slotWidth.get() }
+
+    fun setSlotHeight(value: Int) { slotHeight.set(value) }
+
+    fun getSlotHeight(): Int { return slotHeight.get() }
 }

@@ -284,7 +284,6 @@ class WidgetsController : Controller() {
         shape.outline.widthProperty().bindBidirectional(widget.width)
         shape.outline.heightProperty().bindBidirectional(widget.height)
 
-
         //Listener
         updateVisibility(shape, widget.isInvisible())
         widget.invisible.addListener { _, _, newValue -> updateVisibility(shape, newValue) }
@@ -374,6 +373,16 @@ class WidgetsController : Controller() {
                 if (oldValue != newValue)
                     shape.updateArchive(widget, newValue, false)
             }
+        } else if(widget is WidgetInventory && shape is InventoryShape) {
+            shape.updateInventory(widget)
+            val listener = ChangeListener<Any> { _, oldValue, newValue ->
+                if (oldValue != newValue)
+                    shape.updateInventory(widget)
+            }
+            widget.slotWidth.addListener(listener)
+            widget.slotHeight.addListener(listener)
+            widget.spritePaddingX.addListener(listener)
+            widget.spritePaddingY.addListener(listener)
         }
     }
 

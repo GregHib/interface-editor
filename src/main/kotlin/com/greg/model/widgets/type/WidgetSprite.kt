@@ -18,9 +18,11 @@ class WidgetSprite(builder: WidgetBuilder, id: Int) : Widget(builder, id), Group
     init {
         properties.add(width, "Layout").property.setDisabled(true)
         properties.add(height, "Layout").property.setDisabled(true)
-        properties.addCapped(defaultSprite, defaultCap)
+        heightBounds.set(IntRange.EMPTY)
+        widthBounds.set(IntRange.EMPTY)
         properties.add(defaultSpriteArchive)
-        properties.addCapped(secondarySprite, secondaryCap)
+        properties.addCapped(defaultSprite, defaultCap)
         properties.add(secondarySpriteArchive)
+        properties.addCapped(secondarySprite, secondaryCap)
     }
 }

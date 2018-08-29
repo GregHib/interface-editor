@@ -92,7 +92,7 @@ abstract class GroupWidget {
     }
 
     fun setWidth(value: Int) {
-        width.set(MathUtils.constrain(value, getWidthBounds().start, getWidthBounds().endInclusive))
+        width.set(if(getWidthBounds() != IntRange.EMPTY) MathUtils.constrain(value, getWidthBounds().start, getWidthBounds().endInclusive) else value)
     }
 
     fun getHeight(): Int {
@@ -100,7 +100,7 @@ abstract class GroupWidget {
     }
 
     fun setHeight(value: Int) {
-        height.set(MathUtils.constrain(value, getHeightBounds().start, getHeightBounds().endInclusive))
+        height.set(if(getWidthBounds() != IntRange.EMPTY) MathUtils.constrain(value, getHeightBounds().start, getHeightBounds().endInclusive) else value)
     }
 
     fun getWidthBounds(): IntRange {

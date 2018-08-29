@@ -3,7 +3,9 @@ package com.greg.view.canvas.widgets
 import com.greg.model.settings.Settings
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.image.WritableImage
+import javafx.scene.shape.Rectangle
 import java.awt.image.BufferedImage
 
 interface ImageResample {
@@ -34,5 +36,17 @@ interface ImageResample {
         }
 
         return output
+    }
+
+    fun displayImage(image: ImageView, bufferedImage: BufferedImage?, outline: Rectangle): ImageView {
+        image.fitWidth = (bufferedImage?.width ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH)).toDouble()
+        image.fitHeight = (bufferedImage?.height ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT)).toDouble()
+        image.isPreserveRatio = true
+
+        image.image = if(bufferedImage != null) resample(bufferedImage) else null
+
+        outline.width = (bufferedImage?.width ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH)).toDouble()
+        outline.height = (bufferedImage?.height ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT)).toDouble()
+        return image
     }
 }
