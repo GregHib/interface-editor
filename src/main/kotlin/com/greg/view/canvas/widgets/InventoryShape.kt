@@ -35,7 +35,7 @@ class InventoryShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, 
                 if (item < 20) {
                     val archive = ArchiveMedia.getImage("${widget.getSpritesArchive()[item]}.dat")
                     if (archive != null) {
-                        val spriteIndex = widget.getSpritesIndex()[item] ?: 0
+                        val spriteIndex = widget.getSpritesIndex()[item]
                         if (spriteIndex >= 0 && spriteIndex < archive.sprites.size) {
                             val sprite = archive.sprites[spriteIndex]
                             if(sprite != null) {

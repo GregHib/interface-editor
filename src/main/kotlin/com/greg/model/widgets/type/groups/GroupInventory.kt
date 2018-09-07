@@ -11,8 +11,8 @@ interface GroupInventory {
     var replaceItems: BoolProperty
     var spriteX: ObjProperty<IntArray>
     var spriteY: ObjProperty<IntArray>
-    var spritesArchive: ObjProperty<Array<String?>>
-    var spritesIndex: ObjProperty<Array<Int?>>
+    var spritesArchive: ObjProperty<Array<String>>
+    var spritesIndex: ObjProperty<IntArray>
     var slotWidth: IntProperty
     var slotHeight: IntProperty
 
@@ -36,13 +36,13 @@ interface GroupInventory {
 
     fun getSpriteY(): IntArray { return spriteY.get() }
 
-    fun setSpritesArchive(value: Array<String?>) { spritesArchive.set(value) }
+    fun setSpritesArchive(value: Array<String>) { spritesArchive.set(value) }
 
-    fun getSpritesArchive(): Array<String?> { return spritesArchive.get() }
+    fun getSpritesArchive(): Array<String> { return spritesArchive.get() }
 
-    fun setSpritesIndex(value: Array<Int?>) { spritesIndex.set(value) }
+    fun setSpritesIndex(value: IntArray) { spritesIndex.set(value) }
 
-    fun getSpritesIndex(): Array<Int?> { return spritesIndex.get() }
+    fun getSpritesIndex(): IntArray { return spritesIndex.get() }
 
     fun setSlotWidth(value: Int) { slotWidth.set(value) }
 

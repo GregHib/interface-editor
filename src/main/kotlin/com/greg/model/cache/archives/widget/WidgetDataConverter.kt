@@ -43,7 +43,7 @@ object WidgetDataConverter {
             data.spritePaddingX = widget.getSpritePaddingX()
             data.spritePaddingY = widget.getSpritePaddingY()
             data.sprites = widget.getSpritesArchive().mapIndexed { index, archive ->
-                if(archive != null)
+                if(!archive.isNullOrEmpty())
                 SpriteData(widget.getSpriteX()[index], widget.getSpriteY()[index], "$archive,${widget.getSpritesIndex()[index]}")
                 else null
             }.toTypedArray()
@@ -161,13 +161,13 @@ object WidgetDataConverter {
                 widget.setSpriteX(sprites.map { sprite -> sprite?.x ?: 0 }.toIntArray())
                 widget.setSpriteY(sprites.map { sprite -> sprite?.y ?: 0 }.toIntArray())
                 widget.setSpritesArchive(sprites.map { sprite ->
-                    val name = sprite?.name ?: return@map null
-                    if (name.isNotEmpty()) name.substring(0, name.lastIndexOf(",")) else null
+                    val name = sprite?.name ?: return@map ""
+                    if (name.isNotEmpty()) name.substring(0, name.lastIndexOf(",")) else ""
                 }.toTypedArray())
                 widget.setSpritesIndex(sprites.map { sprite ->
-                    val name = sprite?.name ?: return@map null
-                    if (name.isNotEmpty()) Integer.parseInt(name.substring(name.lastIndexOf(",") + 1)) else null
-                }.toTypedArray())
+                    val name = sprite?.name ?: return@map -1
+                    if (name.isNotEmpty()) Integer.parseInt(name.substring(name.lastIndexOf(",") + 1)) else -1
+                }.toIntArray())
             }
 
             widget.setActions(data.actions!!)

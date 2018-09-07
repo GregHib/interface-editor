@@ -5,7 +5,7 @@ import javafx.beans.value.ObservableValue
 import org.controlsfx.control.PropertySheet
 import java.util.*
 
-open class PropertyItem(private val propertyCategory: String, val propertyValue: Property<*>) : PropertySheet.Item {
+open class PropertyItem(private val propertyCategory: String, private val propertyValue: Property<*>) : PropertySheet.Item {
 
     var disabled: Boolean = false
 
@@ -31,6 +31,10 @@ open class PropertyItem(private val propertyCategory: String, val propertyValue:
 
     override fun getValue(): Any {
         return propertyValue.value
+    }
+
+    fun prop(): Property<*> {
+        return propertyValue
     }
 
     override fun getObservableValue(): Optional<ObservableValue<out Any>> {

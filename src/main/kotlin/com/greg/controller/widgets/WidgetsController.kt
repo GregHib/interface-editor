@@ -379,10 +379,14 @@ class WidgetsController : Controller() {
                 if (oldValue != newValue)
                     shape.updateInventory(widget)
             }
+
             widget.slotWidth.addListener(listener)
             widget.slotHeight.addListener(listener)
             widget.spritePaddingX.addListener(listener)
             widget.spritePaddingY.addListener(listener)
+            widget.spriteX.addListener(listener)
+            widget.spriteY.addListener(listener)
+            widget.spritesIndex.addListener(listener)
         }
     }
 

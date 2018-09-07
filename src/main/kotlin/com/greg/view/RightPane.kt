@@ -5,10 +5,7 @@ import com.greg.model.cache.CacheController
 import com.greg.model.widgets.properties.CappedPropertyValues
 import com.greg.model.widgets.properties.PanelPropertyValues
 import com.greg.model.widgets.type.Widget
-import com.greg.view.properties.CappedPropertyItem
-import com.greg.view.properties.NumberSpinner
-import com.greg.view.properties.PropertyItem
-import com.greg.view.properties.TextAreaProperty
+import com.greg.view.properties.*
 import javafx.beans.property.Property
 import javafx.collections.ListChangeListener
 import javafx.event.ActionEvent
@@ -39,7 +36,7 @@ class RightPane : Fragment() {
 
     init {
         sheet.minWidth = 284.0
-        sheet.prefWidth = 284.0
+//        sheet.prefWidth = 284.0
         sheet.propertyEditorFactory = Callback<Item, PropertyEditor<*>> { param ->
             if (param is PropertyItem) {
                 when {
@@ -48,7 +45,7 @@ class RightPane : Fragment() {
                         val editor = NumberSpinner(param)
                         val spinner = editor.editor
                         spinner.isDisable = param.disabled
-                        spinner.valueFactory.valueProperty().bindBidirectional(param.propertyValue as Property<Int>?)
+                        spinner.valueFactory.valueProperty().bindBidirectional(param.prop() as Property<Int>?)
 
                         spinner.editor.textProperty().addListener { _, oldValue, newValue ->
                             if (oldValue != newValue) {
@@ -80,8 +77,14 @@ class RightPane : Fragment() {
                     param.value is Color -> {
                         val editor = Editors.createColorEditor(param)
                         val field = editor.editor
-                        (field as? ColorPicker)?.valueProperty()?.bindBidirectional(param.propertyValue as Property<Color>?)
+                        (field as? ColorPicker)?.valueProperty()?.bindBidirectional(param.prop() as Property<Color>?)
                         editor
+                    }
+                    param.value is IntArray -> {
+                        IntSpreadsheetProperty(param)
+                    }
+                    param.value is Array<*> -> {
+                        StringSpreadsheetProperty(param)
                     }
                     else -> {
                         if (param.name.contains("Archive")) {
@@ -90,7 +93,7 @@ class RightPane : Fragment() {
                             val editor = Editors.createChoiceEditor(param, options)
                             val field = editor.editor
                             val box = field as? ComboBox<String>
-                            box?.valueProperty()?.bindBidirectional(param.propertyValue as Property<String>?)
+                            box?.valueProperty()?.bindBidirectional(param.prop() as Property<String>?)
                             editor
                         } else {
                             val editor = TextAreaProperty(param)
@@ -98,7 +101,7 @@ class RightPane : Fragment() {
 
                             field?.prefHeight = 50.0
 
-                            field?.textProperty()?.bindBidirectional(param.propertyValue as Property<String>?)
+                            field?.textProperty()?.bindBidirectional(param.prop() as Property<String>?)
 
                             editor
                         }
@@ -138,7 +141,7 @@ class RightPane : Fragment() {
                         .filterIsInstance<PropertyItem>()
                         .forEachIndexed { index, propertyItem ->
                             if (propertyItem.name != "X" && propertyItem.name != "Y")
-                                propertyItem.propertyValue.addListener { _, _, newValue ->
+                                propertyItem.prop().addListener { _, _, newValue ->
                                     change.list
                                             .filter { it != first && it.type == first.type }
                                             .forEach { widget ->

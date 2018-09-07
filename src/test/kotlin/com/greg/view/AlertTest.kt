@@ -20,6 +20,17 @@ class AlertTest : View() {
             dialogPane.contentProperty().set(fp)
         }
     }
+    /*
+    final Button Hyperlink8 = new Button("TextField");
+        Hyperlink8.setOnAction(e -> {
+            TextInputDialog dlg = new TextInputDialog("");
+            dlg.setTitle("Name Check");
+            String optionalMasthead = "Please type in your name";
+            dlg.getDialogPane().setContentText("What is your name?");
+            configureSampleDialog(dlg, optionalMasthead);
+            showDialog(dlg);
+        });
+     */
 
     override val root = vbox {
 
