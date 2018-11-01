@@ -7,7 +7,7 @@ import tornadofx.imageview
 
 class ImageTreeCell : TreeCell<String>() {
     companion object {
-        val placeholderIcon = Image(ImageTreeCell::class.java.getResourceAsStream("../placeholder.png"))
+        val placeholderIcon = Image(ImageTreeCell::class.java.getResourceAsStream("placeholder.png"))
     }
 
     override fun updateItem(string: String?, empty: Boolean) {
