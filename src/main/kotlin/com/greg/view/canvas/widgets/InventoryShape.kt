@@ -1,6 +1,7 @@
 package com.greg.view.canvas.widgets
 
 import com.greg.model.cache.archives.ArchiveMedia
+import com.greg.model.widgets.properties.IntValues
 import com.greg.model.widgets.type.WidgetInventory
 import javafx.scene.Group
 import javafx.scene.image.ImageView
@@ -18,7 +19,10 @@ class InventoryShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, 
     }
 
     fun updateInventory(widget: WidgetInventory) {
+        println("Update inv")
         var item = 0
+
+        widget.arrayRange.set(IntValues(widget.getSlotWidth(), widget.getSlotHeight()))
 
         group.children.clear()
 

@@ -26,8 +26,8 @@ class Properties {
         return values
     }
 
-    fun addCapped(property: ToggleProperty, range: ObjectProperty<IntRange>, category: String = "Properties") : PropertyValues {
-        val values = CappedPropertyValues(property, category, range)
+    fun addRanged(property: ToggleProperty, range: ObjectProperty<IntValues>, category: String = "Properties") : PropertyValues {
+        val values = RangePropertyValues(property, category, range)
         properties.add(values)
         return values
     }

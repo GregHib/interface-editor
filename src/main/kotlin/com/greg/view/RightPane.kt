@@ -2,8 +2,8 @@ package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.cache.CacheController
-import com.greg.model.widgets.properties.CappedPropertyValues
 import com.greg.model.widgets.properties.PanelPropertyValues
+import com.greg.model.widgets.properties.RangePropertyValues
 import com.greg.model.widgets.type.Widget
 import com.greg.view.properties.*
 import javafx.beans.property.Property
@@ -81,10 +81,16 @@ class RightPane : Fragment() {
                         editor
                     }
                     param.value is IntArray -> {
+                        if(param is RangePropertyItem)
                         IntSpreadsheetProperty(param)
+                        else
+                            null
                     }
                     param.value is Array<*> -> {
-                        StringSpreadsheetProperty(param)
+                        if(param is RangePropertyItem)
+                            StringSpreadsheetProperty(param)
+                        else
+                            null
                     }
                     else -> {
                         if (param.name.contains("Archive")) {
@@ -126,8 +132,8 @@ class RightPane : Fragment() {
                 first.properties.get()
                         .filter { !(it is PanelPropertyValues && !it.panel) }
                         .forEach { property ->
-                            val item = if (property is CappedPropertyValues)
-                                CappedPropertyItem(property.category, property.property as Property<*>, property.range)
+                            val item = if (property is RangePropertyValues)
+                                RangePropertyItem(property.category, property.property as Property<*>, property.range)
                             else
                                 PropertyItem(property.category, property.property as Property<*>)
 

@@ -2,6 +2,7 @@ package com.greg.view.canvas.widgets
 
 import com.greg.model.cache.archives.ArchiveMedia
 import com.greg.model.settings.Settings
+import com.greg.model.widgets.properties.IntValues
 import com.greg.model.widgets.properties.extended.StringProperty
 import com.greg.model.widgets.type.WidgetSprite
 import javafx.beans.property.IntegerProperty
@@ -99,9 +100,9 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
 
         //Limit the sprite index to archive size
         if(default)
-            widget.setDefaultCap(IntRange(0, size))
+            widget.setDefaultCap(IntValues(0, size))
         else
-            widget.setSecondaryCap(IntRange(0, size))
+            widget.setSecondaryCap(IntValues(0, size))
 
         //If already on an index which is greater than archive index; reduce, otherwise set the same (refresh)
         if(default)

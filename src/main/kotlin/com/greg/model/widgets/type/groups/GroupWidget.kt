@@ -1,6 +1,7 @@
 package com.greg.model.widgets.type.groups
 
 import com.greg.controller.utils.MathUtils
+import com.greg.model.widgets.properties.IntValues
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
@@ -12,8 +13,8 @@ abstract class GroupWidget {
     abstract var width: IntProperty
     abstract var height: IntProperty
 
-    abstract var widthBounds: ObjProperty<IntRange>
-    abstract var heightBounds: ObjProperty<IntRange>
+    abstract var widthBounds: ObjProperty<IntValues>
+    abstract var heightBounds: ObjProperty<IntValues>
 
     abstract var locked: BoolProperty
     abstract var selected: BoolProperty
@@ -92,7 +93,7 @@ abstract class GroupWidget {
     }
 
     fun setWidth(value: Int) {
-        width.set(if(getWidthBounds() != IntRange.EMPTY) MathUtils.constrain(value, getWidthBounds().start, getWidthBounds().endInclusive) else value)
+        width.set(if(getWidthBounds() != IntValues.EMPTY) MathUtils.constrain(value, getWidthBounds().first, getWidthBounds().last) else value)
     }
 
     fun getHeight(): Int {
@@ -100,14 +101,14 @@ abstract class GroupWidget {
     }
 
     fun setHeight(value: Int) {
-        height.set(if(getWidthBounds() != IntRange.EMPTY) MathUtils.constrain(value, getHeightBounds().start, getHeightBounds().endInclusive) else value)
+        height.set(if(getWidthBounds() != IntValues.EMPTY) MathUtils.constrain(value, getHeightBounds().first, getHeightBounds().last) else value)
     }
 
-    fun getWidthBounds(): IntRange {
+    fun getWidthBounds(): IntValues {
         return widthBounds.get()
     }
 
-    fun getHeightBounds(): IntRange {
+    fun getHeightBounds(): IntValues {
         return heightBounds.get()
     }
 

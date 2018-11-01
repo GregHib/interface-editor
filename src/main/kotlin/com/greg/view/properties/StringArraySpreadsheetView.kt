@@ -8,56 +8,56 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.SelectionMode
 import org.controlsfx.control.spreadsheet.*
-import tornadofx.onChange
 
-class StringArraySpreadsheetView(propertyItem: PropertyItem) : SpreadsheetView() {
+class StringArraySpreadsheetView(propertyItem: RangePropertyItem) : SpreadsheetView() {
     private val property = propertyItem.prop() as ObjProperty<Array<String>>
+    private val range = propertyItem.propertyRange
+    private val array = property.value.clone()
 
     private val listener = ChangeListener<Any> { observable, _, newValue ->
         val cell = observable as ObjectProperty<Any>
         val bean = cell.bean as SpreadsheetCellBase
-        val array = property.value.clone()
 
-        println(array[bean.row])
-        array[bean.row] = newValue as? String ?: ""
+        if(bean is CustomSpreadSheetCell<*>) {
+            array[bean.index] = newValue as? String ?: ""
 
-        property.set(array)
+            property.set(array)
+        }
     }
 
-    init {
-        val array = propertyItem.value as Array<String>
-        val rowCount = array.size //Will be re-calculated after if incorrect.
-        val columnCount = 1
+    private fun refresh() {
+        val rowCount = range.value.last
+        val columnCount = range.value.first
 
         val grid = GridBase(rowCount, columnCount)
 
-        grid.columnHeaders.setAll((0 until grid.columnCount).map { it.toString() })
-        selectionModel.selectionMode = SelectionMode.SINGLE
+        grid.columnHeaders.setAll((0 until columnCount).map { it.toString() })
 
-        buildGrid(grid, array)
+        buildGrid(grid, property.value as Array<String>, rowCount, columnCount)
 
         setGrid(grid)
-
-        grid.rows.onChange {
-            println("Change")
-        }
     }
 
-    /*fun getData(): IntArray {
-        return grid.rows.flatMap { row -> row.map { it.item as Int } }.toIntArray()
-    }*/
+    init {
+        refresh()
+        range.addListener { _, _, _ -> refresh() }
+        selectionModel.selectionMode = SelectionMode.SINGLE
+    }
 
-    private fun buildGrid(grid: GridBase, array: Array<String>) {
-        val rows = FXCollections.observableArrayList<ObservableList<SpreadsheetCell>>()
+    private fun buildGrid(grid: GridBase, array: Array<String>, width: Int, height: Int) {
+        val cells = FXCollections.observableArrayList<ObservableList<SpreadsheetCell>>()
 
-        for (i in 0 until array.size) {
+        var index = 0
+        for (column in 0 until height) {
             val randomRow = FXCollections.observableArrayList<SpreadsheetCell>()
-            val cell = SpreadsheetCellType.STRING.createCell(i, 0, 1, 1, array[i])
-            cell.itemProperty().addListener(listener)
-            randomRow.add(cell)
-            rows.add(randomRow)
+            for (row in 0 until width) {
+                val cell = CustomSpreadSheetCell(row, column, array[index++], SpreadsheetCellType.STRING, index)
+                randomRow.add(cell)
+            }
+            cells.add(randomRow)
         }
-        grid.setRows(rows)
+        grid.setRows(cells)
+        cells.forEach { it.forEach { cell -> cell.itemProperty().addListener(listener) } }
     }
 
     fun setValueProperty(value: Array<String>) {

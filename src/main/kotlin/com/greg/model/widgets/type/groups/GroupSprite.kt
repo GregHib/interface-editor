@@ -1,17 +1,18 @@
 package com.greg.model.widgets.type.groups
 
 import com.greg.controller.utils.MathUtils
+import com.greg.model.widgets.properties.IntValues
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
 import com.greg.model.widgets.properties.extended.StringProperty
 
 interface GroupSprite {
 
-    var defaultCap: ObjProperty<IntRange>
+    var defaultCap: ObjProperty<IntValues>
     var defaultSprite: IntProperty
     var defaultSpriteArchive: StringProperty
 
-    var secondaryCap: ObjProperty<IntRange>
+    var secondaryCap: ObjProperty<IntValues>
     var secondarySprite: IntProperty
     var secondarySpriteArchive: StringProperty
 
@@ -20,14 +21,14 @@ interface GroupSprite {
     }
 
     fun setDefaultSprite(value: Int, constrain: Boolean = true) {
-        defaultSprite.set(if(constrain) MathUtils.constrain(value, getDefaultCap().start, getDefaultCap().endInclusive) else value)
+        defaultSprite.set(if(constrain) MathUtils.constrain(value, getDefaultCap().first, getDefaultCap().last) else value)
     }
 
-    fun setDefaultCap(range: IntRange) {
+    fun setDefaultCap(range: IntValues) {
         defaultCap.set(range)
     }
 
-    fun getDefaultCap(): IntRange {
+    fun getDefaultCap(): IntValues {
         return defaultCap.get()
     }
 
@@ -44,14 +45,14 @@ interface GroupSprite {
     }
 
     fun setSecondarySprite(value: Int, constrain: Boolean = true) {
-        secondarySprite.set(if(constrain) MathUtils.constrain(value, getSecondaryCap().start, getSecondaryCap().endInclusive) else value)
+        secondarySprite.set(if(constrain) MathUtils.constrain(value, getSecondaryCap().first, getSecondaryCap().last) else value)
     }
 
-    fun setSecondaryCap(range: IntRange) {
+    fun setSecondaryCap(range: IntValues) {
         secondaryCap.set(range)
     }
 
-    fun getSecondaryCap(): IntRange {
+    fun getSecondaryCap(): IntValues {
         return secondaryCap.get()
     }
 

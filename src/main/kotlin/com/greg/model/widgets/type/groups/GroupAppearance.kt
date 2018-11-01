@@ -1,6 +1,7 @@
 package com.greg.model.widgets.type.groups
 
 import com.greg.controller.utils.MathUtils
+import com.greg.model.widgets.properties.IntValues
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
@@ -10,7 +11,7 @@ interface GroupAppearance {
     var centred: BoolProperty
     var fontIndex: IntProperty
     var shadow: BoolProperty
-    var fontBounds: ObjProperty<IntRange>
+    var fontBounds: ObjProperty<IntValues>
 
     fun setCentred(value: Boolean) {
         centred.set(value)
@@ -21,14 +22,14 @@ interface GroupAppearance {
     }
 
     fun setFontIndex(value: Int) {
-        fontIndex.set(MathUtils.constrain(value, getFontBounds().start, getFontBounds().endInclusive))
+        fontIndex.set(MathUtils.constrain(value, getFontBounds().first, getFontBounds().last))
     }
 
     fun getFontIndex(): Int {
         return fontIndex.get()
     }
 
-    fun getFontBounds(): IntRange {
+    fun getFontBounds(): IntValues {
         return fontBounds.get()
     }
 

@@ -2,6 +2,7 @@ package com.greg.model.widgets.type
 
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
+import com.greg.model.widgets.properties.IntValues
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
@@ -23,6 +24,7 @@ class WidgetInventory(builder: WidgetBuilder, id: Int) : Widget(builder, id), Gr
     override var spritesIndex: ObjProperty<IntArray> = ObjProperty("spritesIndex", IntArray(0))
     override var slotWidth = IntProperty("slotWidth", 0)
     override var slotHeight = IntProperty("slotHeight", 0)
+    var arrayRange = ObjProperty("arrayRange", IntValues(0, 0))
 
     init {
         properties.add(width, "Layout").property.setDisabled(true)
@@ -35,10 +37,10 @@ class WidgetInventory(builder: WidgetBuilder, id: Int) : Widget(builder, id), Gr
         properties.add(spritePaddingY)
         properties.add(slotWidth)
         properties.add(slotHeight)
-        properties.add(spriteX)
-        properties.add(spriteY)
-        properties.add(spritesIndex)
-        properties.add(spritesArchive)
+        properties.addRanged(spriteX, arrayRange)
+        properties.addRanged(spriteY, arrayRange)
+        properties.addRanged(spritesIndex, arrayRange)
+        properties.addRanged(spritesArchive, arrayRange)
     }
 
 }

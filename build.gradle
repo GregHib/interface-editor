@@ -30,10 +30,10 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-imaging', version: '1.0-R1534292'
     compile group: 'org.apache.commons', name: 'commons-compress', version: '1.15'
     compile group: 'org.apache.commons', name: 'commons-compress', version: '1.15'
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
 //    compile fileTree(dir: 'libs', include: '*.jar')
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'commons-io', name: 'commons-io', version: '2.4'
 }
 
 compileKotlin {

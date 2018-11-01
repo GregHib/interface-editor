@@ -8,6 +8,7 @@ import com.greg.model.widgets.JsonSerializer
 import com.greg.model.widgets.Jsonable
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
+import com.greg.model.widgets.properties.IntValues
 import com.greg.model.widgets.properties.Properties
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
@@ -31,8 +32,8 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, Gr
     override var width = IntProperty("width", Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH))
     override var height = IntProperty("height", Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT))
 
-    override var widthBounds = ObjProperty("widthBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_WIDTH), Settings.getInt(Settings.WIDGET_CANVAS_WIDTH)))
-    override var heightBounds = ObjProperty("heightBounds", IntRange(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_HEIGHT), Settings.getInt(Settings.WIDGET_CANVAS_HEIGHT)))
+    override var widthBounds = ObjProperty("widthBounds", IntValues(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_WIDTH), Settings.getInt(Settings.WIDGET_CANVAS_WIDTH)))
+    override var heightBounds = ObjProperty("heightBounds", IntValues(Settings.getInt(Settings.DEFAULT_WIDGET_MINIMUM_HEIGHT), Settings.getInt(Settings.WIDGET_CANVAS_HEIGHT)))
 
     override var locked = BoolProperty("locked", false)
     override var selected = BoolProperty("selected", false)
@@ -60,8 +61,8 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, Gr
         properties.add(x, category = "Layout")
         properties.add(y, category = "Layout")
         if(builder.type != WidgetType.SPRITE && builder.type != WidgetType.INVENTORY) {
-            properties.addCapped(width, widthBounds, "Layout")
-            properties.addCapped(height, heightBounds, "Layout")
+            properties.addRanged(width, widthBounds, "Layout")
+            properties.addRanged(height, heightBounds, "Layout")
         }
         properties.addPanel(locked, false)
         properties.addPanel(selected, false)

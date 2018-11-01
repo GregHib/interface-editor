@@ -2,6 +2,7 @@ package com.greg.model.widgets.type
 
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
+import com.greg.model.widgets.properties.IntValues
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
@@ -15,7 +16,7 @@ class WidgetText(builder: WidgetBuilder, id: Int) : Widget(builder, id), GroupAp
 
     override var centred = BoolProperty("centred", Settings.getBoolean(Settings.DEFAULT_TEXT_CENTRED))
     override var fontIndex = IntProperty("fontIndex", 0)
-    override var fontBounds = ObjProperty("fontBounds", IntRange(0, 3))
+    override var fontBounds = ObjProperty("fontBounds", IntValues(0, 3))
     override var shadow = BoolProperty("shadow", Settings.getBoolean(Settings.DEFAULT_TEXT_SHADOW))
     override var defaultText = StringProperty("defaultText", Settings.get(Settings.DEFAULT_TEXT_MESSAGE))
     override var secondaryText = StringProperty("secondaryText", Settings.get(Settings.DEFAULT_TEXT_SECONDARY_MESSAGE))
@@ -26,7 +27,7 @@ class WidgetText(builder: WidgetBuilder, id: Int) : Widget(builder, id), GroupAp
 
     init {
         properties.add(centred)
-        properties.addCapped(fontIndex, fontBounds)
+        properties.addRanged(fontIndex, fontBounds)
         properties.add(shadow)
         properties.add(defaultText)
         properties.add(secondaryText)

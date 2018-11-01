@@ -375,7 +375,8 @@ class WidgetsController : Controller() {
             }
         } else if(widget is WidgetInventory && shape is InventoryShape) {
             shape.updateInventory(widget)
-            val listener = ChangeListener<Any> { _, oldValue, newValue ->
+            val listener = ChangeListener<Any> { observable, oldValue, newValue ->
+                println("Inv listener")
                 if (oldValue != newValue)
                     shape.updateInventory(widget)
             }
