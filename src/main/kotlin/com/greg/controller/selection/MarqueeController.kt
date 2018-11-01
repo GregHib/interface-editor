@@ -3,20 +3,16 @@ package com.greg.controller.selection
 import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.widgets.type.Widget
-import javafx.event.EventTarget
 import javafx.geometry.BoundingBox
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
-import javafx.scene.shape.Shape
 
 class MarqueeController(private val widgets: WidgetsController, private var canvas: PannableCanvas) {
     private var marquee = Marquee()
-    private var target: EventTarget? = null
     private var widget: Widget? = null
 
     fun init(event: MouseEvent) {
-        target = event.target
-        this.widget = widgets.getWidget(event.target)
+        widget = widgets.getAllIntersections(canvas, BoundingBox(event.x, event.y, 1.0, 1.0)).lastOrNull()
     }
 
     fun select(event: MouseEvent) {
@@ -28,8 +24,8 @@ class MarqueeController(private val widgets: WidgetsController, private var canv
 
     fun handle(event: MouseEvent): Boolean {
         //If marquee box isn't already on the screen and...
-        //If clicking blank space or a unselected shape with a multi select key down
-        if (!marquee.selecting && (target !is Shape || (widget != null && !widget!!.isSelected() && event.isControlDown))) {
+        //If clicking blank space, locked widget or a unselected shape with a multi select key down
+        if (!marquee.selecting && (widget == null || (widget != null && !widget!!.isSelected() && event.isControlDown))) {
             //Begin marquee selection box
             marquee.selecting = true
             add(event)
@@ -78,26 +74,20 @@ class MarqueeController(private val widgets: WidgetsController, private var canv
      */
     private fun selectContents(event: MouseEvent) {
         //Add everything in marquee to selection
-        widgets.getAll()
-                .filter {widget ->
-                    val canvasX = canvas.boundsInParent.minX
-                    val scaleOffsetX = canvas.boundsInLocal.minX * canvas.scaleX
-                    val widgetX = canvasX - scaleOffsetX + (widget.getX() * canvas.scaleX)
+        val list = widgets.getAllIntersections(canvas, marquee.boundsInParent)
 
-                    val canvasY = canvas.boundsInParent.minY
-                    val scaleOffsetY = canvas.boundsInLocal.minY * canvas.scaleY
-                    val widgetY = canvasY - scaleOffsetY + (widget.getY() * canvas.scaleY)
+        //Make selections
+        list.forEach { widget -> widget.setSelected(if (event.isControlDown) !widget.isSelected() else true, false) }
 
-                    val widgetBounds = BoundingBox(widgetX, widgetY, widget.getWidth() * canvas.scaleX, widget.getHeight() * canvas.scaleY)
+        //Multi-add new selections
+        if (event.isControlDown) {
+            val selected = list.filter { it.isSelected() }
+            val notSelected = list.filter { !it.isSelected() }
 
-                    marquee.boundsInParent.intersects(widgetBounds)
-                }
-                .forEach { widget ->
-                    if (event.isControlDown)
-                        widget.setSelected(!widget.isSelected())
-                    else
-                        widget.setSelected(true)
-                }
+            WidgetsController.selection.removeAll(notSelected)
+            WidgetsController.selection.addAll(selected)
+        } else
+            WidgetsController.selection.addAll(list)
 
         //Remove marquee
         val pane = event.source as? Pane ?: return

@@ -1,8 +1,8 @@
 package com.greg.model.widgets
 
-import com.greg.model.widgets.type.*
+import com.greg.model.widgets.type.Widget
 
-open class WidgetBuilder(val type: WidgetType = WidgetType.WIDGET) {
+open class WidgetBuilder(val type: WidgetType) {
 
     companion object {
         var identifier = 0
@@ -13,15 +13,11 @@ open class WidgetBuilder(val type: WidgetType = WidgetType.WIDGET) {
     }
 
     open fun build(id: Int = -1): Widget {
+        if(id != -1 && id > identifier)
+            identifier = id + 1
+
         val identifier = if(id != -1) id else getId()
-        return when(type) {
-            WidgetType.TEXT -> WidgetText(this, identifier)
-            WidgetType.RECTANGLE -> WidgetRectangle(this, identifier)
-            WidgetType.SPRITE -> WidgetSprite(this, identifier)
-            WidgetType.CACHE_SPRITE -> WidgetCacheSprite(this, identifier)
-            else -> {
-                Widget(this, identifier)
-            }
-        }
+
+        return type.widget.constructors.first().call(this, identifier)
     }
 }

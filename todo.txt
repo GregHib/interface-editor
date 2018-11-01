@@ -1,3 +1,19 @@
+//MVP New thoughts
+Focus on 317 format.
+All index's loaded into hierarchy at once (Redo hierarchy, group by interface) - keep it simple
+Save
+Extend indices
+Change indicy id's
+
+User preferences saving
+Custom interface names
+Loading screen for selecting cache (like intellij with previous locations + option to load last one by default)
+
+
+
+
+
+
 Component naming
 https://gyazo.com/407615643f5a46f34ee82f60252ec86e
 //https://touchgfx.zendesk.com/hc/article_attachments/115001954569/add_new_screen.png
@@ -9,7 +25,6 @@ How to detect revision of cache attempted to be loaded? Xaves
 
 // Features
 //----------------------
-Fix unable to select widgets (just text?) until group selected them
 Fixed mac drag image offset different from windows
 Fix sprite sizes when dropped (e.g internal sprite 0)
 Fix hash named dragged sprites invisible (.value mismatch?)
@@ -26,6 +41,12 @@ Move sprites list to right panel?
 Editable widget names
 Widgets within widgets; recursive for hierarchy + memento's; cutting/pasting etc..
 Hold shift to lock movement on one axis?
+
+//Optimisation
+Test performance without listeners
+Test performance without memento's & action recording
+Test performance with unlimited heap memory
+Better way to handle group changes than one at a time?
 
 
 // Tidy up
@@ -45,3 +66,10 @@ Advanced arrow key movement system, ideally without a game-loop see : https://st
 Undoing and redoing changing an attribute for multiple widgets in one action rather than splitting into individual actions
 Change layout to use mvc?
 Custom names for hierarchy items (have name as a WidgetGroup property?) When saving will need a separate *.names file
+
+
+Credits:
+Savions - Colour conversion code
+Major - 317 deob
+Faris - Interface id list
+Galkon - Sprite to BufferedImage w alpha code

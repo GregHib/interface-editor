@@ -20,7 +20,7 @@ open class WidgetShape(val identifier: Int, width: Int, height: Int) : Group() {
 
         if(Settings.getBoolean(Settings.SELECTION_STROKE_ANIMATE)) {
             outline.strokeDashArray.setAll(4.0, 8.0)
-            val maxOffset = outline.strokeDashArray.stream().reduce(0.0, { a, b -> a + b })
+            val maxOffset = outline.strokeDashArray.stream().reduce(0.0) { a, b -> a + b }
             val line = Timeline(KeyFrame(Duration.ZERO, KeyValue(outline.strokeDashOffsetProperty(), 0, Interpolator.LINEAR)), KeyFrame(Duration.seconds(Settings.getDouble(Settings.SELECTION_STROKE_ANIMATION_DURATION)), KeyValue(outline.strokeDashOffsetProperty(), maxOffset, Interpolator.LINEAR)))
             line.cycleCount = Timeline.INDEFINITE
             line.play()
@@ -29,9 +29,6 @@ open class WidgetShape(val identifier: Int, width: Int, height: Int) : Group() {
         outline.stroke = Settings.getColour(Settings.DEFAULT_STROKE_COLOUR)
         outline.fill = Color.TRANSPARENT
         outline.strokeType = StrokeType.INSIDE
-
-        layoutXProperty().bind(outline.xProperty())
-        layoutYProperty().bind(outline.yProperty())
     }
 
 }

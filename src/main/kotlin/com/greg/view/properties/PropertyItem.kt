@@ -1,22 +1,16 @@
 package com.greg.view.properties
 
 import javafx.beans.property.Property
-import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
 import org.controlsfx.control.PropertySheet
 import java.util.*
 
-open class PropertyItem(private val propertyName: String, private val propertyCategory: String, private val propertyValue: Property<*>) : PropertySheet.Item {
+open class PropertyItem(private val propertyCategory: String, private val propertyValue: Property<*>) : PropertySheet.Item {
 
-    val objectProperty = SimpleObjectProperty(this, propertyName, propertyValue.value)//TODO bean is incorrect but prevents leaking
     var disabled: Boolean = false
 
-    init {
-        objectProperty.bindBidirectional(propertyValue as Property<Any>?)
-    }
-
     override fun getName(): String {
-        return propertyName
+        return propertyValue.name.capitalize()
     }
 
     override fun getCategory(): String {
@@ -32,11 +26,15 @@ open class PropertyItem(private val propertyName: String, private val propertyCa
     }
 
     override fun getType(): Class<*> {
-        return objectProperty.value::class.java
+        return propertyValue.value::class.java
     }
 
     override fun getValue(): Any {
-        return objectProperty.get()
+        return propertyValue.value
+    }
+
+    fun prop(): Property<*> {
+        return propertyValue
     }
 
     override fun getObservableValue(): Optional<ObservableValue<out Any>> {

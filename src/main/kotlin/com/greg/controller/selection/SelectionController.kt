@@ -1,12 +1,14 @@
 package com.greg.controller.selection
 
+import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.widgets.WidgetsController
+import javafx.geometry.BoundingBox
 import javafx.scene.input.MouseEvent
 
-class SelectionController(val widgets: WidgetsController) {
+class SelectionController(val widgets: WidgetsController, private var canvas: PannableCanvas) {
 
     fun start(event: MouseEvent) {
-        val widget = widgets.getWidget(event.target)
+        val widget = widgets.getAllIntersections(canvas, BoundingBox(event.x, event.y, 1.0, 1.0)).lastOrNull()
 
         //If clicked something other than a widget
         var selected = widget == null

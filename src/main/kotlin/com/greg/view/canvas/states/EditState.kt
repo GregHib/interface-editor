@@ -4,33 +4,28 @@ import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.widgets.WidgetsController
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.type.Widget
-import com.greg.view.canvas.states.edit.ResizeBox
-import com.greg.view.canvas.states.edit.ResizePoint
 import com.greg.view.canvas.CanvasState
 import com.greg.view.canvas.CanvasView
+import com.greg.view.canvas.states.edit.ResizeBox
+import com.greg.view.canvas.states.edit.ResizePoint
 import com.greg.view.canvas.widgets.WidgetShape
-import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 
-class EditState(private val view: CanvasView, private var widget: Widget, shape: WidgetShape, val widgets: WidgetsController, private val canvas: PannableCanvas) : CanvasState {
+class EditState(private val view: CanvasView, private var widget: Widget, shape: WidgetShape, val widgets: WidgetsController, canvas: PannableCanvas) : CanvasState {
 
-    private val start = widget.getMemento()
-    private var resize = ResizeBox(widget, canvas)
+    private val start = widget.toJson()
+    private var resize = ResizeBox(widget, canvas, widgets)
 
     init {
         resize.start(shape)
     }
 
     private fun close() {
-        resize.close()
         view.defaultState()
     }
 
     override fun handleMousePress(event: MouseEvent) {
-        if (event.target != canvas)
-            widgets.start(widget)
-
         when {
             event.target is ResizePoint -> {
                 resize.press(event)
@@ -42,6 +37,12 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
                 //Set starting position
                 widget.dragContext.anchorX = widget.getX()
                 widget.dragContext.anchorY = widget.getY()
+            }
+            else -> {
+                //Close edit state if clicked on empty space
+                val widget = widgets.getWidget(event.target)
+                if (!CanvasView.spaceHeld && this.widget != widget)
+                    close()
             }
         }
     }
@@ -61,12 +62,7 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
     }
 
     override fun handleMouseRelease(event: MouseEvent) {
-        //Close edit state if clicked on empty space
-        if (!CanvasView.spaceHeld && event.target == canvas)
-            close()
-
         resize.reset()
-        widgets.finish()
     }
 
     override fun handleDoubleClick(event: MouseEvent) {
@@ -85,22 +81,8 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
         when (event.code.ordinal) {
             Settings.getInt(Settings.ACCEPT_KEY_CODE) -> close()
             Settings.getInt(Settings.CANCEL_KEY_CODE) -> {
-                widget.restore(start)
+                widget.fromJson(start)
                 close()
-            }
-        }
-
-        if (event.isControlDown) {
-            when (event.code) {
-                KeyCode.Z -> {
-                    if (event.isShiftDown)
-                        widgets.redo()
-                    else
-                        widgets.undo()
-                    close()
-                }
-                else -> {
-                }
             }
         }
 
@@ -110,5 +92,6 @@ class EditState(private val view: CanvasView, private var widget: Widget, shape:
 
 
     override fun onClose() {
+        resize.close()
     }
 }

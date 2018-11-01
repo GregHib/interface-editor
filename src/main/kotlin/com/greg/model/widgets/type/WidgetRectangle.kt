@@ -2,34 +2,28 @@ package com.greg.model.widgets.type
 
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
+import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
-import javafx.scene.paint.Color
+import com.greg.model.widgets.type.groups.GroupColour
+import com.greg.model.widgets.type.groups.GroupColours
 
-class WidgetRectangle(builder: WidgetBuilder, id: Int) : Widget(builder, id) {
+class WidgetRectangle(builder: WidgetBuilder, id: Int) : Widget(builder, id), GroupColour, GroupColours {
 
-    private var fill: ObjProperty<Color>? = null
-    private var stroke: ObjProperty<Color>? = null
+    var filled = BoolProperty("filled", Settings.getBoolean(Settings.DEFAULT_RECTANGLE_FILLED))
+    override var defaultColour = ObjProperty("defaultColour", Settings.getColour(Settings.DEFAULT_RECTANGLE_DEFAULT_COLOUR))
+    override var secondaryColour = ObjProperty("secondaryColour", Settings.getColour(Settings.DEFAULT_RECTANGLE_SECONDARY_COLOUR))
+    override var defaultHoverColour = ObjProperty("defaultHoverColour", Settings.getColour(Settings.DEFAULT_RECTANGLE_DEFAULT_HOVER_COLOUR))
+    override var secondaryHoverColour = ObjProperty("secondaryHoverColour", Settings.getColour(Settings.DEFAULT_RECTANGLE_SECONDARY_HOVER_COLOUR))
 
     init {
-        properties.add(fillProperty())
-        properties.add(strokeProperty())
+        properties.add(filled)
+        properties.add(defaultColour)
+        properties.add(secondaryColour)
+        properties.add(defaultHoverColour)
+        properties.add(secondaryHoverColour)
     }
 
-    fun setFill(value: Color) { fillProperty().set(value) }
-    fun getFill(): Color { return fillProperty().get() }
-    fun fillProperty(): ObjProperty<Color> {
-        if (fill == null)
-            fill = ObjProperty(this, "fill", Settings.getColour(Settings.DEFAULT_RECTANGLE_FILL_COLOUR))
+    fun setFilled(value: Boolean) { filled.set(value) }
 
-        return fill!!
-    }
-
-    fun setStroke(value: Color) { strokeProperty().set(value) }
-    fun getStroke(): Color { return strokeProperty().get() }
-    fun strokeProperty(): ObjProperty<Color> {
-        if (stroke == null)
-            stroke = ObjProperty(this, "stroke", Settings.getColour(Settings.DEFAULT_RECTANGLE_STROKE_COLOUR))
-
-        return stroke!!
-    }
+    fun isFilled(): Boolean { return filled.get() }
 }

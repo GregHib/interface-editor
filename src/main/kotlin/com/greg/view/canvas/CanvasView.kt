@@ -5,10 +5,11 @@ import com.greg.controller.canvas.PannableCanvas
 import com.greg.controller.canvas.SceneGestures
 import com.greg.controller.widgets.WidgetShapeBuilder
 import com.greg.controller.widgets.WidgetsController
+import com.greg.model.cache.CacheController
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.type.Widget
-import com.greg.model.widgets.type.WidgetCacheSprite
+import com.greg.model.widgets.type.WidgetContainer
 import com.greg.model.widgets.type.WidgetSprite
 import com.greg.view.KeyInterface
 import com.greg.view.canvas.states.DefaultState
@@ -16,6 +17,8 @@ import com.greg.view.canvas.states.EditState
 import com.greg.view.canvas.widgets.WidgetShape
 import com.greg.view.hierarchy.HierarchyItem
 import javafx.collections.ListChangeListener
+import javafx.geometry.BoundingBox
+import javafx.geometry.Point2D
 import javafx.scene.Cursor
 import javafx.scene.control.TreeItem
 import javafx.scene.input.*
@@ -32,6 +35,7 @@ class CanvasView : View(), KeyInterface {
     }
 
     private val widgets: WidgetsController by inject()
+    private val cache: CacheController by inject()
     private val canvas = PannableCanvas()
     private val nodeGestures = NodeGestures(widgets)
     private val sceneGestures = SceneGestures(canvas)
@@ -52,18 +56,20 @@ class CanvasView : View(), KeyInterface {
         state.onClose()
     }
 
+    fun clear() {
+        widgets.clearSelection()
+    }
+
     override val root = pane {
         //Clip canvas to view
         val rectangle = Rectangle()
         rectangle.widthProperty().bind(widthProperty())
         rectangle.heightProperty().bind(heightProperty())
         clip = rectangle
-
         group {
             //Create canvas
             canvas.layoutX = 100.0
             canvas.layoutY = 100.0
-
             /*val grid = group {
                 for(i in 0..canvas.prefWidth.toInt()/50) {
                     rectangle(i * 50, 0.0, 1.0, canvas.prefHeight) {
@@ -89,16 +95,15 @@ class CanvasView : View(), KeyInterface {
             primaryStage.addEventFilter(KeyEvent.KEY_RELEASED, sceneGestures.onKeyReleasedEventHandler)
         }
 
-        addEventFilter(MouseEvent.ANY, { handleMouseEvents(it)})
+        addEventFilter(MouseEvent.ANY) { handleMouseEvents(it)}
 
         /**
          * Dragging from component panel
          */
 
         setOnDragOver { event ->
-            if (event.dragboard.hasString())
+            if (event.dragboard.hasString() && event.dragboard.string.isNotEmpty())
                 event.acceptTransferModes(TransferMode.MOVE)
-
             event.consume()
         }
 
@@ -107,7 +112,28 @@ class CanvasView : View(), KeyInterface {
             val data = if(string.contains(":")) string.split(":") else arrayListOf(string)
             val type = WidgetType.forString(data[0])
             if (type != null) {
-                val widget = createAndDisplay(type)
+                widgets.clearSelection()
+
+                //Create
+                val widget = WidgetBuilder(type).build()
+
+                //Check if there's a widget under the dropped location
+                val target = widgets.getAllIntersections(canvas, BoundingBox(event.x, event.y, 1.0, 1.0)).lastOrNull { it is WidgetContainer }
+
+                //If there's a widget get the linked shape
+                val targetShape = if(target != null) widgets.getShape(canvas, target) else null
+
+                //Get parent position if target has parents
+                val point = if(target != null && targetShape != null) widgets.getParentPosition(targetShape) else Point2D(target?.getX()?.toDouble() ?: 0.0, target?.getY()?.toDouble() ?: 0.0)
+
+                //Add as a child if target is a container
+                if(target != null && target is WidgetContainer) {
+                    target.getChildren().add(widget)
+                    if(state is EditState)
+                        defaultState()
+                } else {
+                    widgets.add(widget)
+                }
 
                 val scaleOffsetX = canvas.boundsInLocal.minX * canvas.scaleX
                 val canvasX = canvas.boundsInParent.minX - scaleOffsetX
@@ -118,19 +144,16 @@ class CanvasView : View(), KeyInterface {
                 val dropX = (event.x - canvasX) / canvas.scaleX
                 val dropY = (event.y - canvasY) / canvas.scaleY
 
-                widget.setX(dropX.toInt())
-                widget.setY(dropY.toInt())
+                //Set location of new widget to drop point minus offset if a child of a parent
+                widget.setX((dropX - point.x).toInt())
+                widget.setY((dropY - point.y).toInt())
 
                 if(data.size >= 2) {
-                    (widget as? WidgetSprite)?.setSprite(Integer.valueOf(data[1]))
-
-                    if(widget is WidgetCacheSprite) {
-                        widget.setSprite(Integer.valueOf(data[1]))
-                        widget.setArchive(data[2])
+                    if(widget is WidgetSprite) {
+                        widget.setDefaultSprite(Integer.valueOf(data[1]))
+                        widget.setDefaultSpriteArchive(data[2])
                     }
                 }
-
-                widgets.clearSelection()
 
                 widget.setSelected(true)
             }
@@ -173,6 +196,12 @@ class CanvasView : View(), KeyInterface {
     }
 
     private fun handleKeyPress(event: KeyEvent) {
+        if(!event.isControlDown && event.code == KeyCode.A) {
+            val list = arrayListOf<Widget>()
+            for(i in 0..400)
+                list.add(WidgetBuilder(WidgetType.RECTANGLE).build())
+            widgets.addAll(list.toTypedArray())
+        }
         if (event.code == KeyCode.SPACE) {
             spaceHeld = true
             if (root.cursor != Cursor.OPEN_HAND && root.cursor != Cursor.CLOSED_HAND)
@@ -196,21 +225,42 @@ class CanvasView : View(), KeyInterface {
      * Misc
      */
 
-    fun createAndDisplay(type: WidgetType): Widget {
-        val widget = WidgetBuilder(type).build()
-        widgets.add(widget)
-        return widget
+    private fun createShape(widget: Widget, children: List<WidgetShape>? = null): WidgetShape {
+        val shape = WidgetShapeBuilder(widget).build()
+        shape.addEventFilter(MouseEvent.MOUSE_PRESSED, nodeGestures.onMousePressedEventHandler)
+        shape.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeGestures.onMouseDraggedEventHandler)
+        shape.addEventFilter(MouseEvent.MOUSE_ENTERED, nodeGestures.onMouseEnteredEventHandler)
+        shape.addEventFilter(MouseEvent.MOUSE_EXITED, nodeGestures.onMouseExitedEventHandler)
+        widgets.connect(widget, shape, cache, children, createUnit)
+        return shape
+    }
+
+    private val createUnit:(widgets: List<Widget>) -> List<WidgetShape> = { widgets ->
+        val shapes = arrayListOf<WidgetShape>()
+
+        widgets.forEach { widget ->
+            if(widget is WidgetContainer) {
+                //Create child shapes
+                val children = create(widget.getChildren())
+                //Create shape with children
+                shapes.add(createShape(widget, children))
+            } else {
+                //Create shape
+                shapes.add(createShape(widget))
+            }
+        }
+
+        shapes
+    }
+
+    private fun create(widgets: List<Widget>): List<WidgetShape> {
+        return createUnit(widgets)
     }
 
     fun refresh(it: ListChangeListener.Change<out Widget>) {
         if (it.wasAdded()) {
-            it.addedSubList.forEach { widget ->
-                val shape = WidgetShapeBuilder(widget).build()
-                shape.addEventFilter(MouseEvent.MOUSE_PRESSED, nodeGestures.onMousePressedEventHandler)
-                shape.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeGestures.onMouseDraggedEventHandler)
-                widgets.connect(widget, shape)
-                canvas.children.add(shape)
-            }
+            val shape = create(it.addedSubList)
+            canvas.children.addAll(shape)
         } else if (it.wasRemoved()) {
             it.removed.forEach { widget ->
                 canvas.children.filterIsInstance<WidgetShape>()
@@ -220,14 +270,14 @@ class CanvasView : View(), KeyInterface {
         }
     }
 
-    val hierarchyListener:ListChangeListener<TreeItem<String>> = ListChangeListener {
-        it.next()
-        if(it.wasAdded()) {
-            //TODO probably a more efficient way of doing this
-            it.list
+    val hierarchyListener: ListChangeListener<TreeItem<String>> = ListChangeListener { change ->
+        change.next()
+        if(change.wasAdded()) {
+            change.list
                     .filterIsInstance<HierarchyItem>()
                     .forEach { item ->
-                        canvas.children.filterIsInstance<WidgetShape>()
+                        canvas.children
+                                .filterIsInstance<WidgetShape>()
                                 .filter { it.identifier == item.identifier }
                                 .forEach { it.toFront() }
                     }

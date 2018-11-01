@@ -1,96 +1,113 @@
 package com.greg.view.canvas.widgets
 
-import com.greg.controller.widgets.WidgetsController
+import com.greg.model.cache.archives.ArchiveMedia
 import com.greg.model.settings.Settings
-import com.greg.view.sprites.SpriteController
+import com.greg.model.widgets.properties.IntValues
+import com.greg.model.widgets.properties.extended.StringProperty
+import com.greg.model.widgets.type.WidgetSprite
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleIntegerProperty
-import javafx.embed.swing.SwingFXUtils
-import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import javafx.scene.image.WritableImage
+import tornadofx.ChangeListener
 import tornadofx.add
-import java.awt.image.BufferedImage
 
-open class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height) {
+class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height), ImageResample {
 
-    var sprite: SimpleIntegerProperty? = null
+    private var defaultSprite: SimpleIntegerProperty? = null
+    private var secondarySprite: SimpleIntegerProperty? = null
+    private var defaultArchive: StringProperty? = null
+    private var secondaryArchive: StringProperty? = null
     private val image = ImageView()
+    var flip = false
 
     init {
         add(image)
         loadSprite()
-        spriteProperty().addListener { _, _, _ ->
-            loadSprite()
-        }
+        val listener = ChangeListener<Any> { _, _, _ -> loadSprite() }
+        defaultSpriteProperty().addListener(listener)
+        secondarySpriteProperty().addListener(listener)
+        defaultArchiveProperty().addListener(listener)
+        secondaryArchiveProperty().addListener(listener)
     }
 
-    open fun loadSprite() {
-        if(getSprite() >= 0 && getSprite() < SpriteController.observableExternal[0].sprites.size) {
-            val sprite = SpriteController.observableExternal[0].sprites[getSprite()]
-            if(sprite != null)
-                displayImage(sprite.toBufferedImage())
-        }
-    }
+    private fun loadSprite() {
+        val archive = ArchiveMedia.getImage("${if(flip) getSecondaryArchive() else getDefaultArchive()}.dat")
+        if (archive != null) {
+            val spriteIndex = if(flip) getSecondarySprite() else getDefaultSprite()
+            if (spriteIndex >= 0 && spriteIndex < archive.sprites.size) {
+                val sprite = archive.sprites[spriteIndex]
+                if(sprite != null) {
+                    val bufferedImage = sprite.toBufferedImage()
+                    displayImage(image, bufferedImage, outline)
 
-    fun displayImage(bufferedImage: BufferedImage) {
-        image.fitWidth = bufferedImage.width.toDouble()
-        image.fitHeight = bufferedImage.height.toDouble()
-        image.isPreserveRatio = true
-        image.image = resample(SwingFXUtils.toFXImage(bufferedImage, null), 10)
-
-        //TODO fix width/height on adding sprite 0
-        outline.width = bufferedImage.width.toDouble()
-        outline.height = bufferedImage.height.toDouble()
-    }
-
-    private fun resample(input: Image, scaleFactor: Int): Image {
-        val w = input.width.toInt()
-        val h = input.height.toInt()
-
-        val output = WritableImage(w * scaleFactor, h * scaleFactor)
-
-        val reader = input.pixelReader
-        val writer = output.pixelWriter
-
-        val colour = Settings.getInt(Settings.SPRITE_BACKGROUND_COLOUR)
-        val red = (colour shr 16) and 0xFF
-        val green = (colour shr 8) and 0xFF
-        val blue = colour and 0xFF
-
-        for (y in 0 until h) {
-            for (x in 0 until w) {
-                var argb = reader.getArgb(x, y)
-
-                //Replace colour with transparent
-                val r = argb shr 16 and 0xFF
-                val g = argb shr 8 and 0xFF
-                val b = argb and 0xFF
-
-                if (r == red && g == green && b == blue)
-                    argb = argb and 0x00FFFFFF
-
-                //Scale
-                for (dy in 0 until scaleFactor) {
-                    for (dx in 0 until scaleFactor) {
-                        writer.setArgb(x * scaleFactor + dx, y * scaleFactor + dy, argb)
-                    }
+                    layoutX = sprite.offsetX.toDouble()
+                    layoutY = sprite.offsetY.toDouble()
                 }
             }
+        } else {
+            displayImage(image, null, outline)
         }
-
-        return output
     }
 
-    fun getSprite(): Int {
-        return spriteProperty().get()
+    fun getDefaultArchive(): String {
+        return defaultArchiveProperty().get()
     }
 
-    fun spriteProperty(): IntegerProperty {
-        if (sprite == null)
-            sprite = SimpleIntegerProperty(this, "sprite", Settings.getInt(Settings.DEFAULT_SPRITE_ID))
+    fun defaultArchiveProperty(): StringProperty {
+        if (defaultArchive == null)
+            defaultArchive = StringProperty("defaultArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
 
-        return sprite!!
+        return defaultArchive!!
     }
 
+    fun getSecondaryArchive(): String {
+        return secondaryArchiveProperty().get()
+    }
+
+    fun secondaryArchiveProperty(): StringProperty {
+        if (secondaryArchive == null)
+            secondaryArchive = StringProperty("secondaryArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
+
+        return secondaryArchive!!
+    }
+
+    fun getDefaultSprite(): Int {
+        return defaultSpriteProperty().get()
+    }
+
+    fun defaultSpriteProperty(): IntegerProperty {
+        if (defaultSprite == null)
+            defaultSprite = SimpleIntegerProperty(this, "defaultSprite", Settings.getInt(Settings.DEFAULT_SPRITE_ID))
+
+        return defaultSprite!!
+    }
+
+    fun getSecondarySprite(): Int {
+        return secondarySpriteProperty().get()
+    }
+
+    fun secondarySpriteProperty(): IntegerProperty {
+        if (secondarySprite == null)
+            secondarySprite = SimpleIntegerProperty(this, "secondarySprite", Settings.getInt(Settings.DEFAULT_SPRITE_ID))
+
+        return secondarySprite!!
+    }
+
+    fun updateArchive(widget: WidgetSprite, archiveName: String, default: Boolean) {
+        //Get the number of sprites in archive
+        val archive = ArchiveMedia.getImage("$archiveName.dat")//TODO the gnome hash isn't .dat? are all .dat?
+        val size = (archive?.sprites?.size ?: 1) - 1
+
+        //Limit the sprite index to archive size
+        if(default)
+            widget.setDefaultCap(IntValues(0, size))
+        else
+            widget.setSecondaryCap(IntValues(0, size))
+
+        //If already on an index which is greater than archive index; reduce, otherwise set the same (refresh)
+        if(default)
+            widget.setDefaultSprite(if (widget.getDefaultSprite() >= size) size else widget.getDefaultSprite())
+        else
+            widget.setSecondarySprite(if (widget.getSecondarySprite() >= size) size else widget.getSecondarySprite())
+    }
 }

@@ -1,20 +1,16 @@
 package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.widgets.properties.CappedPropertyValues
+import com.greg.model.cache.CacheController
 import com.greg.model.widgets.properties.PanelPropertyValues
+import com.greg.model.widgets.properties.RangePropertyValues
 import com.greg.model.widgets.type.Widget
-import com.greg.view.properties.CappedPropertyItem
-import com.greg.view.properties.NumberSpinner
-import com.greg.view.properties.PropertyItem
-import com.greg.view.properties.TextAreaProperty
-import com.greg.view.sprites.SpriteController
+import com.greg.view.properties.*
 import javafx.beans.property.Property
 import javafx.collections.ListChangeListener
 import javafx.event.ActionEvent
 import javafx.scene.control.ColorPicker
 import javafx.scene.control.ComboBox
-import javafx.scene.control.TextArea
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.ScrollEvent
@@ -34,13 +30,13 @@ import java.util.regex.Pattern
 class RightPane : Fragment() {
 
     val widgets: WidgetsController by inject()
-    val sprites: SpriteController by inject()
+    val cache: CacheController by inject()
     private val sheet = PropertySheet()
     private val pattern = Pattern.compile("^(-?[0-9]+)")
 
     init {
         sheet.minWidth = 284.0
-        sheet.prefWidth = 284.0
+//        sheet.prefWidth = 284.0
         sheet.propertyEditorFactory = Callback<Item, PropertyEditor<*>> { param ->
             if (param is PropertyItem) {
                 when {
@@ -49,7 +45,7 @@ class RightPane : Fragment() {
                         val editor = NumberSpinner(param)
                         val spinner = editor.editor
                         spinner.isDisable = param.disabled
-                        spinner.valueFactory.valueProperty().bindBidirectional(param.objectProperty as Property<Int>?)
+                        spinner.valueFactory.valueProperty().bindBidirectional(param.prop() as Property<Int>?)
 
                         spinner.editor.textProperty().addListener { _, oldValue, newValue ->
                             if (oldValue != newValue) {
@@ -58,60 +54,61 @@ class RightPane : Fragment() {
                             }
                         }
 
-                        spinner.focusedProperty().addListener { _, _, newValue ->
+                        spinner.focusedProperty().addListener { _, _, _ ->
                             spinner.editor.fireEvent(ActionEvent())
-
-                            if (newValue)
-                                widgets.start()
-                            else
-                                widgets.finish()
                         }
 
-                        spinner.editor.addEventFilter(ScrollEvent.SCROLL, {
+                        //Mouse Wheel Scroll to change value
+                        spinner.editor.addEventFilter(ScrollEvent.SCROLL) {
                             if (spinner.editor.isFocused) {
                                 spinner.valueFactory.increment((it.deltaY / 40).toInt())
                             }
-                        })
+                        }
 
                         //Can't override setOnAction
-                        spinner.addEventHandler(KeyEvent.KEY_PRESSED, {
+                        spinner.addEventHandler(KeyEvent.KEY_PRESSED) {
                             if (spinner.editor.isFocused && it.code == KeyCode.ENTER) {
-                                widgets.finish()
                                 it.consume()
                             }
-                        })
+                        }
 
                         editor
                     }
                     param.value is Color -> {
                         val editor = Editors.createColorEditor(param)
                         val field = editor.editor
-                        (field as? ColorPicker)?.valueProperty()?.bindBidirectional(param.objectProperty as Property<Color>?)
+                        (field as? ColorPicker)?.valueProperty()?.bindBidirectional(param.prop() as Property<Color>?)
                         editor
                     }
+                    param.value is IntArray -> {
+                        if(param is RangePropertyItem)
+                        IntSpreadsheetProperty(param)
+                        else
+                            null
+                    }
+                    param.value is Array<*> -> {
+                        if(param is RangePropertyItem)
+                            StringSpreadsheetProperty(param)
+                        else
+                            null
+                    }
                     else -> {
-                        if (param.name == "Archive") {
-                            val editor = Editors.createChoiceEditor(param, sprites.getInternalArchiveNames())
+                        if (param.name.contains("Archive")) {
+                            val options = cache.sprites.getInternalArchiveNames().toMutableList()
+                            options.add(0, "")
+                            val editor = Editors.createChoiceEditor(param, options)
                             val field = editor.editor
                             val box = field as? ComboBox<String>
-                            box?.valueProperty()?.bindBidirectional(param.objectProperty as Property<String>?)
+                            box?.valueProperty()?.bindBidirectional(param.prop() as Property<String>?)
                             editor
                         } else {
-                            val editor = TextAreaProperty(param)//Editors.createTextEditor(param)
+                            val editor = TextAreaProperty(param)
                             val field = editor.editor
 
-                            if (field is TextArea) {
-                                field.textProperty().bindBidirectional(param.objectProperty as Property<String>?)
-                                field.focusedProperty().addListener { _, _, newValue ->
-                                    if (newValue)
-                                        widgets.start()
-                                    else
-                                        widgets.finish()
-                                }
-                                /*field.setOnAction {
-                                    widgets.finish()
-                                }*/
-                            }
+                            field?.prefHeight = 50.0
+
+                            field?.textProperty()?.bindBidirectional(param.prop() as Property<String>?)
+
                             editor
                         }
                     }
@@ -121,35 +118,37 @@ class RightPane : Fragment() {
             }
 
         }
-        widgets.getSelection().addListener(ListChangeListener {
-            it.next()
+        widgets.getSelection().addListener(ListChangeListener { change ->
+            change.next()
             //Get items changed
-            val list = if (it.wasAdded()) it.addedSubList else null
+            val list = change.list
+
             //Clear property sheet
             sheet.items.clear()
 
-            if (list != null) {
+            if (list.isNotEmpty()) {
                 //Add properties for first item only
-                val first = list.first()
+                val first = list.first()//List is ordered by first in not by id
                 first.properties.get()
                         .filter { !(it is PanelPropertyValues && !it.panel) }
                         .forEach { property ->
-                            val item = if (property is CappedPropertyValues)
-                                CappedPropertyItem((property.property as Property<*>).name.capitalize(), property.category, property.property, property.range)
+                            val item = if (property is RangePropertyValues)
+                                RangePropertyItem(property.category, property.property as Property<*>, property.range)
                             else
-                                PropertyItem((property.property as Property<*>).name.capitalize(), property.category, property.property)
+                                PropertyItem(property.category, property.property as Property<*>)
 
                             item.disabled = property.property.isDisabled()
 
                             sheet.items.add(item)
                         }
 
+
                 sheet.items
                         .filterIsInstance<PropertyItem>()
                         .forEachIndexed { index, propertyItem ->
-                            if (propertyItem.objectProperty.name != "X" && propertyItem.objectProperty.name != "Y")
-                                propertyItem.objectProperty.addListener { _, _, newValue ->
-                                    it.list
+                            if (propertyItem.name != "X" && propertyItem.name != "Y")
+                                propertyItem.prop().addListener { _, _, newValue ->
+                                    change.list
                                             .filter { it != first && it.type == first.type }
                                             .forEach { widget ->
                                                 (widget.properties.get().filter {
@@ -168,8 +167,6 @@ class RightPane : Fragment() {
                     vbox {
                         add(sheet)
                     }
-                }
-                item("CS2 Editor") {
                 }
             }
 

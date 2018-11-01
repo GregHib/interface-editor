@@ -35,7 +35,7 @@ class ComponentView : View() {
                         }
 
                         stackpane {
-                            text(it.name.toLowerCase().capitalize())
+                            label(it.name.toLowerCase().capitalize())
                         }
 
                         setOnDragDetected { event ->

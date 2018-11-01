@@ -7,6 +7,7 @@ import com.greg.controller.widgets.WidgetsController
 import com.greg.view.canvas.CanvasState
 import com.greg.view.canvas.CanvasView
 import com.greg.view.canvas.widgets.WidgetShape
+import javafx.geometry.BoundingBox
 import javafx.scene.Cursor
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -15,7 +16,7 @@ import javafx.scene.input.MouseEvent
 class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets: WidgetsController) : CanvasState {
 
     private var marquee = MarqueeController(widgets, canvas)
-    private val selection = SelectionController(widgets)
+    private val selection = SelectionController(widgets, canvas)
 
     /**
      * Default state variables
@@ -25,6 +26,8 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
     private var vertical = 0
 
     override fun handleMousePress(event: MouseEvent) {
+        view.root.requestFocus()
+
         if (!CanvasView.spaceHeld)
             selection.start(event)
 
@@ -36,11 +39,6 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
             }
         }
 
-        //If shift cloned start action with cloned widget
-        if (clone)
-            widgets.start(widgets.getWidget(getClone(event)))
-        else
-            widgets.start(widgets.getWidget(event.target))
 
         if (CanvasView.spaceHeld)
             setCursor(Cursor.CLOSED_HAND)
@@ -64,22 +62,22 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
 
         if (CanvasView.spaceHeld)
             setCursor(Cursor.OPEN_HAND)
-
-        widgets.finish()
     }
 
     override fun handleDoubleClick(event: MouseEvent) {
-        val widget = widgets.getWidget(event.target)
-        val shape = widgets.getShape(event.target)
-        if (widget != null && shape != null && widget.type.resizable)
-            view.editState(widget, shape)
+        val widget = widgets.getAllIntersections(canvas, BoundingBox(event.x, event.y, 1.0, 1.0)).lastOrNull()
+        if(widget != null && widget.type.resizable) {
+            val shape = widgets.getShape(canvas, widget)
+
+            //Set edit state
+            if (shape != null)
+                view.editState(widget, shape)
+        }
 
         cloned = false
-        widgets.finish()
     }
 
     override fun handleMouseClick(event: MouseEvent) {
-        view.root.requestFocus()
     }
 
     override fun handleKeyPress(event: KeyEvent) {
@@ -87,8 +85,6 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
             marquee.remove(view.root)
             return
         }
-        if (event.code != KeyCode.SHIFT)
-            widgets.start()
 
         if (event.code == KeyCode.RIGHT || event.code == KeyCode.LEFT || event.code == KeyCode.UP || event.code == KeyCode.DOWN)
             move(event)
@@ -116,19 +112,11 @@ class DefaultState(val view: CanvasView, val canvas: PannableCanvas, val widgets
                 KeyCode.V -> {
                     widgets.paste()
                 }
-                KeyCode.Z -> {
-                    if (event.isShiftDown)
-                        widgets.redo()
-                    else
-                        widgets.undo()
-                }
                 else -> {
                 }
             }
         }
 
-        if (event.code != KeyCode.SHIFT)
-            widgets.finish()
     }
 
     override fun onClose() {

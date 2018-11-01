@@ -1,10 +1,11 @@
 package com.greg.view
 
 import com.greg.controller.widgets.WidgetsController
+import com.greg.model.cache.CacheController
+import com.greg.model.widgets.type.Widget
+import com.greg.model.widgets.type.WidgetContainer
 import com.greg.view.hierarchy.HierarchyItem
 import com.greg.view.hierarchy.HierarchyView
-import com.greg.view.sprites.SpriteController
-import com.greg.view.sprites.external.ExternalSpriteView
 import com.greg.view.sprites.internal.InternalSpriteView
 import javafx.collections.ListChangeListener
 import javafx.geometry.Orientation
@@ -19,40 +20,51 @@ import tornadofx.tabpane
 class LeftPane : View(), KeyInterface {
 
     val hierarchy = HierarchyView()
-    private val externalSprites = ExternalSpriteView()
-    private val sprites = InternalSpriteView()
 
     private lateinit var tabPane: TabPane
     private val components = ComponentView()
     private val widgets: WidgetsController by inject()
-    val controller: SpriteController by inject()
+    val cache: CacheController by inject()
 
+    private val sprites = InternalSpriteView(cache)
 
-    fun loadImages() {
-        controller.importBinary()
-        tabPane.selectionModel.select(1)
+    private fun addChildren(parent: HierarchyItem, widget: Widget) {
+        val item = HierarchyItem("${widget.name} ${widget.identifier}", widget.identifier, widget)
+        (widget as? WidgetContainer)?.getChildren()?.forEach { child -> addChildren(item, child) }
+        parent.children.add(item)
     }
 
     init {
-        widgets.getAll().addListener(ListChangeListener {
-            it.next()
-            //Get items changed
-            val list = if (it.wasAdded()) it.addedSubList else it.removed
+        widgets.updateHierarchy.addListener { _, oldValue, newValue ->
+            if(!oldValue && newValue) {
+                //Get id's of container widgets which are expanded
+                val expanded = hierarchy.getExpanded()
 
-            //Sync hierarchy with widget list changes
-            list?.forEach { widget ->
-                if (it.wasAdded()) {
-                    val item = HierarchyItem(widget.name, widget.identifier, widget)
-                    hierarchy.rootTreeItem.children.add(item)
-                    item.selectedProperty().bindBidirectional(widget.selectedProperty())
-                } else if (it.wasRemoved()) {
-                    hierarchy.rootTreeItem.children.removeAll(
-                            hierarchy.rootTreeItem.children
-                                    .filterIsInstance<HierarchyItem>()
-                                    .filter { it.identifier == widget.identifier }
-                    )
+                //Clear current hierarchy
+                hierarchy.rootTreeItem.children.clear()
+
+                val items = arrayListOf<HierarchyItem>()
+
+                widgets.get().forEach { widget ->
+                    val item = HierarchyItem("${widget.name} ${widget.identifier}", widget.identifier, widget)
+                    (widget as? WidgetContainer)?.getChildren()?.forEach { child -> addChildren(item, child) }
+                    items.add(item)
                 }
+
+                //Multi-add
+                hierarchy.rootTreeItem.children.addAll(items)
+
+                //Set containers which were expanded, expanded again
+                hierarchy.setExpended(expanded)
+
+                //Cancel update
+                widgets.updateHierarchy.set(false)
             }
+        }
+
+        widgets.get().addListener(ListChangeListener { change ->
+            change.next()
+            widgets.updateHierarchy.set(true)
         })
     }
 
@@ -61,13 +73,10 @@ class LeftPane : View(), KeyInterface {
         prefWidth = 290.0
         tabPane = tabpane {
             tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
-            tab("Hierarchy") {
+            tab("Components") {
                 add(components)
             }
             tab("Sprites") {
-                add(externalSprites)
-            }
-            tab("Cache sprites") {
                 add(sprites)
             }
         }
