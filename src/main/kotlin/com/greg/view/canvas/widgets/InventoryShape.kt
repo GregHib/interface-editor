@@ -19,7 +19,6 @@ class InventoryShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, 
     }
 
     fun updateInventory(widget: WidgetInventory) {
-        println("Update inv")
         var item = 0
 
         widget.arrayRange.set(IntValues(widget.getSlotWidth(), widget.getSlotHeight()))

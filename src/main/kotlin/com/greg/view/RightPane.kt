@@ -5,7 +5,10 @@ import com.greg.model.cache.CacheController
 import com.greg.model.widgets.properties.PanelPropertyValues
 import com.greg.model.widgets.properties.RangePropertyValues
 import com.greg.model.widgets.type.Widget
-import com.greg.view.properties.*
+import com.greg.view.properties.NumberSpinner
+import com.greg.view.properties.PropertyItem
+import com.greg.view.properties.RangePropertyItem
+import com.greg.view.properties.TextAreaProperty
 import javafx.beans.property.Property
 import javafx.collections.ListChangeListener
 import javafx.event.ActionEvent
@@ -81,15 +84,15 @@ class RightPane : Fragment() {
                         editor
                     }
                     param.value is IntArray -> {
-                        if(param is RangePropertyItem)
+                        /*if(param is RangePropertyItem)
                         IntSpreadsheetProperty(param)
-                        else
+                        else*/
                             null
                     }
                     param.value is Array<*> -> {
-                        if(param is RangePropertyItem)
+                        /*if(param is RangePropertyItem)
                             StringSpreadsheetProperty(param)
-                        else
+                        else*/
                             null
                     }
                     else -> {

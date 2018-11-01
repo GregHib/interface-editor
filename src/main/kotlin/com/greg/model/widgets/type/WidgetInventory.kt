@@ -39,8 +39,8 @@ class WidgetInventory(builder: WidgetBuilder, id: Int) : Widget(builder, id), Gr
         properties.add(slotHeight)
         properties.addRanged(spriteX, arrayRange)
         properties.addRanged(spriteY, arrayRange)
-        properties.addRanged(spritesIndex, arrayRange)
-        properties.addRanged(spritesArchive, arrayRange)
+//        properties.addRanged(spritesIndex, arrayRange)
+//        properties.addRanged(spritesArchive, arrayRange)
     }
 
 }
