@@ -1,6 +1,6 @@
 package com.greg.view
 
-import com.greg.model.cache.Cache
+import com.greg.model.cache.OldCache
 import com.greg.model.cache.CachePath
 import com.greg.model.cache.archives.font.Font
 import io.nshusa.rsam.FileStore
@@ -18,7 +18,7 @@ import java.awt.image.BufferedImage
 class FontTest : View() {
 
     private val path = CachePath("./cache/")
-    private var cache = Cache(path)
+    private var cache = OldCache(path)
     lateinit var view: ImageView
 
     override val root = vbox {

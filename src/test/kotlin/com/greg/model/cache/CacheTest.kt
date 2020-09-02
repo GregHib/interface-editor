@@ -10,10 +10,10 @@ import java.io.IOException
 class CacheTest {
 
     private val path = CachePath("./cache/")
-    private var cache = Cache(path)
+    private var cache = OldCache(path)
 
     private val filePath = CachePath("./cache/interface.jag")
-    private var fileCache = Cache(filePath)
+    private var fileCache = OldCache(filePath)
 
     @Test
     fun readFile() {

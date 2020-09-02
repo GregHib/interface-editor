@@ -18,6 +18,9 @@ enum class WidgetType(val widget: KClass<out Widget>, val shape: KClass<out Widg
         fun forString(string: String?): WidgetType? {
             return values().firstOrNull { it.name == string }
         }
+        fun forIndex(index: Int): WidgetType {
+            return values().firstOrNull { it.ordinal == index } ?: CONTAINER
+        }
     }
 }
 

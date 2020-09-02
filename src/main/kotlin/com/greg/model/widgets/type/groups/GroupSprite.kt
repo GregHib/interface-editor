@@ -2,6 +2,7 @@ package com.greg.model.widgets.type.groups
 
 import com.greg.controller.utils.MathUtils
 import com.greg.model.widgets.properties.IntValues
+import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
 import com.greg.model.widgets.properties.extended.StringProperty
@@ -15,6 +16,16 @@ interface GroupSprite {
     var secondaryCap: ObjProperty<IntValues>
     var secondarySprite: IntProperty
     var secondarySpriteArchive: StringProperty
+
+    var repeatsImage: BoolProperty
+
+    fun setRepeats(value: Boolean) {
+        repeatsImage.set(value)
+    }
+
+    fun getRepeatsImage(): Boolean {
+        return repeatsImage.get()
+    }
 
     fun getDefaultSprite(): Int {
         return defaultSprite.get()

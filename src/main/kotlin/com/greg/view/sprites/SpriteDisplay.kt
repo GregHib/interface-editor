@@ -27,7 +27,7 @@ open class SpriteDisplay(root: String, type: WidgetType, getCopyString: (target:
             val target = this.selectionModel.selectedItem
             if (target != null && target is ImageTreeItem) {
                 val db = startDragAndDrop(TransferMode.MOVE)
-                db.dragView = SwingFXUtils.toFXImage(target.sprite!!.toBufferedImage(), null)
+                db.dragView = SwingFXUtils.toFXImage(target.sprite!!, null)
                 val cc = ClipboardContent()
                 cc.putString("${type.name}:${getCopyString(target)}")
                 db.setContent(cc)

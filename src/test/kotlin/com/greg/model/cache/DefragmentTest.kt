@@ -5,7 +5,7 @@ import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
 class DefragmentTest {
-    val cache = Cache(CachePath("./cache/"))
+    val cache = OldCache(CachePath("./cache/"))
     fun call() {
         try {
             val dir = File("./defragmented_cache/")
@@ -25,7 +25,7 @@ class DefragmentTest {
             }
 
 
-            val nFs = Cache(CachePath(dir.toPath()))
+            val nFs = OldCache(CachePath(dir.toPath()))
 
             var var26: Throwable? = null
             try {

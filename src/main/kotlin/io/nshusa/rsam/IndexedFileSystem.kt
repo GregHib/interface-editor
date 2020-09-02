@@ -1,6 +1,6 @@
 package io.nshusa.rsam
 
-import com.greg.model.cache.Cache
+import com.greg.model.cache.OldCache
 import com.greg.model.cache.CachePath
 import com.greg.model.cache.formats.CacheFormats
 import java.io.Closeable
@@ -112,7 +112,7 @@ open class IndexedFileSystem : Closeable {
         }
 
 
-        val nFs = Cache(CachePath(dir.toPath()))
+        val nFs = OldCache(CachePath(dir.toPath()))
 
         var var26: Throwable? = null
         try {

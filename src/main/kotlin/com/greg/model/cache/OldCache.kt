@@ -5,7 +5,7 @@ import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.IndexedFileSystem
 import java.nio.ByteBuffer
 
-class Cache(path: CachePath) : IndexedFileSystem(path) {
+class OldCache(path: CachePath) : IndexedFileSystem(path) {
 
     override fun readFile(storeId: Int, fileId: Int): ByteBuffer {
         if(storeId == FileStore.ARCHIVE_FILE_STORE && path.getCacheType() == CacheFormats.UNPACKED_CACHE)

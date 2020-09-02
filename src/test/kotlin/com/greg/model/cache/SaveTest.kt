@@ -8,7 +8,7 @@ import java.io.File
 import java.nio.ByteBuffer
 
 class SaveTest {
-    val cache = Cache(CachePath("./interface.jag"))
+    val cache = OldCache(CachePath("./interface.jag"))
     val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
 
     fun load(buffer: ByteBuffer = archive.readFile("data")): Boolean {

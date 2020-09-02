@@ -355,12 +355,18 @@ class WidgetsController : Controller() {
                     shape.updateText(widget, cache)
                 }
             }
+            if(widget.isCentred()) {
+                shape.label.textAlignment = if (widget.isCentred()) TextAlignment.CENTER else TextAlignment.LEFT
+                shape.label.alignment = if (widget.isCentred()) Pos.TOP_CENTER else Pos.TOP_LEFT
+                shape.updateText(widget, cache)
+            }
         } else if (widget is WidgetSprite && shape is SpriteShape) {
             shape.flip = WidgetScripts.scriptStateChanged(widget)
             shape.defaultSpriteProperty().bind(widget.defaultSprite)
             shape.defaultArchiveProperty().bind(widget.defaultSpriteArchive)
             shape.secondarySpriteProperty().bind(widget.secondarySprite)
             shape.secondaryArchiveProperty().bind(widget.secondarySpriteArchive)
+            shape.repeatProperty().bind(widget.repeatsImage)
 
             //Update archive values
             shape.updateArchive(widget, widget.getDefaultSpriteArchive(), true)
@@ -376,7 +382,6 @@ class WidgetsController : Controller() {
         } else if(widget is WidgetInventory && shape is InventoryShape) {
             shape.updateInventory(widget)
             val listener = ChangeListener<Any> { observable, oldValue, newValue ->
-                println("Inv listener")
                 if (oldValue != newValue)
                     shape.updateInventory(widget)
             }

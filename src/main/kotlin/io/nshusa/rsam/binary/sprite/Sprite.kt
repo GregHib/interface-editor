@@ -13,11 +13,7 @@ import java.awt.image.RGBImageFilter
 import java.io.IOException
 import java.nio.ByteBuffer
 
-
-
-
-
-class Sprite {
+open class Sprite {
 
     var id: Int = 0
         private set

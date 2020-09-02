@@ -12,6 +12,7 @@ repositories {
     mavenCentral()
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://repo.adobe.com/nexus/content/repositories/public/")
+    maven(url = "https://dl.bintray.com/michaelbull/maven")
 }
 
 dependencies {
@@ -25,7 +26,9 @@ dependencies {
     implementation("org.apache.commons:commons-compress:1.15")
     implementation("org.apache.commons:commons-compress:1.15")
     implementation("commons-io:commons-io:2.4")
-//    compile fileTree(dir: "libs", include: "*.jar")
+    implementation("com.displee:rs-cache-library:6.6")
+    implementation("com.michael-bull.kotlin-inline-logger:kotlin-inline-logger-jvm:1.0.2")
+    implementation("io.netty:netty-buffer:4.1.51.Final")
 
     testImplementation("junit:junit:4.12")
 }

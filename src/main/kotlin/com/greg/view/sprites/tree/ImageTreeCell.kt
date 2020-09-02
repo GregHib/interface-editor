@@ -29,7 +29,7 @@ class ImageTreeCell : TreeCell<String>() {
                             this.image = image
                         } else {
                             //Display image
-                            val image = item.sprite.toBufferedImage()
+                            val image = item.sprite//.toBufferedImage()
                             fitWidth = (if (image.width > 128) 128.0 else image.width.toDouble())
                             fitHeight = (if (image.height > 128) 128.0 else image.height.toDouble())
                             this.image = SwingFXUtils.toFXImage(image, null)

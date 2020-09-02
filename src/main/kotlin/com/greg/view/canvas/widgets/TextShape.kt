@@ -46,12 +46,12 @@ class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, heigh
     fun updateText(widget: WidgetText, cache: CacheController) {
         val text = if (flip && widget.getSecondaryText().isNotEmpty()) widget.getSecondaryText() else widget.getDefaultText()
         label.text = text
-        if(cache.loaded) {
-            label.isVisible = false
-            val font = cache.fonts.fonts[widget.getFontIndex()]
-            val bi = font.getAsImage(text, widget.hasShadow(), widget.isCentred(), ColourUtils.colourToRS(label.textFill as Color))
-            image.image = resample(bi, 1)
-        } else {
+//        if(cache.loaded) {
+//            label.isVisible = false
+//            val font = cache.fonts.fonts[widget.getFontIndex()]
+//            val bi = font.getAsImage(text, widget.hasShadow(), widget.isCentred(), ColourUtils.colourToRS(label.textFill as Color))
+//            image.image = resample(bi, 1)
+//        } else {
             label.isVisible = true
             label.effect = if(widget.hasShadow()) ArchiveFont.shadow else null
             //Only supports the 4 basic fonts
@@ -61,6 +61,6 @@ class TextShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, heigh
                 3 -> ArchiveFont.thin
                 else -> ArchiveFont.small
             }
-        }
+//        }
     }
 }

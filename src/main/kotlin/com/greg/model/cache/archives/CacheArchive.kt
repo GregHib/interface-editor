@@ -1,6 +1,6 @@
 package com.greg.model.cache.archives
 
-import com.greg.model.cache.Cache
+import rs.dusk.cache.Cache
 
 abstract class CacheArchive {
     abstract fun load(cache: Cache): Boolean

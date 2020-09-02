@@ -17,12 +17,12 @@ import tornadofx.stackpane
 class SpreadsheetViewTest : View() {
 
     override val root = stackpane {
-        val intArray = ObjProperty("intArray", intArrayOf(1, 4, 8, 6, 2, 4, 3, 7, 5, 4, 2))
-        val spreadSheetView = IntArraySpreadsheetView(intArray)
-        add(spreadSheetView)
-
-        spreadSheetView.grid.columnHeaders.setAll((0 until spreadSheetView.grid.columnCount).map { it.toString() })
-        spreadSheetView.selectionModel.selectionMode = SelectionMode.SINGLE
+//        val intArray = ObjProperty("intArray", intArrayOf(1, 4, 8, 6, 2, 4, 3, 7, 5, 4, 2))
+//        val spreadSheetView = IntArraySpreadsheetView(intArray)
+//        add(spreadSheetView)
+//
+//        spreadSheetView.grid.columnHeaders.setAll((0 until spreadSheetView.grid.columnCount).map { it.toString() })
+//        spreadSheetView.selectionModel.selectionMode = SelectionMode.SINGLE
     }
 
     inner class SpreadsheetViewExample : SpreadsheetView() {

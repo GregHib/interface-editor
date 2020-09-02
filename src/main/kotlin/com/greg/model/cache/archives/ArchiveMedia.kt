@@ -1,35 +1,59 @@
 package com.greg.model.cache.archives
 
-import com.greg.model.cache.Cache
 import com.greg.view.sprites.tree.ImageArchive
-import io.nshusa.rsam.FileStore
-import io.nshusa.rsam.binary.Archive
-import io.nshusa.rsam.binary.sprite.Sprite
 import io.nshusa.rsam.util.HashUtils
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import rs.dusk.cache.Cache
+import rs.dusk.cache.definition.data.SpriteGroup
+import rs.dusk.cache.definition.decoder.SpriteDecoder
+import rs.dusk.core.io.read.BufferReader
+import java.awt.image.BufferedImage
+import java.io.File
 import java.io.InputStream
+import java.util.logging.Level
+import javax.imageio.ImageIO
 
 class ArchiveMedia : CacheArchive() {
 
     companion object {
-        var imageArchive: ObservableList<ImageArchive> = FXCollections.observableArrayList()
+        lateinit var cache: Cache
+        val decoder = SpriteDecoder()
+        var imageArchive: ObservableList<SpriteGroup> = FXCollections.observableArrayList()
 
-        fun getImage(name: String): ImageArchive? {
-            return imageArchive.firstOrNull { it.hash == HashUtils.nameToHash(name) }
+        fun getImage(name: String): SpriteGroup? {
+            val id = name.toIntOrNull() ?: return null
+            var group = imageArchive.firstOrNull { it.hash == id }
+            if(group != null) {
+                return group
+            }
+            val data = cache.getFile(8, id) ?: return null
+            group = decoder.decode(BufferReader(data), id)
+            imageArchive.add(group)
+            return group
         }
     }
 
-    fun getArchive(archive: String): ImageArchive? {
+    fun getArchive(archive: String): SpriteGroup? {
         return imageArchive.firstOrNull { it.hash == HashUtils.nameToHash(archive) }
     }
 
     fun getInternalArchiveNames(): List<String> {
-        return imageArchive.map { it -> getName(it.hash) }
+        return imageArchive.map { getName(it.hash) }
     }
 
     override fun load(cache: Cache): Boolean {
-        return try {
+        ArchiveMedia.cache = cache
+//        val decoder = SpriteDecoder()
+//        repeat(cache.lastArchiveId(8)) { id ->
+//
+//            val data = cache.getFile(8, id) ?: return false
+//            val group = decoder.decode(BufferReader(data), id)
+//            imageArchive.add(group)
+//        }
+        println("Loaded ${cache.lastArchiveId(8)} sprite groups.")
+
+        return true/*try {
             val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.MEDIA_ARCHIVE))
             val index = archive.readFile("index.dat")
 
@@ -59,7 +83,7 @@ class ArchiveMedia : CacheArchive() {
             e.printStackTrace()
             cache.reset()
             false
-        }
+        }*/
     }
 
     override fun reset(): Boolean {

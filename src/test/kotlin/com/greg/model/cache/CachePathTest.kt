@@ -27,7 +27,7 @@ class CachePathTest {
         Assert.assertTrue(file.isValid())
         Assert.assertTrue(file.getCacheType() == CacheFormats.UNPACKED_CACHE)
 
-        Cache(file).use { fs ->
+        OldCache(file).use { fs ->
             val buff = fs.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE)
             Assert.assertTrue(Arrays.equals(buff.array(),
                     ByteBuffer.wrap(File("./cache/interface.jag").readBytes()).array()))

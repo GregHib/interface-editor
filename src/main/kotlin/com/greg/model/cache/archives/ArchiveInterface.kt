@@ -1,7 +1,8 @@
 package com.greg.model.cache.archives
 
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.cache.Cache
+import com.greg.model.cache.OldCache
+import com.greg.model.cache.archives.widget.SpriteData
 import com.greg.model.cache.archives.widget.WidgetData
 import com.greg.model.cache.archives.widget.WidgetDataConverter
 import com.greg.model.cache.archives.widget.WidgetDataIO
@@ -10,6 +11,8 @@ import com.greg.model.widgets.type.Widget
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.binary.Archive
 import org.apache.commons.io.FileUtils
+import rs.dusk.cache.Cache
+import rs.dusk.cache.definition.decoder.InterfaceDecoder
 import java.io.InputStream
 
 class ArchiveInterface : CacheArchive() {
@@ -45,7 +48,7 @@ class ArchiveInterface : CacheArchive() {
         }
     }
 
-    fun save(widgets: WidgetsController, cache: Cache): Boolean {
+    fun save(widgets: WidgetsController, cache: OldCache): Boolean {
         if(!cache.path.isValid())
             return false
 
@@ -83,14 +86,51 @@ class ArchiveInterface : CacheArchive() {
     }
 
     override fun load(cache: Cache): Boolean {
-        val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
-        val buffer = archive.readFile("data")
-        var data = WidgetDataIO.read(buffer) ?: return false
+        val decoder = InterfaceDecoder(cache)
+        val list = arrayOfNulls<WidgetData>(Short.MAX_VALUE.toInt())
+        repeat(decoder.size) { id ->
+            val def = decoder.getOrNull(id) ?: return@repeat
+            val children = def.components?.map { (componentId, component) ->
+                WidgetData(componentId).apply {
+                    parent = id
+                    group = component.type
+                    x = component.basePositionX
+                    y = component.basePositionY
+                    width = component.baseWidth
+                    height = component.baseHeight
+                    alpha = component.alpha.toByte()
+                    hidden = component.hidden
+                    centeredText = !component.centreType
+                    shadowedText = component.shaded
+                    defaultColour = component.colour
+                    secondaryColour = component.backgroundColour
+                    filled = component.filled
+                    defaultText = component.text
+                    secondaryText = component.applyText
+                    spriteScale = component.spriteScale
+                    spritePitch = component.spritePitch
+                    spriteRoll = component.spriteRoll
+                    repeats = component.imageRepeat
+                    if(component.defaultImage != -1) {
+                        defaultSpriteArchive = component.defaultImage.toString()
+                        defaultSpriteIndex = 0
+                    }
+                }
+            }
+            list[id] = WidgetData(id).apply {
+                this.width = 600
+                this.height = 400
+                this.children = children?.toTypedArray()
+            }
+        }
+//        val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
+//        val buffer = archive.readFile("data")
+//        var data = WidgetDataIO.read(buffer) ?: return false
+//
+//        //Children converted after as likely child.id > parent.id so child data wouldn't have been loaded
+//        data = convert(data)
 
-        //Children converted after as likely child.id > parent.id so child data wouldn't have been loaded
-        data = convert(data)
-
-        set(data)
+        set(list)
         return true
     }
 
@@ -162,7 +202,6 @@ class ArchiveInterface : CacheArchive() {
             return
 
         val widget = WidgetDataConverter.create(data)
-
         widgets.add(widget)
     }
 }

@@ -14,7 +14,7 @@ import io.nshusa.rsam.util.ByteBufferUtils
 import kotlin.experimental.and
 
 class WidgetLoadTest {
-    val cache = Cache(CachePath("./cache/"))
+    val cache = OldCache(CachePath("./cache/"))
     val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
 
     var widgets: Array<Widget?>? = null

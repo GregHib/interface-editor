@@ -1,6 +1,6 @@
 package com.greg.model.cache.archives
 
-import com.greg.model.cache.Cache
+import com.greg.model.cache.OldCache
 import com.greg.model.cache.archives.font.Font
 import io.nshusa.rsam.FileStore
 import io.nshusa.rsam.binary.Archive
@@ -8,6 +8,7 @@ import javafx.scene.effect.BlurType
 import javafx.scene.effect.DropShadow
 import javafx.scene.paint.Color
 import javafx.scene.text.FontWeight
+import rs.dusk.cache.Cache
 
 class ArchiveFont : CacheArchive() {
 
@@ -35,7 +36,7 @@ class ArchiveFont : CacheArchive() {
     }
 
     override fun load(cache: Cache): Boolean {
-        return try {
+        return false/*try {
             val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.TITLE_ARCHIVE))
 
             fonts.add(Font.decode(archive, "p11_full", false))
@@ -47,7 +48,7 @@ class ArchiveFont : CacheArchive() {
             e.printStackTrace()
             cache.reset()
             false
-        }
+        }*/
     }
 
 }

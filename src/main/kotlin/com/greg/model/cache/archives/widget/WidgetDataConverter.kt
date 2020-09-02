@@ -7,6 +7,7 @@ import com.greg.model.widgets.type.*
 import com.greg.model.widgets.type.groups.GroupAppearance
 import com.greg.model.widgets.type.groups.GroupColour
 import com.greg.model.widgets.type.groups.GroupColours
+import tornadofx.asObservable
 import tornadofx.observable
 
 object WidgetDataConverter {
@@ -80,6 +81,7 @@ object WidgetDataConverter {
             data.defaultSpriteIndex = widget.getDefaultSprite()
             data.secondarySpriteArchive = if(widget.getSecondarySpriteArchive().isEmpty()) null else widget.getSecondarySpriteArchive()
             data.secondarySpriteIndex = widget.getSecondarySprite()
+            data.repeats = widget.getRepeatsImage()
         }
 
 
@@ -208,6 +210,7 @@ object WidgetDataConverter {
                 widget.setSecondarySpriteArchive(data.secondarySpriteArchive!!)
             if(data.secondarySpriteIndex != null)
                 widget.setSecondarySprite(data.secondarySpriteIndex!!, false)
+            widget.setRepeats(data.repeats)
         }
 
         if (widget is WidgetModel) {
@@ -255,14 +258,14 @@ object WidgetDataConverter {
      * @param override overrides identifier, (only used for -1 to create unspecified id's)
      */
     fun create(data: WidgetData, override: Boolean = false): Widget {
-        val widget = WidgetBuilder(WidgetType.values()[data.group]).build(if(override) -1 else data.id)
+        val widget = WidgetBuilder(WidgetType.forIndex(data.group)).build(if(override) -1 else data.id)
 
         setData(widget, data)
         if(widget is WidgetContainer) {
             val children = toChildren(data, override)
             if(children != null) {
                 children.forEach { it.setParent(widget) }
-                widget.setChildren(children.observable())
+                widget.setChildren(children.asObservable())
             }
         }
 
