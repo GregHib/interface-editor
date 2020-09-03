@@ -1,6 +1,7 @@
 package com.greg.model.cache.archives.widget
 
 import com.greg.controller.utils.ColourUtils
+import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.type.*
@@ -162,11 +163,17 @@ object WidgetDataConverter {
     }
 
     fun create(data: InterfaceDefinition, override: Boolean = false): Widget {
-        val root: WidgetContainer = WidgetBuilder(WidgetType.CONTAINER).build(if(override) -1 else data.id) as WidgetContainer
+        val root: WidgetContainer = WidgetBuilder(WidgetType.CONTAINER).build(if (override) -1 else data.id) as WidgetContainer
         root.setLocked(true)
-        root.setWidth(765)
-        root.setHeight(503)
-        val components = data.components ?: return root
+
+        val components = data.components
+        root.setWidth(getWidth(components))
+        root.setHeight(getHeight(components))
+
+        if (components == null) {
+            return root
+        }
+
         val p = (data.id shl 16)
         val all = components.map { (id, component) ->
             id or p to create(component)
@@ -175,7 +182,7 @@ object WidgetDataConverter {
         all.forEach { (id, widget) ->
             val component = components[id and 0xffff] ?: return@forEach
             val parentComponent = component.parent and 0xffff
-            val parent = if(parentComponent != 65535) {
+            val parent = if (parentComponent != 65535) {
                 all[parentComponent or p] as WidgetContainer
             } else {
                 root
@@ -188,10 +195,20 @@ object WidgetDataConverter {
         return root
     }
 
+    private fun getWidth(components: Map<Int, InterfaceComponentDefinition>?): Int {
+        val max = components?.maxBy { it.value.basePositionX + it.value.baseWidth } ?: return Settings.getInt(Settings.WIDGET_CANVAS_WIDTH)
+        return max.value.basePositionX + max.value.baseWidth
+    }
+
+    private fun getHeight(components: Map<Int, InterfaceComponentDefinition>?): Int {
+        val max = components?.maxBy { it.value.basePositionY + it.value.baseHeight } ?: return Settings.getInt(Settings.WIDGET_CANVAS_HEIGHT)
+        return max.value.basePositionY + max.value.baseHeight
+    }
+
     fun create(data: InterfaceComponentDefinition, override: Boolean = false): Widget {
-        val widget = WidgetBuilder(WidgetType.forIndex(data.type)).build(if(override) -1 else data.id)
+        val widget = WidgetBuilder(WidgetType.forIndex(data.type)).build(if (override) -1 else data.id)
         setData(widget, data)
-        if(widget is WidgetContainer || widget is WidgetSprite) {
+        if (widget is WidgetContainer || widget is WidgetSprite) {
             widget.setLocked(true)
         }
         return widget
