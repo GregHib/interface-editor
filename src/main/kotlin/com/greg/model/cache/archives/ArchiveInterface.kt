@@ -1,15 +1,10 @@
 package com.greg.model.cache.archives
 
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.cache.OldCache
 import com.greg.model.cache.archives.widget.WidgetData
 import com.greg.model.cache.archives.widget.WidgetDataConverter
-import com.greg.model.cache.formats.CacheFormats
 import com.greg.model.settings.Settings
 import com.greg.model.widgets.type.Widget
-import io.nshusa.rsam.FileStore
-import io.nshusa.rsam.binary.Archive
-import org.apache.commons.io.FileUtils
 import rs.dusk.cache.Cache
 import rs.dusk.cache.definition.decoder.InterfaceDecoder
 
@@ -96,36 +91,8 @@ class ArchiveInterface : CacheArchive() {
         }
     }
 
-    fun save(widgets: WidgetsController, cache: OldCache): Boolean {
-        if (!cache.path.isValid())
-            return false
-
-        //Update all the widgets currently in use into the WidgetData list
-        widgets.forAll { widget -> updateData(widget) }
-
-        val archive = Archive.decode(cache.readFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE))
-
-        //Write all WidgetData to buffer
-//        val buffer = WidgetDataIO.write()
-
-        //Write the data to the Interface.jag archive
-//        archive.writeFile("data", buffer.array())
-
-        //Re-encode the archive
-        val encoded = archive.encode()
-
-        return when (cache.getCacheType()) {
-            CacheFormats.FULL_CACHE -> {
-                //Write the update to the cache.
-                cache.writeFile(FileStore.ARCHIVE_FILE_STORE, Archive.INTERFACE_ARCHIVE, encoded)
-            }
-            CacheFormats.UNPACKED_CACHE -> {
-                val file = cache.path.getArchiveFile(cache.path.getFiles(), Archive.INTERFACE_ARCHIVE)
-                //Overwrite
-                FileUtils.writeByteArrayToFile(file, encoded)
-                true
-            }
-        }
+    fun save(widgets: WidgetsController, cache: Cache): Boolean {
+        return false
     }
 
     override fun reset(): Boolean {

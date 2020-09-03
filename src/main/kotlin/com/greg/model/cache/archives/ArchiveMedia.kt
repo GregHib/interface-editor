@@ -1,6 +1,5 @@
 package com.greg.model.cache.archives
 
-import io.nshusa.rsam.util.HashUtils
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.image.Image
@@ -9,7 +8,6 @@ import rs.dusk.cache.Cache
 import rs.dusk.cache.definition.data.IndexedSprite
 import rs.dusk.cache.definition.data.SpriteDefinition
 import rs.dusk.cache.definition.decoder.SpriteDecoder
-import java.io.InputStream
 
 class ArchiveMedia : CacheArchive() {
 
@@ -71,10 +69,6 @@ class ArchiveMedia : CacheArchive() {
         }
     }
 
-    fun getInternalArchiveNames(): List<String> {
-        return imageArchive.map { getName(it.id) }
-    }
-
     override fun load(cache: Cache): Boolean {
         decoder = SpriteDecoder(cache)
         println("Found ${cache.lastArchiveId(8)} sprite groups.")
@@ -84,20 +78,5 @@ class ArchiveMedia : CacheArchive() {
     override fun reset(): Boolean {
         imageArchive.clear()
         return true
-    }
-
-    fun getName(hash: Int): String {
-        //Get known hashes
-        val inputStream: InputStream = javaClass.getResourceAsStream("4.txt")
-        val lineList = mutableListOf<String>()
-        inputStream.bufferedReader().useLines { lines -> lines.forEach { lineList.add(it) } }
-
-        //If match return (without the .dat)
-        lineList.forEach {
-            if (HashUtils.nameToHash(it) == hash)
-                return it.substring(0, it.length - 4)
-        }
-        //Otherwise just return the hash id
-        return hash.toString()
     }
 }
