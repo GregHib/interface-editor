@@ -1,7 +1,6 @@
 package com.greg.controller.selection
 
 import com.greg.controller.widgets.WidgetsController
-import com.greg.model.cache.archives.widget.WidgetData
 import com.greg.model.cache.archives.widget.WidgetDataConverter
 import com.greg.model.widgets.JsonSerializer
 import com.greg.model.widgets.WidgetType
@@ -9,6 +8,7 @@ import com.greg.model.widgets.type.Widget
 import com.greg.model.widgets.type.WidgetContainer
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
+import rs.dusk.cache.definition.data.InterfaceDefinition
 
 class InteractionController(val widgets: WidgetsController) {
 
@@ -31,7 +31,7 @@ class InteractionController(val widgets: WidgetsController) {
         //For each line
         for (line in lines) {
 
-            val data = JsonSerializer.deserializer(line, WidgetData::class.java)
+            val data = JsonSerializer.deserializer(line, InterfaceDefinition::class.java)
 
             if(data == null) {
                 println("Error deserializing WidgetData $line")
@@ -78,13 +78,14 @@ class InteractionController(val widgets: WidgetsController) {
 
         WidgetsController.selection.removeAll(list)
 
-        list.forEach { widget ->
-            val data = widget.toData()
-            val clone = WidgetDataConverter.create(data, true)
-            widget.setSelected(false, false)
-            clone.setSelected(true, false)
-            map[clone] = widget.getParent()
-        }
+//        FIXME
+//        list.forEach { widget ->
+//            val data = widget.toData()
+//            val clone = WidgetDataConverter.create(data, true)
+//            widget.setSelected(false, false)
+//            clone.setSelected(true, false)
+//            map[clone] = widget.getParent()
+//        }
 
         WidgetsController.selection.addAll(map.keys)
         widgets.addAll(map.filterValues { it == null }.keys.toTypedArray())

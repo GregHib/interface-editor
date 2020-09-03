@@ -27,6 +27,7 @@ class InterfaceDecoder(cache: Cache) : DefinitionDecoder<InterfaceDefinition>(ca
             return null
         }
         val definition = create()
+        definition.id = id
         definition.components = (0..lastArchive).map { file ->
             val component = InterfaceComponentDefinition(id = file + (id shl 16))
             val data = cache.getFile(index, archive, file)
@@ -58,7 +59,7 @@ class InterfaceDecoder(cache: Cache) : DefinitionDecoder<InterfaceDefinition>(ca
         horizontalPositionMode = buffer.readByte().toByte()
         verticalPositionMode = buffer.readByte().toByte()
         parent = buffer.readShort()
-        parent = if (parent == 65535) {
+        parent = if (parent == -1) {
             -1
         } else {
             parent + (id and -65536)

@@ -13,10 +13,10 @@ open class WidgetBuilder(val type: WidgetType) {
     }
 
     open fun build(id: Int = -1): Widget {
-        if(id != -1 && id > identifier)
-            identifier = id + 1
+//        if(id != -1 && id > identifier)
+            identifier = id// + 1
 
-        val identifier = if(id != -1) id else getId()
+//        val identifier = if(id != -1) id else getId()
 
         return type.widget.constructors.first().call(this, identifier)
     }

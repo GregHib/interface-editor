@@ -1,10 +1,8 @@
 package com.greg.model.widgets.type
 
 import com.greg.controller.canvas.DragContext
-import com.greg.model.cache.archives.widget.WidgetData
 import com.greg.model.cache.archives.widget.WidgetDataConverter
 import com.greg.model.settings.Settings
-import com.greg.model.widgets.JsonSerializer
 import com.greg.model.widgets.Jsonable
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
@@ -17,6 +15,7 @@ import com.greg.model.widgets.properties.extended.StringProperty
 import com.greg.model.widgets.type.groups.GroupHover
 import com.greg.model.widgets.type.groups.GroupOptions
 import com.greg.model.widgets.type.groups.GroupWidget
+import rs.dusk.cache.definition.data.InterfaceComponentDefinition
 
 open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, GroupOptions, GroupHover {
 
@@ -69,25 +68,25 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, Gr
         properties.addPanel(invisible, false)
     }
 
-    fun toData(): WidgetData {
+    fun toData(): InterfaceComponentDefinition {
         return WidgetDataConverter.toData(this)
     }
 
-    fun fromData(data: WidgetData) {
+    fun fromData(data: InterfaceComponentDefinition) {
         WidgetDataConverter.setData(this, data)
     }
 
     override fun fromJson(json: String) {
-        val data = JsonSerializer.deserializer(json, WidgetData::class.java) ?: return
-        fromData(data)
+//        val data = JsonSerializer.deserializer(json, WidgetData::class.java) ?: return
+//        fromData(data)
     }
 
     override fun toJson(): String {
-        return JsonSerializer.serialize(toData())
+        return ""//JsonSerializer.serialize(toData()) FIXME
     }
 
     override fun toString(): String {
-        return "$type $identifier"//toJson()
+        return "$name ${identifier and 0xffff}"//toJson()
     }
 
 }

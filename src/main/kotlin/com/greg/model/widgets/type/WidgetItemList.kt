@@ -21,7 +21,7 @@ class WidgetItemList(builder: WidgetBuilder, id: Int) : Widget(builder, id), Gro
     override var spritePaddingX = IntProperty("spritePaddingX", 0)
     override var spritePaddingY = IntProperty("spritePaddingY", 0)
     override var hasActions = BoolProperty("hasActions", Settings.getBoolean(Settings.DEFAULT_HAS_ACTIONS))
-    override var actions: ObjProperty<Array<String?>> = ObjProperty("actions", arrayOfNulls(0))
+    override var actions: ObjProperty<Array<String>> = ObjProperty("actions", Array(0) { "" })
 
     init {
         properties.add(centred)

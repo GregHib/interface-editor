@@ -29,7 +29,7 @@ class LeftPane : View(), KeyInterface {
     private val sprites = InternalSpriteView(cache)
 
     private fun addChildren(parent: HierarchyItem, widget: Widget) {
-        val item = HierarchyItem("${widget.name} ${widget.identifier}", widget.identifier, widget)
+        val item = HierarchyItem(widget.toString(), widget.identifier, widget)
         (widget as? WidgetContainer)?.getChildren()?.forEach { child -> addChildren(item, child) }
         parent.children.add(item)
     }
@@ -46,7 +46,7 @@ class LeftPane : View(), KeyInterface {
                 val items = arrayListOf<HierarchyItem>()
 
                 widgets.get().forEach { widget ->
-                    val item = HierarchyItem("${widget.name} ${widget.identifier}", widget.identifier, widget)
+                    val item = HierarchyItem(widget.toString(), widget.identifier, widget)
                     (widget as? WidgetContainer)?.getChildren()?.forEach { child -> addChildren(item, child) }
                     items.add(item)
                 }
