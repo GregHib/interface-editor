@@ -19,7 +19,6 @@ class InventoryShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, 
     }
 
     fun updateInventory(widget: WidgetInventory) {
-        println("Update inv")
         var item = 0
 
         widget.arrayRange.set(IntValues(widget.getSlotWidth(), widget.getSlotHeight()))
@@ -37,20 +36,12 @@ class InventoryShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, 
                 }
 
                 if (item < 20) {
-                    val archive = ArchiveMedia.getImage(widget.getSpritesArchive()[item])
-                    if (archive != null) {
-                        val spriteIndex = widget.getSpritesIndex()[item]
-                        if (spriteIndex >= 0 && spriteIndex < archive.sprites.size) {
-                            val sprite = archive.sprites[spriteIndex]
-                            if(sprite != null) {
-                                //Sprite
-                                val bufferedImage = sprite//.toBufferedImage()
-                                val image = displayImage(ImageView(), bufferedImage, outline)
-                                image.translateX = componentX.toDouble() //+ sprite.offsetX
-                                image.translateY = componentY.toDouble() //+ sprite.offsetY
-                                group.add(image)
-                            }
-                        }
+                    val image = ArchiveMedia.getImage(widget.getSpritesArchive()[item], widget.getSpritesIndex()[item])
+                    if (image != null) {
+                        val view = displayImage(ImageView(), image, outline)
+                        view.translateX = componentX.toDouble() //+ sprite.offsetX
+                        view.translateY = componentY.toDouble() //+ sprite.offsetY
+                        group.add(view)
                     }
                 }
 

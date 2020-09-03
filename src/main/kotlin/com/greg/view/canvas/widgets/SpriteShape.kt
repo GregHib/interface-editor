@@ -8,7 +8,6 @@ import com.greg.model.widgets.properties.extended.StringProperty
 import com.greg.model.widgets.type.WidgetSprite
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleIntegerProperty
-import javafx.scene.image.ImageView
 import javafx.scene.layout.*
 import tornadofx.ChangeListener
 import tornadofx.add
@@ -17,19 +16,17 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
 
     private var defaultSprite: SimpleIntegerProperty? = null
     private var secondarySprite: SimpleIntegerProperty? = null
-    private var defaultArchive: StringProperty? = null
-    private var secondaryArchive: StringProperty? = null
+    private var defaultArchive: SimpleIntegerProperty? = null
+    private var secondaryArchive: SimpleIntegerProperty? = null
     private var repeat: BoolProperty? = null
     private val pane = Pane()
-    private val image = ImageView()
-    var flip = false
+    var secondary = false
 
     init {
-        println("$width $height")
         add(pane)
-//        add(image)
-        loadSprite(width, height)
-        val listener = ChangeListener<Any> { _, _, _ -> loadSprite(width, height) }
+
+        reloadSprite()
+        val listener = ChangeListener<Any> { _, _, _ -> reloadSprite() }
         defaultSpriteProperty().addListener(listener)
         secondarySpriteProperty().addListener(listener)
         defaultArchiveProperty().addListener(listener)
@@ -39,25 +36,16 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
         outline.heightProperty().addListener(listener)
     }
 
-    private fun loadSprite(width: Int, height: Int) {
-        val archive = ArchiveMedia.getImage(if(flip) getSecondaryArchive() else getDefaultArchive())
-        if (archive != null) {
-            val spriteIndex = if(flip) getSecondarySprite() else getDefaultSprite()
-            if (spriteIndex >= 0 && spriteIndex < archive.sprites.size) {
-                val sprite = archive.sprites[spriteIndex]
-                if(sprite != null) {
-                    // TODO
-                    val bufferedImage = sprite//.toBufferedImage()
-//                    displayImage(image, bufferedImage, outline)
-                    pane.prefWidth = width.toDouble()
-                    pane.prefHeight = height.toDouble()
-                    pane.background = Background(BackgroundImage(resample(bufferedImage), BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT))
-                    layoutX = 0.0//sprite.offsetX.toDouble()
-                    layoutY = 0.0//sprite.offsetY.toDouble()
-                }
-            }
+    private fun reloadSprite() {
+        val id = if(secondary) getSecondaryArchive() else getDefaultArchive()
+        val index = if(secondary) getSecondarySprite() else getDefaultSprite()
+        val image = ArchiveMedia.getImage(id, index)
+        if(image != null) {
+            pane.prefWidth = outline.width
+            pane.prefHeight = outline.height
+            pane.background = Background(BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT))
         } else {
-            displayImage(image, null, outline)
+            pane.background = null
         }
     }
 
@@ -72,24 +60,24 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
         return repeat?.get() ?: false
     }
 
-    fun getDefaultArchive(): String {
+    fun getDefaultArchive(): Int {
         return defaultArchiveProperty().get()
     }
 
-    fun defaultArchiveProperty(): StringProperty {
+    fun defaultArchiveProperty(): IntegerProperty {
         if (defaultArchive == null)
-            defaultArchive = StringProperty("defaultArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
+            defaultArchive = SimpleIntegerProperty(this, "defaultArchive", Settings.getInt(Settings.DEFAULT_SPRITE_ARCHIVE))
 
         return defaultArchive!!
     }
 
-    fun getSecondaryArchive(): String {
+    fun getSecondaryArchive(): Int {
         return secondaryArchiveProperty().get()
     }
 
-    fun secondaryArchiveProperty(): StringProperty {
+    fun secondaryArchiveProperty(): IntegerProperty {
         if (secondaryArchive == null)
-            secondaryArchive = StringProperty("secondaryArchive", Settings.get(Settings.DEFAULT_SPRITE_ARCHIVE_NAME))
+            secondaryArchive = SimpleIntegerProperty(this, "secondaryArchive", Settings.getInt(Settings.DEFAULT_SPRITE_ARCHIVE))
 
         return secondaryArchive!!
     }
@@ -116,9 +104,9 @@ class SpriteShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, hei
         return secondarySprite!!
     }
 
-    fun updateArchive(widget: WidgetSprite, archiveName: String, default: Boolean) {
+    fun updateArchive(widget: WidgetSprite, archiveName: Int, default: Boolean) {
         //Get the number of sprites in archive
-        val archive = ArchiveMedia.getImage(archiveName)
+        val archive = ArchiveMedia.getDef(archiveName)
         val size = (archive?.sprites?.size ?: 1) - 1
 
         //Limit the sprite index to archive size

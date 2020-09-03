@@ -38,6 +38,18 @@ interface ImageResample {
         return output
     }
 
+    fun displayImage(view: ImageView, image: Image, outline: Rectangle): ImageView {
+        view.fitWidth = image.width
+        view.fitHeight = image.height
+        view.isPreserveRatio = true
+
+        view.image = image
+
+        outline.width = image.width
+        outline.height = image.height
+        return view
+    }
+
     fun displayImage(image: ImageView, bufferedImage: BufferedImage?, outline: Rectangle): ImageView {
         image.fitWidth = (bufferedImage?.width ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_WIDTH)).toDouble()
         image.fitHeight = (bufferedImage?.height ?: Settings.getInt(Settings.DEFAULT_RECTANGLE_HEIGHT)).toDouble()

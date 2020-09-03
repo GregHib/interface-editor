@@ -80,9 +80,9 @@ class WidgetData(@Transient var id: Int = -1) {
 
     //Sprite
     var defaultSpriteIndex: Int? = null
-    var defaultSpriteArchive: String? = null
+    var defaultSpriteArchive: Int? = null
     var secondarySpriteIndex: Int? = null
-    var secondarySpriteArchive: String? = null
+    var secondarySpriteArchive: Int? = null
     var repeats: Boolean = false
 
     //Text

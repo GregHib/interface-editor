@@ -11,11 +11,11 @@ interface GroupSprite {
 
     var defaultCap: ObjProperty<IntValues>
     var defaultSprite: IntProperty
-    var defaultSpriteArchive: StringProperty
+    var defaultSpriteArchive: IntProperty
 
     var secondaryCap: ObjProperty<IntValues>
     var secondarySprite: IntProperty
-    var secondarySpriteArchive: StringProperty
+    var secondarySpriteArchive: IntProperty
 
     var repeatsImage: BoolProperty
 
@@ -43,11 +43,11 @@ interface GroupSprite {
         return defaultCap.get()
     }
 
-    fun getDefaultSpriteArchive(): String {
+    fun getDefaultSpriteArchive(): Int {
         return defaultSpriteArchive.get()
     }
 
-    fun setDefaultSpriteArchive(value: String) {
+    fun setDefaultSpriteArchive(value: Int) {
         defaultSpriteArchive.set(value)
     }
 
@@ -67,11 +67,11 @@ interface GroupSprite {
         return secondaryCap.get()
     }
 
-    fun getSecondarySpriteArchive(): String {
+    fun getSecondarySpriteArchive(): Int {
         return secondarySpriteArchive.get()
     }
 
-    fun setSecondarySpriteArchive(value: String) {
+    fun setSecondarySpriteArchive(value: Int) {
         secondarySpriteArchive.set(value)
     }
 }

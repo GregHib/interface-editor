@@ -361,7 +361,7 @@ class WidgetsController : Controller() {
                 shape.updateText(widget, cache)
             }
         } else if (widget is WidgetSprite && shape is SpriteShape) {
-            shape.flip = WidgetScripts.scriptStateChanged(widget)
+            shape.secondary = WidgetScripts.scriptStateChanged(widget)
             shape.defaultSpriteProperty().bind(widget.defaultSprite)
             shape.defaultArchiveProperty().bind(widget.defaultSpriteArchive)
             shape.secondarySpriteProperty().bind(widget.secondarySprite)
@@ -372,16 +372,16 @@ class WidgetsController : Controller() {
             shape.updateArchive(widget, widget.getDefaultSpriteArchive(), true)
             widget.defaultSpriteArchive.addListener { _, oldValue, newValue ->
                 if (oldValue != newValue)
-                    shape.updateArchive(widget, newValue, true)
+                    shape.updateArchive(widget, newValue.toInt(), true)
             }
             shape.updateArchive(widget, widget.getSecondarySpriteArchive(), false)
             widget.secondarySpriteArchive.addListener { _, oldValue, newValue ->
                 if (oldValue != newValue)
-                    shape.updateArchive(widget, newValue, false)
+                    shape.updateArchive(widget, newValue.toInt(), false)
             }
         } else if(widget is WidgetInventory && shape is InventoryShape) {
             shape.updateInventory(widget)
-            val listener = ChangeListener<Any> { observable, oldValue, newValue ->
+            val listener = ChangeListener<Any> { _, oldValue, newValue ->
                 if (oldValue != newValue)
                     shape.updateInventory(widget)
             }

@@ -4,6 +4,7 @@ import com.greg.controller.widgets.WidgetsController
 import com.greg.model.cache.archives.ArchiveFont
 import com.greg.model.cache.archives.ArchiveInterface
 import com.greg.model.cache.archives.ArchiveMedia
+import com.greg.model.settings.Settings
 import com.greg.model.widgets.WidgetBuilder
 import javafx.scene.control.Alert
 import javafx.stage.DirectoryChooser
@@ -27,26 +28,21 @@ class CacheController : Controller() {
 
     var loaded = false
 
+    init {
+        val dir = Settings.get(Settings.CACHE_DIRECTORY)
+        if(dir.isNotBlank()) {
+            load(dir)
+        }
+    }
+
     fun selectDirectory() {
         val chooser = DirectoryChooser()
         chooser.initialDirectory = File("./")
         val directory = chooser.showDialog(null) ?: return
-        load(directory)
+        load(directory.absolutePath)
     }
 
-    fun selectFile() {
-        val chooser = FileChooser()
-        chooser.initialDirectory = File("./")
-        chooser.extensionFilters.addAll(
-                FileChooser.ExtensionFilter("Jagex Archive File (*.jag)", "*.jag"),
-                FileChooser.ExtensionFilter("Cache Data File (*.dat)", "*.dat")
-        )
-
-        val directory = chooser.showOpenDialog(null) ?: return
-        load(directory)
-    }
-
-    private fun load(directory: File) {
+    private fun load(directory: String) {
         loaded = false
 
 //        val path = CachePath(directory)
@@ -55,7 +51,7 @@ class CacheController : Controller() {
 //            alert(Alert.AlertType.ERROR, "Error loading cache", "Invalid cache.")
 //            return
 //        }
-        val cache: Cache = CacheDelegate(directory.absolutePath, "1", "1")
+        val cache: Cache = CacheDelegate(directory, "1", "1")
 
         try {
 //            cache.setPath(path)
@@ -79,7 +75,7 @@ class CacheController : Controller() {
 //                alert(Alert.AlertType.ERROR, "Error loading cache", "Unable to load fontIndex archive.")
 //                return
 //            }
-
+            Settings.put(Settings.CACHE_DIRECTORY, directory)
             loaded = true
         } catch (e: FileNotFoundException) {
             alert(Alert.AlertType.WARNING, "Error loading cache", "Cache already in use.")

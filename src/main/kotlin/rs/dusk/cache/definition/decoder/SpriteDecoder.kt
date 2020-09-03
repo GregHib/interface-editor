@@ -1,114 +1,114 @@
 package rs.dusk.cache.definition.decoder
 
-import rs.dusk.cache.definition.data.SpriteGroup
+import rs.dusk.cache.Cache
+import rs.dusk.cache.DefinitionDecoder
+import rs.dusk.cache.Indices.SPRITES
+import rs.dusk.cache.definition.data.IndexedSprite
+import rs.dusk.cache.definition.data.SpriteDefinition
+import rs.dusk.core.io.read.BufferReader
 import rs.dusk.core.io.read.Reader
-import java.awt.image.BufferedImage
 
-class SpriteDecoder {
-    fun decode(reader: Reader, id: Int): SpriteGroup {
-        reader.position(reader.length - 2)
-        val size = reader.readShort()
+class SpriteDecoder(cache: Cache) : DefinitionDecoder<SpriteDefinition>(cache, SPRITES) {
+    override fun create() = SpriteDefinition()
 
-        val childX = IntArray(size)
-        val childY = IntArray(size)
-        val childWidth = IntArray(size)
-        val childHeight = IntArray(size)
-        reader.position((reader.length - (size * 8)) - 7)
+    override fun getFile(id: Int) = 0
 
-        val groupWidth = reader.readShort()
-        val groupHeight = reader.readShort()
+    override fun readLoop(definition: SpriteDefinition, buffer: Reader) {
+        definition.read(-1, buffer)
+    }
 
-        val palette = IntArray(reader.readUnsignedByte() + 1)
+    override fun SpriteDefinition.read(opcode: Int, buffer: Reader) {
+        buffer.buffer.position(buffer.buffer.array().size - 2)
+        val size: Int = buffer.readShort()
+        buffer.buffer.position(buffer.buffer.array().size - 7 - size * 8)
 
-        val group = SpriteGroup(id, groupWidth, groupHeight, size)
+        val offsetX: Int = buffer.readShort()
+        val offsetY: Int = buffer.readShort()
 
-        repeat(size) {
-            childX[it] = reader.readUnsignedShort()
+        val paletteSize: Int = buffer.readUnsignedByte() + 1
+
+        val sprites = Array(size) { IndexedSprite() }
+        this.sprites = sprites
+        repeat(size) { index ->
+            sprites[index].offsetX = buffer.readShort()
         }
-        repeat(size) {
-            childY[it] = reader.readUnsignedShort()
+        repeat(size) { index ->
+            sprites[index].offsetY = buffer.readShort()
         }
-        repeat(size) {
-            childWidth[it] = reader.readUnsignedShort()
+        repeat(size) { index ->
+            sprites[index].width = buffer.readShort()
         }
-        repeat(size) {
-            childHeight[it] = reader.readUnsignedShort()
+        repeat(size) { index ->
+            sprites[index].height = buffer.readShort()
         }
-        reader.position((reader.length - (size * 8) - 7) - (palette.size - 1) * 3)
-        palette[0] = 0
-        for (index in 1 until palette.size) {
-            palette[index] = reader.readMedium()
+        repeat(size) { index ->
+            val sprite = sprites[index]
+            sprite.deltaWidth = offsetX - sprite.width - sprite.offsetX
+            sprite.deltaHeight = offsetY - sprite.height - sprite.offsetY
+        }
+
+        buffer.buffer.position(buffer.buffer.array().size - 7 - size * 8 - (paletteSize - 1) * 3)
+        val palette = IntArray(paletteSize)
+        for (index in 1 until paletteSize) {
+            palette[index] = buffer.readMedium()
             if (palette[index] == 0) {
                 palette[index] = 1
             }
         }
+        repeat(size) { index ->
+            sprites[index].palette = palette
+        }
 
-        reader.position(0)
-        for (id in 0 until size) {
-            val subWidth = childWidth[id]
-            val subHeight = childHeight[id]
-            val offsetX = childX[id]
-            val offsetY = childY[id]
+        buffer.buffer.position(0)
+        repeat(size) { index ->
+            val sprite = sprites[index]
+            val area = sprite.width * sprite.height
 
-            if (subWidth > 1000 || subHeight > 1000 || groupWidth > 1000 || groupHeight > 1000) {
-                continue
-            }
+            sprite.raster = ByteArray(area)
 
-            group.sprites[id] = BufferedImage(groupWidth, groupHeight, BufferedImage.TYPE_INT_ARGB)
-            val image = group.sprites[id]!!
-
-            val indices = Array(subWidth) { IntArray(subHeight) }
-
-            val flags = reader.readByte()
-            if (flags and FLAG_VERTICAL != 0) {
-                repeat(subWidth) { x ->
-                    repeat(subHeight) { y ->
-                        indices[x][y] = reader.readUnsignedByte()
-                    }
-                }
-            } else {
-                repeat(subHeight) { y ->
-                    repeat(subWidth) { x ->
-                        indices[x][y] = reader.readUnsignedByte()
-                    }
-                }
-            }
-
-            if (flags and FLAG_ALPHA != 0) {
-                if (flags and FLAG_VERTICAL != 0) {
-                    repeat(subWidth) { x ->
-                        repeat(subHeight) { y ->
-                            val alpha: Int = reader.readUnsignedByte()
-                            image.setRGB(x + offsetX, y + offsetY, alpha shl 24 or palette[indices[x][y]])
-                        }
+            val setting: Int = buffer.readUnsignedByte()
+            if (setting and 0x2 == 0) {
+                if (setting and 0x1 == 0) {
+                    repeat(area) { pixel ->
+                        sprite.raster[pixel] = buffer.readByte().toByte()
                     }
                 } else {
-                    repeat(subHeight) { y ->
-                        repeat(subWidth) { x ->
-                            val alpha: Int = reader.readUnsignedByte()
-                            image.setRGB(x + offsetX, y + offsetY, alpha shl 24 or palette[indices[x][y]])
+                    repeat(sprite.width) { x ->
+                        repeat(sprite.height) { y ->
+                            sprite.raster[x + y * sprite.width] = buffer.readByte().toByte()
                         }
                     }
                 }
             } else {
-                repeat(subWidth) { x ->
-                    repeat(subHeight) { y ->
-                        val index: Int = indices[x][y]
-                        if (index == 0) {
-                            image.setRGB(x + offsetX, y + offsetY, 0)
-                        } else {
-                            image.setRGB(x + offsetX, y + offsetY, -0x1000000 or palette[index])
+                var transparent = false
+                val alpha = ByteArray(area)
+                if (setting and 0x1 == 0) {
+                    repeat(area) { pixel ->
+                        sprite.raster[pixel] = buffer.readByte().toByte()
+                    }
+                    repeat(area) { pixel ->
+                        alpha[pixel] = buffer.readByte().toByte()
+                        val p = alpha[pixel].toInt()
+                        transparent = transparent or (p != -1)
+                    }
+                } else {
+                    repeat(sprite.width) { x ->
+                        repeat(sprite.height) { y ->
+                            sprite.raster[x + y * sprite.width] = buffer.readByte().toByte()
                         }
                     }
+                    repeat(sprite.width) { x ->
+                        repeat(sprite.height) { y ->
+                            alpha[x + y * sprite.width] = buffer.readByte().toByte()
+                            val pixel = alpha[x + y * sprite.width].toInt()
+                            transparent = transparent or (pixel != -1)
+                        }
+                    }
+                }
+                if (transparent) {
+                    sprite.alpha = alpha
                 }
             }
         }
-        return group
-    }
-
-    companion object {
-
-        const val FLAG_VERTICAL = 0x01
-        const val FLAG_ALPHA = 0x02
     }
 }

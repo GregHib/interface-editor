@@ -44,9 +44,7 @@ object WidgetDataConverter {
             data.spritePaddingX = widget.getSpritePaddingX()
             data.spritePaddingY = widget.getSpritePaddingY()
             data.sprites = widget.getSpritesArchive().mapIndexed { index, archive ->
-                if(!archive.isNullOrEmpty())
                 SpriteData(widget.getSpriteX()[index], widget.getSpriteY()[index], "$archive,${widget.getSpritesIndex()[index]}")
-                else null
             }.toTypedArray()
             data.actions = widget.getActions()
         }
@@ -77,9 +75,9 @@ object WidgetDataConverter {
         }
 
         if (widget is WidgetSprite) {
-            data.defaultSpriteArchive = if(widget.getDefaultSpriteArchive().isEmpty()) null else widget.getDefaultSpriteArchive()
+            data.defaultSpriteArchive = widget.getDefaultSpriteArchive()
             data.defaultSpriteIndex = widget.getDefaultSprite()
-            data.secondarySpriteArchive = if(widget.getSecondarySpriteArchive().isEmpty()) null else widget.getSecondarySpriteArchive()
+            data.secondarySpriteArchive = widget.getSecondarySpriteArchive()
             data.secondarySpriteIndex = widget.getSecondarySprite()
             data.repeats = widget.getRepeatsImage()
         }
@@ -162,10 +160,7 @@ object WidgetDataConverter {
             if(sprites != null) {
                 widget.setSpriteX(sprites.map { sprite -> sprite?.x ?: 0 }.toIntArray())
                 widget.setSpriteY(sprites.map { sprite -> sprite?.y ?: 0 }.toIntArray())
-                widget.setSpritesArchive(sprites.map { sprite ->
-                    val name = sprite?.name ?: return@map ""
-                    if (name.isNotEmpty()) name.substring(0, name.lastIndexOf(",")) else ""
-                }.toTypedArray())
+//                widget.setSpritesArchive(sprites)
                 widget.setSpritesIndex(sprites.map { sprite ->
                     val name = sprite?.name ?: return@map -1
                     if (name.isNotEmpty()) Integer.parseInt(name.substring(name.lastIndexOf(",") + 1)) else -1
@@ -201,12 +196,12 @@ object WidgetDataConverter {
         }
 
         if (widget is WidgetSprite) {
-            if(!data.defaultSpriteArchive.isNullOrEmpty())
+            if(data.defaultSpriteArchive != null)
                 widget.setDefaultSpriteArchive(data.defaultSpriteArchive!!)
             if(data.defaultSpriteIndex != null)
                 widget.setDefaultSprite(data.defaultSpriteIndex!!, false)
 
-            if(!data.secondarySpriteArchive.isNullOrEmpty())
+            if(data.secondarySpriteArchive != null)
                 widget.setSecondarySpriteArchive(data.secondarySpriteArchive!!)
             if(data.secondarySpriteIndex != null)
                 widget.setSecondarySprite(data.secondarySpriteIndex!!, false)

@@ -10,7 +10,7 @@ enum class WidgetType(val widget: KClass<out Widget>, val shape: KClass<out Widg
     INVENTORY(WidgetInventory::class, InventoryShape::class, resizable = false),
     RECTANGLE(WidgetRectangle::class, RectangleShape::class),
     TEXT(WidgetText::class, TextShape::class),
-    SPRITE(WidgetSprite::class, SpriteShape::class, resizable = false),
+    SPRITE(WidgetSprite::class, SpriteShape::class),
     MODEL(WidgetModel::class, ModelShape::class),
     ITEM_LIST(WidgetItemList::class, ItemListShape::class);
 

@@ -93,24 +93,11 @@ class RightPane : Fragment() {
                             null
                     }
                     else -> {
-                        if (param.name.contains("Archive")) {
-                            val options = cache.sprites.getInternalArchiveNames().toMutableList()
-                            options.add(0, "")
-                            val editor = Editors.createChoiceEditor(param, options)
-                            val field = editor.editor
-                            val box = field as? ComboBox<String>
-                            box?.valueProperty()?.bindBidirectional(param.prop() as Property<String>?)
-                            editor
-                        } else {
-                            val editor = TextAreaProperty(param)
-                            val field = editor.editor
-
-                            field?.prefHeight = 50.0
-
-                            field?.textProperty()?.bindBidirectional(param.prop() as Property<String>?)
-
-                            editor
-                        }
+                        val editor = TextAreaProperty(param)
+                        val field = editor.editor
+                        field?.prefHeight = 50.0
+                        field?.textProperty()?.bindBidirectional(param.prop() as Property<String>?)
+                        editor
                     }
                 }
             } else {

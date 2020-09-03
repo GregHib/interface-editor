@@ -11,31 +11,30 @@ import javafx.scene.control.TreeItem
 class InternalSpriteView(cache: CacheController) : SpriteDisplay("Sprites", WidgetType.SPRITE, { target: ImageTreeItem -> "${target.value}:${target.parent.value}"}) {
 
     init {
-        ArchiveMedia.imageArchive.addListener(ListChangeListener { change ->
-            change.next()
-            if (change.wasAdded()) {
-                for (archive in change.addedSubList) {
-                    val name = cache.sprites.getName(archive.hash)
-                    val archiveItem = TreeItem(name)
-
-                    archive.sprites
-                            .mapIndexed { index, sprite -> ImageTreeItem("$index", sprite) }
-                            .forEach { archiveItem.children.add(it) }
-                    rootTreeItem.children.add(archiveItem)
-                }
-            } else if (change.wasRemoved()) {
-                //Find and remove
-                for (archive in change.removed) {
-                    val name = cache.sprites.getName(archive.hash)
-                    for (child in rootTreeItem.children) {
-                        if (name == child.value) {
-                            rootTreeItem.children.remove(child)
-                            break
-                        }
-                    }
-                }
-            }
-        })
+//        ArchiveMedia.imageArchive.addListener(ListChangeListener { change ->
+//            change.next()
+//            if (change.wasAdded()) {
+//                for (archive in change.addedSubList) {
+//                    val archiveItem = TreeItem(archive.id)
+//
+//                    archive.sprites
+//                            .mapIndexed { index, sprite -> ImageTreeItem("$index", sprite?.toBufferedImage()) }
+//                            .forEach { archiveItem.children.add(it) }
+//                    rootTreeItem.children.add(archiveItem)
+//                }
+//            } else if (change.wasRemoved()) {
+//                //Find and remove
+//                for (archive in change.removed) {
+//                    val name = cache.sprites.getName(archive.id)
+//                    for (child in rootTreeItem.children) {
+//                        if (name == child.value) {
+//                            rootTreeItem.children.remove(child)
+//                            break
+//                        }
+//                    }
+//                }
+//            }
+//        })
         rootTreeItem.isExpanded = true
     }
 }
