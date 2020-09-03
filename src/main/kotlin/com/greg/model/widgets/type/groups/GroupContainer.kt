@@ -5,18 +5,21 @@ import com.greg.model.widgets.properties.extended.ObjProperty
 import com.greg.model.widgets.type.Widget
 import javafx.collections.ObservableList
 
-interface GroupChildren {
+interface GroupContainer {
 
-    var scrollLimit: IntProperty
+    var scrollWidthProperty: IntProperty
+
+    var scrollWidth: Int
+        get() = scrollWidthProperty.get()
+        set(value) = scrollWidthProperty.set(value)
+
+    var scrollHeightProperty: IntProperty
+
+    var scrollHeight: Int
+        get() = scrollHeightProperty.get()
+        set(value) = scrollHeightProperty.set(value)
+
     var children: ObjProperty<ObservableList<Widget>>
-
-    fun setScrollLimit(value: Int) {
-        scrollLimit.set(value)
-    }
-
-    fun getScrollLimit(): Int {
-        return scrollLimit.get()
-    }
 
     fun setChildren(value: ObservableList<Widget>) {
         children.set(value)

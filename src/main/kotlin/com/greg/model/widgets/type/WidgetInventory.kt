@@ -12,7 +12,7 @@ import com.greg.model.widgets.type.groups.GroupPadding
 
 class WidgetInventory(builder: WidgetBuilder, id: Int) : Widget(builder, id), GroupActions, GroupInventory, GroupPadding {
     override var hasActions = BoolProperty("hasActions", Settings.getBoolean(Settings.DEFAULT_HAS_ACTIONS))
-    override var actions: ObjProperty<Array<String>> = ObjProperty("actions", Array(0) { "" })
+    override var actions: ObjProperty<Array<String>> = ObjProperty("actions", emptyArray())
     override var swappableItems = BoolProperty("swappableItems", false)
     override var usableItems = BoolProperty("usableItems", false)
     override var replaceItems = BoolProperty("replaceItems", false)

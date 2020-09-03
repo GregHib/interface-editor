@@ -10,17 +10,16 @@ import com.greg.model.widgets.type.groups.GroupAppearance
 import com.greg.model.widgets.type.groups.GroupColour
 
 class WidgetModelList(builder: WidgetBuilder, id: Int) : Widget(builder, id), GroupAppearance, GroupColour {
-    override var centred = BoolProperty("centred", Settings.getBoolean(Settings.DEFAULT_TEXT_CENTRED))
-    override var fontIndex = IntProperty("fontIndex", 0)
+    override var fontProperty = IntProperty("fontIndex", 0)
     override var fontBounds = ObjProperty("fontBounds", IntValues(0, 3))
-    override var shadow = BoolProperty("shadow", Settings.getBoolean(Settings.DEFAULT_TEXT_SHADOW))
-    override var defaultColour = ObjProperty("defaultColour", Settings.getColour(Settings.DEFAULT_RECTANGLE_DEFAULT_COLOUR))
+    override var shaded = BoolProperty("shadow", Settings.getBoolean(Settings.DEFAULT_TEXT_SHADOW))
+    override var monochromeProperty = BoolProperty("monochrome", false)
+    override var colourProperty = ObjProperty("defaultColour", Settings.getColour(Settings.DEFAULT_RECTANGLE_DEFAULT_COLOUR))
 
     init {
-        properties.add(centred)
-        properties.addRanged(fontIndex, fontBounds)
-        properties.add(shadow)
-        properties.add(defaultColour)
+        properties.addRanged(fontProperty, fontBounds)
+        properties.add(shaded)
+        properties.add(colourProperty)
     }
 
 }

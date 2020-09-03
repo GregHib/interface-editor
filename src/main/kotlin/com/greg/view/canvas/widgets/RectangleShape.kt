@@ -9,7 +9,7 @@ import tornadofx.add
 class RectangleShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, height) {
 
     val rectangle = Rectangle(0.0, 0.0, width.toDouble(), height.toDouble())
-    var flip = false
+    var primary = true
 
     init {
         add(rectangle)
@@ -19,10 +19,10 @@ class RectangleShape(id: Int, width: Int, height: Int) : WidgetShape(id, width, 
     }
 
     fun updateColour(widget: WidgetRectangle) {
-        val colour = if (flip)
-            if (widget.isHovered() && widget.getSecondaryHoverColour() != Color.BLACK) widget.getSecondaryHoverColour() else widget.getSecondaryColour()
+        val colour = if (primary)
+            widget.getColour()
         else
-            if (widget.isHovered() && widget.getDefaultHoverColour() != Color.BLACK) widget.getDefaultHoverColour() else widget.getDefaultColour()
+            widget.getSecondaryColour()
 
         rectangle.fill = if (widget.isFilled()) colour else Color.TRANSPARENT
         rectangle.stroke = colour

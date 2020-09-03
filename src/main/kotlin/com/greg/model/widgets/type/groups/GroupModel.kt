@@ -1,18 +1,53 @@
 package com.greg.model.widgets.type.groups
 
+import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
 
 interface GroupModel {
 
     var defaultMediaType: IntProperty
     var defaultMedia: IntProperty
-    var secondaryMediaType: IntProperty
-    var secondaryMedia: IntProperty
-    var defaultAnimationId: IntProperty
-    var secondaryAnimationId: IntProperty
+
+    var animationProperty: IntProperty
     var spriteScale: IntProperty
     var spritePitch: IntProperty
     var spriteRoll: IntProperty
+
+    var depthBufferProperty: BoolProperty
+
+    var depthBuffer: Boolean
+        get() = depthBufferProperty.get()
+        set(value) = depthBufferProperty.set(value)
+
+    var viewportXProperty: IntProperty
+
+    var viewportX: Int
+        get() = viewportXProperty.get()
+        set(value) = viewportXProperty.set(value)
+
+    var viewportYProperty: IntProperty
+
+    var viewportY: Int
+        get() = viewportYProperty.get()
+        set(value) = viewportYProperty.set(value)
+
+    var spriteYawProperty: IntProperty
+
+    var spriteYaw: Int
+        get() = spriteYawProperty.get()
+        set(value) = spriteYawProperty.set(value)
+
+    var viewportWidthProperty: IntProperty
+
+    var viewportWidth: Int
+        get() = viewportWidthProperty.get()
+        set(value) = viewportWidthProperty.set(value)
+
+    var viewportHeightProperty: IntProperty
+
+    var viewportHeight: Int
+        get() = viewportHeightProperty.get()
+        set(value) = viewportHeightProperty.set(value)
 
     fun setDefaultMediaType(value: Int) { defaultMediaType.set(value) }
 
@@ -22,21 +57,9 @@ interface GroupModel {
 
     fun getDefaultMedia(): Int { return defaultMedia.get() }
 
-    fun setSecondaryMediaType(value: Int) { secondaryMediaType.set(value) }
+    fun setAnimation(value: Int) { animationProperty.set(value) }
 
-    fun getSecondaryMediaType(): Int { return secondaryMediaType.get() }
-
-    fun setSecondaryMedia(value: Int) { secondaryMedia.set(value) }
-
-    fun getSecondaryMedia(): Int { return secondaryMedia.get() }
-
-    fun setDefaultAnimationId(value: Int) { defaultAnimationId.set(value) }
-
-    fun getDefaultAnimationId(): Int { return defaultAnimationId.get() }
-
-    fun setSecondaryAnimationId(value: Int) { secondaryAnimationId.set(value) }
-
-    fun getSecondaryAnimationId(): Int { return secondaryAnimationId.get() }
+    fun getAnimation(): Int { return animationProperty.get() }
 
     fun setSpriteScale(value: Int) { spriteScale.set(value) }
 

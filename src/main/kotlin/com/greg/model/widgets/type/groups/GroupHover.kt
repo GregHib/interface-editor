@@ -1,16 +1,11 @@
 package com.greg.model.widgets.type.groups
 
-import com.greg.model.widgets.properties.extended.StringProperty
+import com.greg.model.widgets.properties.extended.BoolProperty
 
 interface GroupHover {
+    var disableHoverProperty: BoolProperty
 
-    var hover: StringProperty
-
-    fun setHover(value: String) {
-        hover.set(value)
-    }
-
-    fun getHover(): String {
-        return hover.get()
-    }
+    var hover: Boolean
+        get() = disableHoverProperty.get()
+        set(value) = disableHoverProperty.set(value)
 }

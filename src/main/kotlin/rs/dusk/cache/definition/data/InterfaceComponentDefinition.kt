@@ -11,7 +11,7 @@ import java.util.*
 data class InterfaceComponentDefinition(
     override var id: Int = -1,
     var type: Int = 0,
-    var aString4765: String? = null,
+    var name: String? = null,
     var contentType: Int = 0,
     var basePositionX: Int = 0,
     var basePositionY: Int = 0,

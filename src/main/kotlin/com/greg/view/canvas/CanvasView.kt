@@ -150,8 +150,8 @@ class CanvasView : View(), KeyInterface {
 
                 if(data.size >= 2) {
                     if(widget is WidgetSprite) {
-                        widget.setDefaultSprite(Integer.valueOf(data[1]))
-                        widget.setDefaultSpriteArchive(Integer.valueOf(data[2]))
+                        widget.setSpriteIndex(Integer.valueOf(data[1]))
+                        widget.setSprite(Integer.valueOf(data[2]))
                     }
                 }
 

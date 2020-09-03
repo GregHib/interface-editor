@@ -3,6 +3,7 @@ package com.greg.model.cache.archives
 import javafx.scene.effect.BlurType
 import javafx.scene.effect.DropShadow
 import javafx.scene.paint.Color
+import javafx.scene.text.Font.*
 import javafx.scene.text.FontWeight
 import rs.dusk.cache.Cache
 
@@ -11,10 +12,10 @@ class ArchiveFont : CacheArchive() {
     companion object {
 
         val shadow = DropShadow()
-        val small: javafx.scene.text.Font = javafx.scene.text.Font.font(11.0)
-        val medium: javafx.scene.text.Font = javafx.scene.text.Font.font(12.0)
-        val bold: javafx.scene.text.Font = javafx.scene.text.Font.font(null, FontWeight.BLACK, 12.0)
-        val thin: javafx.scene.text.Font = javafx.scene.text.Font.font(null, FontWeight.THIN, 14.0)
+        val small = font(11.0)
+        val medium = font(12.0)
+        val bold = font(null, FontWeight.BLACK, 12.0)
+        val thin = font(null, FontWeight.THIN, 14.0)
 
         init {
             shadow.blurType = BlurType.GAUSSIAN

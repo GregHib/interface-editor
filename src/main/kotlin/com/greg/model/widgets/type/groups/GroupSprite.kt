@@ -5,73 +5,64 @@ import com.greg.model.widgets.properties.IntValues
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
-import com.greg.model.widgets.properties.extended.StringProperty
 
 interface GroupSprite {
 
-    var defaultCap: ObjProperty<IntValues>
-    var defaultSprite: IntProperty
-    var defaultSpriteArchive: IntProperty
+    var spriteIndexBounds: ObjProperty<IntValues>
+    var spriteIndexProperty: IntProperty
+    var spriteProperty: IntProperty
 
-    var secondaryCap: ObjProperty<IntValues>
-    var secondarySprite: IntProperty
-    var secondarySpriteArchive: IntProperty
+    var repeatProperty: BoolProperty
 
-    var repeatsImage: BoolProperty
+    var repeat: Boolean
+        get() = repeatProperty.get()
+        set(value) = repeatProperty.set(value)
 
-    fun setRepeats(value: Boolean) {
-        repeatsImage.set(value)
+    var rotationProperty: IntProperty
+
+    var rotation: Int
+        get() = rotationProperty.get()
+        set(value) = rotationProperty.set(value)
+
+    var orientationProperty: IntProperty
+
+    var orientation: Int
+        get() = orientationProperty.get()
+        set(value) = orientationProperty.set(value)
+
+    var flipVerticalProperty: BoolProperty
+
+    var flipVertical: Boolean
+        get() = flipVerticalProperty.get()
+        set(value) = flipVerticalProperty.set(value)
+
+    var flipHorizontalProperty: BoolProperty
+
+    var flipHorizontal: Boolean
+        get() = flipHorizontalProperty.get()
+        set(value) = flipHorizontalProperty.set(value)
+
+    fun getSpriteIndex(): Int {
+        return spriteIndexProperty.get()
     }
 
-    fun getRepeatsImage(): Boolean {
-        return repeatsImage.get()
-    }
-
-    fun getDefaultSprite(): Int {
-        return defaultSprite.get()
-    }
-
-    fun setDefaultSprite(value: Int, constrain: Boolean = true) {
-        defaultSprite.set(if(constrain) MathUtils.constrain(value, getDefaultCap().first, getDefaultCap().last) else value)
+    fun setSpriteIndex(value: Int, constrain: Boolean = true) {
+        spriteIndexProperty.set(if (constrain) MathUtils.constrain(value, getDefaultCap().first, getDefaultCap().last) else value)
     }
 
     fun setDefaultCap(range: IntValues) {
-        defaultCap.set(range)
+        spriteIndexBounds.set(range)
     }
 
     fun getDefaultCap(): IntValues {
-        return defaultCap.get()
+        return spriteIndexBounds.get()
     }
 
-    fun getDefaultSpriteArchive(): Int {
-        return defaultSpriteArchive.get()
+    fun getSprite(): Int {
+        return spriteProperty.get()
     }
 
-    fun setDefaultSpriteArchive(value: Int) {
-        defaultSpriteArchive.set(value)
-    }
-
-    fun getSecondarySprite(): Int {
-        return secondarySprite.get()
-    }
-
-    fun setSecondarySprite(value: Int, constrain: Boolean = true) {
-        secondarySprite.set(if(constrain) MathUtils.constrain(value, getSecondaryCap().first, getSecondaryCap().last) else value)
-    }
-
-    fun setSecondaryCap(range: IntValues) {
-        secondaryCap.set(range)
-    }
-
-    fun getSecondaryCap(): IntValues {
-        return secondaryCap.get()
-    }
-
-    fun getSecondarySpriteArchive(): Int {
-        return secondarySpriteArchive.get()
-    }
-
-    fun setSecondarySpriteArchive(value: Int) {
-        secondarySpriteArchive.set(value)
+    fun setSprite(value: Int) {
+        spriteProperty.set(value)
     }
 }

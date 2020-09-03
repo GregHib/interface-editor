@@ -47,11 +47,11 @@ class InterfaceDecoder(cache: Cache) : DefinitionDecoder<InterfaceDefinition>(ca
         type = buffer.readUnsignedByte()
         if (type and 0x80 != 0) {
             type = type and 0x7f
-            aString4765 = buffer.readString()
+            name = buffer.readString()
         }
         contentType = buffer.readShort()
-        basePositionX = buffer.readUnsignedShort()
-        basePositionY = buffer.readUnsignedShort()
+        basePositionX = buffer.readShort()
+        basePositionY = buffer.readShort()
         baseWidth = buffer.readShort()
         baseHeight = buffer.readShort()
         horizontalSizeMode = buffer.readByte().toByte()
@@ -64,10 +64,10 @@ class InterfaceDecoder(cache: Cache) : DefinitionDecoder<InterfaceDefinition>(ca
         } else {
             parent + (id and -65536)
         }
-        val i_17_ = buffer.readUnsignedByte()
-        hidden = 0x1 and i_17_ != 0
+        val flag = buffer.readUnsignedByte()
+        hidden = 0x1 and flag != 0
         if (i >= 0) {
-            disableHover = i_17_ and 0x2 != 0
+            disableHover = flag and 0x2 != 0
         }
         if (type == 0) {
             scrollWidth = buffer.readShort()

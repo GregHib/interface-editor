@@ -3,6 +3,7 @@ package com.greg.model.widgets.type
 import com.greg.controller.canvas.DragContext
 import com.greg.model.cache.archives.widget.WidgetDataConverter
 import com.greg.model.settings.Settings
+import com.greg.model.widgets.JsonSerializer
 import com.greg.model.widgets.Jsonable
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
@@ -40,19 +41,20 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, Gr
     override var hidden = BoolProperty("hidden", false)
     override var hovered = BoolProperty("hovered", false)
 
-    override var optionCircumfix = StringProperty("optionCircumfix", "")
-    override var optionText = StringProperty("optionText", "")
-    override var optionAttributes = IntProperty("optionAttributes", 0)
-    override var hover = StringProperty("hover", "")
-
     override var parent = ObjProperty<Widget?>("parent", null)
-    override var optionType = IntProperty("optionType", 0)
+    override var typeProperty = IntProperty("optionType", 0)
     override var contentType = IntProperty("contentType", 0)
     override var alpha = IntProperty("alpha", 0)
-    override var hoverId = IntProperty("hoverId", 0)
-    override var scriptOperators = ObjProperty("scriptOperators", IntArray(0))
-    override var scriptDefaults = ObjProperty("scriptDefaults", IntArray(0))
-    override var scripts: ObjProperty<Array<IntArray?>> = ObjProperty("scripts", arrayOfNulls(0))
+
+    override var horizontalSizeModeProperty = IntProperty("horizontalSizeMode", 0)
+    override var verticalSizeModeProperty = IntProperty("verticalSizeMode", 0)
+    override var horizontalPositionModeProperty = IntProperty("horizontalPositionMode", 0)
+    override var verticalPositionModeProperty = IntProperty("verticalPositionMode", 0)
+
+    override var disableHoverProperty = BoolProperty("disableHover", false)
+    override var applyTextProperty = StringProperty("applyText", "")
+
+    override var optionsProperty: ObjProperty<Array<String>> = ObjProperty("scripts", emptyArray())
 
     var updateSelection = true
 
@@ -66,6 +68,16 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, Gr
         properties.addPanel(locked, false)
         properties.addPanel(selected, false)
         properties.addPanel(invisible, false)
+
+        properties.add(horizontalSizeModeProperty, "Layout")
+        properties.add(verticalSizeModeProperty, "Layout")
+        properties.add(horizontalPositionModeProperty, "Layout")
+        properties.add(verticalPositionModeProperty, "Layout")
+
+        properties.add(disableHoverProperty, "Menu")
+        properties.add(optionsProperty, "Menu")
+
+        properties.add(applyTextProperty, "Text")
     }
 
     fun toData(): InterfaceComponentDefinition {
@@ -77,16 +89,16 @@ open class Widget(builder: WidgetBuilder, id: Int) : GroupWidget(), Jsonable, Gr
     }
 
     override fun fromJson(json: String) {
-//        val data = JsonSerializer.deserializer(json, WidgetData::class.java) ?: return
-//        fromData(data)
+        val data = JsonSerializer.deserializer(json, InterfaceComponentDefinition::class.java) ?: return
+        fromData(data)
     }
 
     override fun toJson(): String {
-        return ""//JsonSerializer.serialize(toData()) FIXME
+        return JsonSerializer.serialize(toData())
     }
 
     override fun toString(): String {
-        return "$name ${identifier and 0xffff}"//toJson()
+        return "$name ${identifier and 0xffff}"
     }
 
 }

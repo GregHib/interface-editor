@@ -4,9 +4,6 @@ import com.greg.controller.utils.ColourUtils
 import com.greg.model.widgets.WidgetBuilder
 import com.greg.model.widgets.WidgetType
 import com.greg.model.widgets.type.*
-import com.greg.model.widgets.type.groups.GroupAppearance
-import com.greg.model.widgets.type.groups.GroupColour
-import com.greg.model.widgets.type.groups.GroupColours
 import rs.dusk.cache.definition.data.InterfaceComponentDefinition
 import rs.dusk.cache.definition.data.InterfaceDefinition
 
@@ -14,146 +11,152 @@ object WidgetDataConverter {
     fun toData(widget: Widget): InterfaceComponentDefinition {
         val data = InterfaceComponentDefinition(widget.identifier)
 
+        data.type = widget.getType()
+        data.contentType = widget.getContentType()
         data.basePositionX = widget.getX()
         data.basePositionY = widget.getY()
+        data.baseWidth = widget.getWidth()
+        data.baseHeight = widget.getHeight()
 
-        data.parent = widget.getParent()?.identifier ?: -1
-        data.type = widget.type.ordinal
-        data.contentType = widget.contentType.get()
-        data.baseWidth = (widget as? WidgetInventory)?.getSlotWidth() ?: widget.getWidth()
-        data.baseHeight = (widget as? WidgetInventory)?.getSlotHeight() ?: widget.getHeight()
+        data.horizontalSizeMode = widget.horizontalSize.toByte()
+        data.verticalSizeMode = widget.verticalSize.toByte()
+        data.horizontalPositionMode = widget.horizontalPosition.toByte()
+        data.verticalPositionMode = widget.verticalPosition.toByte()
+
+        data.hidden = widget.isHidden()
+        data.disableHover = !widget.hover
+        data.applyText = widget.applyText
+        data.options = widget.options
+
         data.alpha = widget.getAlpha()
 
-        if (widget is WidgetContainer) {
-            data.hidden = widget.isHidden()
+        when (widget) {
+            is WidgetContainer -> {
+                data.scrollWidth = widget.scrollWidth
+                data.scrollHeight = widget.scrollHeight
+            }
+            is WidgetRectangle -> {
+                data.colour = ColourUtils.colourToRS(widget.getColour())
+                data.filled = widget.isFilled()
+                data.alpha = widget.getAlpha()
+            }
+            is WidgetText -> {
+                data.fontId = widget.getFont()
+                data.monochrome = widget.monochrome
+                data.text = widget.getText()
+                data.lineHeight = widget.lineHeight
+                data.horizontalTextAlign = widget.horizontalAlign
+                data.verticalTextAlign = widget.verticalAlign
+                data.shaded = widget.isShaded()
+                data.colour = ColourUtils.colourToRS(widget.getColour())
+                data.lineCount = widget.lineCount
+            }
+            is WidgetSprite -> {
+                data.defaultImage = widget.getSprite()
+                data.imageRotation = widget.rotation
+                data.imageRepeat = widget.repeat
+                data.alpha = widget.getAlpha()
+                data.rotation = widget.orientation
+                data.backgroundColour = ColourUtils.colourToRS(widget.getSecondaryColour())
+                data.flipVertical = widget.flipVertical
+                data.flipHorizontal = widget.flipHorizontal
+                data.colour = ColourUtils.colourToRS(widget.getColour())
+            }
+            is WidgetModel -> {
+                data.defaultMediaType = widget.getDefaultMediaType()
+                data.defaultMediaId = widget.getDefaultMedia()
+                data.centreType = widget.isCentred()
+                data.ignoreZBuffer = !widget.depthBuffer
+                data.viewportX = widget.viewportX
+                data.viewportY = widget.viewportY
+                data.spritePitch = widget.getSpritePitch()
+                data.spriteRoll = widget.getSpriteRoll()
+                data.spriteYaw = widget.spriteYaw
+                data.spriteScale = widget.getSpriteScale()
+                data.animation = widget.getAnimation()
+                data.viewportWidth = widget.viewportWidth
+                data.viewportHeight = widget.viewportHeight
+            }
+            is WidgetLine -> {
+                data.lineWidth = widget.lineWidth
+                data.colour = ColourUtils.colourToRS(widget.getColour())
+                data.lineMirrored = widget.lineMirrored
+            }
         }
-
-        if (widget is WidgetRectangle) {
-            data.filled = widget.isFilled()
-        }
-
-        if ((widget is WidgetText || widget is WidgetModelList) && widget is GroupAppearance) {
-            data.centreType = widget.isCentred()
-            data.fontId = widget.getFontIndex()
-            data.shaded = widget.hasShadow()
-        }
-
-        if (widget is WidgetText) {
-            data.text = widget.getDefaultText()
-            data.applyText = widget.getSecondaryText()
-        }
-
-        if ((widget is WidgetModelList || widget is WidgetRectangle || widget is WidgetText)&& widget is GroupColour) {
-            data.colour = ColourUtils.colourToRS(widget.getDefaultColour())
-        }
-
-        if ((widget is WidgetRectangle || widget is WidgetText) && widget is GroupColours) {
-            data.backgroundColour = ColourUtils.colourToRS(widget.getSecondaryColour())
-        }
-
-        if (widget is WidgetSprite) {
-            data.defaultImage = widget.getDefaultSpriteArchive()
-            data.imageRepeat = widget.getRepeatsImage()
-        }
-
-
-        if (widget is WidgetModel) {
-            data.defaultMediaType = widget.getDefaultMediaType()
-            data.defaultMediaId = widget.getDefaultMedia()
-            data.animation = widget.getDefaultAnimationId()
-            data.spriteScale = widget.getSpriteScale()
-            data.spritePitch = widget.getSpritePitch()
-            data.spriteRoll = widget.getSpriteRoll()
-        }
-
-
-        if (widget is WidgetItemList) {
-            data.centreType = widget.isCentred()
-            data.fontId = widget.getFontIndex()
-            data.shaded = widget.hasShadow()
-            data.colour = ColourUtils.colourToRS(widget.getDefaultColour())
-            data.options = widget.getActions()
-        }
-
         return data
     }
 
     fun setData(widget: Widget, data: InterfaceComponentDefinition) {
+        widget.setType(data.type)
+        widget.setContentType(data.contentType)
         widget.setX(data.basePositionX)
         widget.setY(data.basePositionY)
-        widget.setOptionType(data.type)
-        widget.setContentType(data.contentType)
-        if (widget !is WidgetInventory) {
-            widget.setWidth(data.baseWidth)
-            widget.setHeight(data.baseHeight)
-        }
+        widget.setWidth(data.baseWidth)
+        widget.setHeight(data.baseHeight)
+
+        widget.horizontalSize = data.horizontalSizeMode.toInt()
+        widget.verticalSize = data.verticalSizeMode.toInt()
+        widget.horizontalPosition = data.horizontalPositionMode.toInt()
+        widget.verticalPosition = data.verticalPositionMode.toInt()
+
+        widget.setHidden(data.hidden)
+        widget.hover = !data.disableHover
+        widget.applyText = data.applyText
+        widget.options = data.options ?: emptyArray()
+
         widget.setAlpha(data.alpha)
 
-        if(widget is WidgetContainer) {
-            widget.setHidden(data.hidden)
-        }
-
-        if (widget is WidgetInventory) {
-
-            val sprites = data.defaultImage
-            if(sprites != -1) {
-                widget.setSpritesIndex(intArrayOf(sprites))
+        when (widget) {
+            is WidgetContainer -> {
+                widget.scrollWidth = data.scrollWidth
+                widget.scrollHeight = data.scrollHeight
             }
-
-            data.options?.let { options ->
-                widget.setActions(options)
+            is WidgetRectangle -> {
+                widget.setColour(ColourUtils.getColour(data.colour))
+                widget.setFilled(data.filled)
+                widget.setAlpha(data.alpha)
             }
-        }
-
-        if (widget is WidgetRectangle) {
-            widget.setFilled(data.filled)
-        }
-
-        if ((widget is WidgetText || widget is WidgetModelList) && widget is GroupAppearance) {
-            widget.setCentred(!data.centreType)
-            widget.setFontIndex(data.fontId)
-            widget.setShadow(data.shaded)
-        }
-
-        if (widget is WidgetText) {
-            widget.setDefaultText(data.text)
-            widget.setSecondaryText(data.applyText)
-        }
-
-        if ((widget is WidgetModelList || widget is WidgetRectangle || widget is WidgetText)&& widget is GroupColour) {
-            widget.setDefaultColour(ColourUtils.getColour(data.colour))
-        }
-
-        if ((widget is WidgetRectangle || widget is WidgetText) && widget is GroupColours) {
-            widget.setSecondaryColour(ColourUtils.getColour(data.backgroundColour))
-        }
-
-        if (widget is WidgetSprite) {
-
-            widget.setDefaultSpriteArchive(data.defaultImage)
-            widget.setRepeats(data.imageRepeat)
-        }
-
-        if (widget is WidgetModel) {
-            if(data.defaultMediaType == 1) {
+            is WidgetText -> {
+                widget.setFont(data.fontId)
+                widget.monochrome = data.monochrome
+                widget.setText(data.text)
+                widget.lineHeight = data.lineHeight
+                widget.horizontalAlign = data.horizontalTextAlign
+                widget.verticalAlign = data.verticalTextAlign
+                widget.setShaded(data.shaded)
+                widget.setColour(ColourUtils.getColour(data.colour))
+                widget.lineCount = data.lineCount
+            }
+            is WidgetSprite -> {
+                widget.setSprite(data.defaultImage)
+                widget.rotation = data.imageRotation
+                widget.repeat = data.imageRepeat
+                widget.setAlpha(data.alpha)
+                widget.orientation = data.rotation
+                widget.setSecondaryColour(ColourUtils.getColour(data.backgroundColour))
+                widget.flipVertical = data.flipVertical
+                widget.flipHorizontal = data.flipHorizontal
+                widget.setColour(ColourUtils.getColour(data.colour))
+            }
+            is WidgetModel -> {
                 widget.setDefaultMediaType(data.defaultMediaType)
                 widget.setDefaultMedia(data.defaultMediaId)
+                widget.setCentred(data.centreType)
+                widget.depthBuffer = !data.ignoreZBuffer
+                widget.viewportX = data.viewportX
+                widget.viewportY = data.viewportY
+                widget.setSpritePitch(data.spritePitch)
+                widget.setSpriteRoll(data.spriteRoll)
+                widget.spriteYaw = data.spriteYaw
+                widget.setSpriteScale(data.spriteScale)
+                widget.setAnimation(data.animation)
+                widget.viewportWidth = data.viewportWidth
+                widget.viewportHeight = data.viewportHeight
             }
-
-            widget.setDefaultAnimationId(data.animation)
-            widget.setSpriteScale(data.spriteScale)
-            widget.setSpritePitch(data.spritePitch)
-            widget.setSpriteRoll(data.spriteRoll)
-        }
-
-        if (widget is WidgetItemList) {
-            widget.setCentred(data.centreType)
-            widget.setFontIndex(data.fontId)
-            widget.setShadow(data.shaded)
-            widget.setDefaultColour(ColourUtils.getColour(data.colour))
-            widget.setHasActions(data.options != null)
-            if(data.options != null) {
-                widget.setActions(data.options!!)
+            is WidgetLine -> {
+                widget.lineWidth = data.lineWidth
+                widget.setColour(ColourUtils.getColour(data.colour))
+                widget.lineMirrored = data.lineMirrored
             }
         }
     }
@@ -179,6 +182,7 @@ object WidgetDataConverter {
             }
             val list = parent.getChildren()
             list.add(widget)
+            widget.setParent(parent)
             parent.setChildren(list)
         }
         return root

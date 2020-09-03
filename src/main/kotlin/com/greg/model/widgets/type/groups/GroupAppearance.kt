@@ -8,36 +8,33 @@ import com.greg.model.widgets.properties.extended.ObjProperty
 
 interface GroupAppearance {
 
-    var centred: BoolProperty
-    var fontIndex: IntProperty
-    var shadow: BoolProperty
+    var fontProperty: IntProperty
     var fontBounds: ObjProperty<IntValues>
 
-    fun setCentred(value: Boolean) {
-        centred.set(value)
+    var shaded: BoolProperty
+    var monochromeProperty: BoolProperty
+
+    var monochrome: Boolean
+        get() = monochromeProperty.get()
+        set(value) = monochromeProperty.set(value)
+
+    fun setFont(value: Int) {
+        fontProperty.set(value)//MathUtils.constrain(value, getFontBounds().first, getFontBounds().last))
     }
 
-    fun isCentred(): Boolean {
-        return centred.get()
-    }
-
-    fun setFontIndex(value: Int) {
-        fontIndex.set(MathUtils.constrain(value, getFontBounds().first, getFontBounds().last))
-    }
-
-    fun getFontIndex(): Int {
-        return fontIndex.get()
+    fun getFont(): Int {
+        return fontProperty.get()
     }
 
     fun getFontBounds(): IntValues {
         return fontBounds.get()
     }
 
-    fun setShadow(value: Boolean) {
-        shadow.set(value)
+    fun setShaded(value: Boolean) {
+        shaded.set(value)
     }
 
-    fun hasShadow(): Boolean {
-        return shadow.get()
+    fun isShaded(): Boolean {
+        return shaded.get()
     }
 }

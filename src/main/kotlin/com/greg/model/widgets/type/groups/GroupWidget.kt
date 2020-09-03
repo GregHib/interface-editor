@@ -5,6 +5,7 @@ import com.greg.model.widgets.properties.IntValues
 import com.greg.model.widgets.properties.extended.BoolProperty
 import com.greg.model.widgets.properties.extended.IntProperty
 import com.greg.model.widgets.properties.extended.ObjProperty
+import com.greg.model.widgets.properties.extended.StringProperty
 import com.greg.model.widgets.type.Widget
 
 abstract class GroupWidget {
@@ -16,20 +17,47 @@ abstract class GroupWidget {
     abstract var widthBounds: ObjProperty<IntValues>
     abstract var heightBounds: ObjProperty<IntValues>
 
+    abstract var horizontalSizeModeProperty: IntProperty
+
+    var horizontalSize: Int
+        get() = horizontalSizeModeProperty.get()
+        set(value) = horizontalSizeModeProperty.set(value)
+
+    abstract var verticalSizeModeProperty: IntProperty
+
+    var verticalSize: Int
+        get() = verticalSizeModeProperty.get()
+        set(value) = verticalSizeModeProperty.set(value)
+
+    abstract var horizontalPositionModeProperty: IntProperty
+
+    var horizontalPosition: Int
+        get() = horizontalPositionModeProperty.get()
+        set(value) = horizontalPositionModeProperty.set(value)
+
+    abstract var verticalPositionModeProperty: IntProperty
+
+    var verticalPosition: Int
+        get() = verticalPositionModeProperty.get()
+        set(value) = verticalPositionModeProperty.set(value)
+
+    abstract var applyTextProperty: StringProperty
+
+    var applyText: String
+        get() = applyTextProperty.get()
+        set(value) = applyTextProperty.set(value)
+
+    abstract var typeProperty: IntProperty
+    abstract var contentType: IntProperty
+    abstract var alpha: IntProperty
+
+    abstract var hovered: BoolProperty
+    abstract var hidden: BoolProperty
+
+    internal abstract var parent: ObjProperty<Widget?>
     abstract var locked: BoolProperty
     abstract var selected: BoolProperty
     abstract var invisible: BoolProperty
-    abstract var hidden: BoolProperty
-    abstract var hovered: BoolProperty
-
-    internal abstract var parent: ObjProperty<Widget?>
-    abstract var optionType: IntProperty
-    abstract var contentType: IntProperty
-    abstract var alpha: IntProperty
-    abstract var hoverId: IntProperty
-    abstract var scriptOperators: ObjProperty<IntArray>
-    abstract var scriptDefaults: ObjProperty<IntArray>
-    abstract var scripts: ObjProperty<Array<IntArray?>>
 
     fun setLocked(value: Boolean) {
         locked.set(value)
@@ -120,9 +148,9 @@ abstract class GroupWidget {
         return parent.get()
     }
 
-    fun setOptionType(value: Int) { optionType.set(value) }
+    fun setType(value: Int) { typeProperty.set(value) }
 
-    fun getOptionType(): Int { return optionType.get() }
+    fun getType(): Int { return typeProperty.get() }
 
     fun setContentType(value: Int) { contentType.set(value) }
 
@@ -131,20 +159,4 @@ abstract class GroupWidget {
     fun setAlpha(value: Int) { alpha.set(value) }
 
     fun getAlpha(): Int { return alpha.get() }
-
-    fun setHoverId(value: Int) { hoverId.set(value) }
-
-    fun getHoverId(): Int { return hoverId.get() }
-
-    fun setScriptOperators(value: IntArray) { scriptOperators.set(value) }
-
-    fun getScriptOperators(): IntArray { return scriptOperators.get() }
-
-    fun setScriptDefaults(value: IntArray) { scriptDefaults.set(value) }
-
-    fun getScriptDefaults(): IntArray { return scriptDefaults.get() }
-
-    fun setScripts(value: Array<IntArray?>) { scripts.set(value) }
-
-    fun getScripts(): Array<IntArray?> { return scripts.get() }
 }

@@ -16,10 +16,8 @@ import javafx.event.EventTarget
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
 import javafx.geometry.Point2D
-import javafx.geometry.Pos
 import javafx.scene.Group
 import javafx.scene.Node
-import javafx.scene.text.TextAlignment
 import tornadofx.Controller
 import tornadofx.add
 import tornadofx.observable
@@ -308,82 +306,61 @@ class WidgetsController : Controller() {
             })
             children?.forEach { shape.group.add(it) }
         } else if (widget is WidgetRectangle && shape is RectangleShape) {
-            shape.flip = WidgetScripts.scriptStateChanged(widget)
+            shape.primary = true
             shape.updateColour(widget)
             val listener = ChangeListener<Any> { _, _, _ -> shape.updateColour(widget) }
 
             widget.hovered.addListener(listener)
             widget.filled.addListener(listener)
-            widget.defaultColour.addListener(listener)
-            widget.defaultHoverColour.addListener(listener)
+            widget.colourProperty.addListener(listener)
             widget.secondaryColour.addListener(listener)
-            widget.secondaryHoverColour.addListener(listener)
         } else if (widget is WidgetText && shape is TextShape) {
-            shape.flip = WidgetScripts.scriptStateChanged(widget)
             shape.updateColour(widget)
-            shape.updateText(widget, cache)
+            shape.updateText(widget)
 
             var listener = ChangeListener<Any> { _, oldValue, newValue ->
                 if (oldValue != newValue) {
                     shape.updateColour(widget)
-                    shape.updateText(widget, cache)
+                    shape.updateText(widget)
                 }
             }
 
             widget.hovered.addListener(listener)
-            widget.defaultColour.addListener(listener)
-            widget.defaultHoverColour.addListener(listener)
-            widget.secondaryColour.addListener(listener)
-            widget.secondaryHoverColour.addListener(listener)
+            widget.colourProperty.addListener(listener)
 
             listener = ChangeListener { _, oldValue, newValue ->
-                if (oldValue != newValue)
-                    shape.updateText(widget, cache)
+                if (oldValue != newValue) {
+                    shape.updateText(widget)
+                }
             }
 
-            widget.defaultText.addListener(listener)
-            widget.secondaryText.addListener(listener)
+            widget.textProperty.addListener(listener)
             widget.width.addListener(listener)
             widget.height.addListener(listener)
 
-            widget.fontIndex.addListener(listener)
-            widget.shadow.addListener(listener)
-            widget.centred.addListener { _, oldValue, newValue ->
-                if (oldValue != newValue) {
-                    shape.label.textAlignment = if (newValue) TextAlignment.CENTER else TextAlignment.LEFT
-                    shape.label.alignment = if (newValue) Pos.TOP_CENTER else Pos.TOP_LEFT
-                    shape.updateText(widget, cache)
-                }
-            }
-            if(widget.isCentred()) {
-                shape.label.textAlignment = if (widget.isCentred()) TextAlignment.CENTER else TextAlignment.LEFT
-                shape.label.alignment = if (widget.isCentred()) Pos.TOP_CENTER else Pos.TOP_LEFT
-                shape.updateText(widget, cache)
-            }
+            widget.fontProperty.addListener(listener)
+            widget.shaded.addListener(listener)
+            widget.horizontalAlignProperty.addListener(listener)
+            widget.verticalAlignProperty.addListener(listener)
+            shape.updateText(widget)
         } else if (widget is WidgetSprite && shape is SpriteShape) {
-            shape.secondary = WidgetScripts.scriptStateChanged(widget)
-            shape.defaultSpriteProperty().bind(widget.defaultSprite)
-            shape.defaultArchiveProperty().bind(widget.defaultSpriteArchive)
-            shape.secondarySpriteProperty().bind(widget.secondarySprite)
-            shape.secondaryArchiveProperty().bind(widget.secondarySpriteArchive)
-            shape.repeatProperty().bind(widget.repeatsImage)
+            shape.getSpriteIndexProperty().bind(widget.spriteIndexProperty)
+            shape.getSpriteProperty().bind(widget.spriteProperty)
+            shape.repeatProperty().bind(widget.repeatProperty)
 
             //Update archive values
-            shape.updateArchive(widget, widget.getDefaultSpriteArchive(), true)
-            widget.defaultSpriteArchive.addListener { _, oldValue, newValue ->
-                if (oldValue != newValue)
-                    shape.updateArchive(widget, newValue.toInt(), true)
-            }
-            shape.updateArchive(widget, widget.getSecondarySpriteArchive(), false)
-            widget.secondarySpriteArchive.addListener { _, oldValue, newValue ->
-                if (oldValue != newValue)
-                    shape.updateArchive(widget, newValue.toInt(), false)
+            shape.updateArchive(widget, widget.getSprite())
+            widget.spriteProperty.addListener { _, oldValue, newValue ->
+                if (oldValue != newValue) {
+                    shape.updateArchive(widget, newValue.toInt())
+                }
             }
         } else if(widget is WidgetInventory && shape is InventoryShape) {
             shape.updateInventory(widget)
             val listener = ChangeListener<Any> { _, oldValue, newValue ->
-                if (oldValue != newValue)
+                if (oldValue != newValue) {
                     shape.updateInventory(widget)
+                }
             }
 
             widget.slotWidth.addListener(listener)

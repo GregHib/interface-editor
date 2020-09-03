@@ -5,9 +5,9 @@ import javafx.scene.paint.Color
 
 interface GroupColour {
 
-    var defaultColour: ObjProperty<Color>
+    var colourProperty: ObjProperty<Color>
 
-    fun setDefaultColour(value: Color) { defaultColour.set(value) }
+    fun setColour(value: Color) { colourProperty.set(value) }
 
-    fun getDefaultColour(): Color { return defaultColour.get() }
+    fun getColour(): Color { return colourProperty.get() }
 }

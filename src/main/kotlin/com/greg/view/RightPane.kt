@@ -35,13 +35,14 @@ class RightPane : Fragment() {
     private val pattern = Pattern.compile("^(-?[0-9]+)")
 
     init {
+        sheet.mode = PropertySheet.Mode.CATEGORY
         sheet.minWidth = 284.0
 //        sheet.prefWidth = 284.0
         sheet.propertyEditorFactory = Callback<Item, PropertyEditor<*>> { param ->
             if (param is PropertyItem) {
-                when {
-                    param.value is Boolean -> Editors.createCheckEditor(param)
-                    param.value is Int -> {
+                when (param.value) {
+                    is Boolean -> Editors.createCheckEditor(param)
+                    is Int -> {
                         val editor = NumberSpinner(param)
                         val spinner = editor.editor
                         spinner.isDisable = param.disabled
@@ -74,19 +75,19 @@ class RightPane : Fragment() {
 
                         editor
                     }
-                    param.value is Color -> {
+                    is Color -> {
                         val editor = Editors.createColorEditor(param)
                         val field = editor.editor
                         (field as? ColorPicker)?.valueProperty()?.bindBidirectional(param.prop() as Property<Color>?)
                         editor
                     }
-                    param.value is IntArray -> {
+                    is IntArray -> {
                         if(param is RangePropertyItem)
-                        IntSpreadsheetProperty(param)
+                            IntSpreadsheetProperty(param)
                         else
                             null
                     }
-                    param.value is Array<*> -> {
+                    is Array<*> -> {
                         if(param is RangePropertyItem)
                             StringSpreadsheetProperty(param)
                         else
