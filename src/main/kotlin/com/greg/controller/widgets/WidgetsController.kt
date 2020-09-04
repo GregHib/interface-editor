@@ -278,6 +278,17 @@ class WidgetsController : Controller() {
         shape.translateXProperty().bindBidirectional(widget.x)
         shape.translateYProperty().bindBidirectional(widget.y)
 
+        if(widget.horizontalPosition == 1) {
+            // Center in parent
+            val parent = widget.getParent()!!
+            widget.x.bind(parent.x.add(parent.width).divide(2).subtract(widget.width.divide(2)))
+        }
+
+        if(widget.width.get() == 0) {
+            val parent = widget.getParent()!!
+            widget.width.bind(parent.width)
+        }
+
         //Appearance
         shape.outline.widthProperty().bindBidirectional(widget.width)
         shape.outline.heightProperty().bindBidirectional(widget.height)
